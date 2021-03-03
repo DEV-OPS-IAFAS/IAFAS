@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+    
+<!--
+EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
+-->
+
+<configuration>
+    
+     <!-- SE TIENE QUE MAPEAR CADA BEAN -->
+    <typeAliases>
+    
+      <typeAlias alias="Monedas" type="ep.mil.pe.iafas.demo.model.IafasMonedas" />
+       <typeAlias alias="CompromisoAnual" type="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual" />
+       <typeAlias alias="CompromisoAnualDet" type="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnualDet" />
+       <typeAlias alias="Combos" type="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" />
+       <typeAlias alias="VCompromisoMensual" type="ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompromisoMensual" />
+       <typeAlias alias="CompromisoMensual" type="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensual" />
+       <typeAlias alias="CompromisoMensualDet" type="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensualDet" />
+       <typeAlias alias="IafasMonedas" 		type="ep.mil.pe.iafas.maestras.model.IafasMonedas" />
+       <typeAlias alias="IafasUsuarios" 	type="ep.mil.pe.iafas.seguridad.model.IafasUsuarios" />
+       <typeAlias alias="IafasUsuariosMenu" type="ep.mil.pe.iafas.seguridad.model.IafasUsuariosMenu" />
+       <typeAlias alias="IafasGirado" 		type="ep.mil.pe.iafas.administrativo.girado.model.IafasGirado"/>
+       <typeAlias alias="IafasAreasLaboral" 		type="ep.mil.pe.iafas.seguridad.model.IafasAreasLaboral"/>
+       <typeAlias alias="IafasMovimientoCadenas" 		type="ep.mil.pe.iafas.administrativo.girado.model.IafasMovimientoCadenas"/>
+       									
+    </typeAliases>
+
+     <environments default="development">
+        <environment id="development">
+          <transactionManager type="JDBC"/>
+            <!-- CONECCION A MYSQL -->
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/iafas"/>
+                <property name="username" value="root"/>
+                <property name="password" value="esc240789"/>
+            </dataSource>
+       </environment>
+    </environments>
+    <mappers> 
+        <!-- SE TIENE QUE MAPEAR CADA ARCHIVO XML, Q HACE REFERENCIA A CADA BEAN -->
+         <mapper resource="ep/mil/pe/iafas/demo/controller/xml/IafasMonedasController.xml" /> 
+         <mapper resource="ep/mil/pe/iafas/administrativo/maestros/combos/controller/IafasCombosController.xml" /> 
+		<mapper resource="ep/mil/pe/iafas/administrativo/compromiso/controller/xml/IafasCompAnualController.xml" /> 
+		<mapper resource="ep/mil/pe/iafas/administrativo/compromiso/controller/xml/ViewIafasCompMensualController.xml" />
+		<mapper resource="ep/mil/pe/iafas/administrativo/compromiso/controller/xml/IafasCompMensualController.xml" />
+        <mapper resource="ep/mil/pe/iafas/maestras/controller/xml/IafasMonedasController.xml" />
+        <mapper resource="ep/mil/pe/iafas/seguridad/xml/IafasUsuarios.xml" />
+        <mapper resource="ep/mil/pe/iafas/seguridad/xml/IafasUsuariosMenu.xml" />
+        <mapper resource="ep/mil/pe/iafas/administrativo/girado/xml/IafasGirado.xml" />
+        <mapper resource="ep/mil/pe/iafas/seguridad/xml/IafasAreasLaboral.xml" />         
+		<mapper resource="ep/mil/pe/iafas/administrativo/girado/xml/IafasMovimientoCadenas.xml" />
+    </mappers>
+
+</configuration>

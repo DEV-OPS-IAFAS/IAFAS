@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="CompromisoMensual">
+	<resultMap id="compromisoMensual" type="CompromisoMensual" />
+	<select id="listaMovimiento" resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensual" 
+	parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensual">
+	  
+	  SELECT m.vsecuencia secuencia, m.vsecuencia_int correlativo, 
+	  m.vreg_siaf vexpediente,
+      CASE m.vcod_estado WHEN '1' THEN 'REG' WHEN '2' THEN 'AP' END vcodEstado,
+      det.vtip_documento_men vtipDocumentoMen, 
+      det.vnro_documento_men vnroDocumentoMen,
+      det.dfecha_documento_men dfechaDocumento,
+      det.cproveedor_ruc cproveedorRuc,
+      pk_util_razon_social(det.cproveedor_ruc) razonSocial,
+      m.nimp_mon_sol nimpMonSol
+      FROM iafas_movimiento m INNER JOIN iafas_compromiso_mensual det ON (
+      m.vano = det.vano AND
+      m.vsecuencia = det.vsecuencia AND
+      m.vsecuencia_int = det.vsecuencia_int)
+      WHERE m.vano=#{vano}
+	</select>
+	
+	<select id="grabarCompMensual"
+		parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensual"
+		statementType="CALLABLE">
+		{ CALL SP_REGISTRO_COMP_MENSUAL (
+		#{vano mode=IN, jdbcType=VARCHAR},
+		#{vglosa mode=IN, jdbcType=VARCHAR},
+		#{vfuenteFinanciamiento mode=IN, jdbcType=VARCHAR},
+		#{vcodTipoFuncionamiento mode=IN, jdbcType=VARCHAR},
+		#{vcodEstado mode=IN, jdbcType=VARCHAR},
+		#{ntipCam mode=IN, jdbcType=DECIMAL},
+		#{vcodMoneda mode=IN, jdbcType=VARCHAR},
+		#{vtipDocumentoMen mode=IN, jdbcType=VARCHAR},
+		#{vnroDocumentoMen mode=IN, jdbcType=VARCHAR},
+		#{dfechaDocumento mode=IN, jdbcType=DATE},
+		#{vanoDocumento mode=IN, jdbcType=VARCHAR},
+		#{vsecuenciaA mode=IN, jdbcType=VARCHAR},
+		#{vcorrelativo mode=IN, jdbcType=VARCHAR},
+		#{vnroCertificado mode=IN, jdbcType=VARCHAR},
+		#{vcodProcesoSel mode=IN, jdbcType=VARCHAR},
+		#{cproveedorRuc mode=IN, jdbcType=VARCHAR},
+		#{vtipDocumentoCom mode=IN, jdbcType=VARCHAR},
+		#{vnroDocumentoCom mode=IN, jdbcType=VARCHAR},
+		#{vserieCom mode=IN, jdbcType=VARCHAR},
+		#{dfechaDevengado mode=IN, jdbcType=DATE},
+		#{vusuarioIng mode=IN, jdbcType=VARCHAR})}
+	</select>
+
+    
+	<select id="grabarMensualDet"
+		parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensualDet"
+		statementType="CALLABLE">
+		{ CALL SP_REGISTRO_COMP_MENSUAL_DET(
+		#{vano mode=IN, jdbcType=VARCHAR},
+		#{vcodSecFunc, mode=IN,jdbcType=VARCHAR},
+		#{vidClasificador, mode=IN,jdbcType=VARCHAR},
+		#{nimpMonSol, mode=IN,jdbcType=DECIMAL},
+		#{vusuarioIng, mode=IN,jdbcType=VARCHAR})}
+
+	</select>
+</mapper>

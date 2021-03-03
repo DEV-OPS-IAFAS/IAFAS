@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>IAFAS-Compromiso Anual</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+    </h:head>
+    <body class="formulario">
+        <h:form id="frmInsRegCompAnual" class="contenedor">
+            <p:panel >
+                <p:panelGrid columns="6"  >
+                    <i class="pi pi-calendar-minus"></i>
+                    <p:outputLabel value="Registro de Compromiso Anual - Certificado N° #{mbCompAnual.certificado}" style="color: green; font-weight: bold; font-size: 12px;"/>
+                    <p:commandButton  value="Grabar" action="#{mbCompAnual.grabarCompAnual()}" 
+                    icon="pi pi-save" style="height:35px;"/>
+                    <p:commandButton value="Cancelar" action="#{mbCompAnual.retornar()}"
+                    icon="pi pi-arrow-left" style="height:35px;"/>
+                </p:panelGrid>
+                <br/>
+                <p:fieldset legend="Datos del Certificado">
+                    <h:panelGrid columns="4" >
+                        <h:outputLabel value="Fuente Financiamiento"/>
+                        <h:selectOneMenu value="#{mbCompAnual.tipCodFun}" disabled="true" styleClass="select"> 
+                        <f:selectItem itemValue="1" itemLabel="RECURSOS ORDINARIOS"></f:selectItem>
+                        <f:selectItem itemValue="2" itemLabel="RECURSOS DIRECTAMENTE RECAUDADOS"></f:selectItem>
+                        <f:selectItem itemValue="3" itemLabel="RECURSOS POR OPE OFLS DE CREDITO INTERNO"></f:selectItem>
+                        <f:selectItem itemValue="4" itemLabel="DONACIONES Y TRANSFERENCIAS"></f:selectItem>
+                        <f:selectItem itemValue="5" itemLabel="RECURSOS DETERMINADOS"></f:selectItem>
+                        </h:selectOneMenu>  
+                        <h:outputLabel value="Fecha:"/>
+                        <h:inputText id="txt_fechaCert" size="10" styleClass="input" value="#{mbCompAnual.fechaCert}"
+                        readonly="true">
+                                <f:converter converterId="javax.faces.DateTime" />
+                                <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
+                        </h:inputText>
+                        <p:outputLabel value="Proceso Selección"/>
+                        <p:selectOneMenu id="procesoSel"  value="#{mbCompAnual.tipProcesoSel}" disabled="true">
+                         <f:selectItems var="documentos" value="#{mbCombos.procesoSel}"/>
+                        </p:selectOneMenu>
+                   <!--     <p:outputLabel value="Tipo Operación:"/>
+                        <p:selectOneMenu id="cboTipOpe" value="#{mbCompAnual.tipOpe}" >
+                            <f:selectItem itemValue="" itemLabel="Seleccione"/>
+                            <f:selectItem itemValue="N" itemLabel="N: Adquisiciones de Bienes y Servicios"/>
+                            <f:selectItem itemValue="A" itemLabel="A: Encargo Interno"/>
+                            <f:selectItem itemValue="ON" itemLabel="ON: Planillas y Otros Con Afectacion al Gasto"/>
+                            <f:selectItem itemValue="AV" itemLabel="AV: Encargo Interno para Viaticos"/>
+                            <f:selectItem itemValue="OG" itemLabel="OG: Otros Gastos (Sin Proveedor)"/>
+                            <f:selectItem itemValue="SD" itemLabel="N: Servicio a la Deuda"/>
+                        </p:selectOneMenu> -->
+                    </h:panelGrid>
+                </p:fieldset>
+                <br/>
+                <p:fieldset legend="Datos del Compromiso Anual" >
+                        <h:panelGrid columns="7" style="width: 100%">
+                            <p:outputLabel value="Documento:"/>
+                            <p:selectOneMenu id="cbo_documento" style="width: 300px;" value="#{mbCompAnual.tipDocumentoA}" >
+                                <f:selectItem itemValue="" itemLabel="--Seleccione --"/>
+                                <f:selectItem itemValue="031" itemLabel="031:Orden de Compra"/>
+                                <f:selectItem itemValue="032" itemLabel="032:Orden de Servicio"/>
+                               <f:selectItem itemValue="060" itemLabel="060:Contrato Suscrito"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Número:"/>
+                            <p:inputText id="nro_doc" size="9" value="#{mbCompAnual.nroDoc}" styleClass="input" style="text-align: right;"/>
+                            <p:commandButton id="btnbuscarOCOS" icon="ui-icon-search" value="Buscar"  styleClass="button" title="Busqueda Ordenes Spring"/>
+                            <p:outputLabel value="Fecha:"/>
+                            <h:panelGrid columns="2" >
+                                <p:inputMask id="fec_doc" mask="99/99/9999" size="12" value="#{mbCompAnual.fecDocumento}" styleClass="input">
+                                    <f:converter converterId="javax.faces.DateTime" />
+                                <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
+                                </p:inputMask>                               
+                                <p:graphicImage url="img/cal.gif"/>
+                            </h:panelGrid>
+                        </h:panelGrid>
+                    
+                    <h:panelGrid columns="6" style="width: 100%" styleClass="panel">
+                        <p:outputLabel value="Proveedor:"/>
+                        <p:selectOneMenu id="tipProv" style="width: 150px;" value="#{mbCompAnual.idProv}">
+                            <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
+                            <f:selectItem itemValue="1" itemLabel="1 -Ruc Nacional"/>
+                            <f:selectItem itemValue="2" itemLabel="2 -Proveedor Extranjero"/>
+                            <f:selectItem itemValue="3" itemLabel="3 -Instituciones y Proveedores Crédito Público"/>
+                            <f:selectItem itemValue="4" itemLabel="4 -Adquirientes sin Ruc"/>
+                            <f:selectItem itemValue="7" itemLabel="7 -Proveedores de Municipios con Ruc Inválido"/>
+                            <f:selectItem itemValue="8" itemLabel="8 -Otras Empresas u Organismos"/>
+                            <f:selectItem itemValue="9" itemLabel="9 -Otros"/>
+                        </p:selectOneMenu>   
+                        <p:outputLabel value="Ruc - Razón Social:"/>
+                        <h:panelGrid columns="3" id="panel_proveedor">
+                            <h:outputText styleClass="outLabel" value="#{mbCompAnual.ruc}" style="display: block;"/>
+                           <h:outputLabel value="-"/>
+                           <h:outputLabel styleClass="outLabel" value="#{mbCompAnual.razonSocial}" style="display: block;"/>
+                        </h:panelGrid>
+
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Concepto:"/>
+                        <h:inputText id="txt_concepto" style="width: 800px;" 
+                        value="#{mbCompAnual.concepto}" styleClass="input"/>
+                    </h:panelGrid>  
+                    <h:panelGrid columns="8" style="width: 80%">
+                        <p:outputLabel value="Moneda:"/>
+                        <p:selectOneMenu id="tipMon" styleClass="select" value="#{mbCompAnual.tipMon}">
+                 			<f:selectItem itemValue="1" itemLabel="S/."></f:selectItem>
+			                <f:selectItem itemValue="2" itemLabel="USD"></f:selectItem>
+			                <f:selectItem itemValue="3" itemLabel="EURO"></f:selectItem>
+			                <f:selectItem itemValue="57" itemLabel="Y"></f:selectItem>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="T.Cambio:"/>
+                        <h:inputText id="tipcam" style="width: 50px; text-align: right;" 
+                        styleClass="input" value="#{mbCompAnual.ntipCam}" readonly="true"/>
+                        <!--  <p:outputLabel value="Moneda Extranjera:"/>
+                        <h:inputText id="montExtrajero" style="width: 75px;text-align: right;" readonly="true" styleClass="input"/>
+                        <p:outputLabel value="Moneda Nacional:"/>
+                        <h:inputText id="montNacional" style="width: 75px;text-align: right;" readonly="true" styleClass="input"/>
+                   -->
+                    </h:panelGrid>
+                </p:fieldset>
+                <br/>
+                <h:panelGrid>
+                    <p:dataTable id="dTableCla" value="#{mbCompAnual.listaCertDet}" var="cad" editable="true"
+                    editMode="cell">
+                        <p:column headerText="Sec.Func." style="width: 30px;">
+                            <p:outputLabel value="#{cad.vcodSec}"/>
+                        </p:column>
+                        <p:column headerText="Clasif." style="width: 35px;">
+                            <p:outputLabel value="#{cad.cadena}"/>
+                        </p:column>
+                        <p:column headerText="Descripción" style="width: 350px;">
+                            <p:outputLabel value="#{cad.nomClasificador}"/>
+                        </p:column>
+                        <p:column headerText="Monto" style="width: 35px;">
+                            <p:outputLabel value="#{cad.nimpMontoSol}" style="text-align:right">
+                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>  
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Monto Ingresado" style="width: 50px; text-align: right;" >
+                          <p:cellEditor >
+                                <f:facet name="output">
+                                    <p:outputLabel value="#{cad.montoIngresado}" style="text-align: right;">
+                                      <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>  
+                                   </p:outputLabel>
+                                </f:facet>
+                             <f:facet name="input" >
+                                 <p:inputText style="width: 65px; text-align: right" value="#{cad.montoIngresado}" label="Monto"/>
+                            </f:facet>                            
+                            </p:cellEditor>                              
+                        </p:column>                     
+                    </p:dataTable>
+                </h:panelGrid>
+            </p:panel>
+        </h:form>
+    </body>
+</html>

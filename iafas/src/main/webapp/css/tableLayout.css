@@ -1,0 +1,50 @@
+body {
+    margin: 0px;
+}
+
+#top {
+    background-color:  #a6a6a6; /*#4d4d4d#009933#006622/*#339933/*#66cc66 ;*/
+    color: #003366;
+    height: 50px;
+    width: 100%;
+    padding: 10px;
+    margin: 0px 0px 10px 0px;
+}
+
+#bottom {
+    background-color: #c2dfef;
+    padding: 10px;
+}
+
+#left {
+    background-color:  #a6a6a6/*#4d4d4d*/;
+    padding: 10px;
+    width: 250px;
+    vertical-align: top;
+}
+
+#right {
+    background-color: white;
+    padding: 10px;
+    width: 150px;
+    vertical-align: top;
+}
+
+#content {
+    background-color: gainsboro;
+    opacity: 0.5;
+    padding: 10px;
+    vertical-align: top;
+}
+
+#top a:link, #top a:visited {
+  color: white;
+  font-weight : bold;
+  text-decoration: none;
+}
+
+#top a:link:hover, #top a:visited:hover  {
+  color: black;
+  font-weight : bold;
+  text-decoration : underline;
+}

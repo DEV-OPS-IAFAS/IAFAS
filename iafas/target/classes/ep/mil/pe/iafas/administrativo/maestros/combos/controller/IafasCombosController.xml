@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Combos">
+	<resultMap id="combos" type="Combos" />
+
+<select id="procesoSel" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+  SELECT ctipo_procedimiento_codigo codigo, 
+  vtipo_procedimiento_descripcion descripcion
+ FROM iafas_tipo_procedimiento_seleccion
+</select>
+</mapper>

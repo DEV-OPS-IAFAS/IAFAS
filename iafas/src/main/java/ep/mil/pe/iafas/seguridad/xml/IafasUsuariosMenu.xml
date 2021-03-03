@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="IafasUsuariosMenu">
+	<resultMap id="resultado" type="IafasUsuariosMenu" />
+
+
+	<select id="selectFiltro1"
+		parameterType="ep.mil.pe.iafas.seguridad.model.IafasUsuariosMenu"
+		resultType="ep.mil.pe.iafas.seguridad.model.IafasUsuariosMenu">
+		select DISTINCT CAB.CMODULO_CODIGO as cmoduloCodigo, 
+		DET.VMODULO_NOMBRE as vmoduloNombre, CAB.VUSUARIO_CODIGO vusuarioCodigo
+		from iafas_usuarios_menu CAB , iafas_modulos DET
+		WHERE
+		CAB.CMODULO_CODIGO = DET.CMODULO_CODIGO AND
+		CAB.VUSUARIO_CODIGO=#{vusuarioCodigo}AND
+		DET.CESTADO_CODIGO='AC'
+		order by CAB.CMODULO_CODIGO asc
+	</select>
+
+
+	<select id="selectFiltro2"
+		parameterType="ep.mil.pe.iafas.seguridad.model.IafasUsuariosMenu"
+		resultType="ep.mil.pe.iafas.seguridad.model.IafasUsuariosMenu">
+
+		select DISTINCT CAB.CMODULO_CODIGO as cmoduloCodigo,CAB.CMENU_CODIGO as cmenuCodigo,
+		DET.VMENU_NOMBRE as vmenuNombre, DET.VMENU_SERVLET as vmenuServlet, CAB.VUSUARIO_CODIGO vusuarioCodigo
+		from iafas_usuarios_menu CAB , iafas_menu DET
+		WHERE
+		CAB.CMODULO_CODIGO = DET.CMODULO_CODIGO AND
+		CAB.CMENU_CODIGO = DET.CMENU_CODIGO AND
+		CAB.VUSUARIO_CODIGO=#{vusuarioCodigo}  AND
+		CAB.CMODULO_CODIGO=#{cmoduloCodigo} AND
+		DET.CMODULO_CODIGO=#{cmoduloCodigo} AND
+		DET.CESTADO_CODIGO='AC'
+	</select>
+
+
+
+</mapper>

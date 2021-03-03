@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+ <h:head>
+        <title>IAFAS</title>
+        <link href="css/default.css" rel="stylesheet" type="text/css" />
+        <link href="css/tableLayout.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="css/bootstrap.min.css" />
+        <link rel="stylesheet" href="css/style.css" />
+</h:head>
+    
+<h:body>
+	 <table cellspacing="0px">
+            <tr>
+                <td  style="opacity: 0.8; background-color: #4d4d4d;">                 
+                    <img src="img/bannerSolo.png" alt="" style="height: 50px; width: 270px;" />
+                </td>
+                <td id="top" >
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <img src="img/ICTE_ESCUDO.png" alt="" class="rounded-circle" style="height: 50px; width: 150px;"></img>
+                            <h:outputLabel value=" BIENVENIDOS AL SISTEMA INTEGRADO DE GESTION ADMINISTRATIVA - IAFAS" 
+                             style="padding-left: 10px; font-size: 24px; font-family: inherit; text-align: center; font-weight: bold;  font-color: #52BE80 "></h:outputLabel>                            
+                        </div>                        
+                    </div>
+                </td>
+            </tr>
+            
+            <tr>
+            	  <td id="left">
+                    <!-- AQUI EL MENU BAR-->
+                    <div class="wrapper">
+                        <!-- Sidebar  -->
+                        <nav id="sidebar">
+                            <ul class="list-unstyled components">                         
+
+                                <li class="active">
+                                    <a  href="#pregado" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle" >
+                                    	<h:outputText value="Módulos" />
+                                    </a>
+                                    	<c:forEach  items="#{iafasUsuariosMenuController.listaUsuariosMenu}" var="menulista2">
+                                    	
+                                    	</c:forEach>
+                                    <ul class="collapse list-unstyled" id="pregado">     
+
+<!--                                         <li   value="#{iafasUsuariosMenuController.listaUsuariosMenu}"> -->
+<!--                                            <a href="#usuario" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">  -->
+<!--                                             <h:outputText value="#{iafasUsuariosMenuController.nombreModulo}" /> -->
+<!--                                            </a>  -->
+<!--                                             <ul class="collapse list-unstyled" id="usuario"> -->
+<!--                                                 <li> -->
+<!--                                                 <a href="demo/mantoMonedas.xhtml" target="iframe"> -->
+<!--                                                 	<h:outputText value="Mantenimiento de Usuarios" /> -->
+<!--                                                 </a> -->
+<!--                                                 </li> -->
+<!--                                             </ul> -->
+<!--                                         </li> -->
+                                        
+                                        
+                                        <!-- <li><a href="#manto" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"> 
+                                                <h:outputText value="Mantenedores"></h:outputText> </a> 
+                                            <ul class="collapse list-unstyled" id="manto">
+                                                <li><a href="#{iafasUsuariosMenuController.moduloCodigo}" target="iframe"><h:outputText value="Programas" /></a>
+                                                </li>
+                                                <li><a href="demo/mantoMonedas.xhtml" target="iframe"><h:outputText value="Cursos" /></a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="#plancurri" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">                                             
+                                                <h:outputText value="Gestion Curricular"></h:outputText> </a> 
+                                            
+                                            <ul class="collapse list-unstyled" id="plancurri">
+                                                <li><a href="demo/mantoMonedas.xhtml" target="iframe"><h:outputText value="Plan Curricular" /></a>
+                                                </li>
+                                                <li><a href="demo/mantoMonedas.xhtml" target="iframe"><h:outputText value="Malla Curricular" /></a>
+                                                </li>
+                                                <li><a href="demo/mantoMonedas.xhtml" target="iframe"><h:outputText value="Reportes" /></a>
+                                                </li>
+                                            </ul>
+                                            
+                                        </li>
+                                         <li><a href="#docente" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"> 
+                                                <h:outputText value="GestiDocente"></h:outputText> </a> 
+                                            <ul class="collapse list-unstyled" id="docente">
+                                                <li><a href="demo/mantoMonedas.xhtml" target="iframe"><h:outputText value="Mantenimiento de Docentes" /></a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="#programacion" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle" > 
+                                                <h:outputText value="Programacion"></h:outputText> 
+                                             </a> 
+                                            <ul class="collapse list-unstyled" id="programacion">
+                                                
+                                                <li><a href="demo/mantoMonedas.xhtml" target="iframe"><h:outputText value="Programacion Anual" /></a>
+                                                </li>
+                                                
+                                                <li><a href="demo/mantoMonedas.xhtml" target="iframe"><h:outputText value="Programacion Semestral" /></a>
+                                                </li>
+                                                
+                                                <li><a href="demo/mantoMonedas.xhtml" target="iframe"><h:outputText value="Programacion Semanal" /></a>
+                                                </li>
+                                            </ul>
+                                        </li> -->
+                                            
+                                    </ul>  
+                                     
+                                </li>
+                            </ul>
+                            <h:outputLabel value="Usuario : #{iafasUsuariosController.idUsuario}"  class="label" style="padding-left: 10px; font-size: 14px; font-family: inherit; text-align: center; font-weight: bold; "></h:outputLabel>                            
+                            <h:outputLabel value="#{iafasUsuariosController.nombreUsuario} #{iafasUsuariosController.APaternoUsuario} #{iafasUsuariosController.AMaternoUsuario} "  class="label" style="padding-left: 10px; font-size: 14px; font-family: inherit; text-align: center; font-weight: bold; "></h:outputLabel>                                                       
+                        </nav>
+                    </div>
+                    <div>
+						<h:form style="background-color: #009933;">
+						    <h:commandLink action="login.xhtml" actionListener="#{iafasUsuariosController.cerraSession()}"  >
+								<h:outputLabel value="Cerrar Sesión"  />
+						    </h:commandLink>
+						</h:form>
+					</div>
+                </td>
+                <td>
+                    <div valign="top">
+                        
+                        <iframe id="framecontent"  width="100%" height="820px;"  src="mainPrincipal2.xhtml" name="iframe" frameborder="0" style="margin-left: 15px;"/>
+                    </div>
+                </td>
+            </tr>
+       </table>         
+     <!-- jQuery CDN - Slim version (=without AJAX) -->
+        <script type="text/javascript" src="js/jquery-3.3.1.slim.min.js"></script>
+        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+        <script type="text/javascript">
+                                            $(document).ready(function() {
+                                                $('#sidebarCollapse').on('click', function() {
+                                                    $('#sidebar').toggleClass('active');
+                                                });
+                                            });
+                                            function myFunction() {
+                                                document.getElementById("mydrop").classList.toggle("show");
+                                            }
+        </script>
+</h:body>
+
+
+
+</html>

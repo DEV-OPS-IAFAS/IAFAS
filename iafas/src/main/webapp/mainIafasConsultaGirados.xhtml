@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html 	xmlns="http://www.w3.org/1999/xhtml"
+	    xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>IAFAS</title>
+	<link href="css/estilos.css" rel="stylesheet" type="text/css" />
+	
+		<style type="text/css">
+    button.ui-button {
+        margin-right: .5rem;
+    }
+</style>
+
+</h:head>
+
+<body class="formulario">
+	<h:form id="frm_ConsultaGiros"> 
+	   <p:panel>
+	   	<p:panelGrid columns="3">
+				<i class="pi pi-money-bill"></i>
+				<h:outputLabel value="Consulta de Giros" styleClass="etiqueta"  style="font-size:11px;font-weight:bold;" />
+		</p:panelGrid>
+	   	
+	   	<br />
+			<table>
+				<tr>
+					<td valign="top">
+						<div>
+							<p:dataTable id="dTableGiros" var="giros"
+								value="#{iafasUsuariosController.mostrarAllUsuarios()}"
+								rows="10" style="font-size:11px;"
+								emptyMessage="No se encontro Usuarios registrados"
+								paginatorPosition="bottom" paginator="true">
+
+								<p:column style="width:20px;" headerText="Expediente">
+									<p:outputLabel value="#{giros.vregSiaf}" />
+								</p:column>
+<!-- 								<p:column headerText="Nombres" style="width: 20px;" -->
+<!-- 									filterMatchMode="contains"> -->
+<!-- 									<p:outputLabel value="#{usuario.vusuarioNombres}" /> -->
+<!-- 								</p:column> -->
+<!-- 								<p:column headerText="Apellidos" style="width: 60px;" -->
+<!-- 									filterBy="#{usuario.vusuarioPaterno}"> -->
+<!-- 									<p:outputLabel -->
+<!-- 										value="#{usuario.vusuarioPaterno} #{usuario.vusuarioMaterno}" /> -->
+<!-- 								</p:column> -->
+<!-- 								<p:column width="45px" headerText="Acciones"> -->
+<!-- 									<p:commandButton value="Accesos" ajax="false" -->
+<!-- 										icon="pi pi-file-o" /> -->
+
+<!-- 									<p:commandButton value="Modificar" -->
+<!-- 										update="frm_Usuarios:modalUsuario" -->
+<!-- 										oncomplete="PF('modalUsuario').show()" -->
+<!-- 										action="#{iafasUsuariosController.obtenerDatos()}" -->
+<!-- 										icon="pi pi-pencil"> -->
+<!-- 										<f:param id="codUsuario" name="codUsuario" -->
+<!-- 											value="#{usuario.vusuarioCodigo}" /> -->
+<!-- 									</p:commandButton> -->
+
+<!-- 									<p:commandButton value="Eliminar" icon="pi pi-trash" -->
+<!-- 										action="#{iafasUsuariosController.anularRegistro()}" -->
+<!-- 										update="frm_Usuarios:dTableUsuarios"> -->
+<!-- 										<f:param id="codUsuarioDEL" name="codUsuarioDEL" -->
+<!-- 											value="#{usuario.vusuarioCodigo}" /> -->
+<!-- 									</p:commandButton> -->
+<!-- 								</p:column> -->
+							</p:dataTable>
+						</div>
+					</td>
+				</tr>
+			</table>
+			
+		</p:panel>	
+	
+</h:form>
+</body>	
+</html>

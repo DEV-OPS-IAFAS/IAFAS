@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html 	xmlns="http://www.w3.org/1999/xhtml"
+	    xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>IAFAS</title>
+	<link href="css/estilos.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+	button.ui-button {
+		margin-right: .5rem;
+	}	
+</style>
+
+</h:head>
+
+<body class="formulario">
+ <script>
+            function limpiarTexto() {
+                document.getElementById('frm_Girado:inptxtExpediente').value = "";
+            }
+            
+            function completaCeros(obj, tam) {
+                var txt = document.getElementById(obj).value;
+                var tamTxt = txt.length;
+                var i;
+                for (i = tam; i > tamTxt; i--)
+                    txt = '0' + txt;
+                document.getElementById(obj).value = txt;
+            }           
+        
+        </script>
+        
+	<h:form id="frm_Girado"> 
+		<p:panel header="Datos de Busqueda" >
+			
+			<p:panelGrid columns="6" styleClass="panel">
+				<h:outputLabel value="Año" styleClass="etiqueta" style="font-size:11px;font-weight:bold;" />
+				<h:selectOneMenu  id="cboPeriodo"  styleClass="input" value="#{iafasGiradoController.vano}">
+					<f:selectItem itemValue="2021" itemLabel="2021" />
+				</h:selectOneMenu>
+				<h:outputLabel  value="N° Expediente" styleClass="etiqueta" style="font-size:11px;font-weight:bold;"    />
+				<h:inputText id="inptxtExpediente" onkeypress="completaCeros('frm_Girado:inptxtExpediente', 9)" styleClass="input" value="#{iafasGiradoController.vregSiaf}" onclick="limpiarTexto();" />
+				<p:commandButton id="cmdBtnBuscar"  update="dTableGirado" value="Buscar"  actionListener="#{iafasGiradoController.buscarPorSiafAno()}"
+                     ajax="false"   style="height:30px;" title="Click aqui para buscar datos de la fase Devenado"/>
+			</p:panelGrid>
+			
+		</p:panel>
+
+		<p:separator />	
+		<p:panel header="Datos Encontrados" >
+			<p:panelGrid columns="6" styleClass="panel">
+			
+				<h:outputLabel value="Ruc" style="font-size:11px;font-weight:bold;" />
+				<h:inputText id="inptxtRuc" disabled="true" styleClass="input" value="#{iafasGiradoController.vruc}" />
+				
+				<h:outputLabel value="Importe" style="font-size:11px;font-weight:bold;" />
+				<h:inputText id="inptxtImporte" disabled="true" styleClass="input"  value="#{iafasGiradoController.impMonSol}"/>
+			
+				<h:outputLabel value="Glosa" style="font-size:11px;font-weight:bold;" />
+				<h:inputText id="inptxtGlosa" styleClass="input"  style="width: 1220px" maxlength="500" value="#{iafasGiradoController.vglosa}"/>
+				
+				</p:panelGrid>
+				
+				<p:panelGrid columns="8" style="width:100%">
+				<h:outputLabel value="C.C.I" style="font-size:11px;font-weight:bold;" />
+				<h:inputText id="inptxtCci" style="width: 200px" disabled="true" styleClass="input" value="#{iafasGiradoController.vcci}" />
+				
+				<h:outputLabel value="Banco" style="font-size:11px;font-weight:bold;" />
+				<h:inputText id="inptxtBanco" disabled="true" style="width: 400px" styleClass="input" />
+				
+				<h:outputLabel value="N° Cuenta" style="font-size:11px;font-weight:bold;" />
+				<h:inputText id="inptxtCuenta" disabled="true" style="width: 300px" styleClass="input" value="#{iafasGiradoController.cproveedorCuentaBanco}"/>
+				
+			</p:panelGrid>
+		</p:panel>
+
+		<p:panel header="Clasificadores  Encontrados"  >
+			<p:dataTable id="dTableGirado" var="tblGirado"
+				value="#{iafasGiradoController.listaPorGirarCadenas}"
+				style="font-size:11px;" emptyMessage="No se encontro Usuarios registrados">
+
+				<p:column style="width:2px;" headerText="Id. Clasificador">
+					<p:outputLabel value="#{tblGirado.vcodCla}" />
+				</p:column>
+				
+				<p:column style="width:2px;" headerText="Clasificador">
+					<p:outputLabel value="#{tblGirado.cadena}" />
+				</p:column>
+				
+				<p:column style="width:80px;" headerText="Dsecripcion">
+					<p:outputLabel value="#{tblGirado.desCadena}" />
+				</p:column>
+				
+				<p:column headerText="Sec.Fun" style="width: 2px;" 
+					filterMatchMode="contains">
+					<p:outputLabel value="#{tblGirado.vcodSecFun}" />
+				</p:column>
+				
+				<p:column headerText="Importe" style="width: 2px;" 
+					filterMatchMode="contains">
+					<p:outputLabel value="#{tblGirado.impSolCad}" />
+				</p:column>
+
+			</p:dataTable>
+		</p:panel>
+		<p:panel header="Retenciones Encontradas" >
+			<p:dataTable id="dTableGiradoRetencion" var="tblGiradoRet"
+				value="#{iafasGiradoController.listaPorGirarCadenas}"
+				style="font-size:11px;" emptyMessage="No se encontro Usuarios registrados">
+
+				<p:column style="width:2px;" headerText="Codigo Retencion">
+					<p:outputLabel value="#{tblGiradoRet.vcodCla}" />
+				</p:column>
+				
+				<p:column style="width:2px;" headerText="Retencion">
+					<p:outputLabel value="#{tblGiradoRet.cadena}" />
+				</p:column>
+				
+				<p:column style="width:2px;" headerText="% Retencion">
+					<p:outputLabel value="#{tblGiradoRet.desCadena}" />
+				</p:column>
+				
+				<p:column headerText="Importe Retenido" style="width: 2px;" 
+					filterMatchMode="contains">
+					<p:outputLabel value="#{tblGiradoRet.vcodSecFun}" />
+				</p:column>
+				
+				<p:column headerText="Importe Retenido" style="width: 2px;" 
+					filterMatchMode="contains">
+					<p:outputLabel value="#{tblGiradoRet.impSolCad}" />
+				</p:column>
+
+			</p:dataTable>
+		</p:panel>
+
+		<p:panel header="Completar el registro"  rendered="#{iafasGiradoController.muestraBotonGiro}">
+			<p:panelGrid columns="8"  styleClass="panel">
+			<p:outputLabel value="Cta.Cte:" styleClass="etiqueta"  />
+			 <h:selectOneMenu value="#{iafasGiradoController.ctaCte}" styleClass="select"> 
+                <f:selectItem itemValue="054" itemLabel="054 - RO/RDR"></f:selectItem>
+                <f:selectItem itemValue="057" itemLabel="057 - DYT"></f:selectItem>
+                <f:selectItem itemValue="066" itemLabel="066 - ROOC"></f:selectItem>
+              </h:selectOneMenu>
+			<p:outputLabel value="Tipo Giro:" styleClass="etiqueta"  />
+			<h:selectOneMenu value="#{iafasGiradoController.tipoGiro}"  styleClass="select"> 
+                <f:selectItem itemValue="065" itemLabel="065 - CHEQUE GIRADO "></f:selectItem>
+                <f:selectItem itemValue="068" itemLabel="068 - CARTA ORDEN"></f:selectItem>
+                <f:selectItem itemValue="081" itemLabel="081 - TRANSFERENCIA A CUENTA DE TERCEROS (CCI)"></f:selectItem>
+                <f:selectItem itemValue="082" itemLabel="082 - OPERACIONES SIN CHEQUE"></f:selectItem>
+                <f:selectItem itemValue="084" itemLabel="084 - CARTA ORDEN ELECTRONICA"></f:selectItem>
+              </h:selectOneMenu>
+
+				<p:outputLabel value="Moneda:" styleClass="etiqueta" />
+				<h:selectOneMenu id="tipMon" styleClass="select"
+					value="#{iafasGiradoController.tipMon}">
+					<f:selectItem itemValue="1" itemLabel="S/."></f:selectItem>
+					<f:selectItem itemValue="2" itemLabel="USD"></f:selectItem>
+					<f:selectItem itemValue="3" itemLabel="EURO"></f:selectItem>
+					<f:selectItem itemValue="57" itemLabel="Y"></f:selectItem>
+				</h:selectOneMenu>
+				<p:outputLabel value="T.Cambio:" styleClass="etiqueta"  />
+            <h:inputText id="tipcam" style="width: 50px; text-align: right;" 
+            styleClass="input" value="#{iafasGiradoController.ntipCam}" />
+			<p:commandButton  value="Girar"  styleClass="button" ajax="false" rendered="#{iafasGiradoController.muestraBotonGiro}"
+               action="#{iafasGiradoController.insRegistroGiradoCab()}"     style="height:30px;" title="Click aqui para Generar el Girado"/>  
+               <p:outputLabel value="#{iafasGiradoController.msgSP}" styleClass="etiqueta" />   
+			</p:panelGrid>
+		</p:panel>
+
+	</h:form>
+</body>
+
+</html>

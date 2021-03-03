@@ -1,0 +1,42 @@
+
+.formulario {
+    font-size: 11px;
+    font-family: 'Trebuchet MS', sans-serif;
+    color: black;
+    background: gainsboro;
+    /*#f5f4f4 gainsboro*/
+}
+
+.grid {
+	width:1020px;
+	font-family: 'Trebuchet MS', sans-serif;
+	font-size: 11px;
+}
+
+.etiqueta {
+    
+    font-weight: bold;
+    margin: 10px; 
+    position: static;
+}
+
+.banner {
+	background-color: #0a762e;
+	border-radius: 5px 5px 5px 5px;
+	width: 150px;
+}
+
+.accordion {
+	background-color: #0a762e;
+	color: white;
+	font-weight: bold;
+}
+
+.input {
+   background: #ffffff;
+   border: 1px solid #0a762e;
+   border-radius: 5px 5px 5px 5px;
+   color: #393939;
+   padding: 5px;
+}
+

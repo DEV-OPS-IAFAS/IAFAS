@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>IAFAS</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link href="css/estilos.css" rel="stylesheet" type="text/css" />
+</h:head>
+<body>
+
+	<h:form id="frmCompromisoAnual">
+		<p:panel>
+			<p:panelGrid columns="3">
+				<i class="pi pi-money-bill"></i>
+				<h:outputLabel value="Mantenimiento Monedas" style="font-size:11px;font-weight:bold;"></h:outputLabel>
+				<p:commandButton value="Nuevo" action="#{mbMonedas.insert()}" ajax="false" styleClass="ui-button-outlined ui-button-success" />
+			</p:panelGrid>
+			<p:outputLabel value="#{mbMonedas.registros} Registros Encontrados"
+				style="color: green; font-weight: bold; font-size:11px;" />
+			<br />
+			<table>
+				<tr>
+					<td valign="top">
+						<div>
+							<p:dataTable id="dTableMonedas" var="mon"
+								value="#{mbMonedas.listarMonedas()}" rows="10"
+								style="font-size:11px;" rowKey="#{mon.nmonedaCodigo}"
+								emptyMessage="No se encontro datos registrados"
+								paginatorPosition="bottom" paginator="true" sortMode="multiple"
+								currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+								rowsPerPageTemplate="5,10,15,20,30,40,50,{ShowAll|'Todos'}">
+								<p:column style="width:20px;" headerText="C" >
+									<p:outputLabel value="#{mon.nmonedaCodigo}" />
+								</p:column>
+								<p:column headerText="Descripcion" style="width: 60px;"
+									filterBy="#{mon.nmonedaDescripcion}" filterMatchMode="contains">
+									<p:outputLabel value="#{mon.nmonedaDescripcion}" />
+								</p:column>
+								<p:column headerText="Simbolo" style="width: 20px;">
+									<p:outputLabel value="#{mon.vmonedaSimbolo}" />
+								</p:column>
+								<p:column width="45px">
+									<p:commandButton value="Nuevo" action="#{mbMonedas.insert()}" ajax="false"
+										icon="pi pi-file-o" />
+									<p:commandButton type="button" value="Modificar"
+										icon="pi pi-pencil" />
+									<p:commandButton type="button" value="Eliminar"
+										icon="pi pi-trash" />
+								</p:column>
+							</p:dataTable>
+						</div>
+					</td>
+				</tr>
+			</table>
+
+		</p:panel>
+	</h:form>
+</body>
+</html>

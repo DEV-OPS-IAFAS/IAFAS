@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" 
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+        <title>IAFAS</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+    </h:head>
+    <body class="formulario">
+        <script>           
+        </script>
+        <h:form id="frmCompromisoMensual" style="border-radius: 5px 5px 5px 5px;border: 1px; width:1020px;">
+            <p:panel >
+                <p:panelGrid columns="2" styleClass="panel">
+                    <p:graphicImage url="img/Bd.png" />
+                    <h:outputLabel value="Registro de Compromiso Mensual" styleClass="etiqueta"></h:outputLabel>
+                </p:panelGrid> 
+                <p:panelGrid columns="5" >
+                    <p:outputLabel value="N° Certificado :" styleClass="etiqueta"/>
+                    <h:inputText id="inpTxtCertificado" value="#{mbCompMensual.certificado}" 
+                    onclick="limpiarTexto();" styleClass="input" style="text-align:right;"/>
+                    <p:commandButton id="cmdBtnBuscar"  value="Ver" actionListener="#{mbCompMensual.verAnuales()}"
+                     style="height:30px;" oncomplete="PF('dialogCA').show();"
+                     update="frmCompromisoMensual:dCompAnual" icon="pi pi-plus"
+                     title="Click aqui para buscar datos del Certificado Anual"/>
+                    <p:commandButton  value="Grabar" action="#{mbCompMensual.registroCompMensual()}" 
+                    icon="pi pi-save" style="height:30px;"/>
+                    <p:commandButton value="Cancelar" action="#{mbCompMensual.retornar()}"
+                    icon="pi pi-arrow-left" style="height:30px;"/>
+                </p:panelGrid>
+                <br/>
+                <p:fieldset legend="Datos Compromiso Anual">
+                 <h:panelGrid columns="4" style="width:100%">
+                 <h:outputLabel value="Fuente Financiamiento"/>
+                         <h:selectOneMenu value="#{mbCompMensual.vcodtipoFinanciamiento}" disabled="true" styleClass="select"> 
+                        <f:selectItem itemValue="1" itemLabel="RECURSOS ORDINARIOS"></f:selectItem>
+                        <f:selectItem itemValue="2" itemLabel="RECURSOS DIRECTAMENTE RECAUDADOS"></f:selectItem>
+                        <f:selectItem itemValue="3" itemLabel="RECURSOS POR OPE OFLS DE CREDITO INTERNO"></f:selectItem>
+                        <f:selectItem itemValue="4" itemLabel="DONACIONES Y TRANSFERENCIAS"></f:selectItem>
+                        <f:selectItem itemValue="5" itemLabel="RECURSOS DETERMINADOS"></f:selectItem>
+                        </h:selectOneMenu>
+                        <p:outputLabel value="Proceso Selección"/>
+                        <h:selectOneMenu id="procesoSel"  value="#{mbCompMensual.codProcesoSel}" disabled="true" style="width:450px;"
+                        styleClass="select">
+                         <f:selectItems var="documentos" value="#{mbCombos.procesoSel}"/>
+                        </h:selectOneMenu>
+                 </h:panelGrid>
+                 <h:panelGrid columns="6" style="width:100%;">
+                 <p:outputLabel value="Proveedor:"/>
+                 <h:panelGrid columns="3">
+                      <h:outputText styleClass="outLabel" value="#{mbCompMensual.ruc}" style="display: block;"/>
+                      <h:outputLabel value="-"/>
+                      <h:outputLabel styleClass="outLabel" value="#{mbCompAnual.razonSocial}" style="display: block;"/>
+                 </h:panelGrid>
+                 <p:outputLabel value="Moneda:"/>
+                        <h:selectOneMenu id="tipMon" styleClass="select" value="#{mbCompMensual.vcodMoneda}" disabled="true">
+                 			<f:selectItem itemValue="1" itemLabel="S/."></f:selectItem>
+			                <f:selectItem itemValue="2" itemLabel="USD"></f:selectItem>
+			                <f:selectItem itemValue="3" itemLabel="EURO"></f:selectItem>
+			                <f:selectItem itemValue="57" itemLabel="Y"></f:selectItem>
+                        </h:selectOneMenu>
+                        <p:outputLabel value="T.Cambio:"/>
+                        <h:inputText id="tipcam" style="width: 50px; text-align: right;" 
+                        styleClass="input" value="#{mbCompMensual.ntipCam}" readonly="true"/>
+                 </h:panelGrid>
+                </p:fieldset>
+                <br/>
+                <p:fieldset legend="Datos Compromiso Mensual">
+                   <h:panelGrid columns="6" style="width: 833px; ">
+                   <h:outputLabel value="Documento:"/>
+                   <p:selectOneMenu id="cbo_documento" value="#{mbCompMensual.tipDocumentoMen}">
+                      <f:selectItem itemValue="" itemLabel="--Seleccione--"></f:selectItem>
+                      <f:selectItem itemValue="031" itemLabel="Orden de Compra"></f:selectItem>
+                      <f:selectItem itemValue="032" itemLabel="Orden de Servicios"></f:selectItem>
+                      <f:selectItem itemValue="043" itemLabel="Planilla Viaticos"></f:selectItem>
+                   </p:selectOneMenu>
+                   <h:outputLabel value="Nro Documento:"/>
+                   <h:inputText id="inpNroDoc" styleClass="input" value="#{mbCompMensual.nroDocumentoMen}"/>
+                   <h:outputLabel value="Fecha:"/>
+                   <p:inputMask id="inptFecDoc" styleClass="input" mask="99/99/9999" value="#{mbCompMensual.fechaMensual}">
+                                           <f:converter converterId="javax.faces.DateTime" />
+                        <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
+                   </p:inputMask>
+                   </h:panelGrid>
+                   <h:panelGrid columns="2" style="width:100%">
+                    <p:outputLabel value="Glosa:"/>
+                    <p:inputTextarea id="inpTxtGlosa" value="#{mbCompMensual.glosa}" cols="1" rows="2"
+                    style="width:550px;"></p:inputTextarea>
+                   </h:panelGrid>
+                </p:fieldset>
+                <br/>
+                <!-- 
+                <p:fieldset legend="Datos Comprobante">
+                <h:panelGrid columns="8" style="width: 100%; ">
+                   <h:outputLabel value="Comprobante:"/>
+                   <p:selectOneMenu id="cbo_comprobante" value="#{mbCompMensual.tipDocCom}">
+                      
+                      <f:selectItem itemValue="001" itemLabel="Factura"></f:selectItem>
+                      <f:selectItem itemValue="003" itemLabel="Boleta"></f:selectItem>
+                      <f:selectItem itemValue="027" itemLabel="Recibo por Honorarios"></f:selectItem>
+                      <f:selectItem itemValue="038" itemLabel="Planillas"></f:selectItem>
+                   </p:selectOneMenu>
+                   <h:outputLabel value="Nro Serie:"/>
+                   <h:inputText id="inpNroSerieCom" styleClass="input" value="#{mbCompMensual.nroSerieCom}" size="12"/>
+                   <h:outputLabel value="Nro Documento:"/>
+                   <h:inputText id="inpNroDocCom" styleClass="input" value="#{mbCompMensual.nroDocCom}" size="20"/>
+                   <h:outputLabel value="Fecha:"/>
+                     <p:inputMask id="inptFecDocCom" mask="99/99/9999" size="12" value="#{mbCompMensual.fecDocCom}" styleClass="input">
+                        <f:converter converterId="javax.faces.DateTime" />
+                        <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
+                      </p:inputMask>  
+    
+                   </h:panelGrid>
+                </p:fieldset>
+                 -->
+                <p:dataTable id="dataAnualDet" var="det" value="#{mbCompMensual.regAnualDet}"
+                editable="true" editMode="cell">
+                   <p:column headerText="Clasificador" style="width:60px;">
+                      <h:outputText value="#{det.cadena}"/>
+                   </p:column>
+                   <p:column headerText="Descricion" style="width:200px;">
+                      <h:outputText value="#{det.nomCla}"/>
+                   </p:column>
+                   <p:column headerText="Saldo" style="width:40px;text-align:right;">
+                      <h:outputText value="#{det.nimpMontoSol}"/>
+                   </p:column>
+					<p:column headerText="Monto Ingresado" style="width: 50px; text-align: right;" >
+                          <p:cellEditor >
+                                <f:facet name="output">
+                                    <p:outputLabel value="#{det.montoIngresado}" style="text-align: right;">
+                                      <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>  
+                                   </p:outputLabel>
+                                </f:facet>
+                             <f:facet name="input" >
+                                 <p:inputText style="width: 65px; text-align: right" value="#{det.montoIngresado}" label="Monto"/>
+                            </f:facet>                            
+                            </p:cellEditor>                              
+                        </p:column>       
+                </p:dataTable>
+                <p:dialog id="dCompAnual" header="Compromisos Anuales" widgetVar="dialogCA" modal="true"
+                resizable="true" appendTo="@(body)" width="750" position="top" closeOnEscape="true">
+                <p:panel>
+                  <p:dataTable id="dataAnual" var="ca" value="#{mbCompMensual.regAnual}">
+                   <p:column headerText="Secuencia">
+                      <h:outputText value="#{ca.vsecuenciaA}"/>
+                   </p:column>
+                   <p:column headerText="T.Doc-Nro">
+                      <h:outputText value="#{ca.vtipoDocumentoA}-#{ca.vnroDocumentoPagoA}"/>
+                   </p:column>
+                   <p:column headerText="Proveedor">
+                      <h:outputText value="#{ca.vruc}"/>
+                   </p:column>
+                   <p:column headerText="Monto">
+                      <h:outputText value="1"/>
+                   </p:column>
+                   <p:column headerText="#">
+                      <p:commandButton id="btnElegir" icon="pi pi-check" value="Elegir" actionListener="#{mbCompMensual.buscarAnualXSecuencia()}"
+                      immediate="PF('dialogCA').hide();" update="@form" onclick="PF('dialogCA').hide();"
+                      >
+                      <f:param id="p_secuencia" name="p_secuencia" value="#{ca.vsecuenciaA}"></f:param>
+                      </p:commandButton>
+                   </p:column>
+                  </p:dataTable>
+                  </p:panel>
+                </p:dialog>
+            </p:panel>
+        </h:form>
+    </body>
+</html>

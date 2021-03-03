@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="IafasAreasLaboral">
+    <resultMap id="resultado" type="IafasAreasLaboral" />
+    
+    
+    <select id="selectAll" parameterType="ep.mil.pe.iafas.seguridad.model.IafasAreasLaboral" resultType="ep.mil.pe.iafas.seguridad.model.IafasAreasLaboral" >
+       SELECT CAREA_LABORAL_CODIGO AS careaLaboralCodigo, VAREA_LABORAL_ABREVIATURA AS varealaboralAbreviatura, 
+       VAREA_LABORAL_DESCRIPCION AS varealaboralDescripcion, CESTADO_CODIGO AS cestadoCodigo
+	   FROM iafas_area_laboral
+	   WHERE
+	   CESTADO_CODIGO = 'AC'
+    </select>
+    
+ </mapper>

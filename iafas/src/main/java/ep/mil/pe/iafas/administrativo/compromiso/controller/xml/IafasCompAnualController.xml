@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="CompromisoAnual">
+	<resultMap id="compromisoAnual" type="CompromisoAnual" />
+
+	<select id="listadoCab"
+		resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
+		parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual">
+		SELECT cperiodo_codigo vanoDocumento, '001' vsecuenciaA, 
+		'001' vcorrelativoA,
+		'CERTIFICACION' tipoCertificacion,
+		CASE nfuente_financiamiento_codigo WHEN 1 THEN '00'
+		WHEN 2 THEN '09' ELSE '' END vfuenteFinanciamiento,
+		nfuente_financiamiento_codigo vcodTipoFinanciamiento,
+		'' cproveedorRuc,
+		ncertificado_codigo vnroCertificado,
+		vcertificado_documento vnroDocumentoPagoA,
+		vcertificado_concepto vglosa,
+		dcertificado_fecha dfechaDocumento,
+		CASE nmoneda_codigo WHEN 1 THEN 'S/.' WHEN 2 THEN 'US$' WHEN 3 THEN 'EURO'
+		END vcodMoneda,
+		ncertificado_tipo_cambio ntipCam, ncertificado_importe nimpMonSol,
+		PK_AUX_TIPO_PROCESO_SELECCION(npac_procesos_codigo) vcodProcesoSel,
+		CESTADO_CODIGO vcodEstado
+		FROM iafas_certificado_presupuestal
+		WHERE cperiodo_codigo =#{vanoDocumento} AND ncertificado_codigo = #{vnroCertificado}
+		AND CESTADO_CODIGO='AP' 
+		UNION
+		SELECT vano_documento vanoDocumento,vsecuencia_a vsecuenciaA,
+		vcorrelativo_a vcorrelativoA,
+		'COMPROMISO ANUAL' tipoCertificacion,
+		vfuente_financiamiento vfuenteFinanciamiento,
+		vcod_tipo_financiamiento vcodTipoFinanciamiento,
+		cproveedor_ruc cproveedorRuc,
+		vnro_certificado vnroCertificado,
+		CONCAT(vtipo_documento_a,"-",vnro_documento_pago_a) vnroDocumentoPagoA,
+		vglosa vglosa,
+		dfecha_documento_a dfechaDocumento,
+		CASE vcod_moneda WHEN 1 THEN 'S/.' WHEN 2 THEN 'US$' WHEN 3 THEN 'EURO'
+		END vcodMoneda,
+		ntip_cam ntipCam, NIMP_MON_SOL nimpMonSol,
+		vcod_proceso_sel vcodProcesoSel,
+		case vcod_estado WHEN '1' then 'REG' WHEN '2' THEN 'AP' END vcodEstado
+		FROM iafas_compromiso_anual
+		WHERE vano_documento = #{vanoDocumento} AND vnro_certificado = #{vnroCertificado}
+		order by vsecuenciaA
+
+	</select>
+
+	<select id="listadoDet"
+		resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnualDet"
+		parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnualDet">
+		SELECT cperiodo_codigo vanoDocumento, ncertificado_codigo vnroCertificado,
+		NCLASIFICADOR_PRESUPUESTAL_CODIGO vidClasificador,
+		PK_AUX_NOM_CLASIFICADOR(NCLASIFICADOR_PRESUPUESTAL_CODIGO) as
+		nomClasificador,
+		'0042' vcodSec,
+		PK_AUX_CLASIFICADOR(NCLASIFICADOR_PRESUPUESTAL_CODIGO) cadena,
+		(NCERTIFICADO_DETALLE_IMPORTE - PK_TOTAL_CA(cperiodo_codigo,ncertificado_codigo,'0042',NCLASIFICADOR_PRESUPUESTAL_CODIGO)) nimpMontoSol
+		FROM iafas_certifi_presupuestal_detal where
+		cperiodo_codigo=#{vanoDocumento} and
+		ncertificado_codigo = #{vnroCertificado}
+	</select>
+
+	<select id="grabarCompAnual"
+		parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
+		statementType="CALLABLE">
+		
+		{ CALL SP_REGISTRO_COMP_ANUAL (
+		#{vanoDocumento mode=IN, jdbcType=VARCHAR},
+		#{vnroCertificado, mode=IN, jdbcType=VARCHAR},
+		#{vtipoDocumentoA, mode=IN, jdbcType=VARCHAR},
+		#{vnroDocumentoPagoA, mode=IN,jdbcType=VARCHAR},
+		#{dfechaDocumento, mode=IN,jdbcType=DATE},
+		#{vtipoMovimiento, mode=IN,jdbcType=VARCHAR},
+		#{vtipoOperacion, mode=IN,jdbcType=VARCHAR},
+		#{vfuenteFinanciamiento, mode=IN,jdbcType=VARCHAR},
+		#{cproveedorRuc, mode=IN,jdbcType=VARCHAR},
+	<!--  	#{vidProv, mode=IN,jdbcType=VARCHAR},-->
+		#{ntipCam, mode=IN,jdbcType=DECIMAL},
+		#{vcodTipoFinanciamiento, mode=IN,jdbcType=VARCHAR},
+		#{vcodProcesoSel, mode=IN,jdbcType=VARCHAR},
+		#{vcodMoneda, mode=IN,jdbcType=VARCHAR},
+		#{nimpMonSol, mode=IN,jdbcType=DECIMAL},
+		#{vusuarioIng, mode=IN,jdbcType=VARCHAR},
+		#{vglosa, mode=IN,jdbcType=VARCHAR})}
+		
+	</select>
+	
+	<select id="grabarCompAnualDet" parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnualDet"
+	statementType="CALLABLE">
+	
+		{ CALL SP_REGISTRO_COMP_ANUAL_DET(
+		#{vanoDocumento mode=IN, jdbcType=VARCHAR},
+		#{vnroCertificado, mode=IN, jdbcType=VARCHAR},
+		#{vcodSec, mode=IN,jdbcType=VARCHAR},
+		#{vidClasificador, mode=IN,jdbcType=VARCHAR},
+		#{nimpMontoSol, mode=IN,jdbcType=DECIMAL},
+		#{vusuarioIng, mode=IN,jdbcType=VARCHAR})}
+		
+	</select>
+	
+	<select id="enviarCompAnual" parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
+	statementType="CALLABLE">
+	   { CALL SP_ENVIAR_COMP_ANUAL(
+	    #{vanoDocumento mode=IN, jdbcType=VARCHAR},
+		#{vnroCertificado, mode=IN, jdbcType=VARCHAR},
+		#{vsecuenciaA, mode=IN,jdbcType=VARCHAR},
+		#{vcorrelativoA, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioIng, mode=IN,jdbcType=VARCHAR})}
+	</select>
+	
+	<select  id="detalleCompAnual" resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
+	parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual">
+			SELECT cperiodo_codigo vanoDocumento, '001' vsecuenciaA, 
+		'001' vcorrelativoA,
+		'CERTIFICACION' tipoCertificacion,
+		CASE nfuente_financiamiento_codigo WHEN 1 THEN '00'
+		WHEN 2 THEN '09' ELSE '' END vfuenteFinanciamiento,
+		nfuente_financiamiento_codigo vcodTipoFinanciamiento,
+		PK_UTIL_PRESUPUESTO(nfuente_financiamiento_codigo) desPto,
+		'' cproveedorRuc,
+		'' razonSocial,
+		ncertificado_codigo vnroCertificado,
+		vcertificado_documento vnroDocumentoPagoA,
+		vcertificado_concepto vglosa,
+		dcertificado_fecha dfechaDocumento,
+		CASE nmoneda_codigo WHEN 1 THEN 'S/.' WHEN 2 THEN 'US$' WHEN 3 THEN 'EURO'
+		END vcodMoneda,
+		ncertificado_tipo_cambio ntipCam, ncertificado_importe nimpMonSol,
+		PK_AUX_TIPO_PROCESO_SELECCION(npac_procesos_codigo) vcodProcesoSel
+		FROM iafas_certificado_presupuestal
+		WHERE cperiodo_codigo =#{vanoDocumento} AND ncertificado_codigo = #{vnroCertificado}
+		AND CESTADO_CODIGO='AP' and ccertificado_tipo_registro='CE'
+		UNION
+		SELECT vano_documento vanoDocumento,vsecuencia_a vsecuenciaA,
+		vcorrelativo_a vcorrelativoA,
+		'COMPROMISO ANUAL' tipoCertificacion,
+		vfuente_financiamiento vfuenteFinanciamiento,
+		vcod_tipo_financiamiento vcodTipoFinanciamiento,
+		PK_UTIL_PRESUPUESTO(vcod_tipo_financiamiento) desPto,
+		cproveedor_ruc cproveedorRuc,
+		PK_UTIL_RAZON_SOCIAL(cproveedor_ruc) razonSocial,
+		vnro_certificado vnroCertificado,
+		CONCAT(vtipo_documento_a,"-",vnro_documento_pago_a) vnroDocumentoPagoA,
+		vglosa vglosa,
+		dfecha_documento_a dfechaDocumento,
+		CASE vcod_moneda WHEN 1 THEN 'S/.' WHEN 2 THEN 'US$' WHEN 3 THEN 'EURO'
+		END vcodMoneda,
+		ntip_cam ntipCam, NIMP_MON_SOL nimpMonSol,
+		vcod_proceso_sel vcodProcesoSel
+		FROM iafas_compromiso_anual
+		WHERE vano_documento = #{vanoDocumento} AND vnro_certificado = #{vnroCertificado} and
+		vsecuencia_a = #{vsecuenciaA} and vcorrelativo_a = #{vcorrelativoA}
+		order by vsecuenciaA
+	</select>
+</mapper>

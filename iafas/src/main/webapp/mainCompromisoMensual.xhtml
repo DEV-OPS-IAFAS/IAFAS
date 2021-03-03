@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>IAFAS</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+    </h:head>
+    <body class="formulario">
+        <script>
+            function limpiarTexto() {
+                document.getElementById('frmCompromisoAnual:inpTxtCertificado').value = "";
+            }
+                      
+        
+        </script>
+        <h:form id="frmCompromisoMensual" style="border-radius: 5px 5px 5px 5px;border: 1px ; width:1020px;">
+            <p:panel >
+                <p:panelGrid columns="2" styleClass="panel">
+                   <i class="pi pi-calendar-plus" style="height:20px;height:20px;" ></i>
+                    <p:outputLabel value="Compromiso Mensual" styleClass="etiqueta"></p:outputLabel>
+                </p:panelGrid> 
+                <p:panelGrid columns="5" >
+                    <p:outputLabel value="A.F :" styleClass="etiqueta"/>
+                    <p:selectOneMenu id="cboAnio" value="#{mbCompMensual.periodo}" >
+                      <f:selectItem itemValue="" itemLabel="--Seleccione--"></f:selectItem>
+                      <f:selectItem itemValue="2021" itemLabel="2021"></f:selectItem>
+                      <f:ajax render="dTableCompMensual" listener="#{mbCompMensual.listadoMensual()}"></f:ajax>
+                    </p:selectOneMenu>
+                    
+                    <p:commandButton  value="Nuevo"  styleClass="button" action="#{mbCompMensual.nuevoRegistro()}" ajax="false"
+                    style="height:30px;" title="Click aqui para Ingresar un Nuevo Compromiso Mensual"/>
+                    <h:commandLink id="btnXLS" value="Excel" >
+                    <p:dataExporter type="xls" target="dTableCompAnual" fileName="CompromisoAnual"/>
+                    </h:commandLink>
+                </p:panelGrid>
+                <p:outputLabel value="#{mbCompAnual.reg} Registros Encontrados" style="color: green; font-weight: bold;"/>
+                <br/>
+                <table>
+                    <tr>
+                        <td valign="top">
+                            <div>
+                                <p:dataTable id="dTableCompMensual" var="men" value="#{mbCompMensual.lista}" rows="10" scrollable="true" scrollHeight="175px;"
+                                             style="width: 1000px;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
+                                             paginatorPosition="bottom" paginator="true" stripedRows="true">
+
+                                    <p:column headerText="Expediente" style="width: 15px;" >
+                                        <p:outputLabel value="#{men.vexpediente}"/>
+                                    </p:column>
+                                    <p:column headerText="T.Doc-Nro" style="width: 15px;">
+                                        <p:outputLabel value="#{men.vtipDocumentoMen}-#{men.vnroDocumentoMen}"/>
+                                    </p:column>
+                                    <p:column headerText="Ruc" style="width: 100px;">
+                                        <p:outputLabel value="#{men.cproveedorRuc}-#{men.razonSocial}"/>
+                                    </p:column>
+                                    <p:column headerText="Fecha" style="width: 10px;">
+                                        <p:outputLabel value="#{men.dfechaDocumento}">
+                                           <f:converter converterId="javax.faces.DateTime" />
+                                			<f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />	
+                                        </p:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="Monto" style="text-align: right;width: 20px;">
+                                        <p:outputLabel value="#{men.nimpMonSol}">
+                                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                                        </p:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="E.E." style="width: 15px;">
+                                        <p:outputLabel value="#{men.vcodEstado}" style="text-align: center"/>
+                                    </p:column>
+                              <!--       <p:column headerText="Enviar" style="width: 20px;">
+                                        <p:commandButton id="btn_enviar" icon="pi pi-play" action="#{mbCompAnual.obtener()}"
+                                        oncomplete="PF('EnvioAnual').show();"
+                                        update="frmCompromisoAnual:EnvioAnual">
+                                          <f:param id="p_secuencia" name="p_secuencia" value="#{ca.vsecuenciaA}"></f:param>
+                                         <f:param id="p_correlativo" name="p_correlativo" value="#{ca.vcorrelativoA}"></f:param>
+                                        </p:commandButton> 
+                                    </p:column> --> 
+                                </p:dataTable>
+                            </div>
+                        </td>  
+                    </tr>
+                </table>
+                <!-- dialogos -->
+                <p:dialog id="EnvioAnual" widgetVar="EnvioAnual" modal="true" header="Confirmar Envio"
+                showEffect="fade" hideEffect="explode" resizable="false">
+                    <p:panel >
+                        <h:panelGrid columns="2">
+                        <i class="pi pi-exclamation-circle" style="width:30px;height:30px;"></i>
+                            <p:outputLabel value="Desea Enviar el Compromiso Anual a la Siguiente Fase?" 
+                            style="font-weight:bold;font-size:12px;"></p:outputLabel>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                           <p:commandButton id="btnAceptar" value="Si" action="#{mbCompAnual.enviarCompromisoAnual()}"
+                           oncomplete="PF('EnvioAnual').hide();" icon="pi pi-check" style="height:25px;"></p:commandButton>
+                            <p:commandButton id="btnCancelar" value="No" type="button" onclick="PF('EnvioAnual').hide();"
+                            icon="pi pi-times" style="height:25px;"></p:commandButton>
+                        </h:panelGrid>
+                    </p:panel>
+                </p:dialog>
+            </p:panel>
+        </h:form>
+    </body>
+</html>

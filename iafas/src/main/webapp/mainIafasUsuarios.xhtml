@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html 	xmlns="http://www.w3.org/1999/xhtml"
+	    xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>IAFAS</title>
+	<link href="css/estilos.css" rel="stylesheet" type="text/css" />
+<!-- 	<link href="css/bootstrap.css" rel="stylesheet" /> -->
+	
+		<style type="text/css">
+    button.ui-button {
+        margin-right: .5rem;
+    }
+</style>
+
+</h:head>
+
+<body class="formulario">
+	<h:form id="frm_Usuarios"> 
+		<p:panel>
+			<p:panelGrid columns="3">
+				<i class="pi pi-money-bill"></i>
+				<h:outputLabel value="Gestión de Usuarios" styleClass="etiqueta"  style="font-size:11px;font-weight:bold;" />
+				<p:commandButton value="Nuevo"  styleClass="ui-button-raised ui-button-success"  oncomplete="PF('modalUsuario').show()" 
+					action="#{iafasUsuariosController.nuevoRegistro()}"   />
+				
+			</p:panelGrid>
+
+			<p:outputLabel value="#{iafasUsuariosController.nroRegistros} Registros Encontrados" style="color: green; font-weight: bold; font-size:11px;" />
+			<br />
+			<table>
+				<tr>
+					<td valign="top">
+						<div>
+							<p:dataTable id="dTableUsuarios" var="usuario"
+								value="#{iafasUsuariosController.mostrarAllUsuarios()}"
+								rows="10" style="font-size:11px;"
+								rowKey="#{usuario.vusuarioCodigo}"
+								emptyMessage="No se encontro Usuarios registrados"
+								paginatorPosition="bottom" paginator="true">
+								<p:column style="width:20px;" headerText="Codigo">
+									<p:outputLabel value="#{usuario.vusuarioCodigo}" />
+								</p:column>
+								<p:column headerText="Nombres" style="width: 20px;"
+									filterMatchMode="contains">
+									<p:outputLabel value="#{usuario.vusuarioNombres}" />
+								</p:column>
+								<p:column headerText="Apellidos" style="width: 60px;"
+									filterBy="#{usuario.vusuarioPaterno}">
+									<p:outputLabel
+										value="#{usuario.vusuarioPaterno} #{usuario.vusuarioMaterno}" />
+								</p:column>
+								<p:column width="45px" headerText="Acciones" >
+									<p:commandButton value="Accesos" ajax="false"
+										icon="pi pi-file-o" />
+
+									<p:commandButton  value="Modificar" update="frm_Usuarios:modalUsuario" oncomplete="PF('modalUsuario').show()"
+										action="#{iafasUsuariosController.obtenerDatos()}" 
+										icon="pi pi-pencil">
+										<f:param id="codUsuario" name="codUsuario" value="#{usuario.vusuarioCodigo}" />
+									</p:commandButton>
+
+									<p:commandButton  value="Eliminar" icon="pi pi-trash"  
+									 action="#{iafasUsuariosController.anularRegistro()}" update="frm_Usuarios:dTableUsuarios" >
+									<f:param id="codUsuarioDEL" name="codUsuarioDEL" value="#{usuario.vusuarioCodigo}"  />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</p:panel>
+
+		<p:dialog header="Mantenimiento de Usuarios" id="modalUsuario" widgetVar="modalUsuario" showEffect="fade" minHeight="100" width="550" >
+				<p:panelGrid columns="2" colSpans="6,6" size="sm">
+					<h:outputLabel value="Código" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />				
+					<h:inputText id="inptxtCodigo" styleClass="input"  disabled="#{iafasUsuariosController.bllBotonAcciones}"
+						value="#{iafasUsuariosController.idUsuarioMto}" maxlength="8" />
+					<h:outputLabel value="Nombre" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />	
+					<h:inputText id="inptxtNombre" placeholder="Nombres" styleClass="input"
+						label="Nombre:"
+						value="#{iafasUsuariosController.nombreUsuarioMto}" />
+					<h:outputLabel value="A.Paterno" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />	
+					<h:inputText id="inptxtAPat"  styleClass="input"  placeholder="A. Paterno"
+						label="A.Paterno:"
+						value="#{iafasUsuariosController.APaternoUsuarioMto}" />
+					<h:outputLabel value="A.Materno" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
+					<h:inputText id="inptxtAMat"  styleClass="input"  placeholder="A. Materno"
+						label="A.Materno:"
+						value="#{iafasUsuariosController.AMaternoUsuarioMto}" />
+					<h:outputLabel value="Area laboral" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
+					<h:selectOneMenu  id="cboAreas"  styleClass="input"  value="#{iafasUsuariosController.idAreaLaboral}" >
+						 <f:selectItem itemValue="00" itemLabel="-- Seleccione --" />
+                        <f:selectItems var="option" value="#{iafasUsuariosController.area}" />
+					</h:selectOneMenu>
+					<h:outputLabel value="Contraseña" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" 
+					 rendered="#{!iafasUsuariosController.bllBotonAcciones}"/>
+						<h:inputSecret  id="inptxtpass" styleClass="input" 
+							rendered="#{!iafasUsuariosController.bllBotonAcciones}" 
+							value="#{iafasUsuariosController.passUsuarioMto}" />
+				</p:panelGrid>
+				<f:facet name="footer">
+					<p:commandButton value="Cerrar" styleClass="ui-button-outlined ui-button-danger" oncomplete="PF('modalUsuario').hide()"
+						action="#{iafasUsuariosController.limpiarCamposMto()}" update="frm_Usuarios" />
+					<p:commandButton value="Grabar" styleClass="ui-button-outlined ui-button-success" oncomplete="PF('modalUsuario').hide()" 
+						action="#{iafasUsuariosController.mantenimientoUsuarios()}" update="frm_Usuarios:dTableUsuarios" />
+				</f:facet>
+		</p:dialog>
+
+	</h:form>
+</body>
+
+</html>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+ <!-- property ="un alias como se desee llamar el campo , debe relacionarce con el bean Ruccliente " ;
+    column="el nombre de la columna de la tabla"   --> 
+   
+<mapper namespace="IafasMonedas">
+    <resultMap id="monedas" type="IafasMonedas" />
+    
+    <select id="listado" resultType="ep.mil.pe.iafas.maestras.model.IafasMonedas" 
+            parameterType="ep.mil.pe.iafas.maestras.model.IafasMonedas">
+			SELECT nmoneda_codigo nmonedaCodigo, 
+			nmoneda_descripcion nmonedaDescripcion,
+			vmoneda_simbolo vmonedaSimbolo 
+			FROM iafas_monedas order by nmoneda_codigo asc
+        
+    </select>
+    
+    
+</mapper>
