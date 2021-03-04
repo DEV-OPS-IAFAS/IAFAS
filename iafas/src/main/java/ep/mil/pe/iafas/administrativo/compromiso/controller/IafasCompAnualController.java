@@ -11,6 +11,8 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
+import org.apache.log4j.Logger;
+
 import ep.mil.pe.iafas.administrativo.compromiso.dao.IafasCompromisoAnualDao;
 import ep.mil.pe.iafas.administrativo.compromiso.dao.IafasCompromisoAnualDetDao;
 import ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual;
@@ -52,6 +54,8 @@ public class IafasCompAnualController implements Serializable {
     private String pcorrelativo;
     
 	private static final long serialVersionUID = 1L;
+	
+	private static final Logger logger = Logger.getLogger(IafasCompAnualController.class);
 
 	public IafasCompAnualController() {
 		// TODO Auto-generated constructor stub
@@ -59,6 +63,7 @@ public class IafasCompAnualController implements Serializable {
 	}
 	
 	public List<IafasCompromisoAnual> listarCompAnualCab(){
+		logger.info("metodo : listarCompAnualCab");
 		lista = new ArrayList<IafasCompromisoAnual>();
 		try {
 			 IafasCompromisoAnual ca = new IafasCompromisoAnual();
