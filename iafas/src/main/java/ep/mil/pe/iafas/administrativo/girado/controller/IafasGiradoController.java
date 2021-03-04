@@ -176,7 +176,7 @@ public class IafasGiradoController implements Serializable{
 	public String insRegistroGiradoCab() {
 		int reg = 0;
 		String retorno=Constantes.VACIO;
-		logger.info("[INICIO:] Metodo : insRegistroGiradoCab");
+		logger.info("[INICIO:] Metodo : insRegistroGiradoCab:::");
 		IafasGiradoDao giradoDao = new IafasGiradoDao(MySQLSessionFactory.getSqlSessionFactory());
 		HttpSession session=null; 
  		session = (HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true);
