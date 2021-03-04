@@ -29,5 +29,25 @@
         call SP_MTO_GIRADO(#{vano}, #{vregSiaf},#{vctaCodigo}, #{vcodTipGiro}, #{vglosa}, #{impMonSol}, 
         #{vruc}, #{vusuarioIng},#{mode}, #{ntipCam}, #{vtipMon})
     </select>
+    
+    <select id="obtenerExpedientesGirados"
+		parameterType="ep.mil.pe.iafas.administrativo.girado.model.IafasGirado"
+		resultType="ep.mil.pe.iafas.administrativo.girado.model.IafasGirado">
+		SELECT cab.VSECUENCIA AS vsecuencia, cab.VANO AS vano, cab.VSECUENCIA_INT AS vsecuenciaInt,  
+		cab.VREG_SIAF AS vregSiaf, cab.VFUENTE_FINANCIAMIENTO AS vfuenteFinanciamiento, 
+		cab.NTIP_CAM AS ntipCam, cab.NIMP_MON_SOL AS impMonSol, cab.NIMP_MON_EXT AS impMonExt , cab.VTIP_MON AS vtipMon,  
+		cab.VGLOSA AS vglosa
+        ##dev.CPROVEEDOR_RUC AS vruc , 
+		##(SELECT pv.CPROVEEDOR_CCI FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS vcci, 
+		##(SELECT pv.CPROVEEDOR_CUENTA_BANCO FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS cproveedorCuentaBanco
+		FROM iafas_movimiento cab, iafas_girado gir
+		where 
+		cab.VANO=gir.VANO AND
+		cab.VSECUENCIA=gir.VSECUENCIA AND
+		cab.VSECUENCIA_INT=gir.VSECUENCIA_INT AND
+		cab.VANO='2021'  AND 
+		cab.VUSUARIO_ING=#{vusuarioIng} AND 
+		cab.VFASE = 'G'
+	</select>
  
 </mapper>

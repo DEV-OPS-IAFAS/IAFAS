@@ -31,50 +31,80 @@
 					<td valign="top">
 						<div>
 							<p:dataTable id="dTableGiros" var="giros"
-								value="#{iafasUsuariosController.mostrarAllUsuarios()}"
+								value="#{iafasGiradoController.buscarGirados()}"
 								rows="10" style="font-size:11px;"
 								emptyMessage="No se encontro Usuarios registrados"
 								paginatorPosition="bottom" paginator="true">
-
-								<p:column style="width:20px;" headerText="Expediente">
-									<p:outputLabel value="#{giros.vregSiaf}" />
+								<p:column style="width:2px;" headerText="Año">
+									<p:outputLabel value="#{giros.vano}" />
 								</p:column>
-<!-- 								<p:column headerText="Nombres" style="width: 20px;" -->
-<!-- 									filterMatchMode="contains"> -->
-<!-- 									<p:outputLabel value="#{usuario.vusuarioNombres}" /> -->
-<!-- 								</p:column> -->
-<!-- 								<p:column headerText="Apellidos" style="width: 60px;" -->
-<!-- 									filterBy="#{usuario.vusuarioPaterno}"> -->
-<!-- 									<p:outputLabel -->
-<!-- 										value="#{usuario.vusuarioPaterno} #{usuario.vusuarioMaterno}" /> -->
-<!-- 								</p:column> -->
-<!-- 								<p:column width="45px" headerText="Acciones"> -->
-<!-- 									<p:commandButton value="Accesos" ajax="false" -->
-<!-- 										icon="pi pi-file-o" /> -->
-
-<!-- 									<p:commandButton value="Modificar" -->
-<!-- 										update="frm_Usuarios:modalUsuario" -->
-<!-- 										oncomplete="PF('modalUsuario').show()" -->
-<!-- 										action="#{iafasUsuariosController.obtenerDatos()}" -->
-<!-- 										icon="pi pi-pencil"> -->
-<!-- 										<f:param id="codUsuario" name="codUsuario" -->
-<!-- 											value="#{usuario.vusuarioCodigo}" /> -->
-<!-- 									</p:commandButton> -->
-
-<!-- 									<p:commandButton value="Eliminar" icon="pi pi-trash" -->
-<!-- 										action="#{iafasUsuariosController.anularRegistro()}" -->
-<!-- 										update="frm_Usuarios:dTableUsuarios"> -->
-<!-- 										<f:param id="codUsuarioDEL" name="codUsuarioDEL" -->
-<!-- 											value="#{usuario.vusuarioCodigo}" /> -->
-<!-- 									</p:commandButton> -->
-<!-- 								</p:column> -->
+								<p:column style="width:2px;" headerText="Secuencia">
+									<p:outputLabel value="#{giros.vsecuencia}" />
+								</p:column>
+								<p:column style="width:2px;" headerText="Expediente">
+								 <h:commandLink id="cmdLink_Detalle" actionListener="#{iafasGiradoController.obtenerCadenasGiradas()}" >
+								 	<p:outputLabel value="#{giros.vregSiaf}" />
+								 		<f:param id="vano" name="vano" value="#{giros.vano}" />
+								 		<f:param id="vregSiaf" name="vregSiaf" value="#{giros.vregSiaf}" />
+								 		<f:param id="vsecuencia" name="vsecuencia" value="#{giros.vsecuencia}" />
+								 		<f:param id="vsecuenciaInt" name="vsecuenciaInt" value="#{giros.vsecuenciaInt}" />    
+								 </h:commandLink>
+									
+								</p:column>
+								<p:column style="width:250px;" headerText="Glosa">
+									<p:outputLabel value="#{giros.vglosa}" />
+								</p:column>
+								<p:column style="width:20px;" headerText="Importe">
+									<p:outputLabel value="#{giros.impMonSol}" />
+								</p:column>
 							</p:dataTable>
 						</div>
 					</td>
 				</tr>
-			</table>
-			
+			</table>			
 		</p:panel>	
+		
+		<div class="card">
+        <p:accordionPanel multiple="true" widgetVar="multiple">
+            <p:tab title="Detalle del Girado">
+                <p class="p-m-0">
+                    <p:dataTable id="dTableDetalleGiros" var="girosDet"
+								 value="#{iafasGiradoController.listaGiradasCadenas}"
+								rows="10" style="font-size:11px;"
+								emptyMessage="No se encontro Usuarios registrados"
+								paginatorPosition="bottom" paginator="true">
+								
+								<p:column style="width:2px;" headerText="Cod.Cla">
+									<p:outputLabel value="#{girosDet.vcodCla}" />
+								</p:column>
+								<p:column style="width:2px;" headerText="Sec.Func">
+									<p:outputLabel value="#{girosDet.vcodSecFun}" />
+								</p:column>
+								<p:column style="width:2px;" headerText="Cadena">
+									<p:outputLabel value="#{girosDet.cadena}" />
+								</p:column>
+								<p:column style="width:2px;" headerText="Descripcion">
+									<p:outputLabel value="#{girosDet.desCadena}" />
+								</p:column>
+								<p:column style="width:2px;" headerText="Importe">
+									<p:outputLabel value="#{girosDet.impSolCad}" />
+								</p:column>
+					</p:dataTable>
+                </p>
+            </p:tab>
+            <p:tab title="Detalle de Retenciones">
+                <p class="p-m-0">
+                    <p:dataTable id="dTableDetalleGirosRet" var="giros"
+								 
+								rows="10" style="font-size:11px;"
+								emptyMessage="No se encontro Usuarios registrados"
+								paginatorPosition="bottom" paginator="true">
+					</p:dataTable>
+                </p>
+            </p:tab>
+           
+        </p:accordionPanel>
+    </div>
 	
 </h:form>
 </body>	

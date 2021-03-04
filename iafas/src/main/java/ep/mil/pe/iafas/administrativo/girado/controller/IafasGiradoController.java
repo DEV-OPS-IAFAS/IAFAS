@@ -9,6 +9,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
@@ -18,6 +19,7 @@ import ep.mil.pe.iafas.administrativo.girado.model.IafasGirado;
 import ep.mil.pe.iafas.administrativo.girado.model.IafasMovimientoCadenas;
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
 import ep.mil.pe.iafas.configuracion.util.Constantes;
+import ep.mil.pe.iafas.seguridad.controller.IafasUsuariosController;
 import lombok.Data;
 
 @Data
@@ -37,13 +39,48 @@ public class IafasGiradoController implements Serializable{
 	private String nombreBanco;
 	private String vruc;
 	private List<IafasGirado> listaPorGirar = new ArrayList<IafasGirado>();
+	private List<IafasGirado> listaGirados = new ArrayList<IafasGirado>();
 	private List<IafasMovimientoCadenas> listaPorGirarCadenas = new ArrayList<IafasMovimientoCadenas>();
+	private List<IafasMovimientoCadenas> listaGiradasCadenas = new ArrayList<IafasMovimientoCadenas>();
 	private boolean muestraBotonGiro = false;
 	private BigDecimal ntipCam;
 	private String ctaCte;
 	private String tipoGiro;
 	private String tipMon;
 	private String msgSP;
+	
+	public IafasGiradoController() {
+		//buscarGirados();
+	}
+	
+	
+	public List<IafasGirado> buscarGirados() {
+
+		logger.info("[INICIO:] Metodo : buscarGirados");
+
+		this.listaGirados = new ArrayList<>();
+		if (this.listaGirados != null)
+			this.listaGirados.clear();
+		
+		HttpSession session=null; 
+ 		session = (HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		IafasUsuariosController usuarioSession = new IafasUsuariosController();
+		usuarioSession=(IafasUsuariosController)session.getAttribute("iafasUsuariosController");
+		String codUsu = usuarioSession.getIdUsuario();
+		IafasGiradoDao giradoDao = new IafasGiradoDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasGirado> lstGirados = giradoDao.obtenerExpedientesGirados(codUsu);
+		
+		if (lstGirados.size() > 0) {
+			for (IafasGirado objBeanLista : lstGirados) {
+				this.listaGirados.add(objBeanLista);
+			}
+		}
+
+		logger.info("[FIN:] Metodo : buscarGirados");
+		return listaGirados;
+	}
+	
+	
 	
 	
 	public List<IafasGirado> buscarPorSiafAno() {
@@ -106,12 +143,47 @@ public class IafasGiradoController implements Serializable{
 		logger.info("[FIN:] Metodo : obtenerCadenasPorGirar");
 	}
 	
+	public void obtenerCadenasGiradas() {
+		logger.info("[INICIO:] Metodo : obtenerCadenasPorGirar");
+
+		String vanoDet = (String) extContext().getRequestParameterMap().get("vano");
+		String vregSiafDet = (String) extContext().getRequestParameterMap().get("vregSiaf");
+		String vsecuenciaDet = (String) extContext().getRequestParameterMap().get("vsecuencia");
+		String vsecuenciaIntDet = (String) extContext().getRequestParameterMap().get("vsecuenciaInt");
+		
+		this.listaGiradasCadenas = new ArrayList<>();
+		if (this.listaGiradasCadenas != null)
+			this.listaGiradasCadenas.clear();
+
+		IafasMovimientoCadenasDao objDao = new IafasMovimientoCadenasDao(MySQLSessionFactory.getSqlSessionFactory());
+		IafasMovimientoCadenas objBn = new IafasMovimientoCadenas();
+		objBn.setVano(vanoDet);
+		objBn.setVregSiaf(vregSiafDet);
+		objBn.setVsecuencia(vsecuenciaDet);
+		objBn.setVsecuenciaInt(vsecuenciaIntDet);
+		
+		List<IafasMovimientoCadenas> lsts = objDao.obtenerCadenasGiradas(objBn);
+
+		if (lsts.size() > 0 || lsts != null) {
+			for (IafasMovimientoCadenas obj : lsts) {
+				listaGiradasCadenas.add(obj);
+			}
+		}
+		logger.info("[FIN:] Metodo : obtenerCadenasPorGirar");
+	}
+	
+	
 	public String insRegistroGiradoCab() {
 		int reg = 0;
 		String retorno=Constantes.VACIO;
 		logger.info("[INICIO:] Metodo : insRegistroGiradoCab");
 		IafasGiradoDao giradoDao = new IafasGiradoDao(MySQLSessionFactory.getSqlSessionFactory());
-
+		HttpSession session=null; 
+ 		session = (HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		IafasUsuariosController usuarioSession = new IafasUsuariosController();
+		usuarioSession=(IafasUsuariosController)session.getAttribute("iafasUsuariosController");
+		String codUsu = usuarioSession.getIdUsuario();
+		
 		IafasGirado objBn = new IafasGirado();
 		objBn.setVano(vano);
 		objBn.setVregSiaf(vregSiaf);
@@ -123,6 +195,7 @@ public class IafasGiradoController implements Serializable{
 		objBn.setVruc(vruc);
 		objBn.setNtipCam(ntipCam);
 		objBn.setVtipMon(tipMon);
+		objBn.setVusuarioIng(codUsu);
 
 		try {
 			int i = giradoDao.mantenimientoGiradoCab(objBn);

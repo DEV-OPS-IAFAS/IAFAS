@@ -28,4 +28,28 @@
 	</select>
     
  
+ 	<select id="obtenerCadenasGiradas"
+		parameterType="ep.mil.pe.iafas.administrativo.girado.model.IafasMovimientoCadenas"
+		resultType="ep.mil.pe.iafas.administrativo.girado.model.IafasMovimientoCadenas">
+		
+		SELECT  CAD.VID_CLASIFICADOR AS vcodCla, CAD.VSECUENCIA AS vsecuencia, CAD.VSECUENCIA_INT AS vsecuenciaInt, 
+        CAD.VCOD_SEC_FUNC AS vcodSecFun, CAD.NIMP_MON_SOL AS impSolCad , PK_AUX_CLASIFICADOR(CAD.VID_CLASIFICADOR) AS cadena, 
+        PK_AUX_NOM_CLASIFICADOR(CAD.VID_CLASIFICADOR) desCadena
+        FROM iafas_movimiento CAB , iafas_movimiento_mensual_cad CAD, iafas_girado DEV
+        WHERE 
+        CAB.VFASE='G'
+        AND CAB.VANO = CAD.VANO
+        AND CAB.VSECUENCIA = CAD.VSECUENCIA
+        AND CAB.VSECUENCIA_INT = CAD.VSECUENCIA_INT
+        AND CAD.VANO = DEV.VANO
+        AND CAD.VSECUENCIA = DEV.VSECUENCIA
+        AND CAD.vsecuencia_int = DEV.vsecuencia_int AND 
+        CAB.VANO=#{vano}  AND 
+		CAB.VREG_SIAF=#{vregSiaf} AND 
+		CAB.VSECUENCIA = #{vsecuencia} AND 
+		CAB.VSECUENCIA_INT =#{vsecuenciaInt}
+        
+	</select>
+    
+ 
 </mapper>

@@ -38,4 +38,17 @@ public class IafasGiradoDao {
 		}
 		return i;
 	}
+	
+	public List<IafasGirado> obtenerExpedientesGirados(String usuario){
+		List<IafasGirado> list = null;
+	    SqlSession session = this.sqlSessionFactory.openSession();
+	    try {
+	      list = session.selectList("IafasGirado.obtenerExpedientesGirados",usuario);
+	    } finally {
+	      session.close();
+	    } 
+	    return list;
+	}
+	
+	
 }

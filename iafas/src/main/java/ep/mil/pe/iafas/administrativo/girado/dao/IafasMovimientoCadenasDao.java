@@ -25,4 +25,14 @@ public class IafasMovimientoCadenasDao {
 	    return list;
 	  }
 	
+	public List<IafasMovimientoCadenas> obtenerCadenasGiradas(IafasMovimientoCadenas objBn) {
+	    List<IafasMovimientoCadenas> list = null;
+	    SqlSession session = this.sqlSessionFactory.openSession();
+	    try {
+	      list = session.selectList("IafasMovimientoCadenas.obtenerCadenasGiradas",objBn);
+	    } finally {
+	      session.close();
+	    } 
+	    return list;
+	  }
 }
