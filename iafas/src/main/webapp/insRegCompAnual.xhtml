@@ -12,12 +12,13 @@
     </h:head>
     <body class="formulario">
         <h:form id="frmInsRegCompAnual" class="contenedor">
+              <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
             <p:panel >
                 <p:panelGrid columns="6"  >
                     <i class="pi pi-calendar-minus"></i>
                     <p:outputLabel value="Registro de Compromiso Anual - Certificado N° #{mbCompAnual.certificado}" style="color: green; font-weight: bold; font-size: 12px;"/>
                     <p:commandButton  value="Grabar" action="#{mbCompAnual.grabarCompAnual()}" 
-                    icon="pi pi-save" style="height:35px;"/>
+                    icon="pi pi-save" style="height:35px;" ajax="false"/>
                     <p:commandButton value="Cancelar" action="#{mbCompAnual.retornar()}"
                     icon="pi pi-arrow-left" style="height:35px;"/>
                 </p:panelGrid>
@@ -104,7 +105,7 @@
                     </h:panelGrid>  
                     <h:panelGrid columns="8" style="width: 80%">
                         <p:outputLabel value="Moneda:"/>
-                        <p:selectOneMenu id="tipMon" styleClass="select" value="#{mbCompAnual.tipMon}">
+                        <p:selectOneMenu id="tipMon"  value="#{mbCompAnual.tipMon}">
                  			<f:selectItem itemValue="1" itemLabel="S/."></f:selectItem>
 			                <f:selectItem itemValue="2" itemLabel="USD"></f:selectItem>
 			                <f:selectItem itemValue="3" itemLabel="EURO"></f:selectItem>

@@ -19,7 +19,7 @@ public class IafasCompromisoAnualDet {
     private String vusuarioIng;
     private String cadena;
     
-    private BigDecimal montoIngresado;
+    private BigDecimal montoIngresado = new BigDecimal(0);
     
 
 }

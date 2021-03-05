@@ -3,7 +3,7 @@
     font-size: 11px;
     font-family: 'Trebuchet MS', sans-serif;
     color: black;
-    background: gainsboro;
+    background: white;
     /*#f5f4f4 gainsboro*/
 }
 
@@ -35,6 +35,24 @@
 .input {
    background: #ffffff;
    border: 1px solid #0a762e;
+   border-radius: 5px 5px 5px 5px;
+   color: #393939;
+   padding: 5px;
+}
+
+.outLabel{
+    font-weight: bold;
+    font-size: 10px;
+    color: black;
+    border-radius: 5px 5px 5px 5px;
+    background-color: #8cd98c;
+    margin: 2px;
+    padding: 5px;
+}
+
+.select {
+   background: #ffffff;
+   border: 1px solid #a3c2c2;
    border-radius: 5px 5px 5px 5px;
    color: #393939;
    padding: 5px;

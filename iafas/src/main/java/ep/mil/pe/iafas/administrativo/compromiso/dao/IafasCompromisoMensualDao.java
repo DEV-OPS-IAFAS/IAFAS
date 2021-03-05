@@ -95,4 +95,16 @@ public class IafasCompromisoMensualDao {
 	       }
 		return reg;
 	}
+	
+	public int enviarCompromisoMensual(IafasCompromisoMensual men) {
+		int reg =0;
+	       SqlSession session = sqlSessionFactory.openSession();
+	       try{
+	        reg = session.insert("CompromisoMensual.enviarCompromisoMensual",men);
+	       }
+	       finally{
+	        session.close();
+	       }
+		return reg;
+	}
 }

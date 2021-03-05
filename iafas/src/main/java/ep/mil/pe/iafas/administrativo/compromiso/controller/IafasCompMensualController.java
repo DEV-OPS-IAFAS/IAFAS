@@ -51,6 +51,10 @@ public class IafasCompMensualController implements Serializable{
 	private String vsecuenciaA;
 	private String vcorrelativoA;
 	
+	private String psecuencia;
+	private String pcorrelativo;
+	private String pexpediente;
+	
 	
 	IafasCompromisoMensualDao mensualDao = new IafasCompromisoMensualDao(MySQLSessionFactory.getSqlSessionFactory());
 
@@ -167,6 +171,26 @@ public class IafasCompMensualController implements Serializable{
 			System.out.println("Error: "+e.getMessage());
 		}
 		return reg;
+	}
+	
+	public int enviarCompromisoMensual() {
+		int envio = 0;
+		try {
+
+			IafasCompromisoMensual ca = new IafasCompromisoMensual();
+			ca.setVano(periodo);
+			ca.setSecuencia(psecuencia);
+			ca.setCorrelativo(pcorrelativo);
+			ca.setVexpediente(pexpediente);
+			ca.setVusuarioIng("44330686");
+			
+			envio = mensualDao.enviarCompromisoMensual(ca);
+		}
+		catch (Exception e) {
+			System.out.println("Error Envio : "+e.getMessage());
+		}
+
+		return envio;
 	}
 	
     private ExternalContext extContext() {

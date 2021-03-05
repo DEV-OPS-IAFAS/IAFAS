@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
@@ -134,6 +135,7 @@ public class IafasCompAnualController implements Serializable {
 	
 	public String nuevoRegistro() {
 		String page = "insRegCompAnual";
+		limpiarCampos();
 		listarCompAnualDet();
 	    return page;
 	}
@@ -143,7 +145,7 @@ public class IafasCompAnualController implements Serializable {
 		return page;
 	}
 
-	public int grabarCompAnual() {
+	public String grabarCompAnual() {
 		int reg = 0;
 		 IafasCompromisoAnual ca = new IafasCompromisoAnual();
 		 IafasCompromisoAnualDao compAnualDao = new IafasCompromisoAnualDao(MySQLSessionFactory.getSqlSessionFactory());
@@ -168,10 +170,8 @@ public class IafasCompAnualController implements Serializable {
 		 ca.setVglosa(concepto);
 		 ca.setNimpMonSol(BigDecimal.ZERO);
 		 reg = compAnualDao.grabarCompAnual(ca);
-		 
+		 System.out.println("Valos "+reg);
 		 for(int j =0;j<getListaCertDet().size();j++){
-			 if(getListaCertDet().get(j).getMontoIngresado().doubleValue()>0 || 
-			    getListaCertDet().get(j).getMontoIngresado()!=null) {
 				 det.setVanoDocumento(periodo);
 				 det.setVnroCertificado(certificado);
 				 det.setVcodSec(getListaCertDet().get(j).getVcodSec());
@@ -179,12 +179,22 @@ public class IafasCompAnualController implements Serializable {
 				 det.setNimpMontoSol(getListaCertDet().get(j).getMontoIngresado());
 				 det.setVusuarioIng("44330586");
 				// nimpCompSol.add(getListaCertDet().get(j).getMontoIngresado().doubleValue());
-				 compAnualDetDao.grabarCompAnualDet(det);
-			 }
+				 logger.info("Monto del Clasificador "+ getListaCertDet().get(j).getVidClasificador()+" "+getListaCertDet().get(j).getMontoIngresado().doubleValue());
+				 if(getListaCertDet().get(j).getMontoIngresado().doubleValue()>0) {
+					 if(getListaCertDet().get(j).getNimpMontoSol().doubleValue() < getListaCertDet().get(j).getMontoIngresado().doubleValue()) {
+						 FacesContext.getCurrentInstance().addMessage(null, new 
+					     FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR!", "El Monto Ingresado Excede al Saldo del Clasificador!"));
+					   return "insRegCompAnual";
+					 }
+					 else {
+						 compAnualDetDao.grabarCompAnualDet(det);
+					 }
+				 
+				 }
 			 
 		 }
 
-		return reg;
+		return "mainCompromisoAnual";
 	}
 	
 	public String obtener() {
@@ -219,6 +229,12 @@ public class IafasCompAnualController implements Serializable {
 	public boolean validarCampos() {
 		
 		return false; 
+	}
+	
+	public void limpiarCampos() {
+		nroDoc="";
+		fecDocumento = null;
+		tipDocumentoA = "";
 	}
 	
     private ExternalContext extContext() {

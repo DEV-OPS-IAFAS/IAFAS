@@ -46,7 +46,9 @@
                                 <p:dataTable id="dTableCompMensual" var="men" value="#{mbCompMensual.lista}" rows="10" scrollable="true" scrollHeight="175px;"
                                              style="width: 1000px;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
                                              paginatorPosition="bottom" paginator="true" stripedRows="true">
-
+                                    <p:column headerText="Certificado" style="width: 15px;" >
+                                        <p:outputLabel value="#{men.vnroCertificado}"/>
+                                    </p:column>
                                     <p:column headerText="Expediente" style="width: 15px;" >
                                         <p:outputLabel value="#{men.vexpediente}"/>
                                     </p:column>
@@ -70,32 +72,33 @@
                                     <p:column headerText="E.E." style="width: 15px;">
                                         <p:outputLabel value="#{men.vcodEstado}" style="text-align: center"/>
                                     </p:column>
-                              <!--       <p:column headerText="Enviar" style="width: 20px;">
-                                        <p:commandButton id="btn_enviar" icon="pi pi-play" action="#{mbCompAnual.obtener()}"
-                                        oncomplete="PF('EnvioAnual').show();"
-                                        update="frmCompromisoAnual:EnvioAnual">
-                                          <f:param id="p_secuencia" name="p_secuencia" value="#{ca.vsecuenciaA}"></f:param>
-                                         <f:param id="p_correlativo" name="p_correlativo" value="#{ca.vcorrelativoA}"></f:param>
-                                        </p:commandButton> 
-                                    </p:column> --> 
+                                    <p:column headerText="Enviar" style="width: 10px;">
+                                        <p:commandButton id="btn_enviar" icon="pi pi-play" action="#{mbCompMensual.obtener()}"
+                                        oncomplete="PF('pMensual').show();"
+                                        update="frmCompromisoMensual:EnvioMensual">
+                                          <f:param id="p_secuencia" name="p_secuencia" value="#{men.secuencia}"></f:param>
+                                         <f:param id="p_correlativo" name="p_correlativo" value="#{men.correlativo}"></f:param>
+										 <f:param id="p_expediente" name="p_expediente" value="#{men.vexpediente}"></f:param>                                       
+										</p:commandButton> 
+                                    </p:column>
                                 </p:dataTable>
                             </div>
                         </td>  
                     </tr>
                 </table>
                 <!-- dialogos -->
-                <p:dialog id="EnvioAnual" widgetVar="EnvioAnual" modal="true" header="Confirmar Envio"
+                <p:dialog id="EnvioMensual" widgetVar="pMensual" modal="true" header="Confirmar Envio"
                 showEffect="fade" hideEffect="explode" resizable="false">
                     <p:panel >
                         <h:panelGrid columns="2">
                         <i class="pi pi-exclamation-circle" style="width:30px;height:30px;"></i>
-                            <p:outputLabel value="Desea Enviar el Compromiso Anual a la Siguiente Fase?" 
+                            <p:outputLabel value="Desea Enviar el Compromiso Mensual a la Siguiente Fase?" 
                             style="font-weight:bold;font-size:12px;"></p:outputLabel>
                         </h:panelGrid>
                         <h:panelGrid columns="2">
-                           <p:commandButton id="btnAceptar" value="Si" action="#{mbCompAnual.enviarCompromisoAnual()}"
-                           oncomplete="PF('EnvioAnual').hide();" icon="pi pi-check" style="height:25px;"></p:commandButton>
-                            <p:commandButton id="btnCancelar" value="No" type="button" onclick="PF('EnvioAnual').hide();"
+                           <p:commandButton id="btnAceptar" value="Si" action="#{mbCompMensual.enviarCompromisoMensual()}"
+                           oncomplete="PF('pMensual').hide();" icon="pi pi-check" style="height:25px;"></p:commandButton>
+                            <p:commandButton id="btnCancelar" value="No" type="button" onclick="PF('pMensual').hide();"
                             icon="pi pi-times" style="height:25px;"></p:commandButton>
                         </h:panelGrid>
                     </p:panel>
