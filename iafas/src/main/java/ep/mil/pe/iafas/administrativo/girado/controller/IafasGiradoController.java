@@ -49,7 +49,7 @@ public class IafasGiradoController implements Serializable{
 	private String tipMon;
 	private String msgSP;
 	private String msgValidacion;
-	public boolean pasoValidacion = false;
+	public boolean pasoValidacion = true;
 	
 	public IafasGiradoController() {
 		//buscarGirados();
@@ -197,13 +197,13 @@ public class IafasGiradoController implements Serializable{
 		objBn.setVusuarioIng(codUsu);
 
 		try {
-			if(validarRegistroGiro()) {
+			//if(validarRegistroGiro()) {
 				int i = giradoDao.mantenimientoGiradoCab(objBn);
 				if (i == 0) {
 					setMsgSP("Tu registro de giro se realizó con éxito");
 					retorno = "mainIafasConsultaGirados.xhtml";
 				}
-		}
+	//	}
 		} catch (Exception e) {
 			logger.error("error : " + e.getMessage().toString());
 		} finally {
@@ -217,19 +217,21 @@ public class IafasGiradoController implements Serializable{
 	private boolean validarRegistroGiro() {
 		
 		logger.info("[INICIO:] Metodo : validarRegistroGiro:::");
-		if (!Constantes.UNO_STRING.equals(tipMon) && Constantes.UNO_BG.equals(ntipCam)) {
+
+		if (!Constantes.UNO_STRING.equals(tipMon)
+				&& Constantes.UNO_BG.equals(ntipCam)) {
 			setMsgValidacion("Debe registrar un tipo de cambio correspondiente a la moneda seleccionada");
 			pasoValidacion = false;
-		} else {
-			pasoValidacion = true;
-		}
+			return pasoValidacion;
+		} 
+		
 		if (Constantes.UNO_STRING.equals(tipMon) && !Constantes.UNO_BG.equals(ntipCam)) {
 			setMsgValidacion("No puede ingresar un tipo de Cambio diferente a 1, ya que el tipo de Moneda es Soles");
 			pasoValidacion = false;
-		} else {
-			pasoValidacion = true;
-		}	
-		logger.info("[FIN:] Metodo : validarRegistroGiro:::");
+			return pasoValidacion;
+		} 
+		
+		logger.info("[FIN:] Metodo : validarRegistroGiro:::"+pasoValidacion);
 		return pasoValidacion;
 	}
 	
