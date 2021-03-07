@@ -7,10 +7,10 @@
 <h:head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>SISTEMA INTEGRADO IAFAS</title>
-	<link href="css/default.css" rel="stylesheet" type="text/css" />
+<!-- 	<link href="css/default.css" rel="stylesheet" type="text/css" /> -->
     <link href="css/tableLayout.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="css/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/style.css" />
+<!--     <link rel="stylesheet" href="css/bootstrap.min.css" /> -->
+<!--     <link rel="stylesheet" href="css/style.css" /> -->
     <style type="text/css">
     button.ui-button {
         margin-right: .5rem;
@@ -18,9 +18,8 @@
 </style>
 </h:head>
 
-<h:body>
+<body>
 <h:form>
-
 
 	<table cellspacing="0px">
 		<tr>
@@ -30,14 +29,18 @@
 					style="font-size:14px; height:40px;" />
 		</td>
 			<td id="top" align="right" class="banner" style="height: 40px;">
-			<h:panelGrid columns="2" >
+			<h:panelGrid columns="4" >
 					<p:commandButton type="button" icon="pi pi-user" styleClass="rounded-button ui-button-info ui-button-outlined" />
 					<h:outputText value="#{iafasUsuariosController.nombreUsuario} #{iafasUsuariosController.APaternoUsuario} #{iafasUsuariosController.AMaternoUsuario}"
 						style="color:black;font-weight:bold;font-size:12px;"></h:outputText>
+						<h:outputText />
+				<h:commandLink action="login.xhtml" actionListener="#{iafasUsuariosMenuController.cerraSession()}"  >
+					<h:graphicImage value="img/icono-cerrar-sesion-png-6.png" style="font-size:14px; height:40px;" title="Cerrar Session" /> 
+				  </h:commandLink>	
 				</h:panelGrid></td>
 		</tr>
-		<tr>
-			<td valign="top" id="left"> 
+		<tr class="left">
+			<td id="left"  > 
 					<p:slideMenu overlay="true" style="width:200px; font-size:12px;"
 					trigger="dynaButton" my="left top" at="left bottom" backLabel="Regresar">
 					<c:forEach  items="#{iafasUsuariosMenuController.listaMenuNivel1}" var="menuNivel1">
@@ -59,10 +62,11 @@
 					</center>
 				</div>
 			</td>
+			 
 		</tr>
 
 	</table>
 </h:form>
-</h:body>
+</body>
 
 </html>

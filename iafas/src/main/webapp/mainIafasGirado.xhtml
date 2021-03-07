@@ -35,8 +35,11 @@
         </script>
         
 	<h:form id="frm_Girado"> 
+	<p:panelGrid columns="2" styleClass="panel">
+                   <i class="pi pi-calendar-plus" style="height:20px;height:20px;" ></i>
+                    <p:outputLabel value="Registro de Giros" styleClass="etiqueta"></p:outputLabel>
+                </p:panelGrid> 
 		<p:panel header="Datos de Busqueda" >
-			
 			<p:panelGrid columns="6" styleClass="panel">
 				<h:outputLabel value="Año" styleClass="etiqueta" style="font-size:11px;font-weight:bold;" />
 				<h:selectOneMenu  id="cboPeriodo"  styleClass="input" value="#{iafasGiradoController.vano}">
@@ -167,11 +170,12 @@
             styleClass="input" value="#{iafasGiradoController.ntipCam}" />
 			<p:commandButton  value="Girar"  styleClass="button" ajax="false" rendered="#{iafasGiradoController.muestraBotonGiro}"
                action="#{iafasGiradoController.insRegistroGiradoCab()}"     style="height:30px;" title="Click aqui para Generar el Girado"/>  
-               <p:outputLabel value="#{iafasGiradoController.msgSP}" styleClass="etiqueta" />   
+          
 			</p:panelGrid>
 		</p:panel>
-
+		<h:outputLabel value="#{iafasGiradoController.msgSP}" styleClass="etiqueta" />  
+ 		<h:outputLabel value="#{iafasGiradoController.msgValidacion}" styleClass="etiquetaErr" /> 
 	</h:form>
 </body>
-
+  
 </html>

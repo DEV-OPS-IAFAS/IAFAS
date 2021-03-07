@@ -58,3 +58,10 @@
    padding: 5px;
 }
 
+
+.etiquetaErr {
+    font-weight: bold;
+    margin: 20px; 
+    position: static;
+    color: #C82A2A;
+}

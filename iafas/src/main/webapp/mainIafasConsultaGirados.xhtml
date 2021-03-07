@@ -23,6 +23,8 @@
 	   	<p:panelGrid columns="3">
 				<i class="pi pi-money-bill"></i>
 				<h:outputLabel value="Consulta de Giros" styleClass="etiqueta"  style="font-size:11px;font-weight:bold;" />
+				 <p:commandButton value="Retornar" action="#{iafasGiradoController.retornar()}"
+                    icon="pi pi-arrow-left" style="height:35px;"/>
 		</p:panelGrid>
 	   	
 	   	<br />
@@ -40,6 +42,9 @@
 								</p:column>
 								<p:column style="width:2px;" headerText="Secuencia">
 									<p:outputLabel value="#{giros.vsecuencia}" />
+								</p:column>
+								<p:column style="width:2px;" headerText="N° Cheque">
+									<p:outputLabel value="#{giros.vnroCheCar}" />
 								</p:column>
 								<p:column style="width:2px;" headerText="Expediente">
 								 <h:commandLink id="cmdLink_Detalle" actionListener="#{iafasGiradoController.obtenerCadenasGiradas()}" >

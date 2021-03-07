@@ -3,7 +3,7 @@ body {
 }
 
 #top {
-    background-color:  #a6a6a6; /*#4d4d4d#009933#006622/*#339933/*#66cc66 ;*/
+    background-color:  #8bc98b; /*#4d4d4d#009933#006622/*#339933/*#66cc66 ;*/
     color: #003366;
     height: 50px;
     width: 100%;
@@ -17,7 +17,7 @@ body {
 }
 
 #left {
-    background-color:  #a6a6a6/*#4d4d4d*/;
+    background-color:  #8bc98b/*#4d4d4d*/;
     padding: 10px;
     width: 250px;
     vertical-align: top;

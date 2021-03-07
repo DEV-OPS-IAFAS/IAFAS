@@ -36,7 +36,7 @@
 		SELECT cab.VSECUENCIA AS vsecuencia, cab.VANO AS vano, cab.VSECUENCIA_INT AS vsecuenciaInt,  
 		cab.VREG_SIAF AS vregSiaf, cab.VFUENTE_FINANCIAMIENTO AS vfuenteFinanciamiento, 
 		cab.NTIP_CAM AS ntipCam, cab.NIMP_MON_SOL AS impMonSol, cab.NIMP_MON_EXT AS impMonExt , cab.VTIP_MON AS vtipMon,  
-		cab.VGLOSA AS vglosa
+		cab.VGLOSA AS vglosa , gir.VNRO_CHE_CAR AS vnroCheCar
         ##dev.CPROVEEDOR_RUC AS vruc , 
 		##(SELECT pv.CPROVEEDOR_CCI FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS vcci, 
 		##(SELECT pv.CPROVEEDOR_CUENTA_BANCO FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS cproveedorCuentaBanco

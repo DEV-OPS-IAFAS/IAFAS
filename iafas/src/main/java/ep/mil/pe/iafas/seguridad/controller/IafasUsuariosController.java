@@ -9,6 +9,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
@@ -131,6 +132,7 @@ public class IafasUsuariosController implements Serializable {
 		setPassUsuarioMto(Constantes.VACIO);
 		setBllBotonAcciones(false);
 		setIdAreaLaboral(Constantes.CERO_CERO);
+		setModo(Constantes.MODE_REGISTRO);
 
 		logger.info("[FIN:] Metodo : limpiarCamposMto");
 	}
@@ -262,6 +264,15 @@ public class IafasUsuariosController implements Serializable {
 			logger.info("[FIN:] Metodo : anularRegistro");
 		}
 
+	}
+	
+	public void cerraSession() {
+		System.out.println("[INICIO:] Metodo : cerraSession");
+		HttpSession session = null;
+		session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		HttpSession httpSession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		httpSession.invalidate();
+		System.out.println("[FIN:] Metodo : cerraSession");
 	}
 	
 	private ExternalContext extContext() {

@@ -19,6 +19,12 @@
 </h:head>
 
 <body class="formulario">
+
+	 <script>
+           
+        
+        </script>
+
 	<h:form id="frm_Usuarios"> 
 		<p:panel>
 			<p:panelGrid columns="3">
@@ -63,9 +69,9 @@
 										<f:param id="codUsuario" name="codUsuario" value="#{usuario.vusuarioCodigo}" />
 									</p:commandButton>
 
-									<p:commandButton  value="Eliminar" icon="pi pi-trash"  
-									 action="#{iafasUsuariosController.anularRegistro()}" update="frm_Usuarios:dTableUsuarios" >
-									<f:param id="codUsuarioDEL" name="codUsuarioDEL" value="#{usuario.vusuarioCodigo}"  />
+									<p:commandButton  value="Eliminar" icon="pi pi-trash"  action="#{iafasUsuariosController.anularRegistro()}" 
+                                        update="frm_Usuarios:dTableUsuarios" >
+										<f:param id="codUsuarioDEL" name="codUsuarioDEL" value="#{usuario.vusuarioCodigo}"  />
 									</p:commandButton>
 								</p:column>
 							</p:dataTable>
@@ -110,6 +116,23 @@
 						action="#{iafasUsuariosController.mantenimientoUsuarios()}" update="frm_Usuarios:dTableUsuarios" />
 				</f:facet>
 		</p:dialog>
+		
+		 <p:dialog id="Deleteusuario" widgetVar="Deleteusuario" modal="true" header="Confirmar Eliminación"
+                showEffect="fade" hideEffect="explode" resizable="false">
+                    <p:panel >
+                        <h:panelGrid columns="2">
+                        <i class="pi pi-exclamation-circle" style="width:30px;height:30px;"></i>
+                            <p:outputLabel value="Desea Eliminar el Usuario"  style="font-weight:bold;font-size:12px;"></p:outputLabel>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                           <p:commandButton id="btnAceptar" value="Si" action="#{iafasUsuariosController.anularRegistro()}" 
+                           update="frm_Usuarios:dTableUsuarios" oncomplete="PF('Deleteusuario').hide();" icon="pi pi-check" style="height:25px;">
+                           </p:commandButton>
+                            <p:commandButton id="btnCancelar" value="No" type="button"  onclick="PF('Deleteusuario').hide();" update="frm_Usuarios:dTableUsuarios" 
+                            icon="pi pi-times" style="height:25px;"></p:commandButton>
+                        </h:panelGrid>
+                    </p:panel>
+                </p:dialog>
 
 	</h:form>
 </body>

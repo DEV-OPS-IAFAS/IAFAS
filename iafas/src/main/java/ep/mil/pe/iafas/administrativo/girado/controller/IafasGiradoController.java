@@ -48,6 +48,8 @@ public class IafasGiradoController implements Serializable{
 	private String tipoGiro;
 	private String tipMon;
 	private String msgSP;
+	private String msgValidacion;
+	public boolean pasoValidacion = false;
 	
 	public IafasGiradoController() {
 		//buscarGirados();
@@ -79,8 +81,6 @@ public class IafasGiradoController implements Serializable{
 		logger.info("[FIN:] Metodo : buscarGirados");
 		return listaGirados;
 	}
-	
-	
 	
 	
 	public List<IafasGirado> buscarPorSiafAno() {
@@ -174,7 +174,6 @@ public class IafasGiradoController implements Serializable{
 	
 	
 	public String insRegistroGiradoCab() {
-		int reg = 0;
 		String retorno=Constantes.VACIO;
 		logger.info("[INICIO:] Metodo : insRegistroGiradoCab:::");
 		IafasGiradoDao giradoDao = new IafasGiradoDao(MySQLSessionFactory.getSqlSessionFactory());
@@ -198,12 +197,13 @@ public class IafasGiradoController implements Serializable{
 		objBn.setVusuarioIng(codUsu);
 
 		try {
-			int i = giradoDao.mantenimientoGiradoCab(objBn);
-			if (i == 0) {
-				setMsgSP("Tu registro de giro se realizó con éxito");
-				retorno = "mainIafasConsultaGirados.xhtml";
-			}
-
+			if(validarRegistroGiro()) {
+				int i = giradoDao.mantenimientoGiradoCab(objBn);
+				if (i == 0) {
+					setMsgSP("Tu registro de giro se realizó con éxito");
+					retorno = "mainIafasConsultaGirados.xhtml";
+				}
+		}
 		} catch (Exception e) {
 			logger.error("error : " + e.getMessage().toString());
 		} finally {
@@ -212,6 +212,44 @@ public class IafasGiradoController implements Serializable{
 		}
 
 		return retorno;
+	}
+
+	private boolean validarRegistroGiro() {
+		
+		logger.info("[INICIO:] Metodo : validarRegistroGiro:::");
+		if (!Constantes.UNO_STRING.equals(tipMon) && Constantes.UNO_BG.equals(ntipCam)) {
+			setMsgValidacion("Debe registrar un tipo de cambio correspondiente a la moneda seleccionada");
+			pasoValidacion = false;
+		} else {
+			pasoValidacion = true;
+		}
+		if (Constantes.UNO_STRING.equals(tipMon) && !Constantes.UNO_BG.equals(ntipCam)) {
+			setMsgValidacion("No puede ingresar un tipo de Cambio diferente a 1, ya que el tipo de Moneda es Soles");
+			pasoValidacion = false;
+		} else {
+			pasoValidacion = true;
+		}	
+		logger.info("[FIN:] Metodo : validarRegistroGiro:::");
+		return pasoValidacion;
+	}
+	
+	public String retornar() {
+		limpiarcampos();
+		return "mainIafasGirado.xhtml";
+	}
+	
+	private void limpiarcampos() {
+		logger.info("[INICIO:] Metodo : limpiarcampos");
+		setVregSiaf(Constantes.VACIO);
+		setMuestraBotonGiro(false);
+		setVglosa(Constantes.VACIO);
+		setVruc(Constantes.VACIO);
+		setVcci(Constantes.VACIO);
+		setCproveedorCuentaBanco(Constantes.VACIO);
+		setImpMonSol(null);
+		setMsgSP(Constantes.VACIO);
+		obtenerCadenasPorGirar();
+		logger.info("[FIN:] Metodo : limpiarcampos");
 	}
 	
 	private ExternalContext extContext() {
