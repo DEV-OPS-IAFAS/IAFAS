@@ -1,7 +1,5 @@
 package ep.mil.pe.iafas.configuracion.util;
 
-import java.math.BigDecimal;
-
 public class Constantes {
 
 	private Constantes() {		
@@ -15,15 +13,18 @@ public class Constantes {
 	public static final String MODE_ACTUALIZACION = "U";
 	public static final String MODE_ELIMINACION_LOGICA = "D";
 	public static final String CERO_STRING = "0";
-	public static final String UNO_STRING = "1";
 	public static final String LOGIN = "login.xhtml";
 	public static final String MAIN_PRINCIPAL = "mainPrincipal.xhtml";
 	public static final String ESTADO_ACTIVO = "AC";
 	public static final String ESTADO_ANULADO = "AN";
 	public static final String CERO_CERO = "00";
+	
+	
 	public final static String TMOV_INICIAL = "N";
 	public final static String TMOV_AMPLIACION = "M";
 	public final static String TMOV_ANULACION = "A";
 	public final static String TMOV_REBAJA = "R";
-	public final static BigDecimal UNO_BG = new BigDecimal(1);
+	
+	public final static String ESTADO_REGISTRADO = "1";
+	
 }

@@ -107,4 +107,16 @@ public class IafasCompromisoMensualDao {
 	       }
 		return reg;
 	}
+	
+	public int dropCompromisoMensual(IafasCompromisoMensual men) {
+		int reg =0;
+	       SqlSession session = sqlSessionFactory.openSession();
+	       try{
+	        reg = session.insert("CompromisoMensual.dropCompromisoMensual",men);
+	       }
+	       finally{
+	        session.close();
+	       }
+		return reg;
+	}
 }

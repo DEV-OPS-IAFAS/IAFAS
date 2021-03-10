@@ -157,4 +157,11 @@
 		vsecuencia_a = #{vsecuenciaA} and vcorrelativo_a = #{vcorrelativoA}
 		order by vsecuenciaA
 	</select>
+	
+	<select id="dropCompAnual" parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
+	statementType="CALLABLE">
+	   { CALL SP_DROP_COMP_ANUAL(
+	    #{vanoDocumento mode=IN, jdbcType=VARCHAR},
+		#{vnroCertificado, mode=IN, jdbcType=VARCHAR})}
+	</select>
 </mapper>

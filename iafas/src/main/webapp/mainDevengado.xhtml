@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>IAFAS</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+    </h:head>
+    <body class="formulario">
+        <script>
+           /*
+            function limpiarTexto() {
+                document.getElementById('frmCompromisoAnual:inpTxtCertificado').value = "";
+            }
+            */
+                      
+        
+        </script>
+        <h:form id="frmDevengado" style="border-radius: 5px 5px 5px 5px;border: 1px ; width:100%;">
+            <p:panel >
+                <p:panelGrid columns="2" styleClass="panel">
+                   <i class="pi pi-calendar-plus" style="height:20px;height:20px;" ></i>
+                    <p:outputLabel value="Consulta Devengado" styleClass="etiqueta"></p:outputLabel>
+                </p:panelGrid> 
+                <p:panelGrid columns="5" >
+                    <p:outputLabel value="A.F :" styleClass="etiqueta"/>
+                    <p:selectOneMenu id="cboAnio" value="#{mbDevengado.periodo}" >
+                      <f:selectItem itemValue="" itemLabel="--Seleccione--"></f:selectItem>
+                      <f:selectItem itemValue="2021" itemLabel="2021"></f:selectItem>
+                      <f:ajax render="dTableDevengado" listener="#{mbDevengado.listarCompMensuales()}"></f:ajax>
+                    </p:selectOneMenu>
+                    
+                    <p:commandButton  value="Nuevo"  styleClass="button" action="#{mbDevengado.nuevoRegistro()}" ajax="false"
+                    style="height:30px;" title="Click aqui para Ingresar un Nuevo Devengado"/>
+                    <h:commandLink id="btnXLS" value="Excel" >
+                    <p:dataExporter type="xls" target="dTableCompAnual" fileName="CompromisoAnual"/>
+                    </h:commandLink>
+                </p:panelGrid>
+                <p:outputLabel value="#{mbDevengado.reg} Registros Encontrados" style="color: green; font-weight: bold;"/>
+                <br/>
+                <table>
+                    <tr>
+                        <td valign="top">
+                            <div>
+                                <p:dataTable id="dTableDevengado" var="men" value="#{mbDevengado.listaDev}" rows="10" scrollable="true"
+                                             style="width: 1000px;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
+                                             paginatorPosition="bottom" paginator="true" stripedRows="true">
+                                    <p:column headerText="N°Siaf" style="width: 15px;" filterBy="#{men.vexpediente}" filterMatchMode="contains">
+                                        <p:outputLabel value="#{men.vexpediente}"/>
+                                    </p:column>
+                                    <p:column headerText=" Nro Serie" style="width: 15px;">
+                                        <p:outputLabel value="#{men.vserieCom}"/>
+                                    </p:column>
+                                     <p:column headerText=" Nro Comprobante" style="width: 15px;">
+                                        <p:outputLabel value="#{men.vnroDocumentoCom}"/>
+                                    </p:column>
+                                    <p:column headerText="Ruc" style="width: 100px;">
+                                        <p:outputLabel value="#{men.cproveedorRuc}-#{men.razonSocial}"/>
+                                    </p:column>
+                                    <p:column headerText="Fecha" style="width: 10px;">
+                                        <p:outputLabel value="#{men.dfechaDevengado}">
+                                           <f:converter converterId="javax.faces.DateTime" />
+                                			<f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />	
+                                        </p:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="Monto" style="text-align: right;width: 20px;">
+                                        <p:outputLabel value="#{men.nimpMonSol}">
+                                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                                        </p:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="E.E." style="width: 15px;">
+                                        <p:outputLabel value="#{men.vcodEstado}" style="text-align: center"/>
+                                    </p:column>
+                                   <p:column headerText="Envio" style="width: 15px;">
+                                        <p:commandButton icon="pi pi-play">
+                                        </p:commandButton>
+                                    </p:column>                                 
+                                   <p:column headerText="Afectacion" style="width: 10px;">
+                                        <p:commandButton id="btn_enviar" icon="pi pi-calendar-plus" 
+                                        oncomplete="PF('pRetdev').show();" actionListener="#{mbDevengado.verDevengado()}"
+                                        update="frmDevengado:DevRetencion" >
+                                          <f:param id="p_regSiaf" name="p_regSiaf" value="#{men.vexpediente}"></f:param>
+                                         <f:param id="p_secuencia" name="p_secuencia" value="#{men.secuencia}"></f:param>                                      
+										</p:commandButton> 
+                                    </p:column>
+                                     
+                                    
+                                </p:dataTable>
+                            </div>
+                        </td>  
+                    </tr>
+                </table>
+                <!-- dialogos -->
+                <p:dialog id="DevRetencion" widgetVar="pRetdev" modal="true" header="Registro de Afectación"
+                showEffect="fade" hideEffect="explode" resizable="false">
+                    <p:panel >
+                    <h:panelGrid columns="6">
+                      <p:outputLabel value="Tipo Documento:"/>
+                      <h:selectOneMenu id="SelOneMnu_af" value="#{mbDevengado.tipoDoc}" style="width: 300px;"
+							 styleClass="select">
+						    <f:selectItem itemValue="0000" itemLabel="--Seleccione--" />
+						       <f:selectItem itemValue="001" itemLabel="Factura" />
+						      <f:selectItem itemValue="002" itemLabel="Boleta de Venta" />
+						      
+						</h:selectOneMenu>
+                      <p:outputLabel value="Serie:"/>
+                      <h:outputText styleClass="outLabel" value="#{mbDevengado.serieDoc}"/>
+                      <p:outputLabel value="Numero:"/>
+                      <h:outputText styleClass="outLabel" value="#{mbDevengado.nroDoc}"/>
+                       <p:outputLabel value="Monto Devengado:"/>
+                      <h:inputText styleClass="outLabel" value="#{mbDevengado.nroDoc}" readonly="true"/>
+                    </h:panelGrid>
+                        <h:panelGrid columns="6" style="width: 817px; ">
+                        <h:outputText value="Tipo Impuesto:"  ></h:outputText>
+							<h:selectOneMenu id="SelImpuesto" value="#{mbDevengado.vcodImp}" style="width: 150px;"
+							 styleClass="select">
+						    <f:selectItem itemValue="00" itemLabel="--Seleccione--" />
+						       <f:selectItem itemValue="01" itemLabel="Detraccion" />
+						      <f:selectItem itemValue="02" itemLabel="Retencion" />						      
+						</h:selectOneMenu>
+						<h:outputText value="% Impuesto"></h:outputText>
+							<h:inputText  id="txt_imp"  maxlength="4" 
+							 styleClass="input" value="#{mbDevengado.nporImp}"
+							></h:inputText>
+							<h:outputText value="Importe"></h:outputText>
+							<h:inputText  id="txt_monto"  maxlength="4" 
+							 styleClass="input"
+							></h:inputText>
+							
+							<p:commandButton  value="Grabar"  action="#{mbDevengado.registrarRetencion()}"
+		                    icon="pi pi-save" style="height:30px;" ajax="false"/>
+		                    <p:commandButton value="Cancelar" action="#{mbDevengado.retornar()}"
+		                    icon="pi pi-arrow-left" style="height:30px;"/>
+		               </h:panelGrid>      
+		                    <h:panelGrid columns="8">
+                                <p:dataTable id="dTableRetencion" var="Retd" value="#{mbDevengado.listaRetencion}"  rows="10" scrollable="true" scrollHeight="175px;"
+                                             style="width: 1000px;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
+                                             paginatorPosition="bottom" paginator="true" stripedRows="true">
+                                    <p:column headerText="tipoInp." style="width: 15px;" >
+                                        <p:outputLabel value="#{Retd.vcodImp}"/>
+                                    </p:column>
+                                    <p:column headerText=" Porcentaje" style="width: 15px;">
+                                        <p:outputLabel  value="#{Retd.nporImp}" />
+                                    </p:column>
+                                    <p:column headerText="Monto" style="text-align: right;width: 20px;">
+                                        <p:outputLabel value="#{Retd.importeRetencion}" >
+                                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                                        </p:outputLabel>
+                                    </p:column>
+
+                                </p:dataTable>
+		                    </h:panelGrid> 
+                        <!-- 
+                         <h:panelGrid columns="2">
+                           <p:commandButton id="btnAceptar" value="Si" action="#{mbDevengado.enviarCompromisoMensual()}"
+                           oncomplete="PF('pMensual').hide();" icon="pi pi-check" style="height:25px;"></p:commandButton>
+                            <p:commandButton id="btnCancelar" value="No" type="button" onclick="PF('pMensual').hide();"
+                            icon="pi pi-times" style="height:25px;"></p:commandButton>
+                        </h:panelGrid>
+                         -->                  
+                    </p:panel>
+                </p:dialog>
+            </p:panel>
+        </h:form>
+    </body>
+</html>

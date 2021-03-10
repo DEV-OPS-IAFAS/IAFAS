@@ -29,7 +29,7 @@ public class ViewIafasCompromisoMensual {
     private String razonSocial;
     private double ntipCam;
     
-    private BigDecimal montoIngresado;
+    private BigDecimal montoIngresado = new BigDecimal(0);
 
 	public ViewIafasCompromisoMensual() {
 		// TODO Auto-generated constructor stub

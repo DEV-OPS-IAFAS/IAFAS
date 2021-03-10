@@ -74,4 +74,16 @@ public class IafasCompromisoAnualDao {
 	       }
 		return reg;
 	}
+	
+	public int deleteCompAnual(IafasCompromisoAnual anual) {
+		int reg =0;
+	       SqlSession session = sqlSessionFactory.openSession();
+	       try{
+	        reg = session.update("CompromisoAnual.dropCompAnual",anual);
+	       }
+	       finally{
+	        session.close();
+	       }
+		return reg;
+	}
 }

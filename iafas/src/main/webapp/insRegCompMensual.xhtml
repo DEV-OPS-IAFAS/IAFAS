@@ -15,6 +15,7 @@
         <script>           
         </script>
         <h:form id="frmCompromisoMensual" style="border-radius: 5px 5px 5px 5px;border: 1px; width:1020px;">
+        <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
             <p:panel >
                 <p:panelGrid columns="2" styleClass="panel">
                     <p:graphicImage url="img/Bd.png" />
@@ -29,7 +30,7 @@
                      update="frmCompromisoMensual:dCompAnual" icon="pi pi-plus"
                      title="Click aqui para buscar datos del Certificado Anual"/>
                     <p:commandButton  value="Grabar" action="#{mbCompMensual.registroCompMensual()}" 
-                    icon="pi pi-save" style="height:30px;"/>
+                    icon="pi pi-save" style="height:30px;" ajax="false"/>
                     <p:commandButton value="Cancelar" action="#{mbCompMensual.retornar()}"
                     icon="pi pi-arrow-left" style="height:30px;"/>
                 </p:panelGrid>

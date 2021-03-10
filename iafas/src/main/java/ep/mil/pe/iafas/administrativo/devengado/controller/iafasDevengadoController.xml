@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="DevengadoRet">
+	<resultMap id="devret" type="DevengadoRet" />
+
+	<select id="grabarDevengado"
+		parameterType="ep.mil.pe.iafas.administrativo.devengado.model.IafasDevengado"
+		statementType="CALLABLE">
+		{ CALL SP_REGISTRO_DEVENGADO (
+		#{vano mode=IN, jdbcType=VARCHAR},
+		#{vglosa mode=IN, jdbcType=VARCHAR},
+		#{vfuenteFinanciamiento mode=IN, jdbcType=VARCHAR},
+		#{vcodTipoFuncionamiento mode=IN, jdbcType=VARCHAR},
+		#{vcodEstado mode=IN, jdbcType=VARCHAR},
+		#{ntipCam mode=IN, jdbcType=DECIMAL},
+		#{vcodMoneda mode=IN, jdbcType=VARCHAR},
+		#{vtipDocumentoMen mode=IN,jdbcType=VARCHAR},
+		#{vnroDocumentoMen mode=IN, jdbcType=VARCHAR},
+		#{vanoDocumento mode=IN, jdbcType=VARCHAR},
+		#{vcodProcesoSel mode=IN,jdbcType=VARCHAR},
+		#{cproveedorRuc mode=IN, jdbcType=VARCHAR},
+		#{vtipDocumentoCom mode=IN, jdbcType=VARCHAR},
+		#{vnroDocumentoCom mode=IN, jdbcType=VARCHAR},
+		#{vserieCom mode=IN, jdbcType=VARCHAR},
+		#{dfechaDevengado mode=IN, jdbcType=DATE},
+		#{vusuarioIng mode=IN,jdbcType=VARCHAR},
+		#{vexpediente mode=IN, jdbcType=VARCHAR})}
+
+	</select>
+
+	<select id="grabarDevengadoDet"
+		parameterType="ep.mil.pe.iafas.administrativo.devengado.model.IafasDevengadoDet"
+		statementType="CALLABLE">
+		{ CALL SP_REGISTRO_DEVENGADO_DET(
+		#{vano mode=IN,jdbcType=VARCHAR},
+		#{vcodSecFunc, mode=IN,jdbcType=VARCHAR},
+		#{vidClasificador, mode=IN,jdbcType=VARCHAR},
+		#{nimpMonSol, mode=IN,jdbcType=DECIMAL},
+		#{vusuarioIng, mode=IN,jdbcType=VARCHAR})}
+
+	</select>
+
+	<select id="grabarDevengadoRetencion"
+		parameterType="ep.mil.pe.iafas.administrativo.devengado.model.IafasComprobanteRetencion"
+		statementType="CALLABLE">
+		{ CALL SP_DEVENGADO_RETENCION(
+		#{vano mode=IN,jdbcType=VARCHAR},
+		#{vtipDocumentoCom, mode=IN,jdbcType=VARCHAR},
+		#{vnroCom, mode=IN,jdbcType=VARCHAR},
+		#{vserieCom, mode=IN,jdbcType=DECIMAL},
+		#{vexpediente, mode=IN,jdbcType=VARCHAR},
+		#{vsecuencia, mode=IN,jdbcType=VARCHAR},
+		#{vcodImp, mode=IN,jdbcType=VARCHAR},
+		#{nporImp, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioIng, mode=IN,jdbcType=VARCHAR})}
+		   
+
+	</select>
+	
+	<select id="verRetencion"
+		resultType="ep.mil.pe.iafas.administrativo.devengado.model.IafasComprobanteRetencion"
+		parameterType="ep.mil.pe.iafas.administrativo.devengado.model.IafasComprobanteRetencion">
+		SELECT 
+		 vtip_documento_com vtipDocumentoCom,
+		 vcod_imp vcodImp,
+		 por_imp nporImp,
+		 nimp_ret_sol importeRetencion
+		 FROM iafas_ret_comprobante WHERE 
+		 vtip_documento_com=#{vtipDocumentoCom} 
+		 AND vserie_com=#{vserieCom} AND vnro_com=#{vnroCom} AND vruc=#{ruc} 
+		
+	</select>
+    <select id="dropDevengado"
+		parameterType="ep.mil.pe.iafas.administrativo.devengado.model.IafasDevengado"
+		statementType="CALLABLE">
+		{ CALL SP_DROP_DEVENGADO(
+		#{vano mode=IN, jdbcType=VARCHAR},
+		#{secuencia, mode=IN,jdbcType=VARCHAR},
+		#{vexpediente, mode=IN,jdbcType=VARCHAR})}
+		</select>
+</mapper>

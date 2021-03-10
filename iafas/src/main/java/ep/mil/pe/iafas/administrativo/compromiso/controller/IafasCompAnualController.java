@@ -57,7 +57,9 @@ public class IafasCompAnualController implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private static final Logger logger = Logger.getLogger(IafasCompAnualController.class);
-
+	
+	IafasCompromisoAnualDetDao compAnualDetDao = new IafasCompromisoAnualDetDao(MySQLSessionFactory.getSqlSessionFactory());
+	IafasCompromisoAnualDao compAnualDao = new IafasCompromisoAnualDao(MySQLSessionFactory.getSqlSessionFactory());
 	public IafasCompAnualController() {
 		// TODO Auto-generated constructor stub
 		//listarCompAnualCab();
@@ -68,7 +70,6 @@ public class IafasCompAnualController implements Serializable {
 		lista = new ArrayList<IafasCompromisoAnual>();
 		try {
 			 IafasCompromisoAnual ca = new IafasCompromisoAnual();
-			IafasCompromisoAnualDao compAnualDao = new IafasCompromisoAnualDao(MySQLSessionFactory.getSqlSessionFactory());
 			ca.setVanoDocumento(periodo);
 			ca.setVnroCertificado(certificado);
 			List<IafasCompromisoAnual> compromiso = compAnualDao.listaCompromisoAnual(ca);			
@@ -92,7 +93,6 @@ public class IafasCompAnualController implements Serializable {
 			  psecuencia = (String) extContext().getRequestParameterMap().get("p_secuencia");
 			  pcorrelativo = (String) extContext().getRequestParameterMap().get("p_correlativo");
 			 IafasCompromisoAnual ca = new IafasCompromisoAnual();
-			 IafasCompromisoAnualDao compAnualDao = new IafasCompromisoAnualDao(MySQLSessionFactory.getSqlSessionFactory());
 			 ca.setVanoDocumento(periodo);
 			 ca.setVnroCertificado(certificado);
 			 ca.setVsecuenciaA(psecuencia);
@@ -119,7 +119,6 @@ public class IafasCompAnualController implements Serializable {
 		listaCertDet = new ArrayList<IafasCompromisoAnualDet>();
 		try {
 			IafasCompromisoAnualDet ca = new IafasCompromisoAnualDet();
-			IafasCompromisoAnualDetDao compAnualDetDao = new IafasCompromisoAnualDetDao(MySQLSessionFactory.getSqlSessionFactory());
 			ca.setVanoDocumento(periodo);
 			ca.setVnroCertificado(certificado);
 			List<IafasCompromisoAnualDet> compromiso = compAnualDetDao.listaCompromisoAnualDet(ca);			
@@ -147,10 +146,10 @@ public class IafasCompAnualController implements Serializable {
 
 	public String grabarCompAnual() {
 		int reg = 0;
+		logger.info("Ingreso al Metodo Grabar Anual");
 		 IafasCompromisoAnual ca = new IafasCompromisoAnual();
-		 IafasCompromisoAnualDao compAnualDao = new IafasCompromisoAnualDao(MySQLSessionFactory.getSqlSessionFactory());
 		 IafasCompromisoAnualDet det = new IafasCompromisoAnualDet();
-		 IafasCompromisoAnualDetDao compAnualDetDao = new IafasCompromisoAnualDetDao(MySQLSessionFactory.getSqlSessionFactory());
+		 
 		 
 		 ca.setVanoDocumento(periodo);
 		 ca.setVnroCertificado(certificado);
@@ -170,7 +169,7 @@ public class IafasCompAnualController implements Serializable {
 		 ca.setVglosa(concepto);
 		 ca.setNimpMonSol(BigDecimal.ZERO);
 		 reg = compAnualDao.grabarCompAnual(ca);
-		 System.out.println("Valos "+reg);
+		 logger.info("Inserto Compronmiso Anual {} " +certificado);
 		 for(int j =0;j<getListaCertDet().size();j++){
 				 det.setVanoDocumento(periodo);
 				 det.setVnroCertificado(certificado);
@@ -184,7 +183,9 @@ public class IafasCompAnualController implements Serializable {
 					 if(getListaCertDet().get(j).getNimpMontoSol().doubleValue() < getListaCertDet().get(j).getMontoIngresado().doubleValue()) {
 						 FacesContext.getCurrentInstance().addMessage(null, new 
 					     FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR!", "El Monto Ingresado Excede al Saldo del Clasificador!"));
-					   return "insRegCompAnual";
+						 deleteCompAnual();
+						 logger.info("Se elimino Compromiso Anual sin Detalle");
+						 return "insRegCompAnual";
 					 }
 					 else {
 						 compAnualDetDao.grabarCompAnualDet(det);
@@ -210,7 +211,6 @@ public class IafasCompAnualController implements Serializable {
 		try {
 
 			IafasCompromisoAnual ca = new IafasCompromisoAnual();
-			IafasCompromisoAnualDao compAnualDao = new IafasCompromisoAnualDao(MySQLSessionFactory.getSqlSessionFactory());
 			ca.setVanoDocumento(periodo);
 			ca.setVnroCertificado(certificado);
 			ca.setVsecuenciaA(psecuencia);
@@ -235,6 +235,15 @@ public class IafasCompAnualController implements Serializable {
 		nroDoc="";
 		fecDocumento = null;
 		tipDocumentoA = "";
+	}
+	
+	public int deleteCompAnual() {
+		int d =0;
+		IafasCompromisoAnual ca = new IafasCompromisoAnual();
+		ca.setVanoDocumento(periodo);
+		ca.setVnroCertificado(certificado);
+		d = compAnualDao.deleteCompAnual(ca);
+		return d;
 	}
 	
     private ExternalContext extContext() {

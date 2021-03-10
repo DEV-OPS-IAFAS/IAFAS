@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
@@ -45,7 +46,7 @@ public class IafasCompMensualController implements Serializable{
 	private double ntipCam;
 	private String codProcesoSel;
 	private String ruc;
-	private String  razonSocial;
+	private String razonSocial;
 	private String vcodMoneda;
 	private String vanoDocumentoA;
 	private String vsecuenciaA;
@@ -60,6 +61,7 @@ public class IafasCompMensualController implements Serializable{
 
 	public IafasCompMensualController() {
 		// TODO Auto-generated constructor stub
+		listadoMensual();
 	}
 	
 	public List<IafasCompromisoMensual> listadoMensual(){
@@ -126,7 +128,7 @@ public class IafasCompMensualController implements Serializable{
 	    return page;
 	}
 
-	public int registroCompMensual() {
+	public String registroCompMensual() {
 		int reg =0;
 		try {
 			IafasCompromisoMensual men = new IafasCompromisoMensual();
@@ -154,23 +156,33 @@ public class IafasCompMensualController implements Serializable{
 			men.setVusuarioIng("44330586");
 			mensualDao.registroCompMensual(men);
 			for(int j =0;j <regAnualDet.size(); j++) {
-				if(regAnualDet.get(j).getMontoIngresado()!=null || regAnualDet.get(j).getMontoIngresado().doubleValue()>0) {
 					det.setVano(periodo);
 					det.setVcodSecFunc(regAnualDet.get(j).getVcodSecFunc());
 					det.setVidClasificador(regAnualDet.get(j).getVidClasificador());
 					det.setNimpMonSol(regAnualDet.get(j).getMontoIngresado());
 					det.setVusuarioIng("44330586");
-					mensualDao.registroCompMensualDet(det);
+				if(getRegAnualDet().get(j).getMontoIngresado().doubleValue()>0) {
+					if(getRegAnualDet().get(j).getNimpMontoSol().doubleValue() < getRegAnualDet().get(j).getMontoIngresado().doubleValue()) {
+						 FacesContext.getCurrentInstance().addMessage(null, new 
+					     FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR!", "El Monto Ingresado Excede al Saldo del Clasificador!"));
+						 deleteCompromisoMensual();
+						 return "insRegCompMensual";
+					}
+					else {
+						mensualDao.registroCompMensualDet(det);
+					}
+				}	
+					
 				}
-			}
 			
 			retornar();
+			
 		}
 		catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("Error: "+e.getMessage());
 		}
-		return reg;
+		return "";
 	}
 	
 	public int enviarCompromisoMensual() {
@@ -185,6 +197,24 @@ public class IafasCompMensualController implements Serializable{
 			ca.setVusuarioIng("44330686");
 			
 			envio = mensualDao.enviarCompromisoMensual(ca);
+		}
+		catch (Exception e) {
+			System.out.println("Error Envio : "+e.getMessage());
+		}
+
+		return envio;
+	}
+	
+	public int deleteCompromisoMensual() {
+		int envio = 0;
+		try {
+
+			IafasCompromisoMensual ca = new IafasCompromisoMensual();
+			ca.setVano(periodo);
+			ca.setSecuencia("");
+			ca.setVexpediente("");
+			
+			envio = mensualDao.dropCompromisoMensual(ca);
 		}
 		catch (Exception e) {
 			System.out.println("Error Envio : "+e.getMessage());

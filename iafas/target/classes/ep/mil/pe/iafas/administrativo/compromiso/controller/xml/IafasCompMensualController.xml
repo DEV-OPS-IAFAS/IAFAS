@@ -10,6 +10,7 @@
 	  
 	  SELECT m.vsecuencia secuencia, m.vsecuencia_int correlativo, 
 	  m.vreg_siaf vexpediente,
+	  det.vnro_certificado vnroCertificado,
       CASE m.vcod_estado WHEN '1' THEN 'REG' WHEN '2' THEN 'AP' END vcodEstado,
       det.vtip_documento_men vtipDocumentoMen, 
       det.vnro_documento_men vnroDocumentoMen,
@@ -50,8 +51,7 @@
 		#{dfechaDevengado mode=IN, jdbcType=DATE},
 		#{vusuarioIng mode=IN, jdbcType=VARCHAR})}
 	</select>
-
-    
+	  
 	<select id="grabarMensualDet"
 		parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensualDet"
 		statementType="CALLABLE">
@@ -63,4 +63,25 @@
 		#{vusuarioIng, mode=IN,jdbcType=VARCHAR})}
 
 	</select>
+	
+	<select id="enviarCompromisoMensual"
+		parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensual"
+		statementType="CALLABLE">
+		{ CALL SP_ENVIAR_COMP_MENSUAL(
+		#{vano mode=IN, jdbcType=VARCHAR},
+		#{secuencia, mode=IN,jdbcType=VARCHAR},
+		#{correlativo, mode=IN,jdbcType=VARCHAR},
+		#{vexpediente, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioIng, mode=IN,jdbcType=VARCHAR})}
+
+	</select>
+	
+		<select id="dropCompromisoMensual"
+		parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensual"
+		statementType="CALLABLE">
+		{ CALL SP_DROP_COMP_MENSUAL(
+		#{vano mode=IN, jdbcType=VARCHAR},
+		#{secuencia, mode=IN,jdbcType=VARCHAR},
+		#{vexpediente, mode=IN,jdbcType=VARCHAR})}
+		</select>
 </mapper>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>IAFAS</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link href="css/estilos.css" rel="stylesheet" type="text/css" />
+</h:head>
+<body class="formulario">
+<script>
+            function limpiarTexto() {
+                document.getElementById('frmDevengado:txt_nroSiaf').value = "";
+            }
+            
+            function completaCeros(obj, tam) {
+                var txt = document.getElementById(obj).value;
+                var tamTxt = txt.length;
+                var i;
+                for (i = tam; i > tamTxt; i--)
+                    txt = '0' + txt;
+                document.getElementById(obj).value = txt;
+            }  
+</script>
+	<h:form id="frmDevengado">
+	<p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
+		<p:panel>
+			<p:panelGrid columns="8">
+				<i class="pi pi-money-bill"></i>
+				<h:outputLabel value="Registro de Devengados" style="color: green; font-weight: bold; font-size: 12px;"></h:outputLabel>
+				<h:outputText value="N° Expediente : "></h:outputText>
+				<h:inputText  id="txt_nroSiaf" value="#{mbDevengado.vexpediente}"   
+							 styleClass="input" onblur="completaCeros(this.name, 10);"></h:inputText>
+				<p:commandButton id="cmdBtnBuscar"  value="Buscar" action="#{mbDevengado.verMensuales()}"
+                     style="height:30px;" ajax="false" update="frmDevengado:fieldCompromiso" 
+                     icon="pi pi-plus" onblur="completaCeros(this, 10);"
+                     title="Click aqui para buscar datos del Devengado"/>
+				<p:commandButton  value="Grabar"  action="#{mbDevengado.registroDevengado()}"
+                    icon="pi pi-save" style="height:30px;" ajax="false"/>
+                    <p:commandButton value="Cancelar" action="#{mbDevengado.retornar()}"
+                    icon="pi pi-arrow-left" style="height:30px;"/>
+			</p:panelGrid>
+			<p:outputLabel
+				style="color: green; font-weight: bold; font-size:11px;" />
+			<br />
+			<p:fieldset legend="Datos del Compromiso Mensual" id="fieldCompromiso" >
+			        	<h:panelGrid columns="4" border="0" style="width: 966px; ">
+			
+						</h:panelGrid>
+					    <h:panelGrid columns="4" style="width: 966px; ">
+						<h:outputLabel value="Tip.Documento:" />
+						<h:outputLabel value="#{mbDevengado.vtipoDocumento}" styleClass="outLabel" />
+						<h:outputLabel value="Nro.Documento:" />
+						<h:outputLabel value="#{mbDevengado.nroDocumento}" styleClass="outLabel" />
+						<h:outputLabel value="Fecha Comp.Mensual:" />
+                        <h:inputText id="txt_fechaCert" size="10" styleClass="outLabel" value="#{mbDevengado.fechaCom}"
+                        readonly="true">
+                                <f:converter converterId="javax.faces.DateTime" />
+                                <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
+                        </h:inputText>
+						<h:outputLabel value="Modalidad Compra:" ></h:outputLabel>
+						<h:outputText value="OM" styleClass="outLabel"></h:outputText>
+						<h:outputLabel value="Tipo Proc. Sel.:" ></h:outputLabel>
+						 <p:selectOneMenu id="procesoSel"  value="#{mbDevengado.vcodProcesoSel}" style="width: 240px"  disabled="true" >
+                         <f:selectItems var="documentos" value="#{mbCombos.procesoSel}" />
+                        </p:selectOneMenu>
+						<h:outputLabel value="Ruc.:" ></h:outputLabel>
+						<h:outputText value="#{mbDevengado.ruc} - #{mbDevengado.desRuc} " styleClass="outLabel"></h:outputText>    
+						 <p:outputLabel value="Moneda:"/>
+                        <p:selectOneMenu id="tipMon"  value="#{mbDevengado.vcodMoneda}">
+                 			<f:selectItem itemValue="1" itemLabel="S/."></f:selectItem>
+			                <f:selectItem itemValue="2" itemLabel="USD"></f:selectItem>
+			                <f:selectItem itemValue="3" itemLabel="EURO"></f:selectItem>
+			                <f:selectItem itemValue="57" itemLabel="Y"></f:selectItem>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="T.Cambio:"/>
+                        <h:inputText id="tipcam" style="width: 50px; text-align: right;" 
+                        styleClass="input" value="#{mbDevengado.ntipCam}" readonly="true"/>
+						</h:panelGrid> 
+			
+			 </p:fieldset>
+					    
+					  <p:fieldset legend="Datos del Devengado" >
+					    <h:panelGrid columns="8" border="0">
+					    <h:outputText value="Tipo Doc:"  ></h:outputText>
+							<h:selectOneMenu id="SelOneMnu_af" value="#{mbDevengado.tipDocCom}" style="width: 300px;"
+							 styleClass="select">
+						    <f:selectItem itemValue="0000" itemLabel="--Seleccione--" />
+						       <f:selectItem itemValue="001" itemLabel="Factura" />
+						      <f:selectItem itemValue="002" itemLabel="Boleta de Venta" />
+						      
+						</h:selectOneMenu>
+							<h:outputText value="N° Serie:"></h:outputText>
+							<h:inputText  id="txt_serie" value="#{mbDevengado.nroSerieCom}" maxlength="4" 
+							 styleClass="input"
+							></h:inputText>
+							<h:outputText value="N° Comprobante:"></h:outputText>
+							<h:inputText id="txt_numDoc" value="#{mbDevengado.nroDocCom}" styleClass="input" size="11" 
+							 maxlength="11" >
+							 </h:inputText>
+							   
+							<h:outputText value="Fecha:"></h:outputText>
+							<h:panelGrid columns="2" border="0">
+							<p:inputMask id="txt_fecDocPago" mask="99/99/9999" value="#{mbDevengado.fecDocCom}"
+							styleClass="input"
+							style="width:100px; font-weight: bold; color: Black">
+							<f:converter converterId="javax.faces.DateTime" />
+							<f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
+							</p:inputMask>
+							
+							</h:panelGrid>
+							 </h:panelGrid>
+							  <h:panelGrid columns="2">
+							 <h:outputText value="Glosa: "></h:outputText>
+					       	<h:inputTextarea styleClass="input" id="txt_Area_notas1"  
+					       	 value="#{mbDevengado.glosa}" style="width: 800px;" >
+					    	</h:inputTextarea>
+					    </h:panelGrid>
+ </p:fieldset>
+ 
+  <h:panelGrid>
+                    <p:dataTable id="dTableCla"  value="#{mbDevengado.listaDet}"  var="cad" editable="true"
+                    editMode="cell">
+                        <p:column headerText="Sec.Func." style="width: 30px;">
+                            <p:outputLabel value="#{cad.secFun}" />
+                        </p:column>
+                        <p:column headerText="Clasif." style="width: 35px;">
+                            <p:outputLabel  value="#{cad.cadena}" />
+                        </p:column>
+                        <p:column headerText="Descripción" style="width: 350px;">
+                            <p:outputLabel  value="#{cad.nomCla}" />
+                        </p:column>
+                        <p:column headerText="Monto" style="width: 35px;">
+                            <p:outputLabel value="#{cad.impSol}"  style="text-align:right">
+                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>  
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Monto Ingresado" style="width: 50px; text-align: right;" >
+                          <p:cellEditor >
+                                <f:facet name="output">
+                                    <p:outputLabel  value="#{cad.montoIngresado}" style="text-align: right;">
+                                      <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>  
+                                   </p:outputLabel>
+                                </f:facet>
+                             <f:facet name="input" >
+                                 <p:inputText style="width: 65px; text-align: right" value="#{cad.montoIngresado}"  label="Monto"/>
+                            </f:facet>                            
+                            </p:cellEditor>                              
+                        </p:column>                     
+                    </p:dataTable>
+                </h:panelGrid>
+		</p:panel>
+	</h:form>
+</body>
+</html>

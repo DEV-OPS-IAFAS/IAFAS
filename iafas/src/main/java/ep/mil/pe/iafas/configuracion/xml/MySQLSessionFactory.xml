@@ -25,7 +25,11 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
        <typeAlias alias="IafasGirado" 		type="ep.mil.pe.iafas.administrativo.girado.model.IafasGirado"/>
        <typeAlias alias="IafasAreasLaboral" 		type="ep.mil.pe.iafas.seguridad.model.IafasAreasLaboral"/>
        <typeAlias alias="IafasMovimientoCadenas" 		type="ep.mil.pe.iafas.administrativo.girado.model.IafasMovimientoCadenas"/>
-       									
+       <typeAlias alias="VCompromiso" 		type="ep.mil.pe.iafas.administrativo.devengado.model.IafasCompromiso"/>		
+       <!--  <typeAlias alias="VCompromiso" 		type="ep.mil.pe.iafas.administrativo.devengado.model.IafasCompromisoDet"/> -->
+       <typeAlias alias="DevengadoRet" 		type="ep.mil.pe.iafas.administrativo.devengado.model.IafasDevengado"/>	
+      <typeAlias alias="ComprobanteRetencion" 		type="ep.mil.pe.iafas.administrativo.devengado.model.IafasComprobanteRetencion"/>	
+       
     </typeAliases>
 
      <environments default="development">
@@ -36,7 +40,7 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
                 <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
                 <property name="url" value="jdbc:mysql://localhost:3306/iafas"/>
                 <property name="username" value="root"/>
-                <property name="password" value="esc240789"/>
+                <property name="password" value="iafas"/>
             </dataSource>
        </environment>
     </environments>
@@ -53,6 +57,8 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
         <mapper resource="ep/mil/pe/iafas/administrativo/girado/xml/IafasGirado.xml" />
         <mapper resource="ep/mil/pe/iafas/seguridad/xml/IafasAreasLaboral.xml" />         
 		<mapper resource="ep/mil/pe/iafas/administrativo/girado/xml/IafasMovimientoCadenas.xml" />
+		<mapper resource="ep/mil/pe/iafas/administrativo/devengado/controller/IafasVCompromisoController.xml" />
+		<mapper resource="ep/mil/pe/iafas/administrativo/devengado/controller/iafasDevengadoController.xml" />
     </mappers>
 
 </configuration>
