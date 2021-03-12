@@ -112,31 +112,26 @@
 		</p:panel>
 		<p:panel header="Retenciones Encontradas" >
 			<p:dataTable id="dTableGiradoRetencion" var="tblGiradoRet"
-				value="#{iafasGiradoController.listaPorGirarCadenas}"
-				style="font-size:11px;" emptyMessage="No se encontro Usuarios registrados">
+				value="#{iafasGiradoController.listaRetencionesPorGirar}"
+				style="font-size:11px;" emptyMessage="No se encontro Retenciones registradas">
 
 				<p:column style="width:2px;" headerText="Codigo Retencion">
-					<p:outputLabel value="#{tblGiradoRet.vcodCla}" />
+					<p:outputLabel value="#{tblGiradoRet.vcodImp}" />
 				</p:column>
 				
 				<p:column style="width:2px;" headerText="Retencion">
-					<p:outputLabel value="#{tblGiradoRet.cadena}" />
+					<p:outputLabel value="#{tblGiradoRet.descRetencion}" />
 				</p:column>
 				
 				<p:column style="width:2px;" headerText="% Retencion">
-					<p:outputLabel value="#{tblGiradoRet.desCadena}" />
+					<p:outputLabel value="#{tblGiradoRet.nporImp}" />
 				</p:column>
 				
 				<p:column headerText="Importe Retenido" style="width: 2px;" 
 					filterMatchMode="contains">
-					<p:outputLabel value="#{tblGiradoRet.vcodSecFun}" />
+					<p:outputLabel value="#{tblGiradoRet.importeRetencion}" />
 				</p:column>
 				
-				<p:column headerText="Importe Retenido" style="width: 2px;" 
-					filterMatchMode="contains">
-					<p:outputLabel value="#{tblGiradoRet.impSolCad}" />
-				</p:column>
-
 			</p:dataTable>
 		</p:panel>
 

@@ -19,6 +19,10 @@ public class IafasComprobanteRetencion {
 	private String vusuarioIng;
 	private String ruc;
 	
+	/*Metodo agregado por Elvis Severino*/
+	private String vnroCompag;
+	private String descRetencion;
+	
 	public IafasComprobanteRetencion() {
 		// TODO Auto-generated constructor stub
 	}

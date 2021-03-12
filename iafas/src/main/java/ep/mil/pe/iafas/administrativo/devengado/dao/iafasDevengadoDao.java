@@ -155,4 +155,22 @@ public class iafasDevengadoDao {
 		       }
 			return reg;
 		}
+		
+		/*Metodo agregado por Elvis Severino*/
+		@SuppressWarnings("unchecked")
+		public List<IafasComprobanteRetencion> obtenerRetencionesparaGiro(IafasComprobanteRetencion ret) {
+			
+	        List<IafasComprobanteRetencion> lista = null;
+	        SqlSession session = sqlSessionFactory.openSession();
+	        try{
+	              lista = session.selectList("DevengadoRet.obtenerRetencionesparaGiro",ret);
+	        }
+	        catch(Exception e) {
+	        	e.printStackTrace();
+	        }
+	        finally{
+	             session.close();
+	        }
+	        return lista;
+		}
 }

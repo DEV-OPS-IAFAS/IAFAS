@@ -14,7 +14,8 @@
 		cab.NTIP_CAM AS ntipCam, cab.NIMP_MON_SOL AS impMonSol, cab.NIMP_MON_EXT AS impMonExt , cab.VTIP_MON AS vtipMon,  
 		cab.VGLOSA AS vglosa, dev.CPROVEEDOR_RUC AS vruc , 
 		(SELECT pv.CPROVEEDOR_CCI FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS vcci, 
-		(SELECT pv.CPROVEEDOR_CUENTA_BANCO FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS cproveedorCuentaBanco
+		(SELECT pv.CPROVEEDOR_CUENTA_BANCO FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS cproveedorCuentaBanco,
+		dev.VTIP_DOCUMENTO_COM AS vtipDocumentoCom ,dev.vserie_com AS vserieCom,dev.VNRO_DOCUMENTO_COM  AS vnroCom
 		FROM iafas_movimiento cab, iafas_devengado dev
 		where 
 		cab.VANO=dev.VANO AND

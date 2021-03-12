@@ -1,0 +1,2 @@
+ALTER TABLE `iafas`.`iafas_ret_comprobante` 
+ADD COLUMN `VNRO_COM_PAG` VARCHAR(10) NULL AFTER `VSECUENCIA`;

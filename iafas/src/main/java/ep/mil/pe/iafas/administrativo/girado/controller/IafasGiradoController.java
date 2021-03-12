@@ -13,6 +13,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
+import ep.mil.pe.iafas.administrativo.devengado.dao.iafasDevengadoDao;
+import ep.mil.pe.iafas.administrativo.devengado.model.IafasComprobanteRetencion;
 import ep.mil.pe.iafas.administrativo.girado.dao.IafasGiradoDao;
 import ep.mil.pe.iafas.administrativo.girado.dao.IafasMovimientoCadenasDao;
 import ep.mil.pe.iafas.administrativo.girado.model.IafasGirado;
@@ -42,6 +44,7 @@ public class IafasGiradoController implements Serializable{
 	private List<IafasGirado> listaGirados = new ArrayList<IafasGirado>();
 	private List<IafasMovimientoCadenas> listaPorGirarCadenas = new ArrayList<IafasMovimientoCadenas>();
 	private List<IafasMovimientoCadenas> listaGiradasCadenas = new ArrayList<IafasMovimientoCadenas>();
+	private List<IafasComprobanteRetencion> listaRetencionesPorGirar = new ArrayList<IafasComprobanteRetencion>();
 	private boolean muestraBotonGiro = false;
 	private BigDecimal ntipCam;
 	private String ctaCte;
@@ -117,6 +120,7 @@ public class IafasGiradoController implements Serializable{
 			setImpMonSol(null);
 		}
 		obtenerCadenasPorGirar();
+		obtenerRetencionesparaGiro();
 		logger.info("[FIN:] Metodo : buscarPorSiafAno");
 		return listaPorGirar;
 	}
@@ -172,6 +176,28 @@ public class IafasGiradoController implements Serializable{
 		logger.info("[FIN:] Metodo : obtenerCadenasPorGirar");
 	}
 	
+	public void obtenerRetencionesparaGiro() {
+		logger.info("[INICIO:] Metodo : obtenerRetencionesparaGiro");
+
+		this.listaRetencionesPorGirar = new ArrayList<>();
+		if (this.listaRetencionesPorGirar != null)
+			this.listaRetencionesPorGirar.clear();
+
+		iafasDevengadoDao objDao = new iafasDevengadoDao(MySQLSessionFactory.getSqlSessionFactory());
+		IafasComprobanteRetencion objBn = new IafasComprobanteRetencion();
+		objBn.setVano(vano);
+		objBn.setVexpediente(vregSiaf);
+				
+		List<IafasComprobanteRetencion> lsts = objDao.obtenerRetencionesparaGiro(objBn);
+
+		if (lsts.size() > 0 || lsts != null) {
+			for (IafasComprobanteRetencion obj : lsts) {
+				listaRetencionesPorGirar.add(obj);
+			}
+		}
+		logger.info("[FIN:] Metodo : obtenerRetencionesparaGiro");
+		
+	}
 	
 	public String insRegistroGiradoCab() {
 		String retorno=Constantes.VACIO;
@@ -197,13 +223,13 @@ public class IafasGiradoController implements Serializable{
 		objBn.setVusuarioIng(codUsu);
 
 		try {
-			//if(validarRegistroGiro()) {
+			//if (validarRegistroGiro()) {
 				int i = giradoDao.mantenimientoGiradoCab(objBn);
 				if (i == 0) {
 					setMsgSP("Tu registro de giro se realizó con éxito");
 					retorno = "mainIafasConsultaGirados.xhtml";
 				}
-	//	}
+			//}
 		} catch (Exception e) {
 			logger.error("error : " + e.getMessage().toString());
 		} finally {
@@ -215,23 +241,20 @@ public class IafasGiradoController implements Serializable{
 	}
 
 	private boolean validarRegistroGiro() {
-		
+
 		logger.info("[INICIO:] Metodo : validarRegistroGiro:::");
 
-		if (!Constantes.UNO_STRING.equals(tipMon)
-				&& Constantes.UNO_BG.equals(ntipCam)) {
-			setMsgValidacion("Debe registrar un tipo de cambio correspondiente a la moneda seleccionada");
-			pasoValidacion = false;
-			return pasoValidacion;
-		} 
-		
+		logger.info(ntipCam);
 		if (Constantes.UNO_STRING.equals(tipMon) && !Constantes.UNO_BG.equals(ntipCam)) {
 			setMsgValidacion("No puede ingresar un tipo de Cambio diferente a 1, ya que el tipo de Moneda es Soles");
 			pasoValidacion = false;
-			return pasoValidacion;
-		} 
-		
-		logger.info("[FIN:] Metodo : validarRegistroGiro:::"+pasoValidacion);
+
+		} else if (!Constantes.UNO_STRING.equals(tipMon) && Constantes.UNO_BG.equals(ntipCam)) {
+			setMsgValidacion("Debe registrar un tipo de cambio correspondiente a la moneda seleccionada");
+			pasoValidacion = false;
+		}
+
+		logger.info("[FIN:] Metodo : validarRegistroGiro:::" + pasoValidacion);
 		return pasoValidacion;
 	}
 	
