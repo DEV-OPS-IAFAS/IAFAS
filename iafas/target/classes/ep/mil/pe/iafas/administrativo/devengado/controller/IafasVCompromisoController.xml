@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="VCompromiso">
+	<resultMap id="vcompromiso" type="VCompromiso" />
+
+	<select id="listado"
+		resultType="ep.mil.pe.iafas.administrativo.devengado.model.IafasCompromiso"
+		parameterType="ep.mil.pe.iafas.administrativo.devengado.model.IafasCompromiso">
+		SELECT m.vsecuencia secuencia, m.vsecuencia_int correlativo,
+		m.vreg_siaf vexpediente,
+		CASE m.vcod_estado WHEN '1' THEN 'REG' WHEN '2' THEN 'AP' END vcodEstado,
+		det.vtip_documento_men vtipDocumentoMen,
+		det.vnro_documento_men vnroDocumentoMen,
+		det.dfecha_documento_men dfechaDocumento,
+		det.vnro_certificado vnroCertificado,
+		pk_util_razon_social(det.cproveedor_ruc) razonSocial,
+		det.cproveedor_ruc cproveedorRuc,
+		det.vcod_proceso_sel vcodProcesoSel,
+		m.nimp_mon_sol nimpMonSol,
+		m.ntip_cam ntipCam, m.vtip_mon vcodMoneda
+		FROM iafas_movimiento m INNER JOIN iafas_compromiso_mensual det ON (
+		m.vano = det.vano AND
+		m.vsecuencia = det.vsecuencia AND
+		m.vsecuencia_int = det.vsecuencia_int)
+		WHERE m.vano=#{vano} and m.vreg_siaf=#{vexpediente}
+	</select>
+
+
+	<select id="listadoDet"
+		resultType="ep.mil.pe.iafas.administrativo.devengado.model.IafasCompromisoDet"
+		parameterType="ep.mil.pe.iafas.administrativo.devengado.model.IafasCompromisoDet">
+
+		SELECT mov.vano vano,
+		mov.vreg_siaf vexpediente,
+		men.vcod_sec_func secFun,
+		men.vid_clasificador idClasificador,
+		(men.nimp_mon_sol - PK_TOTAL_DEVENGADO(mov.vano,mov.vreg_siaf,mov.vsecuencia,
+		men.vcod_sec_func,men.vid_clasificador)) impSol,
+		mov.vsecuencia secuencia,
+		mov.vsecuencia_int secInt,
+		mov.ntip_cam tipoCam,
+		mov.vtip_mon tipMon,
+		PK_AUX_CLASIFICADOR( men.vid_clasificador) cadena,
+		PK_AUX_NOM_CLASIFICADOR( men.vid_clasificador) nomCla
+		FROM iafas_movimiento mov INNER JOIN iafas_movimiento_mensual_cad men ON
+		( mov.vano =men.vano AND
+		mov.vsecuencia= men.vsecuencia AND
+		mov.vsecuencia_int = men.vsecuencia_int
+		) WHERE mov.vano=#{vano} AND mov.vreg_siaf=#{vexpediente} AND
+		mov.vfase='C' AND mov.vcod_estado='2'
+
+	</select>
+
+	<select id="listadoConsultaDet"
+		resultType="ep.mil.pe.iafas.administrativo.devengado.model.IafasCompromiso"
+		parameterType="ep.mil.pe.iafas.administrativo.devengado.model.IafasCompromiso">
+
+		SELECT m.vsecuencia secuencia, m.vsecuencia_int correlativo,
+		m.vreg_siaf vexpediente,
+		CASE m.vcod_estado WHEN '1' THEN 'REG' WHEN '2' THEN 'AP' END vcodEstado,
+		det.vtip_documento_com vtipDocumentoCom,
+		det.vnro_documento_com vnroDocumentoCom,
+		det.vserie_com vserieCom,
+		det.dfecha_devengado dfechaDevengado,
+		det.cproveedor_ruc cproveedorRuc,
+		pk_util_razon_social(det.cproveedor_ruc) razonSocial,
+		m.nimp_mon_sol nimpMonSol
+		FROM iafas_movimiento m INNER JOIN iafas_devengado det ON (
+		m.vano = det.vano AND
+		m.vsecuencia = det.vsecuencia AND
+		m.vsecuencia_int = det.vsecuencia_int)
+		WHERE m.vano=#{vano};
+
+	</select>
+
+	<select id="verDevengado"
+		resultType="ep.mil.pe.iafas.administrativo.devengado.model.IafasCompromiso"
+		parameterType="ep.mil.pe.iafas.administrativo.devengado.model.IafasCompromiso">
+
+		SELECT m.vsecuencia secuencia, m.vsecuencia_int correlativo,
+		m.vreg_siaf vexpediente,
+		CASE m.vcod_estado WHEN '1' THEN 'REG' WHEN '2' THEN 'AP' END vcodEstado,
+		det.vtip_documento_com vtipDocumentoCom,
+		det.vnro_documento_com vnroDocumentoCom,
+		det.vserie_com vserieCom,
+		det.dfecha_devengado dfechaDevengado,
+		det.cproveedor_ruc cproveedorRuc,
+		pk_util_razon_social(det.cproveedor_ruc) razonSocial,
+		m.nimp_mon_sol nimpMonSol
+		FROM iafas_movimiento m INNER JOIN iafas_devengado det ON (
+		m.vano = det.vano AND
+		m.vsecuencia = det.vsecuencia AND
+		m.vsecuencia_int = det.vsecuencia_int)
+		WHERE m.vano=#{vano} and
+		m.vreg_siaf = #{vexpediente} and
+		m.vsecuencia = #{secuencia};
+
+	</select>
+
+
+</mapper>

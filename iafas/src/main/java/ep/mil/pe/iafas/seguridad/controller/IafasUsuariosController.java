@@ -99,7 +99,8 @@ public class IafasUsuariosController implements Serializable {
 				setIdUsuario(usuario.getVusuarioCodigo());
 			}
 			pasoLogin = true;
-			valor = Constantes.MAIN_PRINCIPAL;
+			//valor = Constantes.MAIN_PRINCIPAL;
+			valor = "mainPrincipal2.xhtml";
 		} else {
 			setMsgErr("El Usuario no Existe o no esta Activo!!");
 			valor = Constantes.LOGIN;

@@ -1,18 +1,240 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:c="http://java.sun.com/jsp/jstl/core">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
-    <head>
-        <title>TODO supply a title</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-     
-    </head>
-    <h:body>
-        <center>            
-         <h:graphicImage value="/img/logo_1.png" style="height: 100%; width: 100%; opacity: 0.5;"></h:graphicImage> 
-        </center>
+<head>
+    <title>IAFAS</title>
+   
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    </h:body>
+    <meta name="keywords" content="bootstrap, bootstrap admin template, admin theme, admin dashboard, dashboard template, admin template, responsive" />
+    <meta name="author" content="Codedthemes" />
+    <!-- Favicon icon -->
+    <link rel="icon" href="material_able-main/assets/images/favicon.ico" type="image/x-icon" />
+    <!-- Google font-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet" />
+    <!-- waves.css -->
+    <link rel="stylesheet" href="material_able-main/assets/pages/waves/css/waves.min.css" type="text/css" media="all" />
+    <!-- Required Fremwork -->
+    <link rel="stylesheet" type="text/css" href="material_able-main/assets/css/bootstrap/css/bootstrap.min.css" />
+    <!-- waves.css -->
+    <link rel="stylesheet" href="material_able-main/assets/pages/waves/css/waves.min.css" type="text/css" media="all" />
+    <!-- themify icon -->
+    <link rel="stylesheet" type="text/css" href="material_able-main/assets/icon/themify-icons/themify-icons.css" />
+    <!-- font-awesome-n -->
+    <link rel="stylesheet" type="text/css" href="material_able-main/assets/css/font-awesome-n.min.css" />
+    <link rel="stylesheet" type="text/css" href="material_able-main/assets/css/font-awesome.min.css" />
+    <!-- scrollbar.css -->
+    <link rel="stylesheet" type="text/css" href="material_able-main/assets/css/jquery.mCustomScrollbar.css" />
+    <!-- Style.css -->
+    <link rel="stylesheet" type="text/css" href="material_able-main/assets/css/style.css" />
+</head>
+
+<body>
+    <!-- Pre-loader start -->
+    <div class="theme-loader">
+        <div class="loader-track">
+            <div class="preloader-wrapper">
+                <div class="spinner-layer spinner-blue">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+                <div class="spinner-layer spinner-red">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+
+                <div class="spinner-layer spinner-yellow">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+
+                <div class="spinner-layer spinner-green">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pre-loader end -->
+    <div id="pcoded" class="pcoded">
+        <div class="pcoded-overlay-box"></div>
+        <div class="pcoded-container navbar-wrapper">
+            <nav class="navbar header-navbar pcoded-header">
+                <div class="navbar-wrapper">
+                    <div class="navbar-logo">
+                        <a class="mobile-menu waves-effect waves-light" id="mobile-collapse" href="#!">
+                            <i class="ti-menu"></i>
+                        </a>
+                        <div class="mobile-search waves-effect waves-light">
+                            <div class="header-search">
+                                <div class="main-search morphsearch-search">
+                                    <div class="input-group">
+                                        <span class="input-group-prepend search-close"><i class="ti-close input-group-text"></i></span>
+                                        <input type="text" class="form-control" placeholder="Enter Keyword" />
+                                        <span class="input-group-append search-btn"><i class="ti-search input-group-text"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="index.html">
+                            <img class="img-fluid" src="material_able-main/assets/images/logo.png" alt="LOGO IAFAS" />
+                        </a>
+                        <a class="mobile-options waves-effect waves-light">
+                            <i class="ti-more"></i>
+                        </a>
+                    </div>
+                    <div class="navbar-container container-fluid">
+                        <ul class="nav-left">
+                            <li>
+                                <div class="sidebar_toggle"><a href="javascript:void(0)"><i class="ti-menu"></i></a></div>
+                            </li>
+                            <li>
+                                <a href="#!" onclick="javascript:toggleFullScreen()" class="waves-effect waves-light">
+                                    <i class="ti-fullscreen"></i>
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="nav-right">
+                            <li class="header-notification">
+                                <a href="#!" class="waves-effect waves-light">
+                                    <i class="ti-bell"></i>
+                                    <span class="badge bg-c-red"></span>
+                                </a>
+                               
+                            </li>
+                            <li class="user-profile header-notification">
+                                <a href="#!" class="waves-effect waves-light">
+                                    <img src="material_able-main/assets/images/avatar-4.jpg" class="img-radius" alt="User-Profile-Image" />
+                                    <span>#{iafasUsuariosController.nombreUsuario} #{iafasUsuariosController.APaternoUsuario} #{iafasUsuariosController.AMaternoUsuario}</span>
+                                    <i class="ti-angle-down"></i>
+                                </a>
+                                <ul class="show-notification profile-notification">
+                                    <li class="waves-effect waves-light">
+                                        <a href="#!">
+                                            <i class="ti-settings"></i> Settings
+                                        </a>
+                                    </li>
+                                    <li class="waves-effect waves-light">
+                                    <h:form>
+                                      <h:commandLink action="login.xhtml" actionListener="#{iafasUsuariosMenuController.cerraSession()}"  > <!-- #{iafasUsuariosMenuController.cerraSession()}" -->
+                                            <i class="ti-layout-sidebar-left"></i> Cerrar Session
+                                        </h:commandLink>
+                                     </h:form>   
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="pcoded-main-container">
+                <div class="pcoded-wrapper">
+                    <nav class="pcoded-navbar">
+                        <div class="sidebar_toggle"><a href="#"><i class="icon-close icons"></i></a></div>
+                        <div class="pcoded-inner-navbar main-menu">
+                            
+                            <div class="pcoded-navigation-label">Modificar </div>
+                            <ul class="pcoded-item pcoded-left-item">
+                                <li class="pcoded-hasmenu">
+                                    <a href="javascript:void(0)" class="waves-effect waves-dark">
+                                        <span class="pcoded-micon"><i class="ti-layout-grid2-alt"></i><b>BC</b></span>
+                                        <span class="pcoded-mtext">Menus de Sistema</span>
+                                        <span class="pcoded-mcaret"></span>
+                                    </a>
+                                    <ul class="pcoded-submenu">
+                                        
+                                        <!-- iNSERTAR MENUS -->
+									<c:forEach
+										items="#{iafasUsuariosMenuController.listaMenuNivel1}"
+										var="menuNivel1">
+										<li class=" ">
+											
+											  <span class="pcoded-micon">
+												<i class="ti-angle-right" />
+											  </span> 
+											  <span class="pcoded-mtext">#{menuNivel1.vmoduloNombre}</span>
+											  <span class="pcoded-mcaret" />
+											  <c:forEach  items="#{iafasUsuariosMenuController.listaMenuNivel2}" var="menuNivel2">	
+											  		<c:if test="#{menuNivel1.cmoduloCodigo == menuNivel2.cmoduloCodigo}">	
+											  			 <a href="#{menuNivel2.vmenuServlet}" class="waves-effect waves-dark" target="iframe">
+                                             			   <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+                                              			   <span class="pcoded-mtext">#{menuNivel2.vmenuNombre}</span>
+                                                           <span class="pcoded-mcaret"></span>
+                                           				 </a>
+											  		</c:if>
+											  </c:forEach>
+										
+										</li>
+									</c:forEach>
+
+								</ul>
+                                </li>
+                            </ul>
+                            
+                        </div>
+                    </nav>
+                    <div class="pcoded-content">
+                       
+                        <iframe id="framecontent" width="100%" height="820px;"  
+							src="mainContenedor.xhtml" name="iframe" frameborder="0" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Required Jquery -->
+    <script type="text/javascript" src="material_able-main/assets/js/jquery/jquery.min.js "></script>
+    <script type="text/javascript" src="material_able-main/assets/js/jquery-ui/jquery-ui.min.js "></script>
+    <script type="text/javascript" src="material_able-main/assets/js/popper.js/popper.min.js"></script>
+    <script type="text/javascript" src="material_able-main/assets/js/bootstrap/js/bootstrap.min.js "></script>
+    <!-- waves js -->
+    <script src="material_able-main/assets/pages/waves/js/waves.min.js"></script>
+    <!-- jquery slimscroll js -->
+    <script type="text/javascript" src="material_able-main/assets/js/jquery-slimscroll/jquery.slimscroll.js"></script>
+
+    <!-- slimscroll js -->
+    <script src="material_able-main/assets/js/jquery.mCustomScrollbar.concat.min.js "></script>
+
+    <!-- menu js -->
+    <script src="material_able-main/assets/js/pcoded.min.js"></script>
+    <script src="material_able-main/assets/js/vertical/vertical-layout.min.js "></script>
+
+    <script type="text/javascript" src="material_able-main/assets/js/script.js "></script>
+</body>
+
 </html>

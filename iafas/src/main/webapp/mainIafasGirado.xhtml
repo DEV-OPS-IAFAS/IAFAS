@@ -8,7 +8,12 @@
 <h:head>
 	<title>IAFAS</title>
 	<link href="css/estilos.css" rel="stylesheet" type="text/css" />
-
+	<link rel="stylesheet" type="text/css" href="material_able-main/assets/css/bootstrap/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="material_able-main/assets/css/style.css" />
+	<link rel="stylesheet" type="text/css" href="material_able-main/assets/icon/themify-icons/themify-icons.css" />
+    <link rel="stylesheet" type="text/css" href="material_able-main/assets/icon/icofont/css/icofont.css" />
+    <link rel="stylesheet" type="text/css" href="material_able-main/assets/icon/font-awesome/css/font-awesome.min.css" />
+  
 <style type="text/css">
 	button.ui-button {
 		margin-right: .5rem;
@@ -37,7 +42,8 @@
 	<h:form id="frm_Girado"> 
 	<p:panelGrid columns="2" styleClass="panel">
                    <i class="pi pi-calendar-plus" style="height:20px;height:20px;" ></i>
-                    <p:outputLabel value="Registro de Giros" styleClass="etiqueta"></p:outputLabel>
+<!--                     <p:outputLabel value="Registro de Giros" styleClass="etiqueta"></p:outputLabel> -->
+ 		 <label class="label label-inverse-success">Registro de Giros</label>
                 </p:panelGrid> 
 		<p:panel header="Datos de Busqueda" >
 			<p:panelGrid columns="6" styleClass="panel">
@@ -64,7 +70,7 @@
 				<h:inputText id="inptxtImporte" disabled="true" styleClass="input"  value="#{iafasGiradoController.impMonSol}"/>
 			
 				<h:outputLabel value="Glosa" style="font-size:11px;font-weight:bold;" />
-				<h:inputText id="inptxtGlosa" styleClass="input"  style="width: 1220px" maxlength="500" value="#{iafasGiradoController.vglosa}"/>
+				<h:inputText id="inptxtGlosa" styleClass="input"  style="width: 1070px" maxlength="500" value="#{iafasGiradoController.vglosa}"/>
 				
 				</p:panelGrid>
 				
@@ -163,14 +169,16 @@
 				<p:outputLabel value="T.Cambio:" styleClass="etiqueta"  />
             <h:inputText id="tipcam" style="width: 50px; text-align: right;" 
             styleClass="input" value="#{iafasGiradoController.ntipCam}" />
-			<p:commandButton  value="Girar"  styleClass="button" ajax="false" rendered="#{iafasGiradoController.muestraBotonGiro}"
-               action="#{iafasGiradoController.insRegistroGiradoCab()}"     style="height:30px;" title="Click aqui para Generar el Girado"/>  
-          
+		  	<h:commandButton styleClass="btn waves-effect waves-light btn-success btn-outline-success" 
+			 title="Click aqui para Generar el Girado" value="girar" action="#{iafasGiradoController.insRegistroGiradoCab()}"/>
 			</p:panelGrid>
 		</p:panel>
 		<h:outputLabel value="#{iafasGiradoController.msgSP}" styleClass="etiqueta" />  
  		<h:outputLabel value="#{iafasGiradoController.msgValidacion}" styleClass="etiquetaErr" /> 
 	</h:form>
+	
+	
+	
 </body>
   
 </html>
