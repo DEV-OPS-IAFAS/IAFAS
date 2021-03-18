@@ -53,6 +53,7 @@ public class IafasGiradoController implements Serializable{
 	private String msgSP;
 	private String msgValidacion;
 	public boolean pasoValidacion = true;
+	public boolean muestraBotonAnular = false;
 	
 	public IafasGiradoController() {
 		//buscarGirados();
@@ -121,6 +122,7 @@ public class IafasGiradoController implements Serializable{
 		}
 		obtenerCadenasPorGirar();
 		obtenerRetencionesparaGiro();
+
 		logger.info("[FIN:] Metodo : buscarPorSiafAno");
 		return listaPorGirar;
 	}
@@ -235,6 +237,43 @@ public class IafasGiradoController implements Serializable{
 		} finally {
 
 			logger.info("[FIN:] Metodo : insRegistroGiradoCab");
+		}
+
+		return retorno;
+	}
+	
+	public String anularGirado() {
+		
+		String retorno=Constantes.VACIO;
+		logger.info("[INICIO:] Metodo : anularGirado:::");
+		IafasGiradoDao giradoDao = new IafasGiradoDao(MySQLSessionFactory.getSqlSessionFactory());
+		HttpSession session=null; 
+ 		session = (HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		IafasUsuariosController usuarioSession = new IafasUsuariosController();
+		usuarioSession=(IafasUsuariosController)session.getAttribute("iafasUsuariosController");
+		String codUsu = usuarioSession.getIdUsuario();
+		
+		String vanoAnu = (String) extContext().getRequestParameterMap().get("vanoAnu");
+		String vsecuenciaAnu = (String) extContext().getRequestParameterMap().get("vsecuenciaAnu");
+		String vsecuenciaIntAnu= (String) extContext().getRequestParameterMap().get("vsecuenciaIntAnu");
+		IafasGirado objBn = new IafasGirado();
+		objBn.setVano(vanoAnu);
+		objBn.setVsecuencia(vsecuenciaAnu);
+		objBn.setVsecuenciaInt(vsecuenciaIntAnu);
+		objBn.setMode(Constantes.MODE_ANULACION);
+		objBn.setVusuarioIng(codUsu);
+
+		try {
+				int i = giradoDao.mantenimientoGiradoCab(objBn);
+				if (i == 0) {
+					setMsgSP("Tu ANULACION de giro se realizó con éxito");
+					retorno = "mainIafasConsultaGirados.xhtml";
+				}
+		} catch (Exception e) {
+			logger.error("error : " + e.getMessage().toString());
+		} finally {
+
+			logger.info("[FIN:] Metodo : anularGirado");
 		}
 
 		return retorno;

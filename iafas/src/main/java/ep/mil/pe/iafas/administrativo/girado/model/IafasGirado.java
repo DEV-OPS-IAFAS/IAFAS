@@ -55,6 +55,7 @@ public class IafasGirado {
 	private String vcodCla;
 	private String vcodSec;
 	private String mode;
+	private String desEstado;
 	
 
 }

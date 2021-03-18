@@ -29,5 +29,6 @@ public class Constantes {
 	public final static String TMOV_REBAJA = "R";
 	
 	public final static String ESTADO_REGISTRADO = "1";
+	public static final String MODE_ANULACION = "A";
 	
 }

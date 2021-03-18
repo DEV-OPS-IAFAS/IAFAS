@@ -90,7 +90,8 @@
 		SELECT ret.vtip_documento_com vtipDocumentoCom,
 		ret.vcod_imp vcodImp,
 		ret.por_imp nporImp,
-		ret.nimp_ret_sol importeRetencion
+		ret.nimp_ret_sol importeRetencion, 
+        (select imp.vdes_imp from iafas_impuesto imp where imp.vcod_imp=ret.vcod_imp) descRetencion
 		FROM iafas_movimiento cab, iafas_devengado dev , iafas_ret_comprobante ret
 		where 
 		cab.VANO=dev.VANO AND

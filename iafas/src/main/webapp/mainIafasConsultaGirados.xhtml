@@ -8,7 +8,11 @@
 <h:head>
 	<title>IAFAS</title>
 	<link href="css/estilos.css" rel="stylesheet" type="text/css" />
-	
+	<link rel="stylesheet" type="text/css" href="material_able-main/assets/css/bootstrap/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="material_able-main/assets/css/style.css" />
+	<link rel="stylesheet" type="text/css" href="material_able-main/assets/icon/themify-icons/themify-icons.css" />
+    <link rel="stylesheet" type="text/css" href="material_able-main/assets/icon/icofont/css/icofont.css" />
+    <link rel="stylesheet" type="text/css" href="material_able-main/assets/icon/font-awesome/css/font-awesome.min.css" />
 		<style type="text/css">
     button.ui-button {
         margin-right: .5rem;
@@ -46,8 +50,8 @@
 								<p:column style="width:2px;" headerText="N° Cheque">
 									<p:outputLabel value="#{giros.vnroCheCar}" />
 								</p:column>
-								<p:column style="width:2px;" headerText="Expediente">
-								 <h:commandLink id="cmdLink_Detalle" actionListener="#{iafasGiradoController.obtenerCadenasGiradas()}" >
+								<p:column style="width:50px;" headerText="Expediente">
+								 <h:commandLink id="cmdLink_Detalle" styleClass="form-control form-txt-success" actionListener="#{iafasGiradoController.obtenerCadenasGiradas()}" >
 								 	<p:outputLabel value="#{giros.vregSiaf}" />
 								 		<f:param id="vano" name="vano" value="#{giros.vano}" />
 								 		<f:param id="vregSiaf" name="vregSiaf" value="#{giros.vregSiaf}" />
@@ -61,6 +65,18 @@
 								</p:column>
 								<p:column style="width:20px;" headerText="Importe">
 									<p:outputLabel value="#{giros.impMonSol}" />
+								</p:column>
+								
+								<p:column style="width:20px;" headerText="Estado">
+									<p:outputLabel value="#{giros.desEstado}" />
+								</p:column>
+								
+								<p:column style="width:50px;" headerText="Opciones">
+									<h:commandButton value="Anular" styleClass="btn waves-effect waves-light btn-danger btn-outline-danger" action="#{iafasGiradoController.anularGirado()}"  >
+										<f:param id="vanoAnu" name="vanoAnu" value="#{giros.vano}"  />
+								 		<f:param id="vsecuenciaAnu" name="vsecuenciaAnu" value="#{giros.vsecuencia}" />
+								 		<f:param id="vsecuenciaIntAnu" name="vsecuenciaIntAnu" value="#{giros.vsecuenciaInt}" />   
+									</h:commandButton>	
 								</p:column>
 							</p:dataTable>
 						</div>
