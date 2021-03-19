@@ -45,7 +45,8 @@
 		vcod_proceso_sel vcodProcesoSel,
 		case vcod_estado WHEN '1' then 'REG' WHEN '2' THEN 'AP' END vcodEstado
 		FROM iafas_compromiso_anual
-		WHERE vano_documento = #{vanoDocumento} AND vnro_certificado = #{vnroCertificado}
+		WHERE vano_documento = #{vanoDocumento} AND vnro_certificado = #{vnroCertificado} and
+		vtipo_movimiento = 'N'
 		order by vsecuenciaA
 
 	</select>
@@ -57,9 +58,9 @@
 		NCLASIFICADOR_PRESUPUESTAL_CODIGO vidClasificador,
 		PK_AUX_NOM_CLASIFICADOR(NCLASIFICADOR_PRESUPUESTAL_CODIGO) as
 		nomClasificador,
-		'0042' vcodSec,
+		ntarea_presupuestal_codigo vcodSec,
 		PK_AUX_CLASIFICADOR(NCLASIFICADOR_PRESUPUESTAL_CODIGO) cadena,
-		(NCERTIFICADO_DETALLE_IMPORTE - PK_TOTAL_CA(cperiodo_codigo,ncertificado_codigo,'0042',NCLASIFICADOR_PRESUPUESTAL_CODIGO)) nimpMontoSol
+		(NCERTIFICADO_DETALLE_IMPORTE - PK_TOTAL_CA(cperiodo_codigo,ncertificado_codigo,ntarea_presupuestal_codigo,NCLASIFICADOR_PRESUPUESTAL_CODIGO)) nimpMontoSol
 		FROM iafas_certifi_presupuestal_detal where
 		cperiodo_codigo=#{vanoDocumento} and
 		ncertificado_codigo = #{vnroCertificado}
@@ -163,5 +164,22 @@
 	   { CALL SP_DROP_COMP_ANUAL(
 	    #{vanoDocumento mode=IN, jdbcType=VARCHAR},
 		#{vnroCertificado, mode=IN, jdbcType=VARCHAR})}
+	</select>
+	
+	<select id="listaMovCA" resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
+	parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual">
+	SELECT vtipo_documento_a vtipoDocumentoA, 
+	vnro_documento_pago_a vnroDocumentoPagoA,
+	dfecha_documento_a dfechaDocumento, 
+	CASE vtipo_movimiento WHEN 'M' THEN 'AMPLIACION' 
+	WHEN 'R' THEN 'REBAJA'
+	WHEN 'A' THEN 'ANULACION' END vtipoMovimiento,
+	nimp_mon_sol nimpMonSol, CASE vcod_estado WHEN '2' THEN 'AP' END vcodEstado,
+	(SELECT vmoneda_simbolo FROM iafas_monedas WHERE nmoneda_codigo = VCOD_MONEDA) vcodMoneda
+ 	FROM iafas_compromiso_anual WHERE 
+ 	vano_documento = #{vanoDocumento} AND
+ 	vsecuencia_a = #{vsecuenciaA} AND 
+ 	vnro_certificado =#{vnroCertificado} AND
+ 	vtipo_movimiento NOT IN ('N')
 	</select>
 </mapper>

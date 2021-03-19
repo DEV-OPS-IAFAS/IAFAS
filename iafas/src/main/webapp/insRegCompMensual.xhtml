@@ -157,7 +157,9 @@
                       <h:outputText value="#{ca.vruc}"/>
                    </p:column>
                    <p:column headerText="Monto">
-                      <h:outputText value="1"/>
+                      <h:outputText value="#{ca.nimpMontoSol}">
+                      
+                      </h:outputText>
                    </p:column>
                    <p:column headerText="#">
                       <p:commandButton id="btnElegir" icon="pi pi-check" value="Elegir" actionListener="#{mbCompMensual.buscarAnualXSecuencia()}"

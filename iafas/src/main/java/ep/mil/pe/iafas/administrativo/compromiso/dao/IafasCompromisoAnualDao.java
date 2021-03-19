@@ -86,4 +86,22 @@ public class IafasCompromisoAnualDao {
 	       }
 		return reg;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IafasCompromisoAnual> verMovimientoCA(IafasCompromisoAnual ca) {
+		
+        List<IafasCompromisoAnual> lista = null;
+        SqlSession session = sqlSessionFactory.openSession();
+        try{
+              lista = session.selectList("CompromisoAnual.listaMovCA",ca);
+        }
+        catch(Exception e) {
+        	e.printStackTrace();
+        }
+        finally{
+             session.close();
+        }
+        return lista;
+	}
+	
 }

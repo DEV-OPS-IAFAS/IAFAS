@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="VCompromisoAnual">
+	<resultMap id="compromisoAnual" type="VCompromisoAnual" />
+	
+	<!-- (PK_TOTAL_CERT(ca.vano_documento, ca.vnro_certificado,d.vcod_sec_func,d.vid_clasificador) -
+		PK_TOTAL_CA(ca.vano_documento,ca.vnro_certificado,d.vcod_sec_func,d.vid_clasificador)) -->
+
+	<select id="listadoMovimientoCA" resultType="ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompAnual"
+	parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompAnual">
+	
+		SELECT ca.vano_documento vanoDocumento, 
+		ca.vsecuencia_a vsecuenciaA, ca.vcorrelativo_a vcorrelativoA,
+		ca.vnro_certificado vnroCertificado, 
+		ca.vtipo_documento_a vtipoDocumentoA, 
+		ca.vnro_documento_pago_a vnroDocumentoPagoA,
+		ca.vfuente_financiamiento vfuenteFinanciamiento,
+		 ca.cproveedor_ruc proveedorRuc,
+		ca.ntip_cam ntipCam, 
+		ca.vcod_tipo_financiamiento vcodTipoFinanciamiento, 
+		ca.vcod_proceso_sel vcodProcesoSel,
+		ca.vcod_moneda vcodMoneda,
+		d.vcod_sec_func vcodSecFunc, 
+		d.vid_clasificador vidClasificador,
+		PK_AUX_CLASIFICADOR(d.vid_clasificador) cadena,
+		pk_aux_nom_clasificador(d.vid_clasificador) nomCla,
+		(PK_TOTAL_CERT_AMP(ca.vano_documento, ca.vnro_certificado,d.vcod_sec_func,d.vid_clasificador) -
+		PK_TOTAL_CA(ca.vano_documento,ca.vnro_certificado,d.vcod_sec_func,d.vid_clasificador)) importeAmpliacion,
+		(PK_TOTAL_CA_SECUENCIA(ca.vano_documento,ca.vnro_certificado,d.vcod_sec_func,d.vid_clasificador,ca.vsecuencia_a) -
+		PK_TOTAL_MEN_ANUAL(ca.vano_documento, ca.vnro_certificado,d.vcod_sec_func,d.vid_clasificador,ca.vsecuencia_a)) importeRebaja,
+		d.nimp_monto_sol importeAnulacion
+		FROM iafas_compromiso_anual ca INNER JOIN iafas_compromiso_anual_det d ON
+		(
+		ca.vano_documento = d.vano_documento AND
+		ca.vsecuencia_a = d.vsecuencia_a AND
+		ca.vcorrelativo_a = d.vcorrelativo_a)
+		WHERE ca.vano_documento = #{vanoDocumento} AND
+		ca.vnro_certificado = #{vnroCertificado} AND
+		ca.vsecuencia_a=#{vsecuenciaA} and ca.vtipo_movimiento='N'
+	</select>
+		
+	<select id="insertMovCA" parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompAnual"
+	statementType="CALLABLE">
+	   { CALL SP_REGISTRAR_MOVIMIENTO_ANUAL(
+	    #{vanoDocumento mode=IN, jdbcType=VARCHAR},
+		#{vsecuenciaA, mode=IN, jdbcType=VARCHAR},
+		#{vnroCertificado, mode=IN, jdbcType=VARCHAR},
+		#{vtipMovimiento, mode=IN, jdbcType=VARCHAR},
+		#{ntipCam, mode=IN, jdbcType=DECIMAL},
+		#{vusuarioIng, mode=IN, jdbcType=VARCHAR},
+		#{vglosa, mode=IN, jdbcType=VARCHAR},
+		#{vcodSecFunc, mode=IN, jdbcType=VARCHAR},
+		#{vidClasificador, mode=IN, jdbcType=VARCHAR},
+		#{importeIngresado, mode=IN, jdbcType=DECIMAL})}
+	</select>
+</mapper>

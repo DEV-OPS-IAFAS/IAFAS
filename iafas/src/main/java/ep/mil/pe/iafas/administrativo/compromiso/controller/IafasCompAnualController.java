@@ -29,6 +29,7 @@ public class IafasCompAnualController implements Serializable {
 	
 	private List<IafasCompromisoAnual> lista;
 	private List<IafasCompromisoAnualDet> listaCertDet;
+	private List<IafasCompromisoAnual> listaMovCA;
 	
 	private String periodo="2021";
 	private String secuencia;
@@ -60,13 +61,35 @@ public class IafasCompAnualController implements Serializable {
 	
 	IafasCompromisoAnualDetDao compAnualDetDao = new IafasCompromisoAnualDetDao(MySQLSessionFactory.getSqlSessionFactory());
 	IafasCompromisoAnualDao compAnualDao = new IafasCompromisoAnualDao(MySQLSessionFactory.getSqlSessionFactory());
+	
 	public IafasCompAnualController() {
 		// TODO Auto-generated constructor stub
 		//listarCompAnualCab();
 	}
 	
+	public List<IafasCompromisoAnual> listarMovimientoCA(String secuencia){
+		listaMovCA = new ArrayList<IafasCompromisoAnual>();
+		logger.info("[INICIO] Metodo listarMovimientoCA {}");
+		try {
+			 IafasCompromisoAnual ca = new IafasCompromisoAnual();
+			ca.setVanoDocumento(periodo);
+			ca.setVnroCertificado(certificado);
+			ca.setVsecuenciaA(secuencia);
+			List<IafasCompromisoAnual> compromiso = compAnualDao.verMovimientoCA(ca);			
+			reg = (short) compromiso.size();
+			logger.info("Cantidad de Movimientos Encontrados "+reg);
+			for(IafasCompromisoAnual l : compromiso) {
+				listaMovCA.add(l);
+			}
+			logger.info("[FIN] Metodo listarMovimientoCA {}");
+		}
+		catch(Exception e) {
+			logger.error("[ERROR] Metodo listarMovimientoCA :"+e);
+		}
+		return listaMovCA;
+	}
+	
 	public List<IafasCompromisoAnual> listarCompAnualCab(){
-		logger.info("metodo : listarCompAnualCab");
 		lista = new ArrayList<IafasCompromisoAnual>();
 		try {
 			 IafasCompromisoAnual ca = new IafasCompromisoAnual();
@@ -83,7 +106,7 @@ public class IafasCompAnualController implements Serializable {
 			}
 		}
 		catch(Exception e) {
-			System.out.println("Error222 :"+e.getCause());
+			logger.error("[ERROR] lista Compromiso Anual :"+e);
 		}
 		return lista;
 	}
@@ -107,12 +130,13 @@ public class IafasCompAnualController implements Serializable {
 				 setRazonSocial(p.getRazonSocial());
 				 setDesPresupuesto(p.getDesPto());
 			 }
+			 
 		}
 		catch(Exception e) {
-			
+			logger.error("[ERROR] Metodo verDetalleRegistroCA {} "+e);
 		}
 
-		 
+		 listarMovimientoCA(psecuencia);
 	}
 	
 	public List<IafasCompromisoAnualDet> listarCompAnualDet(){

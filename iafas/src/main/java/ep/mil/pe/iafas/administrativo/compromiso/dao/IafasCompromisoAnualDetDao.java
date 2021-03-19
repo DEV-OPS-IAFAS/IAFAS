@@ -6,6 +6,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnualDet;
+import ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompAnual;
+import ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompromisoMensual;
 
 public class IafasCompromisoAnualDetDao {
 	private SqlSessionFactory sqlSessionFactory = null;
@@ -37,6 +39,34 @@ public class IafasCompromisoAnualDetDao {
 	       SqlSession session = sqlSessionFactory.openSession();
 	       try{
 	        reg = session.insert("CompromisoAnual.grabarCompAnualDet",detalle);
+	       }
+	       finally{
+	        session.close();
+	       }
+		return reg;
+	}
+	@SuppressWarnings("unchecked")
+	public List<ViewIafasCompAnual> mostrarMovimientoCA(ViewIafasCompAnual mov) {
+		
+        List<ViewIafasCompAnual> lista = null;
+        SqlSession session = sqlSessionFactory.openSession();
+        try{
+              lista = session.selectList("VCompromisoAnual.listadoMovimientoCA",mov);
+        }
+        catch(Exception e) {
+        	e.printStackTrace();
+        }
+        finally{
+             session.close();
+        }
+        return lista;
+	}	
+	
+	public int grabarMovAnual(ViewIafasCompAnual movimiento) {
+		int reg =0;
+	       SqlSession session = sqlSessionFactory.openSession();
+	       try{
+	        reg = session.insert("VCompromisoAnual.insertMovCA",movimiento);
 	       }
 	       finally{
 	        session.close();

@@ -26,9 +26,9 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
        <typeAlias alias="IafasAreasLaboral" 		type="ep.mil.pe.iafas.seguridad.model.IafasAreasLaboral"/>
        <typeAlias alias="IafasMovimientoCadenas" 		type="ep.mil.pe.iafas.administrativo.girado.model.IafasMovimientoCadenas"/>
        <typeAlias alias="VCompromiso" 		type="ep.mil.pe.iafas.administrativo.devengado.model.IafasCompromiso"/>		
-       <!--  <typeAlias alias="VCompromiso" 		type="ep.mil.pe.iafas.administrativo.devengado.model.IafasCompromisoDet"/> -->
        <typeAlias alias="DevengadoRet" 		type="ep.mil.pe.iafas.administrativo.devengado.model.IafasDevengado"/>	
-      <typeAlias alias="ComprobanteRetencion" 		type="ep.mil.pe.iafas.administrativo.devengado.model.IafasComprobanteRetencion"/>	
+      <typeAlias alias="ComprobanteRetencion" 		type="ep.mil.pe.iafas.administrativo.devengado.model.IafasComprobanteRetencion"/>
+      <typeAlias alias="VCompromisoAnual" 		type="ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompAnual"/>	
        
     </typeAliases>
 
@@ -59,6 +59,7 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
 		<mapper resource="ep/mil/pe/iafas/administrativo/girado/xml/IafasMovimientoCadenas.xml" />
 		<mapper resource="ep/mil/pe/iafas/administrativo/devengado/controller/IafasVCompromisoController.xml" />
 		<mapper resource="ep/mil/pe/iafas/administrativo/devengado/controller/iafasDevengadoController.xml" />
+		<mapper resource="ep/mil/pe/iafas/administrativo/compromiso/controller/xml/ViewIafasCompAnual.xml" />
     </mappers>
 
 </configuration>

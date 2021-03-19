@@ -66,3 +66,14 @@
     color: #C82A2A;
      font-size: 15px;
 }
+
+.outLabelMonto{
+    font-weight: bold;
+    text-align: right;
+    color: black;
+    left: 0;
+    display: block;
+    border-radius: 5px 5px 5px 5px;
+    background-color: #8cd98c;
+    padding: 3px;
+}

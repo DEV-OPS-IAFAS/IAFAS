@@ -21,7 +21,7 @@
 		ca.ntip_cam, 
 		ca.vtipo_operacion,
 		ca.vcod_moneda, det.vcod_sec_func,
-		det.vid_clasificador,det.nimp_monto_sol
+		det.vid_clasificador,det.nimp_monto_sol nimpMontoSol
 		FROM iafas_compromiso_anual ca INNER JOIN iafas_compromiso_anual_det det
 		ON (
 		ca.vano_documento = det.vano_documento AND
@@ -53,7 +53,8 @@
 		det.vid_clasificador vidClasificador,
 		PK_AUX_CLASIFICADOR(det.vid_clasificador) cadena,
 		PK_AUX_NOM_CLASIFICADOR(det.vid_clasificador) nomCla,
-	    (det.nimp_monto_sol - pk_total_cm(ca.vano_documento,ca.vnro_certificado,ca.vsecuencia_a,
+	    (PK_TOTAL_CA_SECUENCIA(ca.vano_documento,ca.vnro_certificado,det.vcod_sec_func,det.vid_clasificador,ca.vsecuencia_a)
+	     - pk_total_cm(ca.vano_documento,ca.vnro_certificado,ca.vsecuencia_a,
 		det.vcod_sec_func,det.vid_clasificador)) nimpMontoSol
 		FROM iafas_compromiso_anual ca INNER JOIN iafas_compromiso_anual_det det
 		ON (

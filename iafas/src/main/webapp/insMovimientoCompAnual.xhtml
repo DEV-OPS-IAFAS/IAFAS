@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>IAFAS-Compromiso Anual</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+    </h:head>
+    <body class="formulario">
+        <h:form id="frmInsRegCompAnual" class="contenedor">
+              <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
+            <p:panel >
+                <p:panelGrid columns="6"  >
+                    <i class="pi pi-calendar-minus"></i>
+                    <p:outputLabel value="Registro de Compromiso Anual - Certificado N° #{mbMovCA.certificado}" style="color: green; font-weight: bold; font-size: 12px;"/>
+                    <p:commandButton  value="Grabar" action="#{mbMovCA.grabarMovimientoAnual()}" 
+                    icon="pi pi-save" style="height:35px;" ajax="false"/>
+                    <p:commandButton value="Cancelar" action="#{mbMovCA.retornar()}"
+                    icon="pi pi-arrow-left" style="height:35px;"/>
+                </p:panelGrid>
+                <br/>
+                <p:fieldset legend="Datos del Compromiso Anual">
+                    <h:panelGrid columns="4" style="width: 950px; " >
+                        <p:outputLabel value="Proceso Selección:"/>
+                        <h:selectOneMenu id="procesoSel" styleClass="select" value="#{mbMovCA.tipProcesoSel}" readonly="true" style="width:450px;">
+                         <f:selectItems var="documentos" value="#{mbCombos.procesoSel}"/>
+                        </h:selectOneMenu>
+                        <p:outputLabel value="Fuente Financiamiento"/>
+                        <h:selectOneMenu value="#{mbMovCA.tipCodFun}" disabled="true" styleClass="select"> 
+                        <f:selectItem itemValue="1" itemLabel="RECURSOS ORDINARIOS"></f:selectItem>
+                        <f:selectItem itemValue="2" itemLabel="RECURSOS DIRECTAMENTE RECAUDADOS"></f:selectItem>
+                        <f:selectItem itemValue="3" itemLabel="RECURSOS POR OPE OFLS DE CREDITO INTERNO"></f:selectItem>
+                        <f:selectItem itemValue="4" itemLabel="DONACIONES Y TRANSFERENCIAS"></f:selectItem>
+                        <f:selectItem itemValue="5" itemLabel="RECURSOS DETERMINADOS"></f:selectItem>
+                        </h:selectOneMenu>  
+                    </h:panelGrid>
+                           <h:panelGrid columns="6" style="width: 873px; ">
+                            <p:outputLabel value="Documento:"/>
+                            <p:selectOneMenu id="cbo_documento" style="width: 300px;" value="#{mbMovCA.tipoDocAnual}" disabled="true">
+                                <f:selectItem itemValue="" itemLabel="--Seleccione --"/>
+                                <f:selectItem itemValue="031" itemLabel="031:Orden de Compra"/>
+                                <f:selectItem itemValue="032" itemLabel="032:Orden de Servicio"/>
+                               <f:selectItem itemValue="060" itemLabel="060:Contrato Suscrito"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Número:"/>
+                            <p:inputText id="nro_doc" size="9" value="#{mbMovCA.nroDocumentoAnual}" styleClass="input" style="text-align: right;"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="6" style="width: 872px; ">
+                        <p:outputLabel value="Ruc - Razón Social:"/>
+                        <h:panelGrid columns="3" id="panel_proveedor">
+                            <h:outputText styleClass="outLabel" value="#{mbMovCA.ruc}" style="display: block;"/>
+                           <h:outputLabel value="-"/>
+                           <h:outputLabel styleClass="outLabel" value="#{mbMovCA.razonSocial}" style="display: block;"/>
+                        </h:panelGrid>
+                         <p:outputLabel value="Moneda:"/>
+                        <p:selectOneMenu id="tipMon"  value="#{mbMovCA.codMoneda}">
+                 			<f:selectItem itemValue="1" itemLabel="S/."></f:selectItem>
+			                <f:selectItem itemValue="2" itemLabel="USD"></f:selectItem>
+			                <f:selectItem itemValue="3" itemLabel="EURO"></f:selectItem>
+			                <f:selectItem itemValue="57" itemLabel="Y"></f:selectItem>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="T.Cambio:"/>
+                        <h:inputText id="tipcam" style="width: 50px; text-align: right;" 
+                        styleClass="input" value="#{mbMovCA.tipCam}" readonly="true"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                    <h:outputLabel value="Movimiento:"/>
+                    <p:selectOneMenu id="cbo_operacion" value="#{mbMovCA.tipoMovimiento}" >
+                      <f:selectItem itemValue="" itemLabel="--Seleccione--"></f:selectItem>
+                      <f:selectItem itemValue="M" itemLabel="Ampliacion"></f:selectItem>
+                      <f:selectItem itemValue="R" itemLabel="Rebaja"></f:selectItem>
+                      <f:selectItem itemValue="A" itemLabel="Anulacion"></f:selectItem>
+                      <f:ajax render="dTableCla" listener="#{mbMovCA.verSaldoMovimiento}"/>
+                    </p:selectOneMenu>
+                        <p:outputLabel value="Justificacion: "/>
+                        <h:inputText id="txt_concepto" style="width: 800px;" 
+                        value="#{mbMovCA.justificacion}" styleClass="input"/>
+                    </h:panelGrid> 
+                </p:fieldset>
+               
+                <br/>
+                <h:panelGrid>
+                    <p:dataTable id="dTableCla" value="#{mbMovCA.listaMovimiento}" var="cad" editable="true" editMode="cell">
+                        <p:column headerText="Sec.Func." style="width: 30px;">
+                            <p:outputLabel value="#{cad.vcodSecFunc}"/>
+                        </p:column>
+                        <p:column headerText="Clasif." style="width: 35px;">
+                            <p:outputLabel value="#{cad.cadena}"/>
+                        </p:column>
+                        <p:column headerText="Descripción" style="width: 350px;">
+                            <p:outputLabel value="#{cad.nomCla}"/>
+                        </p:column>
+                        <p:column headerText="Monto" style="width: 35px;" rendered="#{mbMovCA.saldoAmp}">
+                            <p:outputLabel value="#{cad.importeAmpliacion}" style="text-align:right">
+                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>  
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Monto" style="width: 35px;" rendered="#{mbMovCA.saldoReb}">
+                            <p:outputLabel value="#{cad.importeRebaja}" style="text-align:right">
+                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>  
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Monto" style="width: 35px;" rendered="#{mbMovCA.saldoAnu}">
+                            <p:outputLabel value="#{cad.importeAnulacion}" style="text-align:right">
+                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>  
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Monto Ingresado" style="width: 50px; text-align: right;" >
+                          <p:cellEditor >
+                                <f:facet name="output">
+                                    <p:outputLabel value="#{cad.importeIngresado}" style="text-align: right;">
+                                      <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>  
+                                   </p:outputLabel>
+                                </f:facet>
+                             <f:facet name="input" >
+                                 <p:inputText style="width: 65px; text-align: right" value="#{cad.importeIngresado}" label="Monto"/>
+                            </f:facet>                            
+                            </p:cellEditor>                              
+                        </p:column>                     
+                    </p:dataTable>
+                </h:panelGrid>
+            </p:panel>
+        </h:form>
+    </body>
+</html>

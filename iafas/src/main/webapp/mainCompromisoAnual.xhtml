@@ -25,7 +25,7 @@
             }           
         
         </script>
-        <h:form id="frmCompromisoAnual" style="border-radius: 5px 5px 5px 5px;border: 1px ; width:1020px;">
+        <h:form id="frmCompromisoAnual" style="border-radius: 5px 5px 5px 5px;border: 1px ; width:100%;">
             <p:panel >
                 <p:panelGrid columns="2" styleClass="panel">
                    <i class="pi pi-calendar-plus" style="height:20px;height:20px;" ></i>
@@ -44,7 +44,7 @@
                 </p:panelGrid>
                 <p:outputLabel value="#{mbCompAnual.reg} Registros Encontrados" style="color: green; font-weight: bold;"/>
                 <br/>
-                <table>
+                <table style="width:100%">
                     <tr>
                         <td valign="top">
                             <div>
@@ -55,7 +55,7 @@
                                         <h:commandLink id="cmdLink_Fase" actionListener="#{mbCompAnual.verDetalleRegistroCA}" >
                                             <p:outputLabel value="#{ca.tipoCertificacion}"/> 
                                           <f:param id="p_secuenciaDet" name="p_secuencia" value="#{ca.vsecuenciaA}"></f:param>
-                                         <f:param id="p_correlativoDet" name="p_correlativo" value="#{ca.vcorrelativoA}"></f:param>   
+                                         <f:param id="p_correlativoDet" name="p_correlativo" value="#{ca.vcorrelativoA}"></f:param> 
                                        </h:commandLink>
                                     </p:column>
                                     <p:column headerText="Secuencia" style="width: 25px;" filterBy="#{ca.secuencia}">
@@ -86,9 +86,10 @@
     
                                         </p:commandButton>
                                     </p:column>
-                                    <p:column headerText="Eliminar" style="width: 25px;">
-                                        <p:commandButton icon="pi pi-trash">
-  
+                                    <p:column headerText="Movimientos" style="width: 25px;">
+                                        <p:commandButton icon="pi pi-search-plus" action="#{mbMovCA.nuevoMovimientoAnual}">
+  											<f:param id="certificadoP" name="certificadoP" value="#{ca.vnroCertificado}"/>
+  											<f:param id="secuenciaP" name="secuenciaP" value="#{ca.vsecuenciaA}"/>
                                         </p:commandButton>
                                     </p:column>
                                     <p:column headerText="Enviar" style="width: 20px;">
@@ -99,9 +100,52 @@
                                          <f:param id="p_correlativo" name="p_correlativo" value="#{ca.vcorrelativoA}"></f:param>
                                         </p:commandButton> 
                                     </p:column>
+                                    
                                 </p:dataTable>
                             </div>
                         </td>  
+                       <!--    <td valign="top">
+                            <div>
+                                <h:panelGrid columns="2">
+                                    <p:panelGrid columns="1" style="width: 150px;" >
+                                        <p:outputLabel value="MONTO CERTIFICADO" style="font-size: 10px;;font-weight: bold;"/>
+                                       <h:outputLabel value="0.00"  styleClass="outLabelMonto">
+                                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                                        </h:outputLabel>
+                                        <h:outputText value="MODIFICACIONES" style="font-size: 10px;;font-weight: bold;"/>
+                                        <h:outputLabel value="0.00" styleClass="outLabelMonto"> 
+                                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                                        </h:outputLabel>
+                                        <h:outputText value="COMP. ANUAL" style="font-size: 10px;;font-weight: bold;"/>
+                                        <h:outputLabel  value="0.00"  styleClass="outLabelMonto">
+                                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                                        </h:outputLabel>
+                                        <h:outputText value="SALDO X COMPROMETER" style="font-size: 10px;;font-weight: bold;"/>
+                                        <h:outputLabel value="0.00"  styleClass="outLabelMonto">
+                                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                                        </h:outputLabel>
+                                    </p:panelGrid>
+                                    <p:panelGrid columns="1" style="width: 140px;" rendered="false">
+                                        <h:outputText value="COMP. ANUAL" style="font-size: 10px;;font-weight: bold;"/>
+                                        <p:outputLabel value="0.00"   styleClass="outLabelMonto">
+                                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                                        </p:outputLabel>
+                                        <h:outputText value="MODIFICACIONES" style="font-size: 10px;;font-weight: bold;"/>
+                                        <p:outputLabel  value="0.00"  styleClass="outLabelMonto">
+                                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                                        </p:outputLabel>
+                                        <h:outputText value="COMP. MENSUAL" style="font-size: 10px;;font-weight: bold;"/>
+                                        <p:outputLabel  value="0.00"  styleClass="outLabelMonto">
+                                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                                        </p:outputLabel>
+                                        <h:outputText value="SALDO X COMPROMETER" style="font-size: 10px;;font-weight: bold;" />
+                                        <p:outputLabel  value="0.00"  styleClass="outLabelMonto">
+                                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                                        </p:outputLabel>
+                                    </p:panelGrid>
+                                </h:panelGrid>  
+                            </div> 
+                        </td> -->
                     </tr>
                 </table>
                 <br/>
@@ -111,7 +155,7 @@
                             <p:outputLabel value="Secuencia :"/>
                             <p:outputLabel value="#{mbCompAnual.secuencia}" styleClass="outLabel"/>
                             <p:outputLabel value="Número:" />
-                            <p:outputLabel value="#{mCompAnual.nroDoc}" styleClass="outLabel"/>
+                            <p:outputLabel value="#{mbCompAnual.nroDoc}" styleClass="outLabel"/>
                             <p:outputLabel value="Fecha:" />
                             <p:outputLabel value="#{mbCompAnual.fecDocumento}" styleClass="outLabel">
                                 <f:converter converterId="javax.faces.DateTime" />
@@ -132,6 +176,39 @@
                             <p:outputLabel value="Glosa:" />
                             <p:outputLabel value="#{mbCompAnual.concepto}" id="texto" styleClass="outLabel"/>
                         </h:panelGrid>
+                </p:tab>
+                <p:tab title="Movimientos" >
+                <p:panelGrid columns="1"> 
+                                <p:dataTable id="dTableMovimientos" var="mov" value="#{mbCompAnual.listaMovCA}">
+                  <p:column headerText="Tipo Documento">
+                     <h:outputText value="#{mov.vtipoDocumentoA}"></h:outputText>
+                  </p:column>
+                  <p:column headerText="Nro Documento">
+                     <h:outputText value="#{mov.vnroDocumentoPagoA}"></h:outputText>
+                  </p:column>
+                  <p:column headerText="Fecha Documento">
+                     <h:outputText value="#{mov.dfechaDocumento}">
+                     <f:converter converterId="javax.faces.DateTime" />
+                      <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
+                    </h:outputText>
+                  </p:column>
+                   <p:column headerText="Tipo">
+                     <h:outputText value="#{mov.vtipoMovimiento}"></h:outputText>
+                  </p:column>
+                   <p:column headerText="Moneda">
+                     <h:outputText value="#{mov.vcodMoneda}"></h:outputText>
+                  </p:column>
+                   <p:column headerText="Importe">
+                     <h:outputText value="#{mov.nimpMonSol}">
+                     <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                     </h:outputText>
+                  </p:column>
+                    <p:column headerText="Estado">
+                     <h:outputText value="#{mov.vcodEstado}"></h:outputText>
+                  </p:column>
+                </p:dataTable>
+                </p:panelGrid>
+
                 </p:tab>
                 </p:tabView>
                 <!-- dialogos -->

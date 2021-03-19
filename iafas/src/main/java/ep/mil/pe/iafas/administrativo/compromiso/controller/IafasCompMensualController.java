@@ -16,6 +16,7 @@ import ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensual;
 import ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensualDet;
 import ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompromisoMensual;
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
+import ep.mil.pe.iafas.configuracion.util.Constantes;
 import lombok.Data;
 
 @Data
@@ -74,7 +75,8 @@ public class IafasCompMensualController implements Serializable{
 	}
 	
 	public String retornar() {
-		listadoMensual();
+		limpiarSession();
+		listadoMensual();		
 		return "mainCompromisoMensual.xhtml";
 	}
 	
@@ -111,7 +113,6 @@ public class IafasCompMensualController implements Serializable{
 			setVanoDocumentoA(periodo);
 			setVsecuenciaA(l.getVsecuenciaA());
 			setVcorrelativoA(l.getVcorrelativoA());
-			System.out.println("Param :"+ruc+" "+vcodMoneda);
 		}
 		return regAnualDet;
 	}
@@ -125,9 +126,20 @@ public class IafasCompMensualController implements Serializable{
 	
 	public String nuevoRegistro() {
 		String page = "insRegCompMensual.xhtml";
+		limpiarSession();
 	    return page;
 	}
 
+	public void limpiarSession() {
+		setCertificado(Constantes.VACIO);
+		setTipDocumentoMen(Constantes.VACIO);
+		setNroDocumentoMen(Constantes.VACIO);
+		setFechaMensual(null);
+		setGlosa(Constantes.VACIO);
+		regAnualDet.clear();
+	}
+	
+	
 	public String registroCompMensual() {
 		int reg =0;
 		try {
@@ -175,7 +187,7 @@ public class IafasCompMensualController implements Serializable{
 					
 				}
 			
-			retornar();
+			return retornar();
 			
 		}
 		catch (Exception e) {
@@ -183,6 +195,13 @@ public class IafasCompMensualController implements Serializable{
 			System.out.println("Error: "+e.getMessage());
 		}
 		return "";
+	}
+	public String obtener() {
+		String page="";
+		  psecuencia = (String) extContext().getRequestParameterMap().get("p_secuencia");
+		  pcorrelativo = (String) extContext().getRequestParameterMap().get("p_correlativo");
+		  pexpediente = (String) extContext().getRequestParameterMap().get("p_expediente");
+		  return page;
 	}
 	
 	public int enviarCompromisoMensual() {
@@ -201,7 +220,7 @@ public class IafasCompMensualController implements Serializable{
 		catch (Exception e) {
 			System.out.println("Error Envio : "+e.getMessage());
 		}
-
+         retornar();
 		return envio;
 	}
 	
