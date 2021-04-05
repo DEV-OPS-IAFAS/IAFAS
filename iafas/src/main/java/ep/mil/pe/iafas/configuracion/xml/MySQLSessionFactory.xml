@@ -29,6 +29,11 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
        <typeAlias alias="DevengadoRet" 		type="ep.mil.pe.iafas.administrativo.devengado.model.IafasDevengado"/>	
       <typeAlias alias="ComprobanteRetencion" 		type="ep.mil.pe.iafas.administrativo.devengado.model.IafasComprobanteRetencion"/>
       <typeAlias alias="VCompromisoAnual" 		type="ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompAnual"/>	
+      <!-- cambios agrehadoes el 31.03.2021 -->
+      <typeAlias alias="IafasPeriodos" 		type="ep.mil.pe.iafas.programacion.model.IafasPeriodos"/>
+      <typeAlias alias="IafasTareasPptal" 		type="ep.mil.pe.iafas.programacion.model.IafasTareasPptal"/>
+      <typeAlias alias="IafasFuentesFinanciamiento" 		type="ep.mil.pe.iafas.programacion.model.IafasFuentesFinanciamiento"/>
+      <typeAlias alias="IafasUbigeo" 		type="ep.mil.pe.iafas.programacion.model.IafasUbigeo"/>
        
     </typeAliases>
 
@@ -40,7 +45,7 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
                 <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
                 <property name="url" value="jdbc:mysql://localhost:3306/iafas"/>
                 <property name="username" value="root"/>
-                <property name="password" value="iafas"/>
+                <property name="password" value="123"/>
             </dataSource>
        </environment>
     </environments>
@@ -60,6 +65,12 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
 		<mapper resource="ep/mil/pe/iafas/administrativo/devengado/controller/IafasVCompromisoController.xml" />
 		<mapper resource="ep/mil/pe/iafas/administrativo/devengado/controller/iafasDevengadoController.xml" />
 		<mapper resource="ep/mil/pe/iafas/administrativo/compromiso/controller/xml/ViewIafasCompAnual.xml" />
+		<!-- cambios agrehadoes el 31.03.2021 -->
+		<mapper resource="ep/mil/pe/iafas/programacion/xml/IafasPeriodos.xml" />
+		<mapper resource="ep/mil/pe/iafas/programacion/xml/IafasTareasPptal.xml" />
+		<mapper resource="ep/mil/pe/iafas/programacion/xml/IafasFuentesFinanciamiento.xml" />
+		<mapper resource="ep/mil/pe/iafas/programacion/xml/IafasUbigeo.xml" />
+		
     </mappers>
 
 </configuration>

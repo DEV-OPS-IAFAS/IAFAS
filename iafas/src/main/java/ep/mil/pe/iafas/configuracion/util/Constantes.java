@@ -31,4 +31,7 @@ public class Constantes {
 	public final static String ESTADO_REGISTRADO = "1";
 	public static final String MODE_ANULACION = "A";
 	
+	/*Cambios agregados el 31.03.2021*/
+	public static final int CERO_INT =0;
+	
 }

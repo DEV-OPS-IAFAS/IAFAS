@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="IafasFuentesFinanciamiento">
+    <resultMap id="resultado" type="IafasFuentesFinanciamiento" />
+    
+    <select id="obtenerFuentesFinanciamiento"
+		parameterType="ep.mil.pe.iafas.programacion.model.IafasFuentesFinanciamiento"
+		resultType="ep.mil.pe.iafas.programacion.model.IafasFuentesFinanciamiento">
+		SELECT NFUENTE_FINANCIAMIENTO_CODIGO AS fuenteFinanciamientoCodigo, 
+		VFUENTE_FINANCIAMIENTO_NOMBRE AS   fuenteFinanciamientoNombre,
+		VFUENTE_FINANCIAMIENTO_ABREVIATURA AS fuenteFinanciamientoAbreviatura
+		FROM IAFAS_FUENTE_FINANCIAMIENTO
+		where 
+		CESTADO_CODIGO = 'AC'
+	</select>
+	
+</mapper>

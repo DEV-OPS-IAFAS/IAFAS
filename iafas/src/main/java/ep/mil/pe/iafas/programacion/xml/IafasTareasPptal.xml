@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="IafasTareasPptal">
+    <resultMap id="resultado" type="IafasTareasPptal" />
+    
+    <select id="obtenerTareasPresupuestales"
+		parameterType="ep.mil.pe.iafas.programacion.model.IafasTareasPptal"
+		resultType="ep.mil.pe.iafas.programacion.model.IafasTareasPptal">
+		SELECT NTAREA_PRESUPUESTAL_CODIGO AS nTareaPresupuestal  , 
+		VTAREA_PRESUPUESTAL_NOMBRE AS vTareaPresupuestalNombre, 
+		VTAREA_PRESUPUESTAL_ABREVIATURA as vTareaPresupuestalAbreviatura
+		from iafas_tarea_presupuestal
+		where 
+		CESTADO_CODIGO = 'AC'
+		order by NTAREA_PRESUPUESTAL_CODIGO asc
+	</select>
+	
+</mapper>

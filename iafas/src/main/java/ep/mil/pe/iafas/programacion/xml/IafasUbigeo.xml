@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="IafasUbigeo">
+    <resultMap id="resultado" type="IafasUbigeo" />
+    
+    <select id="obtenerDepartamentos"
+		parameterType="ep.mil.pe.iafas.programacion.model.IafasUbigeo"
+		resultType="ep.mil.pe.iafas.programacion.model.IafasUbigeo">
+		SELECT CDEPARTAMENTO_CODIGO AS codigoDepartamento  ,
+		VDEPARTAMENTO_NOMBRE AS nombreDepartamento
+		from iafas_departamento
+		where 
+		CESTADO_CODIGO = 'AC'		
+	</select>
+	
+	 <select id="obtenerProvincias"
+		parameterType="ep.mil.pe.iafas.programacion.model.IafasUbigeo"
+		resultType="ep.mil.pe.iafas.programacion.model.IafasUbigeo">
+		SELECT CPROVINCIA_CODIGO AS codigoProvincia  ,
+		VPROVINCIA_NOMBRE AS nombreProvincia
+		from iafas_provincia
+		where 
+		CDEPARTAMENTO_CODIGO = #{codigoDepartamento} AND 
+		CESTADO_CODIGO = 'AC'		
+	</select>
+	
+	<select id="obtenerUbigeos"
+		parameterType="ep.mil.pe.iafas.programacion.model.IafasUbigeo"
+		resultType="ep.mil.pe.iafas.programacion.model.IafasUbigeo">
+		SELECT CUBIGEO_CODIGO AS codigoUbigeo  ,
+		VUBIGEO_NOMBRE AS nombreUbigeo
+		from IAFAS_UBIGEO
+		where 
+		CDEPARTAMENTO_CODIGO = #{codigoDepartamento} AND 
+		CPROVINCIA_CODIGO = #{codigoProvincia} AND
+		CESTADO_CODIGO = 'AC'		
+	</select>
+	
+</mapper>
