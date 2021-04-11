@@ -14,7 +14,7 @@ import ep.mil.pe.iafas.administrativo.devengado.model.IafasDevengadoDet;
 
 public class iafasDevengadoDao {
 	
-	// definicion de la session
+	// definicion de la session cambio de kate
 		private SqlSessionFactory sqlSessionFactory = null;
 		
 		public iafasDevengadoDao(SqlSessionFactory sqlSessionFactory) {
