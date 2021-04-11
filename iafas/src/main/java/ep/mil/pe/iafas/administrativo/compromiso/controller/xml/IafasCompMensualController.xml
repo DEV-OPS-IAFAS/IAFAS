@@ -10,7 +10,7 @@
 	  
 	  SELECT m.vsecuencia secuencia, m.vsecuencia_int correlativo, 
 	  m.vreg_siaf vexpediente,
-	  det.vnro_certificado vnroCertificado,
+	  lpad(det.vnro_certificado,10,'0') vnroCertificado,
       CASE m.vcod_estado WHEN '1' THEN 'REG' WHEN '2' THEN 'AP' END vcodEstado,
       det.vtip_documento_men vtipDocumentoMen, 
       det.vnro_documento_men vnroDocumentoMen,

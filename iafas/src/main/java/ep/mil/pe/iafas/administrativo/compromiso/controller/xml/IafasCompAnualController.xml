@@ -60,7 +60,8 @@
 		nomClasificador,
 		ntarea_presupuestal_codigo vcodSec,
 		PK_AUX_CLASIFICADOR(NCLASIFICADOR_PRESUPUESTAL_CODIGO) cadena,
-		(NCERTIFICADO_DETALLE_IMPORTE - PK_TOTAL_CA(cperiodo_codigo,ncertificado_codigo,ntarea_presupuestal_codigo,NCLASIFICADOR_PRESUPUESTAL_CODIGO)) nimpMontoSol
+		(PK_TOTAL_CERT_AMP(cperiodo_codigo,ncertificado_codigo,ntarea_presupuestal_codigo,NCLASIFICADOR_PRESUPUESTAL_CODIGO) 
+		- PK_TOTAL_CA(cperiodo_codigo,ncertificado_codigo,ntarea_presupuestal_codigo,NCLASIFICADOR_PRESUPUESTAL_CODIGO)) nimpMontoSol
 		FROM iafas_certifi_presupuestal_detal where
 		cperiodo_codigo=#{vanoDocumento} and
 		ncertificado_codigo = #{vnroCertificado}

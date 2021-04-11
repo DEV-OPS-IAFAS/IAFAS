@@ -8,6 +8,7 @@
         <title>IAFAS</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
     </h:head>
     <body class="formulario">
         <script>
@@ -22,8 +23,13 @@
                 for (i = tam; i > tamTxt; i--)
                     txt = '0' + txt;
                 document.getElementById(obj).value = txt;
-            }           
-        
+            }     
+            
+            function validaCertificado() {
+		     swal("Alerta", 'Debe de Buscar previamente un Certificado',"warning");
+		  
+            }      
+       
         </script>
         <h:form id="frmCompromisoAnual" style="border-radius: 5px 5px 5px 5px;border: 1px ; width:100%;">
             <p:panel >
@@ -36,7 +42,7 @@
                     <h:inputText id="inpTxtCertificado" value="#{mbCompAnual.certificado}" onclick="limpiarTexto();" styleClass="input"/>
                     <p:commandButton id="cmdBtnBuscar"  value="Buscar"  actionListener="#{mbCompAnual.listarCompAnualCab()}"
                      ajax="false"  update="dTableCompAnual" style="height:30px;" title="Click aqui para buscar datos del Certificado"/>
-                    <p:commandButton  value="Nuevo"  styleClass="button" action="#{mbCompAnual.nuevoRegistro()}" ajax="false"
+                    <p:commandButton  value="Nuevo"  styleClass="button" action="#{mbCompAnual.nuevoRegistro()}" 
                     style="height:30px;" title="Click aqui para Ingresar un Nuevo Compromiso Anual"/>
                     <h:commandLink id="btnXLS" value="Excel">
                     <p:dataExporter type="xls" target="dTableCompAnual" fileName="CompromisoAnual"/>
@@ -49,7 +55,7 @@
                         <td valign="top">
                             <div>
                                 <p:dataTable id="dTableCompAnual" var="ca" value="#{mbCompAnual.lista}" rows="10" scrollable="true" scrollHeight="175px;"
-                                             style="width: 1000px;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
+                                             style="width: 100%;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
                                              paginatorPosition="bottom" paginator="true" stripedRows="true">
                                     <p:column headerText="Fase" style="width: 65px;">
                                         <h:commandLink id="cmdLink_Fase" actionListener="#{mbCompAnual.verDetalleRegistroCA}" >
@@ -81,18 +87,18 @@
                                     <p:column headerText="E.E." style="width: 18px;">
                                         <p:outputLabel value="#{ca.vcodEstado}" style="text-align: center"/>
                                     </p:column>
-                                    <p:column headerText="Editar" style="width: 20px;">
+                                   <!--   <p:column headerText="Editar" style="width: 20px;">
                                         <p:commandButton icon="pi pi-pencil" >
     
                                         </p:commandButton>
-                                    </p:column>
+                                    </p:column> -->
                                     <p:column headerText="Movimientos" style="width: 25px;">
                                         <p:commandButton icon="pi pi-search-plus" action="#{mbMovCA.nuevoMovimientoAnual}">
   											<f:param id="certificadoP" name="certificadoP" value="#{ca.vnroCertificado}"/>
   											<f:param id="secuenciaP" name="secuenciaP" value="#{ca.vsecuenciaA}"/>
                                         </p:commandButton>
                                     </p:column>
-                                    <p:column headerText="Enviar" style="width: 20px;">
+                                    <p:column headerText="Comprometer" style="width: 20px;">
                                         <p:commandButton id="btn_enviar" icon="pi pi-play" action="#{mbCompAnual.obtener()}"
                                         oncomplete="PF('EnvioAnual').show();"
                                         update="frmCompromisoAnual:EnvioAnual">
@@ -217,7 +223,7 @@
                     <p:panel >
                         <h:panelGrid columns="2">
                         <i class="pi pi-exclamation-circle" style="width:30px;height:30px;"></i>
-                            <p:outputLabel value="Desea Enviar el Compromiso Anual a la Siguiente Fase?" 
+                            <p:outputLabel value="Desea Confirmar el Compromiso Anual?" 
                             style="font-weight:bold;font-size:12px;"></p:outputLabel>
                         </h:panelGrid>
                         <h:panelGrid columns="2">

@@ -9,8 +9,25 @@
         <title>IAFAS-Compromiso Anual</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+		<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
     </h:head>
-    <body class="formulario">
+    <h:body class="formulario">
+    <script>
+        function verMensajes(){
+           var tipo = '#{mbCompAnual.typeMessages}';
+           if(tipo==0){
+             swal("ERROR", 'Ocurrio Un Error al Registrar',"error");
+           }else
+           if(tipo==1) {
+           	 swal("Aviso", 'Se Registró Con Exito',"success").then(function() {
+    	     window.location = "mainCompromisoAnual.xhtml"; });
+           }    
+		  else{
+		     swal("ALERTA", 'No se permite Campos Vacios al Registrar',"info");
+		  }
+        }
+        
+    </script>
         <h:form id="frmInsRegCompAnual" class="contenedor">
               <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
             <p:panel >
@@ -18,7 +35,7 @@
                     <i class="pi pi-calendar-minus"></i>
                     <p:outputLabel value="Registro de Compromiso Anual - Certificado N° #{mbCompAnual.certificado}" style="color: green; font-weight: bold; font-size: 12px;"/>
                     <p:commandButton  value="Grabar" action="#{mbCompAnual.grabarCompAnual()}" 
-                    icon="pi pi-save" style="height:35px;" ajax="false"/>
+                    icon="pi pi-save" style="height:35px;" ajax="false" />
                     <p:commandButton value="Cancelar" action="#{mbCompAnual.retornar()}"
                     icon="pi pi-arrow-left" style="height:35px;"/>
                 </p:panelGrid>
@@ -66,7 +83,8 @@
                                <f:selectItem itemValue="060" itemLabel="060:Contrato Suscrito"/>
                             </p:selectOneMenu>
                             <p:outputLabel value="Número:"/>
-                            <p:inputText id="nro_doc" size="9" value="#{mbCompAnual.nroDoc}" styleClass="input" style="text-align: right;"/>
+                            <h:inputText id="nro_doc" size="9" value="#{mbCompAnual.nroDoc}" styleClass="input" style="text-align: right;" 
+                            maxlength="8"/>
                             <p:commandButton id="btnbuscarOCOS" icon="ui-icon-search" value="Buscar"  styleClass="button" title="Busqueda Ordenes Spring"/>
                             <p:outputLabel value="Fecha:"/>
                             <h:panelGrid columns="2" >
@@ -101,7 +119,7 @@
                     <h:panelGrid columns="2">
                         <p:outputLabel value="Concepto:"/>
                         <h:inputText id="txt_concepto" style="width: 800px;" 
-                        value="#{mbCompAnual.concepto}" styleClass="input"/>
+                        value="#{mbCompAnual.concepto}" styleClass="input" />
                     </h:panelGrid>  
                     <h:panelGrid columns="8" style="width: 80%">
                         <p:outputLabel value="Moneda:"/>
@@ -155,5 +173,5 @@
                 </h:panelGrid>
             </p:panel>
         </h:form>
-    </body>
+    </h:body>
 </html>

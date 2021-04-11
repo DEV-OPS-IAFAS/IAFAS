@@ -43,19 +43,19 @@
                     <tr>
                         <td valign="top">
                             <div>
-                                <p:dataTable id="dTableCompMensual" var="men" value="#{mbCompMensual.lista}" rows="10" scrollable="true" scrollHeight="175px;"
-                                             style="width: 1000px;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
+                                <p:dataTable id="dTableCompMensual" var="men" value="#{mbCompMensual.lista}" rows="10" 
+                                             style="width: 100%;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
                                              paginatorPosition="bottom" paginator="true" stripedRows="true">
                                     <p:column headerText="Certificado" style="width: 15px;" >
                                         <p:outputLabel value="#{men.vnroCertificado}"/>
                                     </p:column>
-                                    <p:column headerText="Expediente" style="width: 15px;" >
+                                    <p:column headerText="Expediente" style="width: 15px;" filterBy="#{men.vexpediente}" filterMatchMode="contains">
                                         <p:outputLabel value="#{men.vexpediente}"/>
                                     </p:column>
                                     <p:column headerText="T.Doc-Nro" style="width: 15px;">
                                         <p:outputLabel value="#{men.vtipDocumentoMen}-#{men.vnroDocumentoMen}"/>
                                     </p:column>
-                                    <p:column headerText="Ruc" style="width: 100px;">
+                                    <p:column headerText="Ruc" style="width: 100px;" filterBy="#{men.cproveedorRuc}-#{men.razonSocial}" filterMatchMode="contains">
                                         <p:outputLabel value="#{men.cproveedorRuc}-#{men.razonSocial}"/>
                                     </p:column>
                                     <p:column headerText="Fecha" style="width: 10px;">
@@ -72,7 +72,7 @@
                                     <p:column headerText="E.E." style="width: 15px;">
                                         <p:outputLabel value="#{men.vcodEstado}" style="text-align: center"/>
                                     </p:column>
-                                    <p:column headerText="Enviar" style="width: 10px;">
+                                    <p:column headerText="Mensualizar" style="width: 10px;">
                                         <p:commandButton id="btn_enviar" icon="pi pi-play" action="#{mbCompMensual.obtener()}"
                                         oncomplete="PF('pMensual').show();"
                                         update="frmCompromisoMensual:EnvioMensual">
@@ -92,7 +92,7 @@
                     <p:panel >
                         <h:panelGrid columns="2">
                         <i class="pi pi-exclamation-circle" style="width:30px;height:30px;"></i>
-                            <p:outputLabel value="Desea Enviar el Compromiso Mensual a la Siguiente Fase?" 
+                            <p:outputLabel value="Desea Mensualizar El Compromiso Anual?" 
                             style="font-weight:bold;font-size:12px;"></p:outputLabel>
                         </h:panelGrid>
                         <h:panelGrid columns="2">

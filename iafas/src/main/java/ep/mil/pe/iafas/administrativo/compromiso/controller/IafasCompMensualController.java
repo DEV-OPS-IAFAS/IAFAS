@@ -10,6 +10,10 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 
 import ep.mil.pe.iafas.administrativo.compromiso.dao.IafasCompromisoMensualDao;
 import ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensual;
@@ -17,6 +21,7 @@ import ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensualDet
 import ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompromisoMensual;
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
 import ep.mil.pe.iafas.configuracion.util.Constantes;
+import ep.mil.pe.iafas.seguridad.controller.IafasUsuariosController;
 import lombok.Data;
 
 @Data
@@ -56,12 +61,20 @@ public class IafasCompMensualController implements Serializable{
 	private String psecuencia;
 	private String pcorrelativo;
 	private String pexpediente;
-	
+	private int typeMessages = -1;
+	private String messages="";
+	private String usuario;
 	
 	IafasCompromisoMensualDao mensualDao = new IafasCompromisoMensualDao(MySQLSessionFactory.getSqlSessionFactory());
-
+	private static final Logger logger = Logger.getLogger(IafasCompMensualController.class);
+	
 	public IafasCompMensualController() {
 		// TODO Auto-generated constructor stub
+		HttpSession session=null; 
+		session = (HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		IafasUsuariosController usuarioSession = new IafasUsuariosController();
+		usuarioSession=(IafasUsuariosController)session.getAttribute("iafasUsuariosController");
+		usuario = usuarioSession.getIdUsuario();
 		listadoMensual();
 	}
 	
@@ -83,6 +96,9 @@ public class IafasCompMensualController implements Serializable{
 	public List<ViewIafasCompromisoMensual> buscarAnual(){
 		
 		regAnual = new ArrayList<ViewIafasCompromisoMensual>();
+		if(regAnual.size()>0) {
+			regAnual.clear();
+		}
 		ViewIafasCompromisoMensual vcm = new ViewIafasCompromisoMensual();
 		vcm.setVano(periodo);
 		vcm.setVnroCertificado(certificado);
@@ -100,6 +116,7 @@ public class IafasCompMensualController implements Serializable{
 		vcm.setVnroCertificado(certificado);
 		vcm.setVsecuenciaA(psecuencia);
 		List<ViewIafasCompromisoMensual> registros = mensualDao.buscaCompromisoAnualSecuencia(vcm);
+		logger.info("[buscarAnualXSecuencia] Registros Encontrados :"+registros.size());
 		for(ViewIafasCompromisoMensual l : registros)
 		{
 			regAnualDet.add(l);
@@ -118,9 +135,11 @@ public class IafasCompMensualController implements Serializable{
 	}
 	
 	public void verAnuales() {
-		//String page = "insRegCompMensual.xhtml";
-		buscarAnual();
-		//return page;
+		if(certificado==null || certificado.trim().equals("")) {
+			typeMessages=3;
+			showMessages(3);
+		}
+		else {buscarAnual();}
 	}
 	
 	
@@ -136,66 +155,90 @@ public class IafasCompMensualController implements Serializable{
 		setNroDocumentoMen(Constantes.VACIO);
 		setFechaMensual(null);
 		setGlosa(Constantes.VACIO);
-		regAnualDet.clear();
 	}
 	
+	private boolean validaCampos() {
+		
+		if(tipDocumentoMen.equals(Constantes.VACIO)) {typeMessages=2;showMessages(2);return true;}
+		else
+		if(nroDocumentoMen.equals(Constantes.VACIO)) {typeMessages=2;showMessages(2);return true;}
+		else
+		if(fechaMensual==null) {typeMessages=2;showMessages(2);return true;}
+		else
+		if(glosa.equals(Constantes.VACIO)) {typeMessages=2;showMessages(2);return true;}
+		else {
+			typeMessages=1;
+			showMessages(1);
+			return false;	
+		}
+
+	}
 	
 	public String registroCompMensual() {
-		int reg =0;
-		try {
-			IafasCompromisoMensual men = new IafasCompromisoMensual();
-			IafasCompromisoMensualDet det = new IafasCompromisoMensualDet();
-			men.setVano(periodo);
-			men.setVglosa(glosa);
-			men.setVfuenteFinanciamiento(fuenteFinanciamiento);
-			men.setVcodTipoFuncionamiento(vcodtipoFinanciamiento);
-			men.setVcodEstado("1");
-			men.setNtipCam(ntipCam);
-			men.setVcodMoneda(vcodMoneda);
-			men.setVtipDocumentoMen(tipDocumentoMen);
-			men.setVnroDocumentoMen(nroDocumentoMen);
-			men.setDfechaDocumento(fechaMensual);
-			men.setVanoDocumento(vanoDocumentoA);
-			men.setVsecuenciaA(vsecuenciaA);
-			men.setVcorrelativo(vcorrelativoA);
-			men.setVnroCertificado(certificado);
-			men.setVcodProcesoSel(codProcesoSel);
-			men.setCproveedorRuc(ruc);
-			men.setVtipDocumentoCom(tipDocCom);
-			men.setVnroDocumentoCom(nroDocCom);
-			men.setVserieCom(nroSerieCom);
-			men.setDfechaDevengado(fecDocCom);
-			men.setVusuarioIng("44330586");
-			mensualDao.registroCompMensual(men);
-			for(int j =0;j <regAnualDet.size(); j++) {
-					det.setVano(periodo);
-					det.setVcodSecFunc(regAnualDet.get(j).getVcodSecFunc());
-					det.setVidClasificador(regAnualDet.get(j).getVidClasificador());
-					det.setNimpMonSol(regAnualDet.get(j).getMontoIngresado());
-					det.setVusuarioIng("44330586");
-				if(getRegAnualDet().get(j).getMontoIngresado().doubleValue()>0) {
-					if(getRegAnualDet().get(j).getNimpMontoSol().doubleValue() < getRegAnualDet().get(j).getMontoIngresado().doubleValue()) {
-						 FacesContext.getCurrentInstance().addMessage(null, new 
-					     FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR!", "El Monto Ingresado Excede al Saldo del Clasificador!"));
-						 deleteCompromisoMensual();
-						 return "insRegCompMensual";
-					}
-					else {
-						mensualDao.registroCompMensualDet(det);
-					}
-				}	
-					
-				}
-			
-			return retornar();
-			
+		if(validaCampos()==true) {
+			typeMessages=2;
+			showMessages(2);
 		}
-		catch (Exception e) {
-			// TODO: handle exception
-			System.out.println("Error: "+e.getMessage());
+		else {
+			try {
+				IafasCompromisoMensual men = new IafasCompromisoMensual();
+				IafasCompromisoMensualDet det = new IafasCompromisoMensualDet();
+				men.setVano(periodo);
+				men.setVglosa(glosa);
+				men.setVfuenteFinanciamiento(fuenteFinanciamiento);
+				men.setVcodTipoFuncionamiento(vcodtipoFinanciamiento);
+				men.setVcodEstado("1");
+				men.setNtipCam(ntipCam);
+				men.setVcodMoneda(vcodMoneda);
+				men.setVtipDocumentoMen(tipDocumentoMen);
+				men.setVnroDocumentoMen(nroDocumentoMen);
+				men.setDfechaDocumento(fechaMensual);
+				men.setVanoDocumento(vanoDocumentoA);
+				men.setVsecuenciaA(vsecuenciaA);
+				men.setVcorrelativo(vcorrelativoA);
+				men.setVnroCertificado(certificado);
+				men.setVcodProcesoSel(codProcesoSel);
+				men.setCproveedorRuc(ruc);
+				men.setVtipDocumentoCom(tipDocCom);
+				men.setVnroDocumentoCom(nroDocCom);
+				men.setVserieCom(nroSerieCom);
+				men.setDfechaDevengado(fecDocCom);
+				men.setVusuarioIng(usuario);
+				mensualDao.registroCompMensual(men);
+				for(int j =0;j <regAnualDet.size(); j++) {
+						det.setVano(periodo);
+						det.setVcodSecFunc(regAnualDet.get(j).getVcodSecFunc());
+						det.setVidClasificador(regAnualDet.get(j).getVidClasificador());
+						det.setNimpMonSol(regAnualDet.get(j).getMontoIngresado());
+						det.setVusuarioIng(usuario);
+					if(getRegAnualDet().get(j).getMontoIngresado().doubleValue()>0) {
+						if(getRegAnualDet().get(j).getNimpMontoSol().doubleValue() < getRegAnualDet().get(j).getMontoIngresado().doubleValue()) {
+							 FacesContext.getCurrentInstance().addMessage(null, new 
+						     FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR!", "El Monto Ingresado Excede al Saldo del Clasificador!"));
+							 deleteCompromisoMensual();
+							 return "insRegCompMensual";
+						}
+						else {
+							mensualDao.registroCompMensualDet(det);
+							typeMessages = 1;
+						}
+					}	
+						
+					}
+				showMessages(1);		
+				//return retornar();				
+			}
+			catch (Exception e) {
+				// TODO: handle exception
+				typeMessages=0;
+				showMessages(0);
+				logger.error("[ERROR] registroCompMensual :", e);
+			}	
 		}
+		
 		return "";
 	}
+	
 	public String obtener() {
 		String page="";
 		  psecuencia = (String) extContext().getRequestParameterMap().get("p_secuencia");
@@ -213,12 +256,11 @@ public class IafasCompMensualController implements Serializable{
 			ca.setSecuencia(psecuencia);
 			ca.setCorrelativo(pcorrelativo);
 			ca.setVexpediente(pexpediente);
-			ca.setVusuarioIng("44330686");
-			
+			ca.setVusuarioIng(usuario);			
 			envio = mensualDao.enviarCompromisoMensual(ca);
 		}
 		catch (Exception e) {
-			System.out.println("Error Envio : "+e.getMessage());
+			logger.error("[ERROR] enviarCompromisoMensual :", e);
 		}
          retornar();
 		return envio;
@@ -240,6 +282,19 @@ public class IafasCompMensualController implements Serializable{
 		}
 
 		return envio;
+	}
+	
+	private String showMessages(int opcion) {
+		logger.info("Tipo de Opcion y Mensaje :"+opcion+" "+typeMessages);
+		messages = "";
+		switch (opcion) {
+		case 0 : typeMessages=0; messages = "";PrimeFaces.current().executeScript("verMensajes()");break;
+		case 1 : typeMessages=1; messages = "";PrimeFaces.current().executeScript("verMensajes()");break;
+		case 2 : typeMessages=2; messages = "";PrimeFaces.current().executeScript("verMensajes()");break;
+		case 3 : typeMessages=3; messages = "";PrimeFaces.current().executeScript("verMensajes()");break;
+	    default : logger.info("No se muestra ningun mensaje");break;
+		}	
+        return messages;
 	}
 	
     private ExternalContext extContext() {
