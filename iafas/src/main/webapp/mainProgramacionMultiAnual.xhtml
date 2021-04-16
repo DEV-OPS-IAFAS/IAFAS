@@ -31,10 +31,19 @@ button.ui-button {
 <body class="formulario">
 	
 	 <script>
-            function alertas() {
-              var codDep =   document.getElementById('frm_ProgMultiAnual:cboDpto').value ;
+            function validacion() {
+            	var valor;
+              var periodo =   document.getElementById('frm_ProgMultiAnual:cboPeriodo').value ;
               
-              alert(codDep);
+            	if(periodo == "0"){
+            		alert('Debe seleccionar el Periodo');
+            		document.getElementById('frm_ProgMultiAnual:cboPeriodo').focus();
+            		valor = false;
+            	}
+            	else{
+            		valor = true;
+            	}
+            	return valor;
             }
             
             
@@ -47,54 +56,89 @@ button.ui-button {
 	<p:panel header="Datos de Busqueda" >
 			<p:panelGrid columns="6" styleClass="panel">
 				<h:outputLabel value="A.F" styleClass="etiqueta" style="font-size:11px;font-weight:bold;" />
-				<h:selectOneMenu  id="cboPeriodo"  styleClass="input" value="#{programacionMultiAnualController.cperiodo}">
-				 <f:ajax  render="frm_ProgMultiAnual:pnlGr_Importes" listener="#{programacionMultiAnualController.calcularPeriodos}"/>
+				<h:selectOneMenu  id="cboPeriodo"  styleClass="select" value="#{programacionMultiAnualController.cperiodo}">
+				<f:ajax  render="frm_ProgMultiAnual:dTableProgramacion" listener="#{programacionMultiAnualController.buscarCabecera()}"/>
+				 <f:ajax  render="frm_ProgMultiAnual:pnlGr_Importes2" listener="#{programacionMultiAnualController.calcularPeriodos}"/>
 				 	<f:selectItem itemValue="0" itemLabel="Seleccione" />
 					<f:selectItems var="option" value="#{programacionMultiAnualController.periodos}" />
 				</h:selectOneMenu>
 				
 				<h:outputLabel  value="Fte.Financ:" styleClass="etiqueta" style="font-size:11px;font-weight:bold;"    />
-				<h:selectOneMenu  id="cboFuenFinanc"  styleClass="input" value="#{programacionMultiAnualController.fteFinanc}">
+				<h:selectOneMenu  id="cboFuenFinanc"  styleClass="select" value="#{programacionMultiAnualController.fteFinanc}">
+					<f:ajax  render="frm_ProgMultiAnual:dTableProgramacion" listener="#{programacionMultiAnualController.buscarCabecera()}"/>
 					<f:selectItem itemValue="0" itemLabel="Seleccione" />
 						<f:selectItems var="optionFuente" value="#{programacionMultiAnualController.fuentes}" />
 				</h:selectOneMenu>
 <!-- 				<p:commandButton styleClass="btn waves-effect waves-light btn-success btn-outline-success"  oncomplete="PF('modalCabecera').show()"  -->
 <!-- 				 title="Click aqui para Nuevo Registro" value="Nuevo" /> -->
-				<p:commandButton  oncomplete="PF('modalCabecera').show()" 
-				 title="Click aqui para Nuevo Registro" value="Nuevo" />
+				<p:commandButton  onclick="validacion();" oncomplete="PF('modalCabecera').show()" 
+				 title="Click aqui para Nuevo Registro" value="Nuevo" action="#{programacionMultiAnualController.nuevo()}" update="frm_ProgMultiAnual:modalCabecera" />
    			</p:panelGrid>
 			
 			<p:panel header="Datos Encontrados" >
 			<p:panelGrid columns="6" styleClass="panel">
 			
-				<p:dataTable id="dTableGirado" var="tblGirado"
-				value="#{iafasGiradoController.listaPorGirarCadenas}"
+				<p:dataTable id="dTableProgramacion" var="tblProgramacion"
+				value="#{programacionMultiAnualController.listaCabecera}" selection="#{programacionMultiAnualController.bean}"
+				 rowKey="#{tblProgramacion.periodo}#{tblProgramacion.codigoTareaPtal}#{tblProgramacion.fuenteFinac}#{programacionMultiAnualController.cperiodo}#{programacionMultiAnualController.cperiodo1}#{programacionMultiAnualController.cperiodo2}" selectionMode="single"
 				style="font-size:11px;" emptyMessage="No se encontro Usuarios registrados">
 
-				<p:column style="width:2px;" headerText="Id. Clasificador">
-					<p:outputLabel value="#{tblGirado.vcodCla}" />
+				<p:column style="width:100px;" headerText="TAREA">
+					<p:outputLabel value="#{tblProgramacion.codigoTareaPtal}-#{tblProgramacion.tarea}" />
 				</p:column>
 				
-				<p:column style="width:2px;" headerText="Clasificador">
-					<p:outputLabel value="#{tblGirado.cadena}" />
+				<p:column style="width:2px;" headerText="PROG.#{programacionMultiAnualController.cperiodo}">
+					<p:outputLabel value="#{tblProgramacion.monto1}" />
 				</p:column>
 				
-				<p:column style="width:80px;" headerText="Dsecripcion">
-					<p:outputLabel value="#{tblGirado.desCadena}" />
+				<p:column style="width:2px;" headerText="DETALLE #{programacionMultiAnualController.cperiodo}">
+					<p:outputLabel value="#{tblProgramacion.detalle1}" />
 				</p:column>
 				
-				<p:column headerText="Sec.Fun" style="width: 2px;" 
+				<p:column style="width:2px;" headerText="SALDO #{programacionMultiAnualController.cperiodo}" >
+					<p:outputLabel value="#{tblProgramacion.saldo1}" />
+				</p:column>
+				
+				<p:column style="width:2px;" headerText="PROG.#{programacionMultiAnualController.cperiodo1}">
+					<p:outputLabel value="#{tblProgramacion.monto2}" />
+				</p:column>
+				
+				<p:column style="width:2px;" headerText="DETALLE #{programacionMultiAnualController.cperiodo1}">
+					<p:outputLabel value="#{tblProgramacion.detalle2}" />
+				</p:column>
+				
+				<p:column headerText="SALDO #{programacionMultiAnualController.cperiodo1}" style="width: 2px;" 
 					filterMatchMode="contains">
-					<p:outputLabel value="#{tblGirado.vcodSecFun}" />
+					<p:outputLabel value="#{tblProgramacion.saldo2}" />
 				</p:column>
 				
-				<p:column headerText="Importe" style="width: 2px;" 
-					filterMatchMode="contains">
-					<p:outputLabel value="#{tblGirado.impSolCad}" />
+				<p:column style="width:2px;" headerText="PROG.#{programacionMultiAnualController.cperiodo2}">
+					<p:outputLabel value="#{tblProgramacion.monto3}" />
 				</p:column>
-
+				
+				<p:column style="width:2px;" headerText="DETALLE #{programacionMultiAnualController.cperiodo2}">
+					<p:outputLabel value="#{tblProgramacion.detalle3}" />
+				</p:column>
+				
+				<p:column headerText="SALDO #{programacionMultiAnualController.cperiodo2}" style="width: 2px;" 
+					filterMatchMode="contains">
+					<p:outputLabel value="#{tblProgramacion.saldo3}" />
+				</p:column>
+				
 			</p:dataTable>
-				
+			
+			<p:contextMenu for="dTableProgramacion" style="width:200px;">
+            <p:menuitem value="Editar" update="frm_ProgMultiAnual:modalCabecera" 
+            oncomplete="PF('modalCabecera').show()" action="#{programacionMultiAnualController.obtenerRegistro()}" >
+            </p:menuitem>
+            <p:menuitem value="Eliminar"   />
+            <p:menuitem value="Ingresar Detalle" update="frm_ProgMultiAnual:modalDetalle"   oncomplete="PF('modalDetalle').show()" 
+            action="#{programacionMultiAnualController.obtenerRegistroDetalle()}">
+            </p:menuitem>
+            <p:menuitem value="Cerrar"   />
+            <p:menuitem value="Activar"   />
+        </p:contextMenu>
+        	
 			</p:panelGrid>
 		</p:panel>
 			
@@ -103,43 +147,172 @@ button.ui-button {
 		<p:dialog header="PROGRAMACIÓN MULTIANUAL DE GASTOS" id="modalCabecera" widgetVar="modalCabecera" showEffect="fade" minHeight="600" width="1020" >
 			<p:panelGrid columns="2" colSpans="6,6" size="sm" id="pnlGr_Importes">
 					<h:outputLabel value="Tarea" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />				
-					<h:selectOneMenu  id="cboTarea"  styleClass="input" value="#{programacionMultiAnualController.codTarea}">
+					<h:selectOneMenu  id="cboTarea"  styleClass="select" value="#{programacionMultiAnualController.codTarea}">
 						<f:selectItem itemValue="0" itemLabel="Seleccione" />
 						<f:selectItems var="optionTarea" value="#{programacionMultiAnualController.tareas}" />
 					</h:selectOneMenu>
 					
-					<h:outputLabel value="Departamento" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />	
-					<h:selectOneMenu  id="cboDpto"  styleClass="input" value="#{programacionMultiAnualController.codDep}" 
-						partialSubmit="true" valueChangeListener="#{programacionMultiAnualController.cargarProvincias}"  >
+						<h:outputLabel value="Departamento" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />	
+					<h:selectOneMenu  id="cboDpto"  styleClass="select" value="#{programacionMultiAnualController.codDep}" >
+						<f:selectItem itemValue="00" itemLabel="Seleccione" />
 						<f:selectItems var="optionDpto" value="#{programacionMultiAnualController.departamentos}" />
+						 <f:ajax render="cboProv" listener="#{programacionMultiAnualController.cargarProvincias}"  />
 					</h:selectOneMenu>
 					
 					<h:outputLabel value="Provincia" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />	
-					<h:selectOneMenu  id="cboprov"  styleClass="input" value="#{programacionMultiAnualController.codProv}">
+					<h:selectOneMenu  id="cboProv"  styleClass="select" value="#{programacionMultiAnualController.codProv}">
+					<f:selectItem itemValue="00" itemLabel="Seleccione" />
 						<f:selectItems var="optionProv" value="#{programacionMultiAnualController.provincias}" />
+						 <f:ajax render="cboDist" listener="#{programacionMultiAnualController.cargarUbigeo}"  />
 					</h:selectOneMenu>
 					
 					<h:outputLabel value="Distrito" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-					<h:selectOneMenu  id="cboDist"  styleClass="input" value="#{programacionMultiAnualController.codUbigeo}">
-						<f:selectItem itemValue="0" itemLabel="Seleccione" />
-						<f:selectItems var="optionDist" value="#{programacionMultiAnualController.departamentos}" />
+					<h:selectOneMenu  id="cboDist"  styleClass="select" value="#{programacionMultiAnualController.codUbigeo}">
+					<f:selectItem itemValue="00" itemLabel="Seleccione" />
+						<f:selectItems var="optionDist" value="#{programacionMultiAnualController.ubigeos}" />
 					</h:selectOneMenu>
 					
-					<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-					 <p:inputNumber id="input1" value="#{programacionMultiAnualController.monto1}" modifyValueOnWheel="false" />
-					<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo1}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-					 <p:inputNumber id="input2" value="#{programacionMultiAnualController.monto2}" modifyValueOnWheel="false" />
-					<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo2}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-					 <p:inputNumber id="input3" value="#{programacionMultiAnualController.monto3}" modifyValueOnWheel="false" />
-				</p:panelGrid>
+						</p:panelGrid>
+			
+			<h:panelGrid columns="6" colSpans="6,6" size="sm"  id="pnlGr_Importes2">			
+					<table>
+					<tr>
+ 						<td valign="top">
+							<h:panelGrid columns="2"  colSpans="3,3"> 
+								<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
+								<p:inputNumber id="input1" value="#{programacionMultiAnualController.monto1}" />
+								<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo1}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
+								<p:inputNumber id="input2" value="#{programacionMultiAnualController.monto2}" modifyValueOnWheel="false" />
+								<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo2}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
+								<p:inputNumber id="input3" value="#{programacionMultiAnualController.monto3}" modifyValueOnWheel="false" />
+		  
+		  					</h:panelGrid>
+		 				</td>
+				 <td valign="top">
+				 			<h:panelGrid columns="2"  colSpans="3,3"> 
+										
+								<h:outputLabel value="Meta Fisica #{programacionMultiAnualController.cperiodo}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
+								<p:inputNumber id="input4" value="#{programacionMultiAnualController.meta1}" />
+								<h:outputLabel value="Meta Fisica #{programacionMultiAnualController.cperiodo1}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
+								<p:inputNumber id="input5" value="#{programacionMultiAnualController.meta2}" modifyValueOnWheel="false" />
+								<h:outputLabel value="Meta Fisica #{programacionMultiAnualController.cperiodo2}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
+								<p:inputNumber id="input6" value="#{programacionMultiAnualController.meta3}" modifyValueOnWheel="false" />
+				 			</h:panelGrid> 
+				 </td>
+				</tr>
+			</table>
+			
+			</h:panelGrid>
+			
 				<f:facet name="footer">
 					<p:commandButton value="Cerrar" styleClass="ui-button-outlined ui-button-danger" oncomplete="PF('modalCabecera').hide()"
-						action="#{programacionMultiAnualController.limpiarCamposMto()}" update="" />
+						action="#{programacionMultiAnualController.limpiarCamposMto()}" update="frm_ProgMultiAnual:dTableProgramacion" />
 					<p:commandButton value="Grabar" styleClass="ui-button-outlined ui-button-success" oncomplete="PF('modalCabecera').hide()" 
-						action="#{programacionMultiAnualController.mantenimientoUsuarios()}" update="" />
+						action="#{programacionMultiAnualController.insRegistroCab()}" update="frm_ProgMultiAnual:dTableProgramacion" />
 				</f:facet>	
 		</p:dialog>	
 		
+		
+		<p:dialog header="DETALLE DE PROGRAMACIÓN MULTIANUAL DE GASTOS" id="modalDetalle" widgetVar="modalDetalle" showEffect="fade" minHeight="600" width="850" >
+			<p:panelGrid columns="2"  id="pnlGr_Detalle">
+				<h:outputLabel value="Tarea" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />				
+					<h:selectOneMenu  id="cboTareaDetalle"  styleClass="select" value="#{programacionMultiAnualController.codTarea}" disabled="true">
+						<f:selectItem itemValue="0" itemLabel="Seleccione" />
+						<f:selectItems var="optionTareaDetalle" value="#{programacionMultiAnualController.tareas}" />
+					</h:selectOneMenu>
+					<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
+					<p:inputNumber id="input1Det" value="#{programacionMultiAnualController.monto1}" disabled="true"/>
+					<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo1}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
+					<p:inputNumber id="input2Det" value="#{programacionMultiAnualController.monto2}" modifyValueOnWheel="false"  disabled="true"/>
+					<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo2}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
+					<p:inputNumber id="input3Det" value="#{programacionMultiAnualController.monto3}" modifyValueOnWheel="false"  disabled="true"/>
+		  
+			</p:panelGrid>	
+			
+			   <p:toolbar>
+            <p:toolbarGroup>
+                <p:commandButton value="Nuevo" icon="pi pi-plus"   oncomplete="PF('modalDetInsert').show()"
+                                 styleClass="ui-button-success" style="margin-right: .5rem">
+                </p:commandButton>
+                <p:commandButton id="delete-products-button" value="Eliminar" 
+                                 icon="pi pi-trash"  styleClass="ui-button-danger" update="@this">
+                    <p:confirm header="Confirmation" message="Desea Eliminar el registro?"
+                               icon="pi pi-exclamation-triangle"/>
+                </p:commandButton>
+            </p:toolbarGroup>
+        </p:toolbar>
+			  
+			 <p:dataTable id="dTableProgramacionDet" var="tblProgramacionDet"
+				value="#{programacionMultiAnualController.listaDetalle}"   reflow="true" styleClass="products-table"
+				style="font-size:11px;" emptyMessage="No se encontro registros">
+
+				<p:column style="width:100px;" headerText="CADENA DE GASTO">
+					<p:outputLabel value="#{tblProgramacionDet.cadena}-#{tblProgramacionDet.desCadena}" />
+				</p:column>
+				
+				<p:column style="width:2px;" headerText="#{programacionMultiAnualController.cperiodo}">
+					<p:outputLabel value="#{tblProgramacionDet.montoDet1}" />
+				</p:column>
+				<p:column style="width:2px;" headerText="#{programacionMultiAnualController.cperiodo1}">
+					<p:outputLabel value="#{tblProgramacionDet.montoDet2}" />
+				</p:column>
+				
+				<p:column style="width:2px;" headerText="#{programacionMultiAnualController.cperiodo2}">
+					<p:outputLabel value="#{tblProgramacionDet.montoDet3}" />
+				</p:column>
+				
+				<p:column style="width:2px;" headerText="IMPORTE">
+					<p:outputLabel value="#{tblProgramacionDet.importe}" />
+				</p:column>
+				
+			</p:dataTable>	
+		</p:dialog>	
+		
+		<p:dialog header="REGISTRO DE PROGRAMACIÓN MULTIANUAL DE GASTOS" id="modalDetInsert" widgetVar="modalDetInsert" showEffect="fade" minHeight="100" width="1100" >
+			<p:panelGrid columns="2"  id="pnlGr_insert" styleClass="grid">
+					<h:outputLabel value="Tarea" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />				
+					<h:selectOneMenu  id="cboCadenas"  styleClass="select" value="#{programacionMultiAnualController.codCla}">
+						<f:selectItem itemValue="0" itemLabel="Seleccione" />
+						<f:selectItems var="optionCadeas" value="#{programacionMultiAnualController.cadenas}" />
+					</h:selectOneMenu>
+			</p:panelGrid>
+			
+			<h:panelGrid columns="6" colSpans="6,6" size="sm"  id="pnlGr_Importes3">			
+					<table>
+					<tr>
+ 						<td valign="top">
+							<h:panelGrid columns="2"  colSpans="3,3"> 
+								<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
+								<p:inputNumber id="inputCad1" value="#{programacionMultiAnualController.montoDet1}" />
+								<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo1}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
+								<p:inputNumber id="inputCad2" value="#{programacionMultiAnualController.montoDet2}" modifyValueOnWheel="false" />
+								<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo2}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
+								<p:inputNumber id="inputcad3" value="#{programacionMultiAnualController.montoDet3}" modifyValueOnWheel="false" />
+		  
+		  					</h:panelGrid>
+		 				</td>
+				 <td valign="top">
+				 			<h:panelGrid columns="2"  colSpans="3,3"> 
+										
+								<h:outputLabel value="Saldo S/." styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
+								<p:inputNumber id="inputCad4"   />
+								<h:outputLabel value="Saldo S/." styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
+								<p:inputNumber id="inputCad5" modifyValueOnWheel="false" />
+								<h:outputLabel value="Saldo S/." styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
+								<p:inputNumber id="inputCad6"   modifyValueOnWheel="false" />
+				 			</h:panelGrid> 
+				 </td>
+				</tr>
+			</table>
+			
+			</h:panelGrid>
+			<f:facet name="footer">
+					<p:commandButton value="Cerrar" styleClass="ui-button-outlined ui-button-danger" oncomplete="PF('modalDetInsert').hide()"
+						action="#{programacionMultiAnualController.limpiarCamposMto()}" update="frm_ProgMultiAnual:dTableProgramacionDet" />
+					<p:commandButton value="Grabar" styleClass="ui-button-outlined ui-button-success" oncomplete="PF('modalDetInsert').hide()" 
+						action="#{programacionMultiAnualController.insRegistroDet()}" update="frm_ProgMultiAnual:dTableProgramacionDet" />
+				</f:facet>	
+		</p:dialog>
 
 	</h:form>
 	<script type="text/javascript"

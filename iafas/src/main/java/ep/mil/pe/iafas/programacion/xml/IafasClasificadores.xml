@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="IafasClasificadores">
+    <resultMap id="resultado" type="IafasClasificadores" />
+    
+    <select id="obtenerClasificadores"
+		parameterType="ep.mil.pe.iafas.programacion.model.IafasClasificadores"
+		resultType="ep.mil.pe.iafas.programacion.model.IafasClasificadores">
+		SELECT DISTINCT 
+		NCLASIFICADOR_PRESUPUESTAL_CODIGO AS codCla, VCLASIFICADOR_PRESUPUESTAL_CADENA AS cadena , 
+		VCLASIFICADOR_PRESUPUESTAL_DESCRIPCION AS descripcionCla, VCLASIFICADOR_PRESUPUESTAL_NOMBRE AS nombreCla
+		FROM iafas_clasificador_presupuestal
+		ORDER BY NCLASIFICADOR_PRESUPUESTAL_CODIGO
+	</select>
+	
+</mapper>

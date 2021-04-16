@@ -1,28 +1,35 @@
 package ep.mil.pe.iafas.programacion.controller;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.event.ValueChangeEvent;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
 import ep.mil.pe.iafas.configuracion.util.Constantes;
+import ep.mil.pe.iafas.programacion.dao.IafasClasificadoresDao;
 import ep.mil.pe.iafas.programacion.dao.IafasFuentesFinanciamientoDao;
 import ep.mil.pe.iafas.programacion.dao.IafasPeriodosDao;
 import ep.mil.pe.iafas.programacion.dao.IafasTareasPptalDao;
 import ep.mil.pe.iafas.programacion.dao.IafasUbigeoDao;
+import ep.mil.pe.iafas.programacion.dao.ProgramacionMultiAnualDao;
+import ep.mil.pe.iafas.programacion.dao.ProgramacionMultiAnualDetalleDao;
+import ep.mil.pe.iafas.programacion.model.IafasClasificadores;
 import ep.mil.pe.iafas.programacion.model.IafasFuentesFinanciamiento;
 import ep.mil.pe.iafas.programacion.model.IafasPeriodos;
 import ep.mil.pe.iafas.programacion.model.IafasTareasPptal;
 import ep.mil.pe.iafas.programacion.model.IafasUbigeo;
+import ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnual;
+import ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnualDetalle;
+import ep.mil.pe.iafas.seguridad.controller.IafasUsuariosController;
 import lombok.Data;
 
 
@@ -35,7 +42,7 @@ public class ProgramacionMultiAnualController implements Serializable {
 	private static final Logger logger = Logger.getLogger(ProgramacionMultiAnualController.class.getName());
 
 	private String cperiodo;
-	private String fteFinanc;
+	private String fteFinanc =  Constantes.CERO_STRING;
 	private int codTarea;
 	private int cperiodo1;
 	private int cperiodo2;
@@ -43,9 +50,12 @@ public class ProgramacionMultiAnualController implements Serializable {
 	private String codDep;
 	private String codProv;
 	private String codUbigeo;
-	private BigDecimal monto1;
-	private BigDecimal monto2;
-	private BigDecimal monto3;
+	private int monto1;
+	private int monto2;
+	private int monto3;
+	private int meta1;
+	private int meta2;
+	private int meta3;
 	
 	private List<SelectItem> periodos;
 	private List<SelectItem> tareas;
@@ -53,6 +63,74 @@ public class ProgramacionMultiAnualController implements Serializable {
 	private ArrayList<SelectItem> departamentos;
 	private ArrayList<SelectItem> provincias;
 	private ArrayList<SelectItem> ubigeos;
+	private ProgramacionMultiAnual bean;
+	private String modo = Constantes.MODE_REGISTRO;
+	
+	private List<ProgramacionMultiAnual> listaCabecera = new ArrayList<ProgramacionMultiAnual>();
+	private List<ProgramacionMultiAnualDetalle> listaDetalle = new ArrayList<ProgramacionMultiAnualDetalle>();
+	
+	private int codCla;
+	private List<SelectItem> cadenas;
+	private int montoDet1;
+	private int montoDet2;
+	private int montoDet3;
+	
+	public List<ProgramacionMultiAnual> buscarCabecera() {
+
+		logger.info("[INICIO:] Metodo : buscarCabecera");
+
+		int monto1 = Constantes.CERO_INT;
+		int monto2 = Constantes.CERO_INT;
+		int monto3 = Constantes.CERO_INT;
+		int detalle1 = Constantes.CERO_INT;
+		int detalle2 = Constantes.CERO_INT;
+		int detalle3 = Constantes.CERO_INT;
+		int saldo1 = Constantes.CERO_INT;
+		int saldo2 = Constantes.CERO_INT;
+		int saldo3 = Constantes.CERO_INT;
+		
+		
+		this.listaCabecera = new ArrayList<>();
+		if (this.listaCabecera != null)
+			this.listaCabecera.clear();
+
+		ProgramacionMultiAnualDao objDao = new ProgramacionMultiAnualDao(MySQLSessionFactory.getSqlSessionFactory());
+		ProgramacionMultiAnual objBn  = new ProgramacionMultiAnual();
+		
+		objBn.setPeriodo(cperiodo);
+		objBn.setFuenteFinac(Integer.parseInt(fteFinanc));
+		
+		List<ProgramacionMultiAnual> lstCab = objDao.mostrarCabecera(objBn);
+
+		if (lstCab.size() > 0) {
+			for (ProgramacionMultiAnual objBeanLista : lstCab) {
+				objBn.setAno1(Integer.parseInt(cperiodo));
+				objBn.setAno2(cperiodo1);
+				objBn.setAno3(cperiodo2);
+				objBn.setCodigoTareaPtal(objBeanLista.getCodigoTareaPtal());
+				List<ProgramacionMultiAnual> lstMonto1 =	objDao.obtenerMonto1(objBn);
+				List<ProgramacionMultiAnual> lstMonto2 =	objDao.obtenerMonto2(objBn);
+				List<ProgramacionMultiAnual> lstMonto3 =	objDao.obtenerMonto3(objBn);
+				
+				logger.info("size ::: "+lstMonto1.size() +" - " +lstMonto2.size()+" - "+lstMonto3.size());
+				if (lstMonto1.size() > 0 && lstMonto2.size() > 0 && lstMonto3.size() > 0) {
+					monto1 = lstMonto1.get(0).getMonto1();
+					monto2 = lstMonto2.get(0).getMonto2();
+					monto3 = lstMonto3.get(0).getMonto3();
+					objBeanLista.setMonto1(monto1);
+					objBeanLista.setMonto2(monto2);
+					objBeanLista.setMonto3(monto3);
+					
+				}
+				
+				this.listaCabecera.add(objBeanLista);
+			}
+		}
+
+		logger.info("[FIN:] Metodo : buscarCabecera");
+		return listaCabecera;
+	}
+	
 	
 	public List<SelectItem> getPeriodos() {
 		logger.info("[INICIO:] Metodo : getPeriodos");
@@ -103,9 +181,13 @@ public class ProgramacionMultiAnualController implements Serializable {
 		logger.info("[INICIO:] Metodo : limpiarCamposMto");
 
 		setCodTarea(Constantes.CERO_INT);
-		setCperiodo1(Constantes.CERO_INT);
-		setCperiodo2(Constantes.CERO_INT);
-		setCperiodo3(Constantes.CERO_INT);
+		setCodDep(Constantes.CERO_CERO_STRING);
+		setCodProv(Constantes.CERO_CERO_STRING);
+		setCodUbigeo(Constantes.CERO_CERO_STRING);
+		setMeta1(Constantes.CERO_INT);
+		setMeta2(Constantes.CERO_INT);
+		setMeta3(Constantes.CERO_INT);
+		//buscarCabecera();
 		logger.info("[FIN:] Metodo : limpiarCamposMto");
 	}
 	
@@ -128,69 +210,272 @@ public class ProgramacionMultiAnualController implements Serializable {
 		logger.info("[INICIO:] Metodo : getDepartamentos");
 		
 		this.departamentos = new ArrayList<SelectItem>();
-//		departamentos.add(new SelectItem("00", "Seleccione.."));
 		IafasUbigeoDao DptoDao = new IafasUbigeoDao(MySQLSessionFactory.getSqlSessionFactory());
 		List<IafasUbigeo> lstDpts = DptoDao.obtenerDepartamentos();
 		for (IafasUbigeo p : lstDpts) {
-			this.departamentos.add(new SelectItem(p.getCodigoDepartamento(),
-					p.getCodigoDepartamento() +" - " +p.getNombreDepartamento()));
+			this.departamentos.add(new SelectItem(p.getCodigoDepartamento(),p.getNombreDepartamento()));
 		}
 		logger.info("[FIN:] Metodo : getDepartamentos");
 		return this.departamentos;
 
 	}
 	
-	public void cargarProvincias(ValueChangeEvent event) throws IOException {
-
+	public ArrayList<SelectItem> cargarProvincias() {
 		logger.info("[INICIO:] Metodo : cargarProvincias");
 
-		this.provincias = new ArrayList<SelectItem>();
-		provincias.add(new SelectItem("00", "Seleccione.."));
+		this.provincias = new ArrayList<>();
 		IafasUbigeoDao provDao = new IafasUbigeoDao(MySQLSessionFactory.getSqlSessionFactory());
-		List<IafasUbigeo> lstProv = provDao.obtenerProvincias( event.getNewValue().toString());
+
+		List<IafasUbigeo> lstProv = provDao.obtenerProvincias(codDep);
 
 		for (IafasUbigeo p : lstProv) {
 			this.provincias.add(
-					new SelectItem(p.getCodigoProvincia(), p.getCodigoProvincia() + " - " + p.getNombreProvincia()));
+					new SelectItem(p.getCodigoProvincia(), p.getNombreProvincia()));
 		}
 		logger.info("[FIN:] Metodo : cargarProvincias");
-	}
-	
-	
-	/*public List<SelectItem> getProvincias() {
-		logger.info("[INICIO:] Metodo : getProvincias");
-		
-		this.provincias = new ArrayList<>();
-		IafasUbigeoDao provDao = new IafasUbigeoDao(MySQLSessionFactory.getSqlSessionFactory());
-		
-		List<IafasUbigeo> lstProv = provDao.obtenerProvincias(codDep);
-		
-		for (IafasUbigeo p : lstProv) {
-			this.fuentes.add(new SelectItem(p.getCodigoProvincia(),
-					p.getCodigoProvincia() +" - " +p.getNombreProvincia()));
-		}
-		logger.info("[FIN:] Metodo : getProvincias");
 		return this.provincias;
-
 	}
 	
-	public List<SelectItem> getUbigeos() {
-		logger.info("[INICIO:] Metodo : getUbigeos");
-		
+	public ArrayList<SelectItem> cargarUbigeo() {
+		logger.info("[INICIO:] Metodo : cargarUbigeo");
+
 		this.ubigeos = new ArrayList<>();
 		IafasUbigeoDao ubigeoDao = new IafasUbigeoDao(MySQLSessionFactory.getSqlSessionFactory());
 		IafasUbigeo objBn = new IafasUbigeo();
 		objBn.setCodigoDepartamento(codDep);
 		objBn.setCodigoProvincia(codProv);
-		
-		List<IafasUbigeo> lstUbigeo = ubigeoDao.obtenerUbigeos(objBn);
-		
-		for (IafasUbigeo p : lstUbigeo) {
-			this.fuentes.add(new SelectItem(p.getCodigoUbigeo(),
-					p.getCodigoUbigeo() +" - " +p.getNombreUbigeo()));
-		}
-		logger.info("[FIN:] Metodo : getUbigeos");
-		return this.ubigeos;
 
-	}*/
+		List<IafasUbigeo> lstUbigeo = ubigeoDao.obtenerUbigeos(objBn);
+
+		for (IafasUbigeo p : lstUbigeo) {
+			this.ubigeos.add(new SelectItem(p.getCodigoUbigeo(),p.getNombreUbigeo()));
+		}
+		logger.info("[FIN:] Metodo : cargarUbigeo");
+		return this.ubigeos;
+	}
+	
+	public String insRegistroCab() {
+		String retorno=Constantes.VACIO;
+		logger.info("[INICIO:] Metodo : insRegistroCab:::");
+		ProgramacionMultiAnualDao objDao = new ProgramacionMultiAnualDao(MySQLSessionFactory.getSqlSessionFactory());
+		HttpSession session=null; 
+ 		session = (HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		IafasUsuariosController usuarioSession = new IafasUsuariosController();
+		usuarioSession=(IafasUsuariosController)session.getAttribute("iafasUsuariosController");
+		String codUsu = usuarioSession.getIdUsuario();
+		ProgramacionMultiAnual objBn = new ProgramacionMultiAnual();
+		objBn.setPeriodo(cperiodo);
+		objBn.setFuenteFinac(Integer.parseInt(fteFinanc));
+		objBn.setTareaPtalCodigo(codTarea);
+		objBn.setUbigeoCodigo(codUbigeo);
+		objBn.setImporteA(monto1);
+		objBn.setImporteB(monto2);
+		objBn.setImporteC(monto3);
+		objBn.setMetaFisicaA(meta1);
+		objBn.setMetaFisicaB(meta2);
+		objBn.setMetaFisicaC(meta3);
+		
+		objBn.setUsuarioCodigo(codUsu);
+		objBn.setTipo(modo);
+		
+		try {
+				int i = objDao.SP_IDU_PROGRAMACION_MULTIANUAL(objBn);
+				if (i == 0) {
+					buscarCabecera();
+					retorno = "mainProgramacionMultiAnual.xhtml";
+				}
+		} catch (Exception e) {
+			logger.error("error : " + e.getMessage().toString());
+		} finally {
+
+			logger.info("[FIN:] Metodo : insRegistroCab");
+		}
+
+		return retorno;
+	}
+	
+	public void obtenerRegistro() {
+		logger.info("[INICIO:] Metodo : obtenerRegistro");
+		
+		ProgramacionMultiAnualDao objDao = new ProgramacionMultiAnualDao(MySQLSessionFactory.getSqlSessionFactory());
+		ProgramacionMultiAnual objBn  = new ProgramacionMultiAnual();
+		objBn.setPeriodo(bean.getPeriodo());
+		objBn.setFuenteFinac(bean.getFuenteFinac());
+		objBn.setCodigoTareaPtal(bean.getCodigoTareaPtal());
+		objBn.setAno1(Integer.parseInt(getCperiodo()));
+		objBn.setAno2(getCperiodo1());
+		objBn.setAno3(getCperiodo2());
+		
+		List<ProgramacionMultiAnual> lstReg = objDao.obtenerRegistro(objBn);
+		
+		logger.info("Datos: "+lstReg.size());
+		for (ProgramacionMultiAnual objBean : lstReg) {
+			setCodTarea(objBean.getCodigoTareaPtal());
+			setCodDep(objBean.getCodDepa());
+			cargarProvincias();
+			setCodProv(objBean.getCodProv());
+			cargarUbigeo();
+			setCodUbigeo(objBean.getCodDistr());
+			setMonto1(objBean.getMonto1());
+			setMonto2(objBean.getMonto2());
+			setMonto3(objBean.getMonto3());
+			setMeta1(objBean.getMeta1());
+			setMeta2(objBean.getMeta2());
+			setMeta3(objBean.getMeta3());
+		}
+		setModo(Constantes.MODE_ACTUALIZACION);
+		logger.info("[FIN:] Metodo : obtenerRegistro");
+	}
+	
+	public void nuevo() {
+		logger.info("[INICIO:] Metodo : nuevo:::");
+		setCodTarea(Constantes.CERO_INT);
+		setModo(Constantes.MODE_REGISTRO);
+		setCodDep(Constantes.VACIO);
+		getDepartamentos();
+		setCodProv(Constantes.VACIO);
+		cargarProvincias();
+		setCodUbigeo(Constantes.VACIO);
+		cargarUbigeo();
+		setMeta1(Constantes.CERO_INT);
+		setMeta2(Constantes.CERO_INT);
+		setMeta3(Constantes.CERO_INT);
+		setMonto1(Constantes.CERO_INT);
+		setMonto2(Constantes.CERO_INT);
+		setMonto3(Constantes.CERO_INT);
+		logger.info("[FIN:] Metodo : nuevo:::");
+	}
+	
+	
+	public void obtenerRegistroDetalle() {
+		logger.info("[INICIO:] Metodo : obtenerRegistroDetalle");
+		
+		ProgramacionMultiAnualDao objDao = new ProgramacionMultiAnualDao(MySQLSessionFactory.getSqlSessionFactory());
+		ProgramacionMultiAnual objBn  = new ProgramacionMultiAnual();
+		objBn.setPeriodo(bean.getPeriodo());
+		objBn.setFuenteFinac(bean.getFuenteFinac());
+		objBn.setCodigoTareaPtal(bean.getCodigoTareaPtal());
+		objBn.setAno1(Integer.parseInt(getCperiodo()));
+		objBn.setAno2(getCperiodo1());
+		objBn.setAno3(getCperiodo2());
+		
+		List<ProgramacionMultiAnual> lstReg = objDao.obtenerRegistro(objBn);
+		
+		logger.info("Datos: "+lstReg.size());
+		for (ProgramacionMultiAnual objBean : lstReg) {
+			setCodTarea(objBean.getCodigoTareaPtal());
+			setMonto1(objBean.getMonto1());
+			setMonto2(objBean.getMonto2());
+			setMonto3(objBean.getMonto3());
+			buscarDetalle();
+		}
+		setModo(modo);
+		logger.info("[FIN:] Metodo : obtenerRegistroDetalle");
+	}
+	
+	public List<ProgramacionMultiAnualDetalle> buscarDetalle() {
+
+		logger.info("[INICIO:] Metodo : buscarDetalle");
+
+		int montoDet1 = Constantes.CERO_INT;
+		int montoDet2 = Constantes.CERO_INT;
+		int montoDet3 = Constantes.CERO_INT;
+		int importeTotal = Constantes.CERO_INT;
+		
+		this.listaDetalle = new ArrayList<>();
+		if (this.listaDetalle != null)
+			this.listaDetalle.clear();
+
+		ProgramacionMultiAnualDetalleDao objDao = new ProgramacionMultiAnualDetalleDao(MySQLSessionFactory.getSqlSessionFactory());
+		ProgramacionMultiAnualDetalle objBnDet  = new ProgramacionMultiAnualDetalle();
+		
+		objBnDet.setPeriodo(cperiodo);
+		objBnDet.setFuenteFinac(Integer.parseInt(fteFinanc));
+		objBnDet.setTareaPtalCodigo(codTarea);
+		
+		List<ProgramacionMultiAnualDetalle> lstDet = objDao.mostrarDetalle(objBnDet);
+
+		if (lstDet.size() > 0) {
+			for (ProgramacionMultiAnualDetalle objBeanLista : lstDet) {
+				objBnDet.setAno1(Integer.parseInt(cperiodo));
+				objBnDet.setAno2(cperiodo1);
+				objBnDet.setAno3(cperiodo2);
+				objBnDet.setCodCla(objBeanLista.getCodCla());
+				objBnDet.setCodigoTareaPtal(objBeanLista.getCodigoTareaPtal());
+				
+				List<ProgramacionMultiAnualDetalle> lstMontoDet1 =	objDao.obtenerMontoDetalle1(objBnDet);
+				List<ProgramacionMultiAnualDetalle> lstMontoDet2 =	objDao.obtenerMontoDetalle2(objBnDet);
+				List<ProgramacionMultiAnualDetalle> lstMontoDet3 =	objDao.obtenerMontoDetalle3(objBnDet);
+
+				if (lstMontoDet1!= null   && lstMontoDet2!= null && lstMontoDet3!= null ) {
+					montoDet1 = lstMontoDet1.get(0).getMontoDet1();
+					montoDet2 = lstMontoDet2.get(0).getMontoDet2();
+					montoDet3 = lstMontoDet3.get(0).getMontoDet3(); 
+					importeTotal = montoDet1+montoDet2+montoDet3;
+					objBeanLista.setMontoDet1(montoDet1);
+					objBeanLista.setMontoDet2(montoDet2);
+					objBeanLista.setMontoDet3(montoDet3);
+					objBeanLista.setImporte(importeTotal);
+				}
+				this.listaDetalle.add(objBeanLista);
+			}
+		}
+
+		logger.info("[FIN:] Metodo : buscarDetalle");
+		return listaDetalle;
+	}
+	
+	public List<SelectItem> getCadenas() {
+		logger.info("[INICIO:] Metodo : getCadenas");
+		
+		this.cadenas = new ArrayList<>();
+		IafasClasificadoresDao cadenasDao = new IafasClasificadoresDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasClasificadores> lstCadenas = cadenasDao.obtenerClasificadores();
+		for (IafasClasificadores p : lstCadenas) {
+			this.cadenas.add(new SelectItem(p.getCodCla(),
+					p.getCadena() +" - " +p.getNombreCla()));
+		}
+		logger.info("[FIN:] Metodo : getCadenas");
+		return this.cadenas;
+
+	}
+	
+	public void insRegistroDet() {
+
+		logger.info("[INICIO:] Metodo : insRegistroDet:::");
+		ProgramacionMultiAnualDetalleDao objDao = new ProgramacionMultiAnualDetalleDao(MySQLSessionFactory.getSqlSessionFactory());
+		HttpSession session=null; 
+ 		session = (HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		IafasUsuariosController usuarioSession = new IafasUsuariosController();
+		usuarioSession=(IafasUsuariosController)session.getAttribute("iafasUsuariosController");
+		String codUsu = usuarioSession.getIdUsuario();
+		ProgramacionMultiAnualDetalle objBnDetalle = new ProgramacionMultiAnualDetalle();
+		objBnDetalle.setPeriodo(cperiodo);
+		objBnDetalle.setFuenteFinac(Integer.parseInt(fteFinanc));
+		objBnDetalle.setTareaPtalCodigo(bean.getCodigoTareaPtal());
+		objBnDetalle.setCodCla(codCla);
+		objBnDetalle.setImporteA(montoDet1);
+		objBnDetalle.setImporteB(montoDet2);
+		objBnDetalle.setImporteC(montoDet3); 
+		objBnDetalle.setUsuarioCodigo(codUsu);
+		objBnDetalle.setTipo(modo);
+		
+		try {
+				int i = objDao.SP_IDU_PROGRAMACION_MULTIANUALDETALLE(objBnDetalle);
+				if (i == 0) {
+					buscarDetalle();
+				}
+		} catch (Exception e) {
+			logger.error("error : " + e.getMessage().toString());
+		} finally {
+
+			logger.info("[FIN:] Metodo : insRegistroDet");
+		}
+	}
+	
+	private ExternalContext extContext() {
+		FacesContext c = FacesContext.getCurrentInstance();
+		ExternalContext ec = c.getExternalContext();
+		return ec;
+	}
 }

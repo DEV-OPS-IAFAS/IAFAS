@@ -34,6 +34,9 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
       <typeAlias alias="IafasTareasPptal" 		type="ep.mil.pe.iafas.programacion.model.IafasTareasPptal"/>
       <typeAlias alias="IafasFuentesFinanciamiento" 		type="ep.mil.pe.iafas.programacion.model.IafasFuentesFinanciamiento"/>
       <typeAlias alias="IafasUbigeo" 		type="ep.mil.pe.iafas.programacion.model.IafasUbigeo"/>
+      <typeAlias alias="ProgramacionMultiAnual" 		type="ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnual"/>
+      <typeAlias alias="ProgramacionMultiAnualDetalle" 		type="ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnualDetalle"/>
+      <typeAlias alias="IafasClasificadores" 		type="ep.mil.pe.iafas.programacion.model.IafasClasificadores"/>
        
     </typeAliases>
 
@@ -45,7 +48,7 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
                 <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
                 <property name="url" value="jdbc:mysql://localhost:3306/iafas"/>
                 <property name="username" value="root"/>
-                <property name="password" value="123"/>
+                <property name="password" value="123456"/>
             </dataSource>
        </environment>
     </environments>
@@ -70,6 +73,9 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
 		<mapper resource="ep/mil/pe/iafas/programacion/xml/IafasTareasPptal.xml" />
 		<mapper resource="ep/mil/pe/iafas/programacion/xml/IafasFuentesFinanciamiento.xml" />
 		<mapper resource="ep/mil/pe/iafas/programacion/xml/IafasUbigeo.xml" />
+		<mapper resource="ep/mil/pe/iafas/programacion/xml/ProgramacionMultiAnual.xml" />
+		<mapper resource="ep/mil/pe/iafas/programacion/xml/ProgramacionMultiAnualDetalle.xml" />
+		<mapper resource="ep/mil/pe/iafas/programacion/xml/IafasClasificadores.xml" />
 		
     </mappers>
 

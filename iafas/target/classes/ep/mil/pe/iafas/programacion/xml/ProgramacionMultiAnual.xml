@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="ProgramacionMultiAnual">
+    <resultMap id="resultado" type="ProgramacionMultiAnual" />
+    
+    <select id="SP_IDU_PROGRAMACION_MULTIANUAL" statementType="CALLABLE" parameterType="ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnual">
+        call SP_IDU_PROGRAMACION_MULTIANUAL(#{periodo}, #{fuenteFinac},#{tareaPtalCodigo}, #{ubigeoCodigo}, #{importeA}, #{importeB}, 
+        #{importeC}, #{metaFisicaA},#{metaFisicaB}, #{metaFisicaC}, #{usuarioCodigo}, #{tipo})
+    </select>
+    
+	<select id="mostrarCabecera"
+		parameterType="ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnual"
+		resultType="ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnual">
+		SELECT DISTINCT  CAB.NTAREA_PRESUPUESTAL_CODIGO as codigoTareaPtal, (SELECT VTAREA_PRESUPUESTAL_NOMBRE FROM IAFAS_TAREA_PRESUPUESTAL 
+		WHERE NTAREA_PRESUPUESTAL_CODIGO = CAB.NTAREA_PRESUPUESTAL_CODIGO) as tarea ,
+		CAB.CUBIGEO_CODIGO,  (SELECT VUBIGEO_NOMBRE FROM IAFAS_UBIGEO WHERE CUBIGEO_CODIGO=CAB.CUBIGEO_CODIGO) as ubigeo,
+		CAB.NFUENTE_FINANCIAMIENTO_CODIGO as fuenteFinac , CAB.CPERIODO_CODIGO as periodo
+		FROM IAFAS_PROGRAMACION_MULTIANUAL_GASTO CAB
+		WHERE 
+		CAB.CPERIODO_CODIGO=#{periodo} AND 
+		CAB.NFUENTE_FINANCIAMIENTO_CODIGO=#{fuenteFinac}
+	</select>
+	
+	<select id="obtenerRegistro"
+		parameterType="ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnual"
+		resultType="ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnual">
+		
+		SELECT DISTINCT  CAB.NTAREA_PRESUPUESTAL_CODIGO AS codigoTareaPtal,
+		substring(CAB.CUBIGEO_CODIGO, 1,2) AS codDepa,  
+        substring(CAB.CUBIGEO_CODIGO, 1,2) AS codProv,  
+        CAB.CUBIGEO_CODIGO AS codDistr,  
+        CAB.NFUENTE_FINANCIAMIENTO_CODIGO AS fuenteFinac,
+        CAB.CPERIODO_CODIGO AS periodo,
+        F_OBTENER_PROGRAMADO(#{ano1},CAB.CPERIODO_CODIGO,CAB.NFUENTE_FINANCIAMIENTO_CODIGO,CAB.NTAREA_PRESUPUESTAL_CODIGO) AS monto1,
+        F_OBTENER_PROGRAMADO(#{ano2},CAB.CPERIODO_CODIGO,CAB.NFUENTE_FINANCIAMIENTO_CODIGO,CAB.NTAREA_PRESUPUESTAL_CODIGO) AS monto2,
+        F_OBTENER_PROGRAMADO(#{ano3},CAB.CPERIODO_CODIGO,CAB.NFUENTE_FINANCIAMIENTO_CODIGO,CAB.NTAREA_PRESUPUESTAL_CODIGO) AS monto3,
+        F_OBTENER_META_FISICA(#{ano1},CAB.CPERIODO_CODIGO,CAB.NFUENTE_FINANCIAMIENTO_CODIGO,CAB.NTAREA_PRESUPUESTAL_CODIGO) AS meta1,
+        F_OBTENER_META_FISICA(#{ano2},CAB.CPERIODO_CODIGO,CAB.NFUENTE_FINANCIAMIENTO_CODIGO,CAB.NTAREA_PRESUPUESTAL_CODIGO) AS meta2,
+        F_OBTENER_META_FISICA(#{ano3},CAB.CPERIODO_CODIGO,CAB.NFUENTE_FINANCIAMIENTO_CODIGO,CAB.NTAREA_PRESUPUESTAL_CODIGO) AS meta3        
+		FROM IAFAS_PROGRAMACION_MULTIANUAL_GASTO CAB
+		WHERE 
+		CAB.CPERIODO_CODIGO=#{periodo} AND 
+		CAB.NFUENTE_FINANCIAMIENTO_CODIGO=#{fuenteFinac} AND 
+        CAB.NTAREA_PRESUPUESTAL_CODIGO = #{codigoTareaPtal} AND
+        CAB.CANIO_REGISTRO IN ( #{ano3}, #{ano2}, #{ano3})
+	</select>
+    
+	<select id="obtenerMonto1"
+		parameterType="ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnual"
+		resultType="ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnual">
+		SELECT DISTINCT  F_OBTENER_PROGRAMADO(#{ano1},CAB.CPERIODO_CODIGO,CAB.NFUENTE_FINANCIAMIENTO_CODIGO,#{codigoTareaPtal}) as monto1
+		FROM IAFAS_PROGRAMACION_MULTIANUAL_GASTO CAB
+		WHERE 
+		CAB.CPERIODO_CODIGO=#{periodo} AND 
+		CAB.NFUENTE_FINANCIAMIENTO_CODIGO=#{fuenteFinac} 
+	</select>
+	
+	<select id="obtenerMonto2"
+		parameterType="ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnual"
+		resultType="ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnual">
+		SELECT DISTINCT  F_OBTENER_PROGRAMADO(#{ano2},CAB.CPERIODO_CODIGO,CAB.NFUENTE_FINANCIAMIENTO_CODIGO,#{codigoTareaPtal}) as monto2
+		FROM IAFAS_PROGRAMACION_MULTIANUAL_GASTO CAB
+		WHERE 
+		CAB.CPERIODO_CODIGO=#{periodo} AND 
+		CAB.NFUENTE_FINANCIAMIENTO_CODIGO=#{fuenteFinac}
+	</select>
+	
+	<select id="obtenerMonto3"
+		parameterType="ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnual"
+		resultType="ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnual">
+		SELECT DISTINCT  F_OBTENER_PROGRAMADO(#{ano3},CAB.CPERIODO_CODIGO,CAB.NFUENTE_FINANCIAMIENTO_CODIGO,#{codigoTareaPtal}) as monto3
+		FROM IAFAS_PROGRAMACION_MULTIANUAL_GASTO CAB
+		WHERE 
+		CAB.CPERIODO_CODIGO=#{periodo} AND 
+		CAB.NFUENTE_FINANCIAMIENTO_CODIGO=#{fuenteFinac}
+	</select>
+	
+</mapper>	

@@ -12,7 +12,7 @@
 		SELECT NTAREA_PRESUPUESTAL_CODIGO AS nTareaPresupuestal  , 
 		VTAREA_PRESUPUESTAL_NOMBRE AS vTareaPresupuestalNombre, 
 		VTAREA_PRESUPUESTAL_ABREVIATURA as vTareaPresupuestalAbreviatura
-		from iafas_tarea_presupuestal
+		from IAFAS_TAREA_PRESUPUESTAL
 		where 
 		CESTADO_CODIGO = 'AC'
 		order by NTAREA_PRESUPUESTAL_CODIGO asc
