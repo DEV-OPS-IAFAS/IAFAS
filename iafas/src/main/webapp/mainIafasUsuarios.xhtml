@@ -115,6 +115,7 @@
 					<p:commandButton value="Grabar" styleClass="ui-button-outlined ui-button-success" oncomplete="PF('modalUsuario').hide()" 
 						action="#{iafasUsuariosController.mantenimientoUsuarios()}" update="frm_Usuarios:dTableUsuarios" />
 				</f:facet>
+				<p:outputLabel value="#{iafasUsuariosController.msgErr}" />
 		</p:dialog>
 		
 		 <p:dialog id="Deleteusuario" widgetVar="Deleteusuario" modal="true" header="Confirmar Eliminación"

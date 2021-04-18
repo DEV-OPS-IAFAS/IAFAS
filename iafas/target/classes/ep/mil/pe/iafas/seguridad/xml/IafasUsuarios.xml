@@ -40,9 +40,11 @@
     
     
      <select id="SP_MTO_IAFAS_USUARIOS" statementType="CALLABLE" parameterType="ep.mil.pe.iafas.seguridad.model.IafasUsuarios">
-        call SP_MTO_IAFAS_USUARIOS(#{vusuarioCodigo}, #{vusuarioNombres},#{vusuarioPaterno}, #{vusuarioPassword}, 
-        #{vusuarioCorreo}, #{vusuarioTelefono}, #{cestadoCodigo}, #{vusuarioModifica}, #{dusuarioModifica}, #{vusuarioMaterno}, 
-        #{vusuarioCargo}, #{areaLaboralCodigo}, #{vusuarioCreador}, #{dusuarioCreador}, #{modo}, #{codigoRespuesta} , #{mensajeRespuesta})
+        <![CDATA[
+        call SP_MTO_IAFAS_USUARIOS(#{vusuarioCodigo,mode=IN}, #{vusuarioNombres,mode=IN},#{vusuarioPaterno,mode=IN}, #{vusuarioPassword,mode=IN}, 
+        #{vusuarioCorreo,mode=IN}, #{vusuarioTelefono,mode=IN}, #{cestadoCodigo,mode=IN}, #{vusuarioModifica,mode=IN}, #{dusuarioModifica,mode=IN}, #{vusuarioMaterno,mode=IN}, 
+        #{vusuarioCargo,mode=IN}, #{areaLaboralCodigo,mode=IN}, #{vusuarioCreador,mode=IN}, #{dusuarioCreador,mode=IN}, #{modo,mode=IN}, #{codigoRespuesta,mode=OUT,jdbcType=VARCHAR} , #{mensajeRespuesta,mode=OUT,jdbcType=VARCHAR})
+        ]]>
     </select>
 
 </mapper>

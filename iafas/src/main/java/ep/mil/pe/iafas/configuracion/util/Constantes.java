@@ -34,4 +34,5 @@ public class Constantes {
 	/*Cambios agregados el 31.03.2021*/
 	public static final int CERO_INT =0;
 	public static final String CERO_CERO_STRING = "00";
+	public static final String DOS_STRING = "2";
 }

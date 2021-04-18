@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
 import ep.mil.pe.iafas.configuracion.util.Constantes;
+import ep.mil.pe.iafas.configuracion.util.Response;
 import ep.mil.pe.iafas.seguridad.dao.IafasAreasLaboralDao;
 import ep.mil.pe.iafas.seguridad.dao.IafasUsuariosDao;
 import ep.mil.pe.iafas.seguridad.model.IafasAreasLaboral;
@@ -141,6 +142,7 @@ public class IafasUsuariosController implements Serializable {
 	public void preRegistroUsuario() {
 		logger.info("[INICIO:] Metodo : preRegistroUsuario");
 
+		Response response = new Response();
 		IafasUsuariosDao usuarioSessionDao = new IafasUsuariosDao(MySQLSessionFactory.getSqlSessionFactory());
 		IafasUsuarios objUsuario = new IafasUsuarios();
 		objUsuario.setVusuarioCodigo(dni);
@@ -149,16 +151,14 @@ public class IafasUsuariosController implements Serializable {
 		objUsuario.setModo(Constantes.MODE_PRE_REGISTRO);
 		pasoFuncionalidad = true;
 		try {
-			int i = usuarioSessionDao.mantenimientoUsuarios(objUsuario);
- 		String abc =	(String)objUsuario.get("mensajeRespuesta"); 
-			
-			logger.error("abc: " + abc);
-			if (i == 0) {
-				setMsgErr("Tu Pre - Registro se realizo con exito");
+			response = usuarioSessionDao.mantenimientoUsuarios(objUsuario);
+
+			if (Constantes.CERO_STRING != response.getCodigoRespuesta()) {
+				setMsgErr(response.getMensajeRespuesta());
 			}
 			limpiarCampos();
 		} catch (Exception e) {
-			logger.error("error : " + e.getMessage().toString());
+			logger.error("error : " + response.getMensajeRespuesta());
 			setMsgErr(e.getMessage());
 
 		} finally {
@@ -191,6 +191,7 @@ public class IafasUsuariosController implements Serializable {
 		logger.info("[INICIO:] Metodo : mantenimientoUsuarios");
 
 		IafasUsuariosDao usuarioSessionDao = new IafasUsuariosDao(MySQLSessionFactory.getSqlSessionFactory());
+		Response response = new Response();
 		IafasUsuarios objUsuario = new IafasUsuarios();
 		String Patron_encripta = "OnXEiGH9eIp8stu7UVWvlmï¿½fq0D2YZï¿½oPQR4AwyFgxhbjk65rcSTz1N3BCdJKLMa";
 		funcionesUtiles encripta = new funcionesUtiles();
@@ -207,14 +208,15 @@ public class IafasUsuariosController implements Serializable {
 		
 		objUsuario.setModo(modo);
 		try {
-			int i = usuarioSessionDao.mantenimientoUsuarios(objUsuario);
-
-			if (i == 0) {
-				logger.info("Tu registro se realizo con exito");
+			response = usuarioSessionDao.mantenimientoUsuarios(objUsuario);
+			
+			if(Constantes.CERO_STRING!= response.getCodigoRespuesta()) {
+				setMsgErr(response.getMensajeRespuesta());
 			}
-
+			
+			
 		} catch (Exception e) {
-			logger.error("error : " + e.getMessage().toString());
+			logger.error("error : " + response.getMensajeRespuesta());
 		} finally {
 			
 			mostrarAllUsuarios();
@@ -245,6 +247,7 @@ public class IafasUsuariosController implements Serializable {
 	public void anularRegistro() {
 		logger.info("[INICIO:] Metodo : anularRegistro");
 
+		Response response = new Response();
 		String codUsuDEL = (String) extContext().getRequestParameterMap().get("codUsuarioDEL");
 		IafasUsuariosDao usuarioSessionDao = new IafasUsuariosDao(MySQLSessionFactory.getSqlSessionFactory());
 		IafasUsuarios objUsuario = new IafasUsuarios();
@@ -252,14 +255,16 @@ public class IafasUsuariosController implements Serializable {
 		objUsuario.setCestadoCodigo(Constantes.ESTADO_ANULADO);
 		objUsuario.setModo(Constantes.MODE_ELIMINACION_LOGICA);
 		try {
-			int i = usuarioSessionDao.mantenimientoUsuarios(objUsuario);
+			//int i = usuarioSessionDao.mantenimientoUsuarios(objUsuario);
+			response = usuarioSessionDao.mantenimientoUsuarios(objUsuario);
 
-			if (i == 0) {
+			//if (i == 0) {
+			if(response.getCodigoRespuesta() == Constantes.CERO_STRING) {
 				logger.info("La anulación se realizo con exito");
 			}
 
 		} catch (Exception e) {
-			logger.error("error : " + e.getMessage().toString());
+			logger.error("error : " + response.getMensajeRespuesta());
 		} finally {
 			mostrarAllUsuarios();
 			logger.info("[FIN:] Metodo : anularRegistro");
