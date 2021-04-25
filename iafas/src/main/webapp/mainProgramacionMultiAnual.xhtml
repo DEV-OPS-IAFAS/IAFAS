@@ -180,11 +180,11 @@ button.ui-button {
  						<td valign="top">
 							<h:panelGrid columns="2"  colSpans="3,3"> 
 								<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-								<p:inputNumber id="input1" value="#{programacionMultiAnualController.monto1}" />
+								<p:inputText styleClass="input" id="input1" value="#{programacionMultiAnualController.monto1}" />
 								<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo1}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-								<p:inputNumber id="input2" value="#{programacionMultiAnualController.monto2}" modifyValueOnWheel="false" />
+								<p:inputText styleClass="input" id="input2" value="#{programacionMultiAnualController.monto2}" modifyValueOnWheel="false" />
 								<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo2}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-								<p:inputNumber id="input3" value="#{programacionMultiAnualController.monto3}" modifyValueOnWheel="false" />
+								<p:inputText styleClass="input"  id="input3" value="#{programacionMultiAnualController.monto3}" modifyValueOnWheel="false" />
 		  
 		  					</h:panelGrid>
 		 				</td>
@@ -192,11 +192,11 @@ button.ui-button {
 				 			<h:panelGrid columns="2"  colSpans="3,3"> 
 										
 								<h:outputLabel value="Meta Fisica #{programacionMultiAnualController.cperiodo}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-								<p:inputNumber id="input4" value="#{programacionMultiAnualController.meta1}" />
+								<p:inputText styleClass="input"  id="input4" value="#{programacionMultiAnualController.meta1}" />
 								<h:outputLabel value="Meta Fisica #{programacionMultiAnualController.cperiodo1}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-								<p:inputNumber id="input5" value="#{programacionMultiAnualController.meta2}" modifyValueOnWheel="false" />
+								<p:inputText styleClass="input"  id="input5" value="#{programacionMultiAnualController.meta2}" modifyValueOnWheel="false" />
 								<h:outputLabel value="Meta Fisica #{programacionMultiAnualController.cperiodo2}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-								<p:inputNumber id="input6" value="#{programacionMultiAnualController.meta3}" modifyValueOnWheel="false" />
+								<p:inputText styleClass="input"  id="input6" value="#{programacionMultiAnualController.meta3}" modifyValueOnWheel="false" />
 				 			</h:panelGrid> 
 				 </td>
 				</tr>
@@ -221,32 +221,37 @@ button.ui-button {
 						<f:selectItems var="optionTareaDetalle" value="#{programacionMultiAnualController.tareas}" />
 					</h:selectOneMenu>
 					<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-					<p:inputNumber id="input1Det" value="#{programacionMultiAnualController.monto1}" disabled="true"/>
+					<p:inputText styleClass="input"  id="input1Det" value="#{programacionMultiAnualController.monto1}" disabled="true"/>
 					<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo1}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-					<p:inputNumber id="input2Det" value="#{programacionMultiAnualController.monto2}" modifyValueOnWheel="false"  disabled="true"/>
+					<p:inputText styleClass="input"  id="input2Det" value="#{programacionMultiAnualController.monto2}" modifyValueOnWheel="false"  disabled="true"/>
 					<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo2}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-					<p:inputNumber id="input3Det" value="#{programacionMultiAnualController.monto3}" modifyValueOnWheel="false"  disabled="true"/>
+					<p:inputText styleClass="input"  id="input3Det" value="#{programacionMultiAnualController.monto3}" modifyValueOnWheel="false"  disabled="true"/>
 		  
 			</p:panelGrid>	
 			
 			   <p:toolbar>
             <p:toolbarGroup>
-                <p:commandButton value="Nuevo" icon="pi pi-plus"   oncomplete="PF('modalDetInsert').show()"
-                                 styleClass="ui-button-success" style="margin-right: .5rem">
+                <p:commandButton value="Nuevo" icon="pi pi-plus"   oncomplete="PF('modalDetInsert').show()"  update="frm_ProgMultiAnual:pnlGr_Importes4"
+                                 styleClass="ui-button-success" style="margin-right: .5rem" action="#{programacionMultiAnualController.calcularSaldos()}">
+                    <f:param id="codTareaParam" name="codTareaParam" value="#{programacionMultiAnualController.codTarea}"  />             
                 </p:commandButton>
-                <p:commandButton id="delete-products-button" value="Eliminar" 
-                                 icon="pi pi-trash"  styleClass="ui-button-danger" update="@this">
-                    <p:confirm header="Confirmation" message="Desea Eliminar el registro?"
-                               icon="pi pi-exclamation-triangle"/>
+                <!-- 
+                <p:commandButton id="update-products-button" value="Modificar" 
+                                icon="pi pi-pencil" styleClass="ui-button-danger" update="@this">
                 </p:commandButton>
+                
+                <p:commandButton id="delete-products-button" value="Eliminar"  oncomplete="PF('deleteProductDialog').show()"
+                                 icon="pi pi-trash"  styleClass="ui-button-danger" >
+                </p:commandButton>
+                 -->
             </p:toolbarGroup>
         </p:toolbar>
 			  
-			 <p:dataTable id="dTableProgramacionDet" var="tblProgramacionDet"
+			 <p:dataTable id="dTableProgramacionDet" var="tblProgramacionDet" 
 				value="#{programacionMultiAnualController.listaDetalle}"   reflow="true" styleClass="products-table"
-				style="font-size:11px;" emptyMessage="No se encontro registros">
+				style="font-size:11px;" emptyMessage="No se encontro registros" >
 
-				<p:column style="width:100px;" headerText="CADENA DE GASTO">
+				<p:column style="width:90px;" headerText="CADENA DE GASTO">
 					<p:outputLabel value="#{tblProgramacionDet.cadena}-#{tblProgramacionDet.desCadena}" />
 				</p:column>
 				
@@ -264,13 +269,28 @@ button.ui-button {
 				<p:column style="width:2px;" headerText="IMPORTE">
 					<p:outputLabel value="#{tblProgramacionDet.importe}" />
 				</p:column>
-				
+
+				<p:column width="60px" headerText="Acciones">
+	
+					<!-- <p:commandButton value="Modificar" icon="pi pi-pencil" update="frm_ProgMultiAnual:pnlGr_Importes3" 
+					 	action="#{programacionMultiAnualController.obtenerDatos()}" >
+						<f:param id="codClaMod" name="codClaMod" value="#{tblProgramacionDet.codCla}" />
+						<f:param id="codTareaMod" name="codTareaMod" value="#{tblProgramacionDet.codigoTareaPtal}" />
+					</p:commandButton>
+ 					-->
+					<p:commandButton value="Eliminar" icon="pi pi-trash"
+						action="#{programacionMultiAnualController.anularRegistro()}" >
+						<f:param id="codClaDel" name="codClaDel" value="#{tblProgramacionDet.codCla}" />
+						<f:param id="codTareaDel" name="codTareaDel" value="#{tblProgramacionDet.codigoTareaPtal}" />
+					</p:commandButton>
+				</p:column>
+
 			</p:dataTable>	
 		</p:dialog>	
 		
 		<p:dialog header="REGISTRO DE PROGRAMACIÓN MULTIANUAL DE GASTOS" id="modalDetInsert" widgetVar="modalDetInsert" showEffect="fade" minHeight="100" width="1100" >
 			<p:panelGrid columns="2"  id="pnlGr_insert" styleClass="grid">
-					<h:outputLabel value="Tarea" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />				
+					<h:outputLabel value="Cad.Gasto" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />				
 					<h:selectOneMenu  id="cboCadenas"  styleClass="select" value="#{programacionMultiAnualController.codCla}">
 						<f:selectItem itemValue="0" itemLabel="Seleccione" />
 						<f:selectItems var="optionCadeas" value="#{programacionMultiAnualController.cadenas}" />
@@ -283,23 +303,23 @@ button.ui-button {
  						<td valign="top">
 							<h:panelGrid columns="2"  colSpans="3,3"> 
 								<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-								<p:inputNumber id="inputCad1" value="#{programacionMultiAnualController.montoDet1}" />
+								<p:inputText styleClass="input"  id="inputCad1" value="#{programacionMultiAnualController.montoDet1}" />
 								<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo1}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-								<p:inputNumber id="inputCad2" value="#{programacionMultiAnualController.montoDet2}" modifyValueOnWheel="false" />
+								<p:inputText styleClass="input"  id="inputCad2" value="#{programacionMultiAnualController.montoDet2}" modifyValueOnWheel="false" />
 								<h:outputLabel value="Importe #{programacionMultiAnualController.cperiodo2}" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-								<p:inputNumber id="inputcad3" value="#{programacionMultiAnualController.montoDet3}" modifyValueOnWheel="false" />
+								<p:inputText styleClass="input"  id="inputcad3" value="#{programacionMultiAnualController.montoDet3}" modifyValueOnWheel="false" />
 		  
 		  					</h:panelGrid>
 		 				</td>
 				 <td valign="top">
-				 			<h:panelGrid columns="2"  colSpans="3,3"> 
+				 			<h:panelGrid columns="2"  colSpans="3,3" id="pnlGr_Importes4"> 
 										
 								<h:outputLabel value="Saldo S/." styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-								<p:inputNumber id="inputCad4"   />
+								<p:inputText styleClass="input"  id="inputCad4"  value="#{programacionMultiAnualController.saldoDetalle1}"  disabled="true" />
 								<h:outputLabel value="Saldo S/." styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-								<p:inputNumber id="inputCad5" modifyValueOnWheel="false" />
+								<p:inputText styleClass="input"  id="inputCad5" modifyValueOnWheel="false" value="#{programacionMultiAnualController.saldoDetalle2}" disabled="true" />
 								<h:outputLabel value="Saldo S/." styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-								<p:inputNumber id="inputCad6"   modifyValueOnWheel="false" />
+								<p:inputText styleClass="input"   id="inputCad6"   modifyValueOnWheel="false"  value="#{programacionMultiAnualController.saldoDetalle3}" disabled="true"/>
 				 			</h:panelGrid> 
 				 </td>
 				</tr>
@@ -309,10 +329,19 @@ button.ui-button {
 			<f:facet name="footer">
 					<p:commandButton value="Cerrar" styleClass="ui-button-outlined ui-button-danger" oncomplete="PF('modalDetInsert').hide()"
 						action="#{programacionMultiAnualController.limpiarCamposMto()}" update="frm_ProgMultiAnual:dTableProgramacionDet" />
-					<p:commandButton value="Grabar" styleClass="ui-button-outlined ui-button-success" oncomplete="PF('modalDetInsert').hide()" 
+					<p:commandButton value="Grabar" styleClass="ui-button-outlined ui-button-success" 
 						action="#{programacionMultiAnualController.insRegistroDet()}" update="frm_ProgMultiAnual:dTableProgramacionDet" />
 				</f:facet>	
 		</p:dialog>
+
+
+		<p:confirmDialog widgetVar="deleteProductDialog" showEffect="fade" width="300"
+                         message="Desea eliminar el Registro?" header="Confirm" severity="warn">
+            <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{crudView.deleteProduct}"
+                             process="@this" oncomplete="PF('deleteProductDialog').hide()"/>
+            <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                             onclick="PF('deleteProductDialog').hide()"/>
+        </p:confirmDialog>
 
 	</h:form>
 	<script type="text/javascript"

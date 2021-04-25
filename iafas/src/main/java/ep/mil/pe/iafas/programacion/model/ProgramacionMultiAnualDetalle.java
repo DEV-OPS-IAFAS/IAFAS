@@ -1,5 +1,6 @@
 package ep.mil.pe.iafas.programacion.model;
 
+import ep.mil.pe.iafas.configuracion.util.Constantes;
 import lombok.Data;
 
 @Data
@@ -26,5 +27,9 @@ public class ProgramacionMultiAnualDetalle {
 	private int importeA;
 	private int importeB;
 	private int importeC;
-	
+	private String codigoRespuesta;
+	private String mensajeRespuesta;
+	private int montoDetalle1;
+	private int montoDetalle2;
+	private int montoDetalle3;
 }

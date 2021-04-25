@@ -41,4 +41,6 @@ public class ProgramacionMultiAnual {
 	private String codDepa;
 	private String codProv;
 	private String codDistr;
+	private String codigoRespuesta;
+	private String mensajeRespuesta;
 }

@@ -7,8 +7,9 @@
     <resultMap id="resultado" type="ProgramacionMultiAnual" />
     
     <select id="SP_IDU_PROGRAMACION_MULTIANUAL" statementType="CALLABLE" parameterType="ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnual">
-        call SP_IDU_PROGRAMACION_MULTIANUAL(#{periodo}, #{fuenteFinac},#{tareaPtalCodigo}, #{ubigeoCodigo}, #{importeA}, #{importeB}, 
-        #{importeC}, #{metaFisicaA},#{metaFisicaB}, #{metaFisicaC}, #{usuarioCodigo}, #{tipo})
+         <![CDATA[call SP_IDU_PROGRAMACION_MULTIANUAL(#{periodo,mode=IN}, #{fuenteFinac,mode=IN},#{tareaPtalCodigo,mode=IN}, #{ubigeoCodigo,mode=IN}, #{importeA,mode=IN}, #{importeB,mode=IN}, 
+        #{importeC,mode=IN}, #{metaFisicaA,mode=IN},#{metaFisicaB,mode=IN}, #{metaFisicaC,mode=IN}, #{usuarioCodigo,mode=IN}, #{tipo,mode=IN}, #{codigoRespuesta,mode=OUT,jdbcType=VARCHAR}, #{mensajeRespuesta,mode=OUT,jdbcType=VARCHAR})
+         ]]>
     </select>
     
 	<select id="mostrarCabecera"
