@@ -33,9 +33,6 @@
                     
                     <p:commandButton  value="Nuevo"  styleClass="button" action="#{mbCompMensual.nuevoRegistro()}" ajax="false"
                     style="height:30px;" title="Click aqui para Ingresar un Nuevo Compromiso Mensual"/>
-                    <h:commandLink id="btnXLS" value="Excel" >
-                    <p:dataExporter type="xls" target="dTableCompAnual" fileName="CompromisoAnual"/>
-                    </h:commandLink>
                 </p:panelGrid>
                 <p:outputLabel value="#{mbCompAnual.reg} Registros Encontrados" style="color: green; font-weight: bold;"/>
                 <br/>

@@ -28,5 +28,18 @@ public class IafasCombosDao {
         }
         return lista;
     }
+    
+    @SuppressWarnings("unchecked")
+	public List<IafasCombos> getFuenteFin() {
+        List<IafasCombos> lista = null;
+        SqlSession session = sqlSessionFactory.openSession();
+        try{
+              lista = session.selectList("Combos.tipoFinanciamiento");
+        }
+        finally{
+             session.close();
+        }
+        return lista;
+    }
 
 }

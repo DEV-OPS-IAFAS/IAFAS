@@ -17,21 +17,17 @@
             
       function verMensajes(){
     	  var tipo = '#{mbCompMensual.typeMessages}';
-    	  alert("Tipo : "+tipo);
            if(tipo==0){
-        	   alert("Entro 0");
              swal("ERROR", 'Ocurrio Un Error al Registrar',"error");
            }else
            if(tipo==1) {
-        	   alert("Entro 1");
            	 swal("Aviso", 'Se Registró Con Exito',"success").then(function() {
     	     window.location = "mainCompromisoMensual.xhtml"; });
            }else
         	if(tipo==2){
-        		alert("Entro 2")
         		   swal("ALERTA", 'No se permite Campos Vacios al Registrar',"info");        		   
         	   }
-		  else{ alert("Entro 3");
+		  else{ 
 			  swal("Info", 'Debe ingresar el Certificado a Mensualizar',"info");  
 		  }
 		  
@@ -63,11 +59,7 @@
                  <h:panelGrid columns="4" style="width:100%">
                  <h:outputLabel value="Fuente Financiamiento"/>
                          <h:selectOneMenu value="#{mbCompMensual.vcodtipoFinanciamiento}" disabled="true" styleClass="select"> 
-                        <f:selectItem itemValue="1" itemLabel="RECURSOS ORDINARIOS"></f:selectItem>
-                        <f:selectItem itemValue="2" itemLabel="RECURSOS DIRECTAMENTE RECAUDADOS"></f:selectItem>
-                        <f:selectItem itemValue="3" itemLabel="RECURSOS POR OPE OFLS DE CREDITO INTERNO"></f:selectItem>
-                        <f:selectItem itemValue="4" itemLabel="DONACIONES Y TRANSFERENCIAS"></f:selectItem>
-                        <f:selectItem itemValue="5" itemLabel="RECURSOS DETERMINADOS"></f:selectItem>
+                         <f:selectItems var="fuenteFin" value="#{mbCombos.fuenteFinanciamiento}"></f:selectItems>
                         </h:selectOneMenu>
                         <p:outputLabel value="Proceso Selección"/>
                         <h:selectOneMenu id="procesoSel"  value="#{mbCompMensual.codProcesoSel}" disabled="true" style="width:450px;"

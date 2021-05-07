@@ -21,7 +21,9 @@ public class IafasCombosController implements Serializable {
 	public IafasCombosController() {
 		// TODO Auto-generated constructor stub
 	}
+	
 	public List<SelectItem> procesoSel ;
+	public List<SelectItem> fuenteFinanciamiento;
 	
     public List<SelectItem> getProcesoSel() {
         procesoSel = new ArrayList<>();
@@ -32,5 +34,16 @@ public class IafasCombosController implements Serializable {
              }
        
         return procesoSel;
+    }
+    
+    public List<SelectItem> getFuenteFinanciamiento() {
+    	fuenteFinanciamiento = new ArrayList<>();
+        IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());    
+             List<IafasCombos> lista = cb.getFuenteFin();
+             for(IafasCombos d : lista){
+            	 fuenteFinanciamiento.add(new SelectItem(d.getCodigo(),d.getCodigo()+"-"+ d.getDescripcion()));
+             }
+       
+        return fuenteFinanciamiento;
     }
 }

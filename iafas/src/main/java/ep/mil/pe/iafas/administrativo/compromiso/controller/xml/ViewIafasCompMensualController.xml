@@ -28,7 +28,7 @@
 		ca.vsecuencia_a = det.vsecuencia_a AND
 		ca.vcorrelativo_a = det.vcorrelativo_a AND
 		ca.vnro_certificado = det.vnro_certificado)
-		WHERE ca.vnro_certificado = #{vnroCertificado} AND 
+		WHERE ca.vnro_certificado = #{vnroCertificado} AND ca.vcod_estado='2' and
 		ca.vtipo_movimiento ='N' AND
 		ca.vano_documento = #{vano}
 

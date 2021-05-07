@@ -65,6 +65,8 @@ public class IafasCompMensualController implements Serializable{
 	private String messages="";
 	private String usuario;
 	
+	private String numCertificado;
+	
 	IafasCompromisoMensualDao mensualDao = new IafasCompromisoMensualDao(MySQLSessionFactory.getSqlSessionFactory());
 	private static final Logger logger = Logger.getLogger(IafasCompMensualController.class);
 	
@@ -88,7 +90,7 @@ public class IafasCompMensualController implements Serializable{
 	}
 	
 	public String retornar() {
-		limpiarSession();
+		//limpiarSession();
 		listadoMensual();		
 		return "mainCompromisoMensual.xhtml";
 	}
@@ -130,6 +132,7 @@ public class IafasCompMensualController implements Serializable{
 			setVanoDocumentoA(periodo);
 			setVsecuenciaA(l.getVsecuenciaA());
 			setVcorrelativoA(l.getVcorrelativoA());
+			setNumCertificado(l.getVnroCertificado());
 		}
 		return regAnualDet;
 	}
@@ -196,7 +199,7 @@ public class IafasCompMensualController implements Serializable{
 				men.setVanoDocumento(vanoDocumentoA);
 				men.setVsecuenciaA(vsecuenciaA);
 				men.setVcorrelativo(vcorrelativoA);
-				men.setVnroCertificado(certificado);
+				men.setVnroCertificado(numCertificado);
 				men.setVcodProcesoSel(codProcesoSel);
 				men.setCproveedorRuc(ruc);
 				men.setVtipDocumentoCom(tipDocCom);
@@ -226,7 +229,8 @@ public class IafasCompMensualController implements Serializable{
 						
 					}
 				showMessages(1);		
-				//return retornar();				
+				//return retornar();	
+				regAnualDet.clear();
 			}
 			catch (Exception e) {
 				// TODO: handle exception
@@ -289,7 +293,7 @@ public class IafasCompMensualController implements Serializable{
 		messages = "";
 		switch (opcion) {
 		case 0 : typeMessages=0; messages = "";PrimeFaces.current().executeScript("verMensajes()");break;
-		case 1 : typeMessages=1; messages = "";PrimeFaces.current().executeScript("verMensajes()");break;
+		case 1 : typeMessages=1; messages = "";PrimeFaces.current().executeScript("verMensajes()");retornar();break;
 		case 2 : typeMessages=2; messages = "";PrimeFaces.current().executeScript("verMensajes()");break;
 		case 3 : typeMessages=3; messages = "";PrimeFaces.current().executeScript("verMensajes()");break;
 	    default : logger.info("No se muestra ningun mensaje");break;

@@ -44,11 +44,7 @@
                     <h:panelGrid columns="4" >
                         <h:outputLabel value="Fuente Financiamiento"/>
                         <h:selectOneMenu value="#{mbCompAnual.tipCodFun}" disabled="true" styleClass="select"> 
-                        <f:selectItem itemValue="1" itemLabel="RECURSOS ORDINARIOS"></f:selectItem>
-                        <f:selectItem itemValue="2" itemLabel="RECURSOS DIRECTAMENTE RECAUDADOS"></f:selectItem>
-                        <f:selectItem itemValue="3" itemLabel="RECURSOS POR OPE OFLS DE CREDITO INTERNO"></f:selectItem>
-                        <f:selectItem itemValue="4" itemLabel="DONACIONES Y TRANSFERENCIAS"></f:selectItem>
-                        <f:selectItem itemValue="5" itemLabel="RECURSOS DETERMINADOS"></f:selectItem>
+                        <f:selectItems var="fuenteFinanciamiento" value="#{mbCombos.fuenteFinanciamiento}"></f:selectItems>
                         </h:selectOneMenu>  
                         <h:outputLabel value="Fecha:"/>
                         <h:inputText id="txt_fechaCert" size="10" styleClass="input" value="#{mbCompAnual.fechaCert}"
@@ -57,7 +53,8 @@
                                 <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
                         </h:inputText>
                         <p:outputLabel value="Proceso Selección"/>
-                        <p:selectOneMenu id="procesoSel"  value="#{mbCompAnual.tipProcesoSel}" disabled="true">
+                        <p:selectOneMenu id="procesoSel"  value="#{mbCompAnual.tipProcesoSel}" disabled="true"
+                        style="width:450px;">
                          <f:selectItems var="documentos" value="#{mbCombos.procesoSel}"/>
                         </p:selectOneMenu>
                    <!--     <p:outputLabel value="Tipo Operación:"/>
@@ -85,7 +82,7 @@
                             <p:outputLabel value="Número:"/>
                             <h:inputText id="nro_doc" size="9" value="#{mbCompAnual.nroDoc}" styleClass="input" style="text-align: right;" 
                             maxlength="8"/>
-                            <p:commandButton id="btnbuscarOCOS" icon="ui-icon-search" value="Buscar"  styleClass="button" title="Busqueda Ordenes Spring"/>
+                            <p:commandButton id="btnbuscarOCOS" icon="ui-icon-search" value="Buscar"  styleClass="button" title="Busqueda Ordenes y Contratos"/>
                             <p:outputLabel value="Fecha:"/>
                             <h:panelGrid columns="2" >
                                 <p:inputMask id="fec_doc" mask="99/99/9999" size="12" value="#{mbCompAnual.fecDocumento}" styleClass="input">

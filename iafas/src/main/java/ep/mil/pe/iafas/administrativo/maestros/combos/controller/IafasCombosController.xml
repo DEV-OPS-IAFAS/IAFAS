@@ -10,6 +10,13 @@
 parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
   SELECT ctipo_procedimiento_codigo codigo, 
   vtipo_procedimiento_descripcion descripcion
- FROM iafas_tipo_procedimiento_seleccion
+ FROM iafas_tipo_procedimiento_seleccion where cestado_codigo = 'AC'
 </select>
+
+<select id="tipoFinanciamiento" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+ SELECT nfuente_financiamiento_codigo codigo, vfuente_financiamiento_nombre descripcion
+ FROM iafas_fuente_financiamiento WHERE cestado_codigo='AC'
+</select>
+
 </mapper>
