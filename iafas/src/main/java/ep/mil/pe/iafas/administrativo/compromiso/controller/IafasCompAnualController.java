@@ -2,6 +2,7 @@ package ep.mil.pe.iafas.administrativo.compromiso.controller;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,7 +22,10 @@ import ep.mil.pe.iafas.administrativo.compromiso.dao.IafasCompromisoAnualDetDao;
 import ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual;
 import ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnualDet;
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
+import ep.mil.pe.iafas.configuracion.SQLServerSessionFactory;
 import ep.mil.pe.iafas.configuracion.util.Constantes;
+import ep.mil.pe.iafas.integracion.dao.OrdenesCSDao;
+import ep.mil.pe.iafas.integracion.model.OrdenesCS;
 import ep.mil.pe.iafas.seguridad.controller.IafasUsuariosController;
 import lombok.Data;
 
@@ -48,8 +52,8 @@ public class IafasCompAnualController implements Serializable {
 	private String concepto;
 	private String tipMon;
     private double ntipCam = 1.0;
-    private String ruc = "10443305861";
-    private String razonSocial="PRODUCTOS ACME S.A.";
+    private String ruc;
+    private String razonSocial;
     private String tipCodFun;
     private String desPresupuesto;
     private BigDecimal nimpCompSol;
@@ -70,6 +74,8 @@ public class IafasCompAnualController implements Serializable {
 	IafasCompromisoAnualDetDao compAnualDetDao = new IafasCompromisoAnualDetDao(MySQLSessionFactory.getSqlSessionFactory());
 	IafasCompromisoAnualDao compAnualDao = new IafasCompromisoAnualDao(MySQLSessionFactory.getSqlSessionFactory());
 	
+	OrdenesCSDao OrderDao = new OrdenesCSDao(SQLServerSessionFactory.getSqlServerSessionFactory());
+	
 	// Sessiones
 
 	
@@ -81,6 +87,36 @@ public class IafasCompAnualController implements Serializable {
 		IafasUsuariosController usuarioSession = new IafasUsuariosController();
 		usuarioSession=(IafasUsuariosController)session.getAttribute("iafasUsuariosController");
 		usuario = usuarioSession.getIdUsuario();
+	}
+	
+	public String validarOCSTest() {
+		IafasCompromisoAnual ca = new IafasCompromisoAnual();
+		ca.setVanoDocumento("2021");
+		ca.setVnroDocumentoPagoA(nroDoc);
+		List<IafasCompromisoAnual> ordenes = compAnualDao.verOC(ca);
+		for(IafasCompromisoAnual registros: ordenes) {
+				ruc = ordenes.get(0).getCproveedorRuc();
+				razonSocial = ordenes.get(0).getRazonSocial();
+			}
+		return "";
+	}
+	
+	public String validarOCS() throws SQLException {
+		try {
+			logger.info("Validando Ordenes {} " +nroDoc);
+			OrdenesCS oc = new OrdenesCS();
+			oc.setPeriodo(Integer.valueOf(periodo));
+			oc.setNumeroOrden(nroDoc);
+			List<OrdenesCS> ordenes = OrderDao.findPurchaseOrder(oc);
+			for(OrdenesCS registros: ordenes) {
+				ruc = ordenes.get(0).getRuc();
+				razonSocial = ordenes.get(0).getProveedor();
+			}
+			logger.info("Valores Obtenidos {} "+ruc+" "+razonSocial);
+		} catch (Exception e) {
+			logger.error("Error Valida ORdenes : {} "+e.getMessage()+" "+e.getCause());
+		}
+		return "";
 	}
 	
 	public List<IafasCompromisoAnual> listarMovimientoCA(String secuencia){

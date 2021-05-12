@@ -104,4 +104,20 @@ public class IafasCompromisoAnualDao {
         return lista;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<IafasCompromisoAnual> verOC(IafasCompromisoAnual ca) {
+		
+        List<IafasCompromisoAnual> lista = null;
+        SqlSession session = sqlSessionFactory.openSession();
+        try{
+              lista = session.selectList("CompromisoAnual.testOC",ca);
+        }
+        catch(Exception e) {
+        	e.printStackTrace();
+        }
+        finally{
+             session.close();
+        }
+        return lista;
+	}
 }

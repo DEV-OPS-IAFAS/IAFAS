@@ -183,4 +183,14 @@
  	vnro_certificado =#{vnroCertificado} AND
  	vtipo_movimiento NOT IN ('N')
 	</select>
+	
+	<select id="testOC" resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
+	parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual">
+	SELECT tipodocumento vtipoDocumentoA, numeroorden vnroDocumentoPagoA, 
+	documento cproveedorRuc, busqueda razonSocial
+	FROM iafas_logistica_temp WHERE YEAR(fechapreparacion) = #{vanoDocumento} AND 
+	numeroOrden =#{vnroDocumentoPagoA} AND
+	estado='CO'
+	</select>
+	
 </mapper>

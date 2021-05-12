@@ -82,7 +82,8 @@
                             <p:outputLabel value="Número:"/>
                             <h:inputText id="nro_doc" size="9" value="#{mbCompAnual.nroDoc}" styleClass="input" style="text-align: right;" 
                             maxlength="8"/>
-                            <p:commandButton id="btnbuscarOCOS" icon="ui-icon-search" value="Buscar"  styleClass="button" title="Busqueda Ordenes y Contratos"/>
+                            <p:commandButton id="btnbuscarOCOS" icon="ui-icon-search" value="Buscar" action="#{mbCompAnual.validarOCS}"
+                            styleClass="button" title="Busqueda Ordenes Compra o Servicio" update="panel_proveedor"/>
                             <p:outputLabel value="Fecha:"/>
                             <h:panelGrid columns="2" >
                                 <p:inputMask id="fec_doc" mask="99/99/9999" size="12" value="#{mbCompAnual.fecDocumento}" styleClass="input">
