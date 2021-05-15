@@ -20,7 +20,7 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
             <!-- CONECTION A SQLSERVER -->
             <dataSource type="POOLED">
                 <property name="driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
-                <property name="url" value="jdbc:sqlserver://10.66.21.8;database=spring2021;integratedSecurity=true;"/>
+                <property name="url" value="jdbc:sqlserver://10.66.21.8;database=spring2021"/>
                 <property name="username" value="rolando"/>
                 <property name="password" value="rp12345678"/>
             </dataSource>

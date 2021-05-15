@@ -17,8 +17,8 @@
         MontoTotal montoTotal,
         FechaPreparacion fechaOrden 
         from spring2021.dbo.v_OrdenCompraServicio
-        where YEAR(FechaPreparacion) = #{periodo} and NumeroOrden = #{numeroOrden} and
-        estado = 'CO'
+        where YEAR(FechaPreparacion) = #{periodo} and NumeroOrden = #{numeroOrden} and TipoDocumento = #{tipoDocumento}
+        and estado = 'CO'
 	</select>
 
 </mapper>

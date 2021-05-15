@@ -65,7 +65,7 @@ public class IafasCompAnualController implements Serializable {
     
     private String messages;
     private int typeMessages;
-   
+   private String tipOrden;
     
 	private static final long serialVersionUID = 1L;
 	
@@ -105,14 +105,28 @@ public class IafasCompAnualController implements Serializable {
 		try {
 			logger.info("Validando Ordenes {} " +nroDoc);
 			OrdenesCS oc = new OrdenesCS();
+			if(tipDocumentoA.equals("031")) {
+				setTipOrden("OC");
+			}
+			else {
+				if(tipDocumentoA.equals("032")) {
+					setTipOrden("OS");
+				}
+				setTipOrden("");
+			}
 			oc.setPeriodo(Integer.valueOf(periodo));
 			oc.setNumeroOrden(nroDoc);
+			oc.setTipoDocumento(tipOrden);
 			List<OrdenesCS> ordenes = OrderDao.findPurchaseOrder(oc);
-			for(OrdenesCS registros: ordenes) {
-				ruc = ordenes.get(0).getRuc();
-				razonSocial = ordenes.get(0).getProveedor();
+			if(ordenes.size()==0) {ruc="";razonSocial="";}
+			else {
+				for(OrdenesCS registros: ordenes) {
+					ruc = ordenes.get(0).getRuc();
+					razonSocial = ordenes.get(0).getProveedor();
+				}
+				logger.info("Valores Obtenidos {} "+ruc+" "+razonSocial);
 			}
-			logger.info("Valores Obtenidos {} "+ruc+" "+razonSocial);
+
 		} catch (Exception e) {
 			logger.error("Error Valida ORdenes : {} "+e.getMessage()+" "+e.getCause());
 		}

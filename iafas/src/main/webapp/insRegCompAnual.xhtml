@@ -27,6 +27,15 @@
 		  }
         }
         
+        function completaCeros(obj, tam) {
+            var txt = document.getElementById(obj).value;
+            var tamTxt = txt.length;
+            var i;
+            for (i = tam; i > tamTxt; i--)
+                txt = '0' + txt;
+            document.getElementById(obj).value = txt;
+        }
+        
     </script>
         <h:form id="frmInsRegCompAnual" class="contenedor">
               <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
@@ -80,8 +89,9 @@
                                <f:selectItem itemValue="060" itemLabel="060:Contrato Suscrito"/>
                             </p:selectOneMenu>
                             <p:outputLabel value="Número:"/>
-                            <h:inputText id="nro_doc" size="9" value="#{mbCompAnual.nroDoc}" styleClass="input" style="text-align: right;" 
-                            maxlength="8"/>
+                            <h:inputText id="nro_doc" size="11" value="#{mbCompAnual.nroDoc}" onblur="completaCeros(this, 10);"
+                            styleClass="input" style="text-align: right;" 
+                            maxlength="10"/>
                             <p:commandButton id="btnbuscarOCOS" icon="ui-icon-search" value="Buscar" action="#{mbCompAnual.validarOCS}"
                             styleClass="button" title="Busqueda Ordenes Compra o Servicio" update="panel_proveedor"/>
                             <p:outputLabel value="Fecha:"/>

@@ -42,14 +42,16 @@ BEGIN
     VALUES(xcproveedor_ruc);
     
     COMMIT;
-    
-    INSERT INTO iafas_compromiso_anual(vano_documento,vsecuencia_a,vcorrelativo_a,vnro_certificado,
+        INSERT INTO iafas_compromiso_anual(vano_documento,vsecuencia_a,vcorrelativo_a,vnro_certificado,
     vtipo_documento_a,vnro_documento_pago_a,dfecha_documento_a,vtipo_movimiento,vtipo_operacion,
     vfuente_financiamiento,cproveedor_ruc,ntip_cam,vcod_tipo_financiamiento,vcod_proceso_sel,
     vcod_moneda,nimp_mon_sol,vusuario_ing,vglosa,dfecha_ing,vcod_estado)
-    VALUES(xvano_documento, secuencia, correlativo, xvnro_certificado,xvtipo_documento_a,xvnro_documento_pago_a,
+    VALUES(xvano_documento, secuencia, correlativo, xvnro_certificado,xvtipo_documento_a,
+    substr(xvnro_documento_pago_a,3,10),
     xdfecha_documento,xvtipo_movimiento,xvtipo_operacion,xvfuente_financiamiento,xcproveedor_ruc,xntip_cam,
     xvcod_tipo_financiamiento, xvcod_proceso_sel,xvcod_moneda,xnimp_mon_sol,xvusuario_ing,xvglosa,NOW(),1);
+    
+   
     COMMIT;
 END$$
 
