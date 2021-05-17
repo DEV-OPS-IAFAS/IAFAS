@@ -118,7 +118,7 @@ public class IafasCompAnualController implements Serializable {
 			oc.setPeriodo(Integer.valueOf(periodo));
 			oc.setNumeroOrden(nroDoc);
 			oc.setTipoDocumento(tipOrden);
-			List<OrdenesCS> ordenes = null;// OrderDao.findPurchaseOrder(oc);
+			List<OrdenesCS> ordenes = OrderDao.findPurchaseOrder(oc);
 			logger.info("Parametros Busqueda {} "+periodo+" "+tipOrden+" "+nroDoc);
 			if(ordenes.size()==0) {ruc="";razonSocial="";}
 			else {
