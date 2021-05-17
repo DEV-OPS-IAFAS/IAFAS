@@ -28,8 +28,64 @@
             function validaCertificado() {
 		     swal("Alerta", 'Debe de Buscar previamente un Certificado',"warning");
 		  
-            }      
+            }  
+            
+     function validaModificacion(tipo, tipo1){
+	
+		var valor;
+		if(tipo=="CERTIFICACION") {
+		swal("Alerta", 'Esta opcion es solo para Compromisos Anuales',"warning");
+		valor = true;
+		}
+		else{
+		if(tipo1!="AP"){
+		swal("Alerta", 'No se Realiza Movimientos sin Previa Aprobación de los Compromisos Anuales',"warning");
+		valor = true;
+		}
+		else{ valor=false;}
+		//valor=false;
+        }
+		return valor
+	}    
        
+	function modificarDatos(tipo, tipo1){
+		var valor;
+		if(validaModificacion(tipo, tipo1)){
+			valor = false;
+		}
+		else
+		{ valor = true;}
+		return valor
+	} 
+	
+	function enviarDatos(tipo, tipo1){
+	    var valor;
+		if(validaEnvio(tipo, tipo1)){
+			valor = false;
+		}
+		else
+		{ valor = true;}
+		return valor
+	}
+	
+	function validaEnvio(tipo, tipo1){
+	
+		var valor;
+		if(tipo=="CERTIFICACION") {
+		swal("Alerta", 'Esta opcion es solo para Compromisos Anuales',"warning");
+		valor = true;
+		}
+		else{
+		if(tipo1!="REG"){
+		swal("Alerta", 'Solo se puede enviar Compromisos Registrados.. Verificar!!',"warning");
+		valor = true;
+		}
+		else{ valor=false;}
+		//valor=false;
+        }
+		return valor
+	}
+	
         </script>
         <h:form id="frmCompromisoAnual" style="border-radius: 5px 5px 5px 5px;border: 1px ; width:100%;">
             <p:panel >
@@ -39,7 +95,8 @@
                 </p:panelGrid> 
                 <p:panelGrid columns="5" >
                     <p:outputLabel value="Certificado :" styleClass="etiqueta"/>
-                    <h:inputText id="inpTxtCertificado" value="#{mbCompAnual.certificado}" onclick="limpiarTexto();" styleClass="input"/>
+                    <h:inputText id="inpTxtCertificado" value="#{mbCompAnual.certificado}" onclick="limpiarTexto();" styleClass="input"
+                    size="8"/>
                     <p:commandButton id="cmdBtnBuscar"  value="Buscar"  actionListener="#{mbCompAnual.listarCompAnualCab()}"
                      ajax="false"  update="dTableCompAnual" style="height:30px;" title="Click aqui para buscar datos del Certificado"/>
                     <p:commandButton  value="Nuevo"  styleClass="button" action="#{mbCompAnual.nuevoRegistro()}" 
@@ -90,13 +147,15 @@
                                         </p:commandButton>
                                     </p:column> -->
                                     <p:column headerText="Movimientos" style="width: 25px;">
-                                        <p:commandButton icon="pi pi-search-plus" action="#{mbMovCA.nuevoMovimientoAnual}">
+                                        <p:commandButton icon="pi pi-search-plus" action="#{mbMovCA.nuevoMovimientoAnual}" 
+                                        onclick="if (!modificarDatos('#{ca.tipoCertificacion}','#{ca.vcodEstado}')) return false">
   											<f:param id="certificadoP" name="certificadoP" value="#{ca.vnroCertificado}"/>
   											<f:param id="secuenciaP" name="secuenciaP" value="#{ca.vsecuenciaA}"/>
                                         </p:commandButton>
                                     </p:column>
                                     <p:column headerText="Comprometer" style="width: 20px;">
                                         <p:commandButton id="btn_enviar" icon="pi pi-play" action="#{mbCompAnual.obtener()}"
+                                        onclick="if (!enviarDatos('#{ca.tipoCertificacion}','#{ca.vcodEstado}')) return false"
                                         oncomplete="PF('EnvioAnual').show();"
                                         update="frmCompromisoAnual:EnvioAnual">
                                           <f:param id="p_secuencia" name="p_secuencia" value="#{ca.vsecuenciaA}"></f:param>
@@ -225,7 +284,8 @@
                         </h:panelGrid>
                         <h:panelGrid columns="2">
                            <p:commandButton id="btnAceptar" value="Si" action="#{mbCompAnual.enviarCompromisoAnual()}"
-                           oncomplete="PF('EnvioAnual').hide();" icon="pi pi-check" style="height:25px;"></p:commandButton>
+                           oncomplete="PF('EnvioAnual').hide();" icon="pi pi-check" style="height:25px;"
+                           update="dTableCompAnual"></p:commandButton>
                             <p:commandButton id="btnCancelar" value="No" type="button" onclick="PF('EnvioAnual').hide();"
                             icon="pi pi-times" style="height:25px;"></p:commandButton>
                         </h:panelGrid>

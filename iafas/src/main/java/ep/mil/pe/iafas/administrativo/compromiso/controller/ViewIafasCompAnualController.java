@@ -155,7 +155,10 @@ public class ViewIafasCompAnualController implements Serializable {
 	public void limpiarCampos() {
 		tipoMovimiento = Constantes.VACIO;
 		justificacion = Constantes.VACIO;
-		listaMovimiento.clear();
+		if(listaMovimiento!=null) {
+			listaMovimiento.clear();
+		}
+		
 	}
 	
     private ExternalContext extContext() {

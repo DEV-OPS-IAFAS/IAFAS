@@ -65,7 +65,9 @@ public class IafasCompAnualController implements Serializable {
     
     private String messages;
     private int typeMessages;
-   private String tipOrden;
+    private String tipOrden;
+    
+    Date hoy = new Date();
     
 	private static final long serialVersionUID = 1L;
 	
@@ -77,8 +79,8 @@ public class IafasCompAnualController implements Serializable {
 	OrdenesCSDao OrderDao = new OrdenesCSDao(SQLServerSessionFactory.getSqlServerSessionFactory());
 	
 	// Sessiones
-
-	
+     
+	 
 	public IafasCompAnualController() {
 		// TODO Auto-generated constructor stub
 		//listarCompAnualCab();
@@ -105,19 +107,19 @@ public class IafasCompAnualController implements Serializable {
 		try {
 			logger.info("Validando Ordenes {} " +nroDoc);
 			OrdenesCS oc = new OrdenesCS();
-			if(tipDocumentoA.equals("031")) {
+			if(tipDocumentoA.equals(Constantes.ID_ORDEN_COMPRA)) {
 				setTipOrden("OC");
 			}
-			else {
-				if(tipDocumentoA.equals("032")) {
+			else 
+				if(tipDocumentoA.equals(Constantes.ID_ORDEN_SERVICIO)) {
 					setTipOrden("OS");
 				}
-				setTipOrden("");
-			}
+			
 			oc.setPeriodo(Integer.valueOf(periodo));
 			oc.setNumeroOrden(nroDoc);
 			oc.setTipoDocumento(tipOrden);
-			List<OrdenesCS> ordenes = OrderDao.findPurchaseOrder(oc);
+			List<OrdenesCS> ordenes = null;// OrderDao.findPurchaseOrder(oc);
+			logger.info("Parametros Busqueda {} "+periodo+" "+tipOrden+" "+nroDoc);
 			if(ordenes.size()==0) {ruc="";razonSocial="";}
 			else {
 				for(OrdenesCS registros: ordenes) {
@@ -169,6 +171,7 @@ public class IafasCompAnualController implements Serializable {
 				setNtipCam(compromiso.get(0).getNtipCam());
 				setFechaCert(compromiso.get(0).getDfechaDocumento());
 				lista.add(l);
+				
 			}
 		}
 		catch(Exception e) {
@@ -324,7 +327,8 @@ public class IafasCompAnualController implements Serializable {
 	}
 	
 	
-	public int enviarCompromisoAnual() {
+	public String enviarCompromisoAnual() {
+		String retorno ="mainCompromisoAnual.xhtml";
 		int envio = 0;
 		try {
 
@@ -336,17 +340,19 @@ public class IafasCompAnualController implements Serializable {
 			ca.setVusuarioIng(usuario);
 			
 			envio = compAnualDao.enviarCompAnual(ca);
+			 retornar();
+			listarCompAnualCab();
 		}
 		catch (Exception e) {
 			logger.error("[ERROR] Ocurrio un Error al enviar CompromisoAnual "+e);
 		}
 
-		return envio;
+		return retorno;
 	}
 	
 	public void limpiarCampos() {
 		nroDoc="";
-		fecDocumento = null;
+		fecDocumento = hoy;
 		tipDocumentoA = "";
 		concepto="";
 	}

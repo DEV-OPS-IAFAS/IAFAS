@@ -9,7 +9,7 @@
 	<!-- (PK_TOTAL_CERT(ca.vano_documento, ca.vnro_certificado,d.vcod_sec_func,d.vid_clasificador) -
 		PK_TOTAL_CA(ca.vano_documento,ca.vnro_certificado,d.vcod_sec_func,d.vid_clasificador)) -->
 
-	<select id="listadoMovimientoCA" resultType="ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompAnual"
+	<select id="listadoMovimientoCAOLD" resultType="ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompAnual"
 	parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompAnual">
 	
 		SELECT ca.vano_documento vanoDocumento, 
@@ -40,6 +40,32 @@
 		WHERE ca.vano_documento = #{vanoDocumento} AND
 		ca.vnro_certificado = #{vnroCertificado} AND
 		ca.vsecuencia_a=#{vsecuenciaA} and ca.vtipo_movimiento='N'
+	</select>
+	
+	<select id="listadoMovimientoCA" resultType="ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompAnual"
+	parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompAnual">
+	SELECT vanoDocumento vanoDocumento, 
+		vsecuenciaA vsecuenciaA, vcorrelativoA vcorrelativoA,
+		vnroCertificado vnroCertificado, 
+		vtipoDocumentoA vtipoDocumentoA, 
+		vnroDocumentoPagoA vnroDocumentoPagoA,
+		vfuenteFinanciamiento vfuenteFinanciamiento,
+		proveedorRuc proveedorRuc,
+		ntipCam ntipCam, 
+		vcodTipoFinanciamiento vcodTipoFinanciamiento, 
+		vcodProcesoSel vcodProcesoSel,
+		vcodMoneda vcodMoneda,
+		vcodSecFunc vcodSecFunc, 
+		vidClasificador vidClasificador,
+		cadena cadena,
+		nomCla nomCla,
+		importeAmpliacion importeAmpliacion,
+		importeRebaja importeRebaja,
+		importeAnulacion importeAnulacion
+		FROM V_movimientoCertificadoAnual
+		WHERE vanoDocumento = #{vanoDocumento} AND
+		vnroCertificado = #{vnroCertificado} AND
+		vsecuenciaA=#{vsecuenciaA} and ca.vtipo_movimiento='N'
 	</select>
 		
 	<select id="insertMovCA" parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompAnual"

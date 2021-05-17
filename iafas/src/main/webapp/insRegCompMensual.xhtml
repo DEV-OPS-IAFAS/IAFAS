@@ -43,7 +43,7 @@
                 <p:panelGrid columns="5" >
                     <p:outputLabel value="N° Certificado :" styleClass="etiqueta"/>
                     <h:inputText id="inpTxtCertificado" value="#{mbCompMensual.certificado}" 
-                    onclick="limpiarTexto();" styleClass="input" style="text-align:right;"/>
+                    onclick="limpiarTexto();" styleClass="input" style="text-align:right;" size="8"/>
                     <p:commandButton id="cmdBtnBuscar"  value="Ver" actionListener="#{mbCompMensual.verAnuales()}"                  
                      style="height:30px;" ajax="true" update="frmCompromisoMensual:dCompAnual"
                      oncomplete="PF('dialogCA').show();"
@@ -185,6 +185,8 @@
                       </p:commandButton>
                    </p:column>
                   </p:dataTable>
+                  <br/>
+                  <p:commandButton id="btnCancelar" value="Retornar" onclick="PF('dialogCA').hide();"></p:commandButton>
                   </p:panel>
                 </p:dialog>
             </p:panel>

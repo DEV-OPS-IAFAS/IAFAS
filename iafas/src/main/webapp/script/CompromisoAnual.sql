@@ -24,6 +24,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_REGISTRO_COMP_ANUAL`(
 BEGIN
       DECLARE secuencia VARCHAR(3);
       DECLARE correlativo VARCHAR(3);
+      declare cantidadRUC INTEGER;
       
     -- Generando secuencia por certificado
     SELECT IFNULL(LPAD(MAX(vsecuencia_a+1),3,0),'002') INTO secuencia
@@ -38,10 +39,17 @@ BEGIN
     vnro_certificado = xvnro_certificado AND
     vsecuencia_a = secuencia;
     
+    select count(*) into cantidadRUC
+    from iafas_proveedores
+    where cproveedor_ruc = xcproveedor_ruc;
+    
+    IF cantidadRUC = 0 then
     INSERT INTO iafas_proveedores(cproveedor_ruc)
     VALUES(xcproveedor_ruc);
-    
     COMMIT;
+    end if;
+    
+
         INSERT INTO iafas_compromiso_anual(vano_documento,vsecuencia_a,vcorrelativo_a,vnro_certificado,
     vtipo_documento_a,vnro_documento_pago_a,dfecha_documento_a,vtipo_movimiento,vtipo_operacion,
     vfuente_financiamiento,cproveedor_ruc,ntip_cam,vcod_tipo_financiamiento,vcod_proceso_sel,

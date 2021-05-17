@@ -8,13 +8,35 @@
         <title>IAFAS</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
     </h:head>
     <body class="formulario">
-        <script>
-            function limpiarTexto() {
-                document.getElementById('frmCompromisoAnual:inpTxtCertificado').value = "";
-            }
-                      
+        <script>    
+       function enviarDatos(tipo){
+	    var valor;
+		if(validaEnvio(tipo)){
+			valor = false;
+		}
+		else
+		{ valor = true;}
+		return valor
+	}     
+        function validaEnvio(tipo){
+		var valor;
+		if(tipo!="REG") {
+		swal("Alerta", 'Esta opción es solo para Compromisos Anuales',"warning");
+		valor = true;
+		}
+		/*else{
+		if(tipo!="REG"){
+		swal("Alerta", 'Solo se puede enviar Compromisos Registrados.. Verificar!!',"warning");
+		valor = true;
+		}
+		else{ valor=false;}
+		//valor=false;
+        }*/
+		return valor
+	}           
         
         </script>
         <h:form id="frmCompromisoMensual" style="border-radius: 5px 5px 5px 5px;border: 1px ; width:100%;">
@@ -70,7 +92,9 @@
                                         <p:outputLabel value="#{men.vcodEstado}" style="text-align: center"/>
                                     </p:column>
                                     <p:column headerText="Mensualizar" style="width: 10px;">
-                                        <p:commandButton id="btn_enviar" icon="pi pi-play" action="#{mbCompMensual.obtener()}"
+                                        <p:commandButton id="btn_enviar" icon="pi pi-play" 
+                                        onclick="if (!enviarDatos('#{men.vcodEstado}')) return false"
+                                        action="#{mbCompMensual.obtener()}"
                                         oncomplete="PF('pMensual').show();"
                                         update="frmCompromisoMensual:EnvioMensual">
                                           <f:param id="p_secuencia" name="p_secuencia" value="#{men.secuencia}"></f:param>
@@ -94,7 +118,8 @@
                         </h:panelGrid>
                         <h:panelGrid columns="2">
                            <p:commandButton id="btnAceptar" value="Si" action="#{mbCompMensual.enviarCompromisoMensual()}"
-                           oncomplete="PF('pMensual').hide();" icon="pi pi-check" style="height:25px;"></p:commandButton>
+                           oncomplete="PF('pMensual').hide();" icon="pi pi-check" style="height:25px;"
+                           update="dTableCompMensual"></p:commandButton>
                             <p:commandButton id="btnCancelar" value="No" type="button" onclick="PF('pMensual').hide();"
                             icon="pi pi-times" style="height:25px;"></p:commandButton>
                         </h:panelGrid>

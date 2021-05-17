@@ -35,9 +35,21 @@
                 txt = '0' + txt;
             document.getElementById(obj).value = txt;
         }
-        
+           
+           function activateBoton(){
+               var tip = document.getElementById('frmInsRegCompAnual:cbo_documento').value;
+               if(tip =="031" || tip=="032"){
+               document.getElementById("frmInsRegCompAnual:panelOC").style.visibility = "visible";
+               document.getElementById("frmInsRegCompAnual:inptxtRuc").disabled=true;
+               }
+               else{
+               document.getElementById("frmInsRegCompAnual:panelOC").style.visibility = "hidden";
+               document.getElementById("frmInsRegCompAnual:inptxtRuc").disabled=false;
+               }
+               
+           }
     </script>
-        <h:form id="frmInsRegCompAnual" class="contenedor">
+        <h:form id="frmInsRegCompAnual" >
               <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
             <p:panel >
                 <p:panelGrid columns="6"  >
@@ -63,7 +75,7 @@
                         </h:inputText>
                         <p:outputLabel value="Proceso Selección"/>
                         <p:selectOneMenu id="procesoSel"  value="#{mbCompAnual.tipProcesoSel}" disabled="true"
-                        style="width:450px;">
+                        style="width:450px;" >
                          <f:selectItems var="documentos" value="#{mbCombos.procesoSel}"/>
                         </p:selectOneMenu>
                    <!--     <p:outputLabel value="Tipo Operación:"/>
@@ -79,21 +91,27 @@
                     </h:panelGrid>
                 </p:fieldset>
                 <br/>
-                <p:fieldset legend="Datos del Compromiso Anual" >
+                <p:fieldset legend="Datos del Compromiso Anual" id="DatosCA">
                         <h:panelGrid columns="7" style="width: 100%">
                             <p:outputLabel value="Documento:"/>
-                            <p:selectOneMenu id="cbo_documento" style="width: 300px;" value="#{mbCompAnual.tipDocumentoA}" >
-                                <f:selectItem itemValue="" itemLabel="--Seleccione --"/>
-                                <f:selectItem itemValue="031" itemLabel="031:Orden de Compra"/>
-                                <f:selectItem itemValue="032" itemLabel="032:Orden de Servicio"/>
-                               <f:selectItem itemValue="060" itemLabel="060:Contrato Suscrito"/>
-                            </p:selectOneMenu>
+                            <h:selectOneMenu id="cbo_documento" style="width: 300px;" 
+                            value="#{mbCompAnual.tipDocumentoA}" styleClass="select" onchange="activateBoton();">
+                                <f:selectItem itemValue="0" itemLabel="--Seleccione --"/>
+                                <f:selectItem itemValue="031" itemLabel="031: Orden de Compra"/>
+                                <f:selectItem itemValue="032" itemLabel="032: Orden de Servicio"/>
+                               <f:selectItem itemValue="060" itemLabel="060: Contrato Suscrito"/>
+                            </h:selectOneMenu>
                             <p:outputLabel value="Número:"/>
-                            <h:inputText id="nro_doc" size="11" value="#{mbCompAnual.nroDoc}" onblur="completaCeros(this, 10);"
-                            styleClass="input" style="text-align: right;" 
+                            <h:inputText id="nrodocumento" value="#{mbCompAnual.nroDoc}" onblur="completaCeros(this.name, 10);"
+                            styleClass="input" style="text-align: right;" size="11"
                             maxlength="10"/>
-                            <p:commandButton id="btnbuscarOCOS" icon="ui-icon-search" value="Buscar" action="#{mbCompAnual.validarOCS}"
-                            styleClass="button" title="Busqueda Ordenes Compra o Servicio" update="panel_proveedor"/>
+                            <h:panelGrid id="panelOC" style="visibility:hidden;">
+                            <p:commandButton id="btnbuscarOCOS" icon="ui-icon-search" value="Buscar" 
+                            action="#{mbCompAnual.validarOCS}" 
+                            style="height:25px;"
+                            onblur="completaCeros(this.name, 10);" ajax="true"
+                            title="Búsqueda Ordenes Compra o Servicio, validará el RUC y RazonSocial" update="panel_proveedor"/>
+                            </h:panelGrid>                 
                             <p:outputLabel value="Fecha:"/>
                             <h:panelGrid columns="2" >
                                 <p:inputMask id="fec_doc" mask="99/99/9999" size="12" value="#{mbCompAnual.fecDocumento}" styleClass="input">
@@ -103,7 +121,7 @@
                                 <p:graphicImage url="img/cal.gif"/>
                             </h:panelGrid>
                         </h:panelGrid>
-                    
+                    <!--   action="#{mbCompAnual.validarOCS}"-->
                     <h:panelGrid columns="6" style="width: 100%" styleClass="panel">
                         <p:outputLabel value="Proveedor:"/>
                         <p:selectOneMenu id="tipProv" style="width: 150px;" value="#{mbCompAnual.idProv}">
@@ -118,7 +136,8 @@
                         </p:selectOneMenu>   
                         <p:outputLabel value="Ruc - Razón Social:"/>
                         <h:panelGrid columns="3" id="panel_proveedor">
-                            <h:outputText styleClass="outLabel" value="#{mbCompAnual.ruc}" style="display: block;"/>
+                            <h:inputText id="inptxtRuc" styleClass="outLabel" value="#{mbCompAnual.ruc}" style="display: block;"
+                            disabled="true"/>
                            <h:outputLabel value="-"/>
                            <h:outputLabel styleClass="outLabel" value="#{mbCompAnual.razonSocial}" style="display: block;"/>
                         </h:panelGrid>

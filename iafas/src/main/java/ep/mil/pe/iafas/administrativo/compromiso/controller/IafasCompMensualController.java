@@ -69,7 +69,7 @@ public class IafasCompMensualController implements Serializable{
 	
 	IafasCompromisoMensualDao mensualDao = new IafasCompromisoMensualDao(MySQLSessionFactory.getSqlSessionFactory());
 	private static final Logger logger = Logger.getLogger(IafasCompMensualController.class);
-	
+	Date hoy = new Date();
 	public IafasCompMensualController() {
 		// TODO Auto-generated constructor stub
 		HttpSession session=null; 
@@ -156,7 +156,7 @@ public class IafasCompMensualController implements Serializable{
 		setCertificado(Constantes.VACIO);
 		setTipDocumentoMen(Constantes.VACIO);
 		setNroDocumentoMen(Constantes.VACIO);
-		setFechaMensual(null);
+		setFechaMensual(hoy);
 		setGlosa(Constantes.VACIO);
 	}
 	
@@ -251,8 +251,9 @@ public class IafasCompMensualController implements Serializable{
 		  return page;
 	}
 	
-	public int enviarCompromisoMensual() {
-		int envio = 0;
+	public String enviarCompromisoMensual() {
+		String retorno = "mainCompromisoMensual.xhtml";
+		int envio=0;
 		try {
 
 			IafasCompromisoMensual ca = new IafasCompromisoMensual();
@@ -262,12 +263,14 @@ public class IafasCompMensualController implements Serializable{
 			ca.setVexpediente(pexpediente);
 			ca.setVusuarioIng(usuario);			
 			envio = mensualDao.enviarCompromisoMensual(ca);
+			logger.info("Se Valido el Compromiso Mensual {} "+pexpediente);
 		}
 		catch (Exception e) {
 			logger.error("[ERROR] enviarCompromisoMensual :", e);
 		}
          retornar();
-		return envio;
+         
+		return retorno;
 	}
 	
 	public int deleteCompromisoMensual() {

@@ -115,7 +115,7 @@
 		#{vusuarioIng, mode=IN,jdbcType=VARCHAR})}
 	</select>
 	
-	<select  id="detalleCompAnual" resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
+	<select  id="detalleCompAnualOLD" resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
 	parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual">
 			SELECT cperiodo_codigo vanoDocumento, '001' vsecuenciaA, 
 		'001' vcorrelativoA,
@@ -158,6 +158,30 @@
 		WHERE vano_documento = #{vanoDocumento} AND vnro_certificado = #{vnroCertificado} and
 		vsecuencia_a = #{vsecuenciaA} and vcorrelativo_a = #{vcorrelativoA}
 		order by vsecuenciaA
+	</select>
+	
+	<select id="detalleCompAnual" resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
+	parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual">
+	     SELECT vanoDocumento vanoDocumento,vsecuenciaA vsecuenciaA,
+		vcorrelativoA vcorrelativoA,
+		tipoCertificacion tipoCertificacion,
+		vfuenteFinanciamiento vfuenteFinanciamiento,
+		vcodTipoFinanciamiento vcodTipoFinanciamiento,
+		desPto desPto,
+		cproveedorRuc cproveedorRuc,
+		razonSocial razonSocial,
+		vnroCertificado vnroCertificado,
+		vnroDocumentoPagoA vnroDocumentoPagoA,
+		vglosa vglosa,
+		dfechaDocumento dfechaDocumento,
+		vcodMoneda vcodMoneda,
+		ntipCam ntipCam, nimpMonSol nimpMonSol,
+		vcodProcesoSel vcodProcesoSel
+		from V_ConsultaCertificadoAnual
+		WHERE vanoDocumento = #{vanoDocumento} AND vnroCertificado = #{vnroCertificado} and
+		vsecuenciaA = #{vsecuenciaA} and vcorrelativoA = #{vcorrelativoA}
+		order by vsecuenciaA
+	     
 	</select>
 	
 	<select id="dropCompAnual" parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
