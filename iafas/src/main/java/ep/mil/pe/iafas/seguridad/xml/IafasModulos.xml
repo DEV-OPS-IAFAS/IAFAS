@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="IafasModulos">
+    <resultMap id="resultado" type="IafasModulos" />
+    
+    
+    <select id="selectModulos" parameterType="ep.mil.pe.iafas.seguridad.model.IafasModulos" resultType="ep.mil.pe.iafas.seguridad.model.IafasModulos" >
+      SELECT CMODULO_CODIGO AS cmoduloCodigo , VMODULO_NOMBRE AS vmoduloNombre
+	  FROM iafas_modulos
+	  WHERE
+	  CESTADO_CODIGO = 'AC'
+    </select>
+    
+ </mapper>

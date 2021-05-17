@@ -35,4 +35,14 @@ public class Constantes {
 	public static final int CERO_INT =0;
 	public static final String CERO_CERO_STRING = "00";
 	public static final String DOS_STRING = "2";
+	public static final int UNO_INT =1;
+	public static final int DOS_INT =2;
+	public static final int TRES_INT = 3;
+	public static final String MESSAGE_VALIDACION_PARAMETROS = "Debe seleccionar los parámetros de entrada.";
+	public static final int UNO_NEGATIVO = -1;
+	public static final String MODE_CERRAR_TECHO = "F";
+	public static final String MODE_ABRIR_TECHO = "A";
+	public static final String ESTADO_TECHO_CERRADO = "CE";
+	public static final String MESSAGE_VALIDACION_TECHO_CERRADO = "El registro se encuentra en estado CERRADO!.";
+	public static final String MESSAGE_VALIDACION_SALDOS = "El monto a ingresar no puede ser mayor al SALDO!.";
 }

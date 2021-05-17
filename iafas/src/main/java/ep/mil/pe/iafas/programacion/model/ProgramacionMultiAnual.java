@@ -31,6 +31,7 @@ public class ProgramacionMultiAnual {
 	private int meta2;
 	private int meta3;
 	private String  estado;
+	private String  desEstado;
 	private String ubigeo;
 	private int detalle1;
 	private int detalle2;

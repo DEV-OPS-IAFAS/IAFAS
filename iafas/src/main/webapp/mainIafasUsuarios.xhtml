@@ -60,8 +60,10 @@
 										value="#{usuario.vusuarioPaterno} #{usuario.vusuarioMaterno}" />
 								</p:column>
 								<p:column width="45px" headerText="Acciones" >
-									<p:commandButton value="Accesos" ajax="false"
-										icon="pi pi-file-o" />
+									<p:commandButton value="Accesos" ajax="false" action="#{iafasUsuariosController.mostrarMenus()}" 
+										icon="pi pi-file-o" >
+									<f:param id="codUsuarioPrivilegio" name="codUsuarioPrivilegio" value="#{usuario.vusuarioCodigo}" />
+									</p:commandButton>	
 
 									<p:commandButton  value="Modificar" update="frm_Usuarios:modalUsuario" oncomplete="PF('modalUsuario').show()"
 										action="#{iafasUsuariosController.obtenerDatos()}" 

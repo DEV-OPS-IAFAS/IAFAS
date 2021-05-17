@@ -12,6 +12,9 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
+
+import com.sun.faces.context.RequestCookieMap;
 
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
 import ep.mil.pe.iafas.configuracion.util.Constantes;
@@ -79,6 +82,8 @@ public class ProgramacionMultiAnualController implements Serializable {
 	private int saldoDetalle1 = Constantes.CERO_INT;
 	private int saldoDetalle2= Constantes.CERO_INT;
 	private int saldoDetalle3= Constantes.CERO_INT;
+	private int typeMessages = Constantes.UNO_NEGATIVO;
+	private String messages = Constantes.MESSAGE_VALIDACION_PARAMETROS;
 	
 	public List<ProgramacionMultiAnual> buscarCabecera() {
 
@@ -284,8 +289,8 @@ public class ProgramacionMultiAnualController implements Serializable {
 		return this.ubigeos;
 	}
 	
-	public String insRegistroCab() {
-		String retorno = Constantes.VACIO;
+	public void insRegistroCab() {
+		//String retorno = Constantes.VACIO;
 		logger.info("[INICIO:] Metodo : insRegistroCab:::");
 		ProgramacionMultiAnualDao objDao = new ProgramacionMultiAnualDao(MySQLSessionFactory.getSqlSessionFactory());
 		Response response = new Response();
@@ -308,22 +313,25 @@ public class ProgramacionMultiAnualController implements Serializable {
 
 		objBn.setUsuarioCodigo(codUsu);
 		objBn.setTipo(modo);
-
 		try {
 			response = objDao.SP_IDU_PROGRAMACION_MULTIANUAL(objBn);
-			logger.info("Respuesta en insRegistroCab ::: " + response.getCodigoRespuesta());
+			
 			if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
-				retorno = "mainProgramacionMultiAnual.xhtml";
+				
+				this.typeMessages = Constantes.CERO_INT;
+				this.messages = response.getMensajeRespuesta();
 				buscarCabecera();
+				PrimeFaces.current().ajax().update("frm_ProgMultiAnual:pnl_messages");
+				refreshMessage();
+				showMessages(typeMessages, messages);
 			}
+			
 		} catch (Exception e) {
 			logger.error("error : " + e.getMessage().toString());
 		} finally {
 
 			logger.info("[FIN:] Metodo : insRegistroCab");
 		}
-
-		return retorno;
 	}
 	
 	public void obtenerRegistro() {
@@ -340,27 +348,51 @@ public class ProgramacionMultiAnualController implements Serializable {
 		
 		List<ProgramacionMultiAnual> lstReg = objDao.obtenerRegistro(objBn);
 		
-		logger.info("Datos: "+lstReg.size());
 		for (ProgramacionMultiAnual objBean : lstReg) {
-			setCodTarea(objBean.getCodigoTareaPtal());
-			setCodDep(objBean.getCodDepa());
-			cargarProvincias();
-			setCodProv(objBean.getCodProv());
-			cargarUbigeo();
-			setCodUbigeo(objBean.getCodDistr());
-			setMonto1(objBean.getMonto1());
-			setMonto2(objBean.getMonto2());
-			setMonto3(objBean.getMonto3());
-			setMeta1(objBean.getMeta1());
-			setMeta2(objBean.getMeta2());
-			setMeta3(objBean.getMeta3());
+			
+			if(!validarEstados(objBean.getEstado())) {
+				setCodTarea(objBean.getCodigoTareaPtal());
+				setCodDep(objBean.getCodDepa());
+				cargarProvincias();
+				setCodProv(objBean.getCodProv());
+				cargarUbigeo();
+				setCodUbigeo(objBean.getCodDistr());
+				setMonto1(objBean.getMonto1());
+				setMonto2(objBean.getMonto2());
+				setMonto3(objBean.getMonto3());
+				setMeta1(objBean.getMeta1());
+				setMeta2(objBean.getMeta2());
+				setMeta3(objBean.getMeta3());
+			}
 		}
 		setModo(Constantes.MODE_ACTUALIZACION);
 		logger.info("[FIN:] Metodo : obtenerRegistro");
 	}
 	
+	public boolean validaciones() {
+		boolean pasoValidacion = false;
+		if (cperiodo.equals(Constantes.CERO_STRING) || fteFinanc.equals(Constantes.CERO_STRING)) {
+			typeMessages = Constantes.TRES_INT;
+			messages = Constantes.MESSAGE_VALIDACION_PARAMETROS;
+			pasoValidacion = true;
+		} 
+		
+		return pasoValidacion;
+	}
+	
+	public void refreshMessage() {
+			setTypeMessages(typeMessages);
+			setMessages(messages);
+	}
+	
 	public void nuevo() {
 		logger.info("[INICIO:] Metodo : nuevo:::");
+		if(validaciones()) {
+			showMessages(typeMessages, messages);
+		}
+		else {
+		typeMessages = Constantes.UNO_NEGATIVO;
+		messages = Constantes.VACIO;
 		setCodTarea(Constantes.CERO_INT);
 		setModo(Constantes.MODE_REGISTRO);
 		setCodDep(Constantes.VACIO);
@@ -375,9 +407,49 @@ public class ProgramacionMultiAnualController implements Serializable {
 		setMonto1(Constantes.CERO_INT);
 		setMonto2(Constantes.CERO_INT);
 		setMonto3(Constantes.CERO_INT);
+		}
 		logger.info("[FIN:] Metodo : nuevo:::");
 	}
 	
+	private String showMessages(int opcion, String mensaje) {
+
+		logger.info("[INICIO:] Metodo : showMessages:::");
+		
+		switch (opcion) {
+		
+		case Constantes.CERO_INT:
+			typeMessages = Constantes.CERO_INT;
+			messages = mensaje;
+			PrimeFaces.current().executeScript("verMensajes()");
+			break;
+			
+		case Constantes.UNO_INT:
+			typeMessages = Constantes.UNO_INT;
+			messages = mensaje;
+			PrimeFaces.current().executeScript("verMensajes()");
+			break;
+			
+		case Constantes.DOS_INT:
+			typeMessages = Constantes.DOS_INT;
+			messages = mensaje;
+			PrimeFaces.current().executeScript("verMensajes()");
+			break;
+			
+		case Constantes.TRES_INT:
+			typeMessages = Constantes.TRES_INT;
+			messages = mensaje;
+			PrimeFaces.current().executeScript("verMensajes()");
+			break;
+			
+		default:
+			typeMessages = Constantes.TRES_INT;
+			messages = mensaje;
+			break;
+		}
+		
+		logger.info("[FIN:] Metodo : showMessages:::");
+		return messages;
+	}
 	
 	public void obtenerRegistroDetalle() {
 		logger.info("[INICIO:] Metodo : obtenerRegistroDetalle");
@@ -395,11 +467,13 @@ public class ProgramacionMultiAnualController implements Serializable {
 		
 		logger.info("Datos: "+lstReg.size());
 		for (ProgramacionMultiAnual objBean : lstReg) {
-			setCodTarea(objBean.getCodigoTareaPtal());
-			setMonto1(objBean.getMonto1());
-			setMonto2(objBean.getMonto2());
-			setMonto3(objBean.getMonto3());
-			buscarDetalle();
+			if(!validarEstados(objBean.getEstado())) {
+				setCodTarea(objBean.getCodigoTareaPtal());
+				setMonto1(objBean.getMonto1());
+				setMonto2(objBean.getMonto2());
+				setMonto3(objBean.getMonto3());
+				buscarDetalle();
+			}
 		}
 		setModo(modo);
 		logger.info("[FIN:] Metodo : obtenerRegistroDetalle");
@@ -493,12 +567,14 @@ public class ProgramacionMultiAnualController implements Serializable {
 		objBnDetalle.setUsuarioCodigo(codUsu);
 		objBnDetalle.setTipo(modo);
 		try {
-			response= objDao.SP_IDU_PROGRAMACION_MULTIANUALDETALLE(objBnDetalle);
-			logger.info("Respuesta en insRegistroDet ::: " + response.getCodigoRespuesta());
+			if (!validarSaldos()) {
+				response = objDao.SP_IDU_PROGRAMACION_MULTIANUALDETALLE(objBnDetalle);
+				logger.info("Respuesta en insRegistroDet ::: " + response.getCodigoRespuesta());
 				if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
 					buscarDetalle();
 					pasoActividad = true;
 				}
+			}
 		} catch (Exception e) {
 			logger.error("error : " + e.getMessage().toString());
 		} finally {
@@ -523,6 +599,7 @@ public class ProgramacionMultiAnualController implements Serializable {
 		
 		objBn.setPeriodo(cperiodo);
 		objBn.setFuenteFinac(Integer.parseInt(fteFinanc));
+		objBn.setCodigoTareaPtal(Integer.parseInt(codTareaParam));
 		
 		List<ProgramacionMultiAnual> lstCab = objDao.mostrarCabecera(objBn);
 		if (lstCab.size() > 0) {
@@ -564,6 +641,12 @@ public class ProgramacionMultiAnualController implements Serializable {
 				saldoDetalle2 = monto2-detalle2;
 				saldoDetalle3 = monto3-detalle3;
 			}
+		}
+		else {
+			objBn.setAno1(Integer.parseInt(cperiodo));
+			objBn.setAno2(cperiodo1);
+			objBn.setAno3(cperiodo2);
+			objBn.setCodigoTareaPtal(Integer.parseInt(codTareaParam));
 		}
 		logger.info("[FIN:] Metodo : calcularSaldos");
 	}
@@ -609,6 +692,42 @@ public class ProgramacionMultiAnualController implements Serializable {
 	public void anularRegistro() {
 		logger.info("[INICIO:] Metodo : anularRegistro");
 		Response response = new Response();
+		ProgramacionMultiAnualDao objDao =  new ProgramacionMultiAnualDao(MySQLSessionFactory.getSqlSessionFactory());
+		ProgramacionMultiAnual objBn = new ProgramacionMultiAnual();
+		objBn.setPeriodo(cperiodo);
+		objBn.setFuenteFinac(Integer.parseInt(fteFinanc));
+		objBn.setTareaPtalCodigo(bean.getCodigoTareaPtal());
+		objBn.setTipo(Constantes.MODE_ELIMINACION_LOGICA);
+		
+		try {
+			if (Constantes.ESTADO_TECHO_CERRADO.equals(bean.getEstado())) {
+				this.typeMessages = Constantes.UNO_INT;
+				this.messages = Constantes.MESSAGE_VALIDACION_TECHO_CERRADO;
+				PrimeFaces.current().ajax().update("frm_ProgMultiAnual:pnl_messages");
+				refreshMessage();
+				showMessages(typeMessages, messages);
+			} else {
+				response = objDao.SP_IDU_PROGRAMACION_MULTIANUAL(objBn);
+				if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
+					this.typeMessages = Constantes.CERO_INT;
+					this.messages = response.getMensajeRespuesta();
+					buscarCabecera();
+					PrimeFaces.current().ajax().update("frm_ProgMultiAnual:pnl_messages");
+					refreshMessage();
+					showMessages(typeMessages, messages);
+				}
+			}
+		} catch (Exception e) {
+			logger.error("error : " + e.getMessage().toString());
+		} finally {
+
+			logger.info("[FIN:] Metodo : anularRegistro");
+		}
+	}
+	
+	public void anularRegistroDetalle() {
+		logger.info("[INICIO:] Metodo : anularRegistroDetalle");
+		Response response = new Response();
 		String codClaDel = (String) extContext().getRequestParameterMap().get("codClaDel");
 		String codTareaDel = (String) extContext().getRequestParameterMap().get("codTareaDel");
 		ProgramacionMultiAnualDetalleDao objDao =  new ProgramacionMultiAnualDetalleDao(MySQLSessionFactory.getSqlSessionFactory());
@@ -621,16 +740,79 @@ public class ProgramacionMultiAnualController implements Serializable {
 		
 		try {
 			response= objDao.SP_IDU_PROGRAMACION_MULTIANUALDETALLE(objBn);
-			logger.info("Respuesta en anularRegistro ::: " + response.getCodigoRespuesta());
-				if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
-					logger.info("Se elimino el registro Correctamente!");
-				}
+			 if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
+				 logger.info("Se elimino el registro Correctamente!");
+			 }
 		} catch (Exception e) {
 			logger.error("error : " + e.getMessage().toString());
 		} finally {
 
-			logger.info("[FIN:] Metodo : anularRegistro");
+			logger.info("[FIN:] Metodo : anularRegistroDetalle");
 		}
+	}
+	
+	public void cambiarEstados(String opcion) {
+		logger.info("[INICIO:] Metodo : cambiarEstados");
+		Response response = new Response();
+		ProgramacionMultiAnualDao objDao = new ProgramacionMultiAnualDao(MySQLSessionFactory.getSqlSessionFactory());
+		ProgramacionMultiAnual objBn = new ProgramacionMultiAnual();
+		objBn.setPeriodo(cperiodo);
+		objBn.setFuenteFinac(Integer.parseInt(fteFinanc));
+		objBn.setTareaPtalCodigo(bean.getCodigoTareaPtal());
+		if (Constantes.MODE_CERRAR_TECHO.equals(opcion)) {
+			objBn.setTipo(Constantes.MODE_CERRAR_TECHO);
+		} else {
+			objBn.setTipo(Constantes.MODE_ABRIR_TECHO);
+		}
+
+		try {
+			response = objDao.SP_IDU_PROGRAMACION_MULTIANUAL(objBn);
+			if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
+				this.typeMessages = Constantes.CERO_INT;
+				this.messages = response.getMensajeRespuesta();
+				buscarCabecera();
+				PrimeFaces.current().ajax().update("frm_ProgMultiAnual:pnl_messages");
+				refreshMessage();
+				showMessages(typeMessages, messages);
+			}
+		} catch (Exception e) {
+			logger.error("error : " + e.getMessage().toString());
+		} finally {
+			logger.info("[FIN:] Metodo : cambiarEstados");
+		}
+	}
+	
+	public boolean validarEstados(String estado) {
+		boolean valiadacionEstado = false;
+		if (estado.equals(Constantes.ESTADO_TECHO_CERRADO)) {
+			this.typeMessages = Constantes.UNO_INT;
+			this.messages = Constantes.MESSAGE_VALIDACION_TECHO_CERRADO;
+			PrimeFaces.current().ajax().update("frm_ProgMultiAnual:pnl_messages");
+			refreshMessage();
+			showMessages(typeMessages, messages);
+			valiadacionEstado = true;
+
+		}
+		return valiadacionEstado;
+	}
+	
+	public boolean validarSaldos() {
+		boolean pasoValidacionSaldos = false;
+		
+		logger.info("datos::::"+montoDet1 +" - "+montoDet2 + " - "+ montoDet3);
+		logger.info("datos::::"+saldoDetalle1 +" - "+saldoDetalle2 + " - "+ saldoDetalle3);
+		
+		if( (montoDet1 > saldoDetalle1) || (montoDet2 > saldoDetalle2) || (montoDet3 > saldoDetalle3) ) {
+			
+			this.typeMessages = Constantes.DOS_INT;
+			this.messages = Constantes.MESSAGE_VALIDACION_SALDOS;
+			PrimeFaces.current().ajax().update("frm_ProgMultiAnual:pnl_messages");
+			refreshMessage();
+			showMessages(typeMessages, messages);
+			pasoValidacionSaldos =  true;
+		}
+			
+		return pasoValidacionSaldos;
 	}
 	
 	private ExternalContext extContext() {
