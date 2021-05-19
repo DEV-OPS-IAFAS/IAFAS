@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>IAFAS</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
+    </h:head>
+    <body class="formulario">
+        <script>
+           
+	
+        </script>
+        <h:form id="frmPersonal" style="border-radius: 5px 5px 5px 5px;border: 1px ; width:100%;">
+            <p:panel >
+                <p:panelGrid columns="2" styleClass="panel">
+                   <i class="pi pi-calendar-plus" style="height:20px;height:20px;" ></i>
+                    <p:outputLabel value="Registro de Personal" styleClass="etiqueta"></p:outputLabel>
+                </p:panelGrid> 
+                <p:panelGrid columns="5" >                  
+                    <p:commandButton  value="Nuevo"  styleClass="button" action="#{mbPersonal.nuevoRegistro()}" 
+                    style="height:30px;" title="Click aqui para Ingresar un Nuevo Personal"/>
+                </p:panelGrid>
+                
+                <br/>
+                <table style="width:100%">
+                    <tr>
+                        <td valign="top">
+                            <div>
+                                <p:dataTable id="dTablePersonal" var="ca" value="#{mbPersonal.lista}" rows="5" scrollable="true" scrollHeight="175px;"
+                                             style="width: 100%;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
+                                             paginatorPosition="bottom" paginator="true" stripedRows="true">
+                                    <p:column headerText="Nª DOCUMENTO" style="width: 15px;" filterBy="#{ca.vpersonaNumeroDoc}">
+                                          <h:commandLink id="cmdLink_Fase" actionListener="#{mbPersonal.verDetalleFamilia}" >
+                                            <p:outputLabel value="#{ca.vpersonaNumeroDoc}"/> 
+                                          <f:param id="pSecuencia" name="pSecuencia" value="#{ca.npersonaCodigo}"></f:param>
+                                       </h:commandLink>
+                                    </p:column>                                  
+                                     <p:column headerText="NOMBRE y APELLIDOS" style="width:45px;" >
+                                        <p:outputLabel value="#{ca.vpersonaNombres} #{ca.vpersonaPaterno} #{ca.vpersonaMaterno}"/>
+                                    </p:column>
+                                    <p:column headerText="GRADO" style="width: 10px;" >
+                                        <p:outputLabel value="#{ca.desGrado}"/>
+                                    </p:column>
+                                    <p:column headerText="FECHA NACIMIENTO" style="width: 10px;">
+                                        <p:outputLabel value="#{ca.dpersonaNacimiento}">
+                                           <f:converter converterId="javax.faces.DateTime" />
+                                			<f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />	
+                                        </p:outputLabel>
+                                    </p:column>                                
+                                    <p:column headerText="AREA" style="width: 25px;" >
+                                        <p:outputLabel value="#{ca.desArea}"/>
+                                    </p:column>
+                                    <p:column headerText="CARGO" style="width: 25px;" >
+                                        <p:outputLabel value="#{ca.vpersonalCargo}"/>
+                                    </p:column>
+                                     <p:column headerText="TELEFONO" style="width: 25px;" >
+                                        <p:outputLabel value="#{ca.vpersonaTelefono} "/>
+                                    </p:column>
+                                     <p:column headerText="DIRECCION" style="width: 25px;" >
+                                        <p:outputLabel value="#{ca.vpersonaDireccion}"/>
+                                    </p:column>
+                                    <p:column headerText="Familia" style="width: 10px; text-align:center; ">
+                                        <p:commandButton id="btn_fami" icon="pi pi-user-plus" 
+                                        action="#{mbPersonal.nuevoRegFamilia}">   
+                                        <f:param id="pSecDetalle" name="pSecDetalle" value="#{ca.npersonaCodigo}"></f:param>                                 
+										</p:commandButton> 
+                                    </p:column>                               
+      
+                                </p:dataTable>
+                            </div>
+                        </td>  
+                       
+                    </tr>
+                </table>
+                <br/>
+                  <p:tabView id="tabViewDetalle" dynamic="true" cache="false">
+                <p:tab title="Detalle de Registro de Familia">
+                <p:dataTable id="dTablePersonal" var="fa" value="#{mbPersonal.listaFamilia}" rows="5" scrollable="true" scrollHeight="175px;"
+                                             style="width: 100%;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
+                                             paginatorPosition="bottom" paginator="true" stripedRows="true"> 
+                                             <p:column headerText="PARENTESCO" style="width: 15px;" >                                        
+                                            <p:outputLabel value="#{fa.ndetalle}"/>                                           
+                                    </p:column>                                    
+                                    <p:column headerText="Nª DOCUMENTO" style="width: 15px;" >                                        
+                                            <p:outputLabel value="#{fa.vpersonaNumeroDoc}"/>                                           
+                                    </p:column>                                                                     
+									<p:column headerText="NOMBRE y APELLIDOS" style="width:45px;" >
+                                        <p:outputLabel value="#{fa.vpersonaNombres} #{fa.vpersonaPaterno} #{fa.vpersonaMaterno}"/>
+                                    </p:column>                                    
+                                    <p:column headerText="FECHA NACIMIENTO" style="width: 10px;">
+                                        <p:outputLabel value="#{fa.dpersonaNacimiento}">
+                                           <f:converter converterId="javax.faces.DateTime" />
+                                			<f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />	
+                                        </p:outputLabel>
+                                    </p:column>                                                                   
+                                     <p:column headerText="TELEFONO" style="width: 25px;" >
+                                        <p:outputLabel value="#{fa.vpersonaTelefono} "/>
+                                    </p:column>                                     
+                                </p:dataTable>
+                </p:tab>
+                </p:tabView>
+                <!-- dialogos -->
+                
+            </p:panel>
+        </h:form>
+    </body>
+</html>

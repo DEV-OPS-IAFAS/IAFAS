@@ -37,21 +37,21 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
       <typeAlias alias="ProgramacionMultiAnual" 		type="ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnual"/>
       <typeAlias alias="ProgramacionMultiAnualDetalle" 		type="ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnualDetalle"/>
       <typeAlias alias="IafasClasificadores" 		type="ep.mil.pe.iafas.programacion.model.IafasClasificadores"/>
+      <typeAlias alias="IafasPersona" 		type="ep.mil.pe.iafas.personal.model.IafasPersona"/>
        
     </typeAliases>
-
-    <!--  PRODUCCION  -->
-        <environments default="development">
+    
+    <environments default="development">
         <environment id="development">
           <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://localhost:3306/IAFASEP"/>
+                <property name="url" value="jdbc:mysql://209.45.40.94:3306/IAFASEP?zeroDateTimeBehavior=CONVERT_TO_NULL"/>
     			<property name="username" value="iafasep"/>
                 <property name="password" value="iafasEP$2021"/>
             </dataSource>
-       </environment>
-    </environments>  
+       </environment> 
+    </environments>
   
     <mappers> 
         <!-- SE TIENE QUE MAPEAR CADA ARCHIVO XML, Q HACE REFERENCIA A CADA BEAN -->
@@ -77,7 +77,8 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
 		<mapper resource="ep/mil/pe/iafas/programacion/xml/ProgramacionMultiAnual.xml" />
 		<mapper resource="ep/mil/pe/iafas/programacion/xml/ProgramacionMultiAnualDetalle.xml" />
 		<mapper resource="ep/mil/pe/iafas/programacion/xml/IafasClasificadores.xml" />
-		
+		<mapper resource="ep/mil/pe/iafas/personal/controller/xml/IafasPersonalController.xml" />
+		 
     </mappers>
 
 </configuration>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>IAFAS- REGISTRO FAMILIA</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+		<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
+    </h:head>
+    <h:body class="formulario">
+    <script>
+       
+    </script>
+        <h:form id="frmInsRegFamilia" enctype="multipart/form-data">
+              <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
+            <p:panel > 
+             <p:panelGrid columns="6"  >
+                    <i class="pi pi-calendar-minus"></i>
+                    <p:outputLabel value="Registro del Personal " style="color: green; font-weight: bold; font-size: 12px;"/>
+                    <p:commandButton  value="Grabar" action="#{mbPersonal.grabarFamilia()}" 
+                    icon="pi pi-save" style="height:35px;" ajax="false" />
+                    <p:commandButton value="Cancelar" 
+                    icon="pi pi-arrow-left" style="height:35px;"/>
+                </p:panelGrid>                         
+                <br/>
+                <p:fieldset legend="Datos de la Familia" id="DatosCA">
+                        <h:panelGrid columns="2" style="width: 100%"> 
+                                <p:outputLabel value="TIPO DOCUMENTO: "/>
+                        <p:selectOneMenu id="tipProv" value="#{mbPersonal.ctipoDocumentocodigo}" style="width: 100px;"  >
+                            <f:selectItem itemValue="00" itemLabel="--Seleccione--"/>
+                            <f:selectItem itemValue="01" itemLabel="DNI"/>
+                            <f:selectItem itemValue="02" itemLabel="C.EXT"/>
+                        </p:selectOneMenu>                                                                     
+                            <p:outputLabel value="Nº DOCUMENTO: "/>
+                            <h:inputText id="nrodocumento"   value="#{mbPersonal.vpersonaNumeroDoc}"
+                            styleClass="input" style="text-align: left;" size="50" 
+                            maxlength="8"/> 
+                            <p:outputLabel value="APELLIDO PARTENO: "/>
+                            <h:inputText id="apepar" value="#{mbPersonal.vpersonaPaterno}"
+                            styleClass="input" style="text-align: left;" size="50"
+                            maxlength="200"/> 
+                            <p:outputLabel value="APELLIDO MATERNO: "/>
+                            <h:inputText id="apemat" value="#{mbPersonal.vpersonaMaterno}"
+                            styleClass="input" style="text-align: left;" size="50"
+                            maxlength="200"/> 
+                            <p:outputLabel value="NOMBRE: "/>
+                            <h:inputText id="nom"  value="#{mbPersonal.vpersonaNombres}"
+                            styleClass="input" style="text-align: left;" size="50"
+                            maxlength="200"/>                                                                                        
+                            <p:outputLabel value="FECHA DE NACIMIENTO: "/>
+                            <h:panelGrid columns="2" >
+                                <p:inputMask id="fec_doc" mask="99/99/9999" size="12" value="#{mbPersonal.dpersonaNacimiento}" styleClass="input">
+                                    <f:converter converterId="javax.faces.DateTime" />
+                                <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
+                                </p:inputMask>                               
+                                <p:graphicImage url="img/cal.gif"/>
+                            </h:panelGrid>
+                             <p:outputLabel value="SEXO: "/>
+                        <p:selectOneMenu id="tipSex" value="#{mbPersonal.cpersonaGenero}" style="width: 100px;" >
+                            <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
+                            <f:selectItem itemValue="1" itemLabel="MASCULINO"/>
+                            <f:selectItem itemValue="2" itemLabel="FEMENINO"/>
+                        </p:selectOneMenu>   
+                         <p:outputLabel value="ESTADO CIVIL: "/>
+                        <p:selectOneMenu id="tipEstado" value="#{mbPersonal.nestadoCivilCodigo}" style="width: 100px;" >
+                            <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
+                            <f:selectItem itemValue="1" itemLabel="SOLTERO/A"/>
+                            <f:selectItem itemValue="2" itemLabel="CASADO/A"/>
+                            <f:selectItem itemValue="3" itemLabel="DIVORCIADAO/A"/>
+                            <f:selectItem itemValue="4" itemLabel="VIUDO/A"/>
+                        </p:selectOneMenu>  
+                        <p:outputLabel value="TELEFONO: "/>
+                            <h:inputText id="tel"  value="#{mbPersonal.vpersonaTelefono}"
+                            styleClass="input" style="text-align: left;" size="50"
+                            maxlength="10"/>   
+                         <p:outputLabel value="CELULAR: "/>
+                            <h:inputText id="cel"  value="#{mbPersonal.vpersonaCelular}"
+                            styleClass="input" style="text-align: left;" size="50"
+                            maxlength="11"/>   
+                            <p:outputLabel value="DIRECCION: "/>
+                            <h:inputText id="dir"  value="#{mbPersonal.vpersonaDireccion}"
+                            styleClass="input" style="text-align: left;" size="50"
+                            maxlength="500"/>   
+                            <p:outputLabel value="CORREO: "/>
+                            <h:inputText id="corr"  value="#{mbPersonal.vpersonaCorreo}"
+                            styleClass="input" style="text-align: left;" size="50"
+                            maxlength="200"/> 
+                            <p:outputLabel value="PARENTESCO:  "/>
+                        <p:selectOneMenu id="art"  value="#{mbPersonal.ntipoFamiliaCodigo}"
+                        style="width:200px;" >
+                         <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
+                         <f:selectItems var="documentos" value="#{mbCombos.familia}"/>
+                        </p:selectOneMenu>                            
+                        </h:panelGrid>                    
+                </p:fieldset>
+                <br/>               
+            </p:panel>
+        </h:form>
+    </h:body>
+</html>
