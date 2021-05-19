@@ -31,11 +31,7 @@
                         </h:selectOneMenu>
                         <p:outputLabel value="Fuente Financiamiento"/>
                         <h:selectOneMenu value="#{mbMovCA.tipCodFun}" disabled="true" styleClass="select"> 
-                        <f:selectItem itemValue="1" itemLabel="RECURSOS ORDINARIOS"></f:selectItem>
-                        <f:selectItem itemValue="2" itemLabel="RECURSOS DIRECTAMENTE RECAUDADOS"></f:selectItem>
-                        <f:selectItem itemValue="3" itemLabel="RECURSOS POR OPE OFLS DE CREDITO INTERNO"></f:selectItem>
-                        <f:selectItem itemValue="4" itemLabel="DONACIONES Y TRANSFERENCIAS"></f:selectItem>
-                        <f:selectItem itemValue="5" itemLabel="RECURSOS DETERMINADOS"></f:selectItem>
+						<f:selectItems var="fuenteFinanciamiento" value="#{mbCombos.fuenteFinanciamiento}"></f:selectItems>
                         </h:selectOneMenu>  
                     </h:panelGrid>
                            <h:panelGrid columns="6" style="width: 873px; ">

@@ -66,6 +66,7 @@ public class IafasCompAnualController implements Serializable {
     private String messages;
     private int typeMessages;
     private String tipOrden;
+    private String conceptoDetalle;
     
     Date hoy = new Date();
     
@@ -139,7 +140,7 @@ public class IafasCompAnualController implements Serializable {
 		listaMovCA = new ArrayList<IafasCompromisoAnual>();
 		logger.info("[INICIO] Metodo listarMovimientoCA {}");
 		try {
-			 IafasCompromisoAnual ca = new IafasCompromisoAnual();
+			IafasCompromisoAnual ca = new IafasCompromisoAnual();
 			ca.setVanoDocumento(periodo);
 			ca.setVnroCertificado(certificado);
 			ca.setVsecuenciaA(secuencia);
@@ -166,12 +167,15 @@ public class IafasCompAnualController implements Serializable {
 			List<IafasCompromisoAnual> compromiso = compAnualDao.listaCompromisoAnual(ca);			
 			reg = (short) compromiso.size();
 			for(IafasCompromisoAnual l : compromiso) {
-				setTipCodFun(compromiso.get(0).getVcodTipoFinanciamiento());
-				setTipProcesoSel(compromiso.get(0).getVcodProcesoSel());
-				setNtipCam(compromiso.get(0).getNtipCam());
-				setFechaCert(compromiso.get(0).getDfechaDocumento());
 				lista.add(l);
-				
+				setTipCodFun(compromiso.get(0).getVcodTipoFinanciamiento());
+				setTipProcesoSel(compromiso.get(0).getVcodProcesoSel());			
+				setFechaCert(compromiso.get(0).getDfechaDocumento());
+				setConcepto(compromiso.get(0).getVglosa());
+				if(compromiso.get(0).getNtipCam()==0) {
+					setNtipCam(1.0);
+				}
+				else {setNtipCam(compromiso.get(0).getNtipCam());}					
 			}
 		}
 		catch(Exception e) {
@@ -194,7 +198,7 @@ public class IafasCompAnualController implements Serializable {
 				 setNroDoc(p.getVnroDocumentoPagoA());
 				 setSecuencia(p.getVsecuenciaA());
 				 setFecDocumento(p.getDfechaDocumento());
-				 setConcepto(p.getVglosa());
+				 setConceptoDetalle(p.getVglosa());
 				 setRuc(p.getCproveedorRuc());
 				 setRazonSocial(p.getRazonSocial());
 				 setDesPresupuesto(p.getDesPto());
@@ -315,7 +319,8 @@ public class IafasCompAnualController implements Serializable {
 			showMessages(0);
 			logger.error("[ERROR] No se Registro Compromiso Anual : "+e);
 		}
-	} 
+	}
+		limpiarCampos();
      	return "";
 	}
 	
@@ -354,7 +359,8 @@ public class IafasCompAnualController implements Serializable {
 		nroDoc="";
 		fecDocumento = hoy;
 		tipDocumentoA = "";
-		concepto="";
+		//concepto="";
+		ruc="";
 	}
 	
 	public int deleteCompAnual() {

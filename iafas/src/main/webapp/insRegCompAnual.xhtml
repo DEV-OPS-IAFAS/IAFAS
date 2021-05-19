@@ -145,8 +145,8 @@
                     </h:panelGrid>
                     <h:panelGrid columns="2">
                         <p:outputLabel value="Concepto:"/>
-                        <h:inputText id="txt_concepto" style="width: 800px;" 
-                        value="#{mbCompAnual.concepto}" styleClass="input" />
+                        <h:inputTextarea id="txt_concepto" style="width: 840px;" 
+                        value="#{mbCompAnual.concepto}" styleClass="input" rows="3"/>
                     </h:panelGrid>  
                     <h:panelGrid columns="8" style="width: 80%">
                         <p:outputLabel value="Moneda:"/>
@@ -170,16 +170,19 @@
                 <h:panelGrid>
                     <p:dataTable id="dTableCla" value="#{mbCompAnual.listaCertDet}" var="cad" editable="true"
                     editMode="cell">
-                        <p:column headerText="Sec.Func." style="width: 30px;">
+                        <p:column headerText="Tarea" style="width: 15px;">
                             <p:outputLabel value="#{cad.vcodSec}"/>
                         </p:column>
-                        <p:column headerText="Clasif." style="width: 35px;">
+                        <p:column headerText="Desc.Tarea" style="width: 250px;">
+                            <p:outputLabel value="#{cad.descTarea}" style="font-size:10px;"/>
+                        </p:column>
+                        <p:column headerText="Clasif." style="width: 50px;">
                             <p:outputLabel value="#{cad.cadena}"/>
                         </p:column>
-                        <p:column headerText="Descripción" style="width: 350px;">
-                            <p:outputLabel value="#{cad.nomClasificador}"/>
+                        <p:column headerText="Descripción" style="width: 250px;">
+                            <p:outputLabel value="#{cad.nomClasificador}" style="font-size:10px;"/>
                         </p:column>
-                        <p:column headerText="Monto" style="width: 35px;">
+                        <p:column headerText="Monto" style="width: 50px;text-align:right">
                             <p:outputLabel value="#{cad.nimpMontoSol}" style="text-align:right">
                                 <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>  
                             </p:outputLabel>

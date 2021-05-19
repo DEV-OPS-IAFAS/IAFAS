@@ -50,8 +50,8 @@
 		order by vsecuenciaA
 
 	</select>
-
-	<select id="listadoDet"
+	
+		<select id="listadoDet"
 		resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnualDet"
 		parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnualDet">
 		SELECT cperiodo_codigo vanoDocumento, ncertificado_codigo vnroCertificado,
@@ -59,6 +59,7 @@
 		PK_AUX_NOM_CLASIFICADOR(NCLASIFICADOR_PRESUPUESTAL_CODIGO) as
 		nomClasificador,
 		ntarea_presupuestal_codigo vcodSec,
+		PK_DESC_TAREA(ntarea_presupuestal_codigo) descTarea,
 		PK_AUX_CLASIFICADOR(NCLASIFICADOR_PRESUPUESTAL_CODIGO) cadena,
 		(PK_TOTAL_CERT_AMP(cperiodo_codigo,ncertificado_codigo,ntarea_presupuestal_codigo,NCLASIFICADOR_PRESUPUESTAL_CODIGO) 
 		- PK_TOTAL_CA(cperiodo_codigo,ncertificado_codigo,ntarea_presupuestal_codigo,NCLASIFICADOR_PRESUPUESTAL_CODIGO)) nimpMontoSol

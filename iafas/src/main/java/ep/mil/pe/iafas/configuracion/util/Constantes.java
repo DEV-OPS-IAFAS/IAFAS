@@ -31,6 +31,9 @@ public class Constantes {
 	public final static String ESTADO_REGISTRADO = "1";
 	public static final String MODE_ANULACION = "A";
 	
+	public static final String ID_ORDEN_COMPRA = "031"; 
+	public static final String ID_ORDEN_SERVICIO = "032"; 
+	
 	/*Cambios agregados el 31.03.2021*/
 	public static final int CERO_INT =0;
 	public static final String CERO_CERO_STRING = "00";
