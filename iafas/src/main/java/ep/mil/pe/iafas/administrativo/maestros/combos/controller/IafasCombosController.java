@@ -24,9 +24,6 @@ public class IafasCombosController implements Serializable {
 	
 	public List<SelectItem> procesoSel ;
 	public List<SelectItem> fuenteFinanciamiento;
-	public List<SelectItem> grado;
-	public List<SelectItem> area;
-	public List<SelectItem> familia;
 	
     public List<SelectItem> getProcesoSel() {
         procesoSel = new ArrayList<>();
@@ -48,36 +45,5 @@ public class IafasCombosController implements Serializable {
              }
        
         return fuenteFinanciamiento;
-    }
-    public List<SelectItem> getgrado() {
-    	grado = new ArrayList<>();
-        IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());    
-             List<IafasCombos> lista = cb.getTipoGrado();
-             for(IafasCombos d : lista){
-            	 grado.add(new SelectItem(d.getCodigo(),d.getCodigo()+"-"+ d.getDescripcion()));
-             }
-       
-        return grado;
-    }
-    public List<SelectItem> getarea() {
-    	area = new ArrayList<>();
-        IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());    
-             List<IafasCombos> lista = cb.getTipoArea();
-             for(IafasCombos d : lista){
-            	 area.add(new SelectItem(d.getCodigo(),d.getCodigo()+"-"+ d.getDescripcion()));
-             }
-       
-        return area;
-    }
-    
-    public List<SelectItem> getfamilia() {
-    	familia = new ArrayList<>();
-        IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());    
-             List<IafasCombos> lista = cb.getTipoFamilia();
-             for(IafasCombos d : lista){
-            	 familia.add(new SelectItem(d.getCodigo(),d.getCodigo()+"-"+ d.getDescripcion()));
-             }
-       
-        return familia;
     }
 }

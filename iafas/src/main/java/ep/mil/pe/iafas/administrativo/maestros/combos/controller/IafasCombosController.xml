@@ -19,26 +19,4 @@ parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
  FROM iafas_fuente_financiamiento WHERE cestado_codigo='AC'
 </select>
 
-<select id="tipoGrado" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
-parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
-select NGRADO_CODIGO codigo,
-			 VGRADO_ABREVIATURA descripcion
-			  from iafas_grados where CESTADO_CODIGO='AC' order by NGRADO_CODIGO asc
-</select>
-
-<select id="tipoArea" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
-parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
- select CAREA_LABORAL_CODIGO codigo,
-			 VAREA_LABORAL_ABREVIATURA descripcion
-			  from iafas_area_laboral where CESTADO_CODIGO='AC' order by CAREA_LABORAL_CODIGO asc
-</select>
-
-
-<select id="tipoFamilia" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
-parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
-		select NTIPO_FAMILIA_CODIGO codigo,
-			 VTIPO_FAMILIA_ABREVIATURA descripcion
-			  from iafas_tipo_familia where CESTADO_CODIGO='AC' order by NTIPO_FAMILIA_CODIGO asc
-</select>
-
 </mapper>
