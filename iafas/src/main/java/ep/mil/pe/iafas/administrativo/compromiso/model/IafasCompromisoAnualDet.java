@@ -18,6 +18,7 @@ public class IafasCompromisoAnualDet {
     private BigDecimal nimpMontoExt;
     private String vusuarioIng;
     private String cadena;
+    private String descTarea;
     
     private BigDecimal montoIngresado = new BigDecimal(0);
     
