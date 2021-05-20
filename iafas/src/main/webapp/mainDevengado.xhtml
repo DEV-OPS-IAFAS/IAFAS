@@ -34,10 +34,7 @@
                     </p:selectOneMenu>
                     
                     <p:commandButton  value="Nuevo"  styleClass="button" action="#{mbDevengado.nuevoRegistro()}" ajax="false"
-                    style="height:30px;" title="Click aqui para Ingresar un Nuevo Devengado"/>
-                    <h:commandLink id="btnXLS" value="Excel" >
-                    <p:dataExporter type="xls" target="dTableCompAnual" fileName="CompromisoAnual"/>
-                    </h:commandLink>
+                    style="height:30px;" title="Click aqui para Ingresar un Nuevo Devengado"/>                    
                 </p:panelGrid>
                 <p:outputLabel value="#{mbDevengado.reg} Registros Encontrados" style="color: green; font-weight: bold;"/>
                 <br/>
