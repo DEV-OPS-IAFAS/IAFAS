@@ -42,4 +42,41 @@ public class IafasCombosDao {
         return lista;
     }
 
+    @SuppressWarnings("unchecked")
+ 	public List<IafasCombos> getTipoGrado() {
+         List<IafasCombos> lista = null;
+         SqlSession session = sqlSessionFactory.openSession();
+         try{
+               lista = session.selectList("Combos.tipoGrado");
+         }
+         finally{
+              session.close();
+         }
+         return lista;
+     }
+     @SuppressWarnings("unchecked")
+    	public List<IafasCombos> getTipoArea() {
+            List<IafasCombos> lista = null;
+            SqlSession session = sqlSessionFactory.openSession();
+            try{
+                  lista = session.selectList("Combos.tipoArea");
+            }
+            finally{
+                 session.close();
+            }
+            return lista;
+        }
+     
+     @SuppressWarnings("unchecked")
+ 	public List<IafasCombos> getTipoFamilia() {
+         List<IafasCombos> lista = null;
+         SqlSession session = sqlSessionFactory.openSession();
+         try{
+               lista = session.selectList("Combos.tipoFamilia");
+         }
+         finally{
+              session.close();
+         }
+         return lista;
+     }
 }
