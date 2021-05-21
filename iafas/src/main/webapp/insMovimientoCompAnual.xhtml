@@ -81,16 +81,17 @@
                 <br/>
                 <h:panelGrid>
                     <p:dataTable id="dTableCla" value="#{mbMovCA.listaMovimiento}" var="cad" editable="true" editMode="cell">
-                        <p:column headerText="Sec.Func." style="width: 30px;">
-                            <p:outputLabel value="#{cad.vcodSecFunc}"/>
+   
+                        <p:column headerText="Desc.Tarea" style="width: 250px;">
+                            <p:outputLabel value="#{cad.vcodSecFunc}: #{cad.descTarea}" style="font-size:10px;"/>
                         </p:column>
-                        <p:column headerText="Clasif." style="width: 35px;">
+                        <p:column headerText="Clasif." style="width: 50px;">
                             <p:outputLabel value="#{cad.cadena}"/>
                         </p:column>
-                        <p:column headerText="Descripción" style="width: 350px;">
+                        <p:column headerText="Descripción" style="width: 280px;font-size:10px;" >
                             <p:outputLabel value="#{cad.nomCla}"/>
                         </p:column>
-                        <p:column headerText="Monto" style="width: 35px;" rendered="#{mbMovCA.saldoAmp}">
+                        <p:column headerText="Monto" style="width: 50px;" rendered="#{mbMovCA.saldoAmp}">
                             <p:outputLabel value="#{cad.importeAmpliacion}" style="text-align:right">
                                 <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>  
                             </p:outputLabel>

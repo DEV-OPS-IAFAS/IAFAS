@@ -170,32 +170,26 @@
                 <h:panelGrid>
                     <p:dataTable id="dTableCla" value="#{mbCompAnual.listaCertDet}" var="cad" editable="true"
                     editMode="cell">
-                        <p:column headerText="Tarea" style="width: 15px;">
-                            <p:outputLabel value="#{cad.vcodSec}"/>
+                        <p:column headerText="Tarea" style="width: 250px;">
+                            <p:outputLabel value="#{cad.vcodSec}: #{cad.descTarea}" style="font-size:10px;"/>
                         </p:column>
-                        <p:column headerText="Desc.Tarea" style="width: 250px;">
-                            <p:outputLabel value="#{cad.descTarea}" style="font-size:10px;"/>
+                        <p:column headerText="Clasificador" style="width: 250px;">
+                            <p:outputLabel value="#{cad.cadena}: #{cad.nomClasificador}" style="font-size:10px;"/>
                         </p:column>
-                        <p:column headerText="Clasif." style="width: 50px;">
-                            <p:outputLabel value="#{cad.cadena}"/>
-                        </p:column>
-                        <p:column headerText="Descripción" style="width: 250px;">
-                            <p:outputLabel value="#{cad.nomClasificador}" style="font-size:10px;"/>
-                        </p:column>
-                        <p:column headerText="Monto" style="width: 50px;text-align:right">
+                        <p:column headerText="Monto" style="width: 70px;text-align:right">
                             <p:outputLabel value="#{cad.nimpMontoSol}" style="text-align:right">
                                 <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>  
                             </p:outputLabel>
                         </p:column>
-                        <p:column headerText="Monto Ingresado" style="width: 50px; text-align: right;" >
+                        <p:column headerText="Monto Ingresado" style="width: 70px; text-align: right;" >
                           <p:cellEditor >
                                 <f:facet name="output">
-                                    <p:outputLabel value="#{cad.montoIngresado}" style="text-align: right;">
+                                    <p:outputLabel value="#{cad.montoIngresado}" style="text-align: right;" >
                                       <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>  
                                    </p:outputLabel>
                                 </f:facet>
                              <f:facet name="input" >
-                                 <p:inputText style="width: 65px; text-align: right" value="#{cad.montoIngresado}" label="Monto"/>
+                                 <p:inputText style="width: 90px; text-align: right" value="#{cad.montoIngresado}" label="Monto"/>
                             </f:facet>                            
                             </p:cellEditor>                              
                         </p:column>                     

@@ -58,6 +58,7 @@
 		vcodSecFunc vcodSecFunc, 
 		vidClasificador vidClasificador,
 		cadena cadena,
+		descTarea descTarea,
 		nomCla nomCla,
 		importeAmpliacion importeAmpliacion,
 		importeRebaja importeRebaja,
@@ -65,7 +66,7 @@
 		FROM V_movimientoCertificadoAnual
 		WHERE vanoDocumento = #{vanoDocumento} AND
 		vnroCertificado = #{vnroCertificado} AND
-		vsecuenciaA=#{vsecuenciaA} and ca.vtipo_movimiento='N'
+		vsecuenciaA=#{vsecuenciaA} and vtipMovimiento='N'
 	</select>
 		
 	<select id="insertMovCA" parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompAnual"

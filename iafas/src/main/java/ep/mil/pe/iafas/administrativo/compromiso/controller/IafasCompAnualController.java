@@ -133,6 +133,7 @@ public class IafasCompAnualController implements Serializable {
 		} catch (Exception e) {
 			logger.error("Error Valida ORdenes : {} "+e.getMessage()+" "+e.getCause());
 		}
+		
 		return "";
 	}
 	
@@ -361,6 +362,7 @@ public class IafasCompAnualController implements Serializable {
 		tipDocumentoA = "";
 		//concepto="";
 		ruc="";
+		razonSocial="";
 	}
 	
 	public int deleteCompAnual() {

@@ -236,12 +236,13 @@
                         <br/>
                         <h:panelGrid columns="2" style="font-weight: bold; font-size: 11px; width: 100%">
                             <p:outputLabel value="Glosa:" />
-                            <p:outputLabel value="#{mbCompAnual.conceptoDetalle}" id="texto" styleClass="outLabel"/>
+                            <h:inputTextarea value="#{mbCompAnual.conceptoDetalle}" id="texto" styleClass="outLabel"
+                            rows="3" readonly="true" style="width:980px;"/>
                         </h:panelGrid>
                 </p:tab>
                 <p:tab title="Movimientos" >
                 <p:panelGrid columns="1"> 
-                                <p:dataTable id="dTableMovimientos" var="mov" value="#{mbCompAnual.listaMovCA}">
+                <p:dataTable id="dTableMovimientos" var="mov" value="#{mbCompAnual.listaMovCA}">
                   <p:column headerText="Tipo Documento">
                      <h:outputText value="#{mov.vtipoDocumentoA}"></h:outputText>
                   </p:column>

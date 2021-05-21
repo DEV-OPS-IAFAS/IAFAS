@@ -200,7 +200,8 @@
 	CASE vtipo_movimiento WHEN 'M' THEN 'AMPLIACION' 
 	WHEN 'R' THEN 'REBAJA'
 	WHEN 'A' THEN 'ANULACION' END vtipoMovimiento,
-	nimp_mon_sol nimpMonSol, CASE vcod_estado WHEN '2' THEN 'AP' END vcodEstado,
+	nimp_mon_sol nimpMonSol,
+	 CASE vcod_estado WHEN '1' THEN 'REG' when '2' THEN 'AP' END vcodEstado,
 	(SELECT vmoneda_simbolo FROM iafas_monedas WHERE nmoneda_codigo = VCOD_MONEDA) vcodMoneda
  	FROM iafas_compromiso_anual WHERE 
  	vano_documento = #{vanoDocumento} AND
