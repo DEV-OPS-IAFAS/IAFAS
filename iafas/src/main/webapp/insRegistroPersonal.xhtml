@@ -23,7 +23,7 @@
                     <p:outputLabel value="Registro del Personal " style="color: green; font-weight: bold; font-size: 12px;"/>
                     <p:commandButton  value="Grabar" action="#{mbPersonal.grabarPersonal()}" 
                     icon="pi pi-save" style="height:35px;" ajax="false" />
-                    <p:commandButton value="Cancelar" 
+                    <p:commandButton value="Cancelar" action="#{mbPersonal.retorno()}"
                     icon="pi pi-arrow-left" style="height:35px;"/>
                 </p:panelGrid>                         
                 <br/>
@@ -62,8 +62,8 @@
                              <p:outputLabel value="SEXO: "/>
                         <p:selectOneMenu id="tipSex" value="#{mbPersonal.cpersonaGenero}" style="width: 100px;" >
                             <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
-                            <f:selectItem itemValue="1" itemLabel="MASCULINO"/>
-                            <f:selectItem itemValue="2" itemLabel="FEMENINO"/>
+                            <f:selectItem itemValue="M" itemLabel="MASCULINO"/>
+                            <f:selectItem itemValue="F" itemLabel="FEMENINO"/>
                         </p:selectOneMenu>   
                          <p:outputLabel value="ESTADO CIVIL: "/>
                         <p:selectOneMenu id="tipEstado" value="#{mbPersonal.nestadoCivilCodigo}" style="width: 100px;" >

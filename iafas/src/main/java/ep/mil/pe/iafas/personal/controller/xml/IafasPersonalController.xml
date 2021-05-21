@@ -112,6 +112,63 @@
 
 	</select>
 	
+	<select id="listaEditPersona"
+		resultType="ep.mil.pe.iafas.personal.model.IafasPersona"
+		parameterType="ep.mil.pe.iafas.personal.model.IafasPersona">
+			     SELECT  per.VPERSONA_NUMERO_DOCUMENTO  vpersonaNumeroDoc ,
+		  per.VPERSONA_PATERNO vpersonaPaterno  ,
+         per.VPERSONA_MATERNO   vpersonaMaterno ,
+         per.VPERSONA_NOMBRES vpersonaNombres ,
+         per.CPERSONA_GENERO  cpersonaGenero,
+        per.DPERSONA_NACIMIENTO dpersonaNacimiento  ,
+        per.NPERSONA_CODIGO  npersonaCodigo, 
+        per.CTIPO_DOCUMENTO_CODIGO   ctipoDocumentocodigo,
+        per.NESTADO_CIVIL_CODIGO nestadoCivilCodigo,
+        perl.CAREA_LABORAL_CODIGO careaLaboralCodigo,
+        perl.NGRADO_CODIGO ngradoCodigo,
+        perl.VPERSONAL_CARGO vpersonalCargo,
+        per.NESTADO_CIVIL_CODIGO nestadoCivilCodigo,
+        per.VPERSONA_CELULAR vpersonaCelular ,
+        per.VPERSONA_TELEFONO vpersonaTelefono ,
+        per.VPERSONA_CORREO vpersonaCorreo ,
+        per.VPERSONA_DIRECCION  vpersonaDireccion,
+        perl.VCIP vcip,
+        per.cpersona_genero cpersonaGenero
+		       FROM     iafas_persona per
+               inner join iafas_personal perl on (
+                per.NPERSONA_CODIGO=perl.NPERSONA_CODIGO
+               ) where per.VPERSONA_NUMERO_DOCUMENTO=#{vpersonaNumeroDoc}
+
+	</select>
+	
+	<select id="grabarEditarPersonal"
+		parameterType="ep.mil.pe.iafas.personal.model.IafasPersona"
+		statementType="CALLABLE">
+		
+		{ CALL SP_EDITAR_PERSONAL (
+		#{vpersonaNumeroDoc mode=IN, jdbcType=VARCHAR},
+		#{vpersonaPaterno, mode=IN, jdbcType=VARCHAR},
+		#{vpersonaMaterno, mode=IN, jdbcType=VARCHAR},
+		#{vpersonaNombres, mode=IN,jdbcType=VARCHAR},
+		#{cpersonaGenero, mode=IN,jdbcType=VARCHAR},
+		#{dpersonaNacimiento, mode=IN,jdbcType=DATE},
+		#{ctipoDocumentocodigo, mode=IN,jdbcType=VARCHAR},
+		#{nestadoCivilCodigo, mode=IN,jdbcType=INTEGER},
+		#{vpersonaCelular, mode=IN,jdbcType=VARCHAR},
+		#{vpersonaTelefono, mode=IN,jdbcType=VARCHAR},
+		#{vpersonaCorreo, mode=IN,jdbcType=VARCHAR},		
+		#{vpersonaDireccion, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCreador, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR},
+		#{cperiodoCodigo, mode=IN,jdbcType=VARCHAR},
+		#{ngradoCodigo, mode=IN,jdbcType=INTEGER},
+		#{cgradoTipo, mode=IN,jdbcType=VARCHAR},
+		#{careaLaboralCodigo, mode=IN,jdbcType=VARCHAR},
+		#{vpersonalCargo, mode=IN,jdbcType=VARCHAR},
+		#{cestadoCodigo, mode=IN,jdbcType=VARCHAR},
+		#{vcip, mode=IN,jdbcType=VARCHAR})}
+
+	</select>
 	
 	
 </mapper>

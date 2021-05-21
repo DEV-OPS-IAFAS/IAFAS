@@ -77,5 +77,35 @@ public class IafasPersonalDao {
 		       }
 			return reg;
 		}
+		
+	 	@SuppressWarnings("unchecked")
+		public List<IafasPersona> listaEditarFamilia(IafasPersona pe) {
+			
+	        List<IafasPersona> lista = null;
+	        SqlSession session = sqlSessionFactory.openSession();
+	        try{
+	              lista = session.selectList("IafasPersona.listaEditPersona",pe);
+	        }
+	        catch(Exception e) {
+	        	e.printStackTrace();
+	        }
+	        finally{
+	             session.close();
+	        }
+	        return lista;
+		}
+	 	
+		public int grabarEdit(IafasPersona ca) {
+			int reg =0;
+		       SqlSession session = sqlSessionFactory.openSession();
+		       try{
+		        reg = session.insert("IafasPersona.grabarEditarPersonal",ca);
+		       }
+		       finally{
+		        session.close();
+		       }
+			return reg;
+		}
+		 	
 	 
 }

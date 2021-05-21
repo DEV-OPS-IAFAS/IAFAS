@@ -70,7 +70,13 @@
                                         <f:param id="pSecDetalle" name="pSecDetalle" value="#{ca.npersonaCodigo}"></f:param>                                 
 										</p:commandButton> 
                                     </p:column>                               
-      
+      							  <p:column headerText="Editar" style="width: 10px; text-align:center; ">
+                                        <p:commandButton id="btn_edit" icon="pi pi-calendar-plus" 
+                                        oncomplete="PF('pRedit').show();" actionListener="#{mbPersonal.verPersonal()}"
+                                        update="frmPersonal:EditPersona" >
+                                          <f:param id="pdetalleDoc" name="pdetalleDoc" value="#{ca.vpersonaNumeroDoc}"></f:param>                                    
+										</p:commandButton> 
+                                    </p:column>
                                 </p:dataTable>
                             </div>
                         </td>  
@@ -105,6 +111,99 @@
                 </p:tab>
                 </p:tabView>
                 <!-- dialogos -->
+                 <p:dialog id="EditPersona" widgetVar="pRedit" modal="true" 
+                showEffect="fade" hideEffect="explode" resizable="false">
+                    <p:panel >
+                    <br/>
+                <p:fieldset legend="Editar Personal" id="DatosCA">
+                        <h:panelGrid columns="2" style="width: 100%">                                                            
+                            <p:outputLabel value="Nº DOCUMENTO: "/>
+                            <h:inputText id="nrodocumento"   value="#{mbPersonal.vpersonaNumeroDoc}" readonly="true"
+                            styleClass="input" style="text-align: left;" size="50" 
+                            maxlength="8"/> 
+                            <p:outputLabel value="APELLIDO PARTENO: "/>
+                            <h:inputText id="apepar" value="#{mbPersonal.vpersonaPaterno}"
+                            styleClass="input" style="text-align: left;" size="50"
+                            maxlength="200"/> 
+                            <p:outputLabel value="APELLIDO MATERNO: "/>
+                            <h:inputText id="apemat" value="#{mbPersonal.vpersonaMaterno}"
+                            styleClass="input" style="text-align: left;" size="50"
+                            maxlength="200"/> 
+                            <p:outputLabel value="NOMBRE: "/>
+                            <h:inputText id="nom"  value="#{mbPersonal.vpersonaNombres}"
+                            styleClass="input" style="text-align: left;" size="50"
+                            maxlength="200"/>                                                                                        
+                            <p:outputLabel value="FECHA DE NACIMIENTO: "/>
+                            <h:panelGrid columns="2" >
+                                <p:inputMask id="fec_doc" mask="99/99/9999" size="12" value="#{mbPersonal.dpersonaNacimiento}" styleClass="input">
+                                    <f:converter converterId="javax.faces.DateTime" />
+                                <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
+                                </p:inputMask>                               
+                                <p:graphicImage url="img/cal.gif"/>
+                            </h:panelGrid>
+                             <p:outputLabel value="SEXO: "/>
+                        <p:selectOneMenu id="tipSex" value="#{mbPersonal.cpersonaGenero}" style="width: 100px;" >
+                            <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
+                            <f:selectItem itemValue="M" itemLabel="MASCULINO"/>
+                            <f:selectItem itemValue="F" itemLabel="FEMENINO"/>
+                        </p:selectOneMenu>   
+                         <p:outputLabel value="ESTADO CIVIL: "/>
+                        <p:selectOneMenu id="tipEstado" value="#{mbPersonal.nestadoCivilCodigo}" style="width: 100px;" >
+                            <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
+                            <f:selectItem itemValue="1" itemLabel="SOLTERO/A"/>
+                            <f:selectItem itemValue="2" itemLabel="CASADO/A"/>
+                            <f:selectItem itemValue="3" itemLabel="DIVORCIADAO/A"/>
+                            <f:selectItem itemValue="4" itemLabel="VIUDO/A"/>
+                        </p:selectOneMenu>  
+                        <p:outputLabel value="TELEFONO: "/>
+                            <h:inputText id="tel"  value="#{mbPersonal.vpersonaTelefono}"
+                            styleClass="input" style="text-align: left;" size="50"
+                            maxlength="10"/>   
+                         <p:outputLabel value="CELULAR: "/>
+                            <h:inputText id="cel"  value="#{mbPersonal.vpersonaCelular}"
+                            styleClass="input" style="text-align: left;" size="50"
+                            maxlength="11"/>   
+                            <p:outputLabel value="DIRECCION: "/>
+                            <h:inputText id="dir"  value="#{mbPersonal.vpersonaDireccion}"
+                            styleClass="input" style="text-align: left;" size="50"
+                            maxlength="500"/>   
+                            <p:outputLabel value="CORREO: "/>
+                            <h:inputText id="corr"  value="#{mbPersonal.vpersonaCorreo}"
+                            styleClass="input" style="text-align: left;" size="50"
+                            maxlength="200"/> 
+                            
+                       <p:outputLabel value="GRADO: "/>
+                        <p:selectOneMenu id="grad"  value="#{mbPersonal.ngradoCodigo}"
+                        style="width:200px;" >
+                         <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
+                         <f:selectItems var="documentos" value="#{mbCombos.grado}"/>
+                        </p:selectOneMenu>  
+                        <p:outputLabel value="CIP: "/>
+                            <h:inputText id="cip" value="#{mbPersonal.vcip}" 
+                            styleClass="input" style="text-align: left;" size="50"
+                            maxlength="9"/> 
+                         <p:outputLabel value="AREA:  "/>
+                        <p:selectOneMenu id="art"  value="#{mbPersonal.areaLaboral}"
+                        style="width:200px;" >
+                         <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
+                         <f:selectItems var="documentos" value="#{mbCombos.area}"/>
+                        </p:selectOneMenu> 
+                        <p:outputLabel value="CARGO: "/>
+                            <h:inputText id="carg" value="#{mbPersonal.vpersonalCargo}" 
+                            styleClass="input" style="text-align: left;" size="50"
+                            maxlength="100"/>
+                        </h:panelGrid>                    
+                </p:fieldset>
+                <br/>
+                <p:panelGrid columns="4" >
+                    <p:commandButton  value="Grabar"  action="#{mbPersonal.EditarPersonal()}"
+                    icon="pi pi-save" style="height:35px; " ajax="false" />
+                    <p:commandButton value="Cancelar" action="#{mbPersonal.retorno()}" oncomplete="PF('pRedit').hide();"
+                    icon="pi pi-arrow-left" style="height:35px; "/>
+                </p:panelGrid>   
+                               
+                    </p:panel>
+                </p:dialog>
                 
             </p:panel>
         </h:form>

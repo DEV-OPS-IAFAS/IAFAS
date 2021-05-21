@@ -1,7 +1,6 @@
 package ep.mil.pe.iafas.personal.controller;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
@@ -19,12 +17,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.file.UploadedFile;
-
-import com.mysql.cj.jdbc.Driver;
-
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
 import ep.mil.pe.iafas.configuracion.util.BDCon;
-import ep.mil.pe.iafas.configuracion.util.Constantes;
 import ep.mil.pe.iafas.personal.dao.IafasPersonalDao;
 import ep.mil.pe.iafas.personal.model.IafasPersona;
 import ep.mil.pe.iafas.seguridad.controller.IafasUsuariosController;
@@ -67,6 +61,7 @@ public class IafasPersonalController implements Serializable{
 	 
 	 private String pSecuencia;
 	 private int pSecDetalle;
+	 private String pdetalleDoc;
 	 
 	 private String cperiodoCodigo;
 	 private Integer ngradoCodigo;
@@ -102,7 +97,7 @@ public class IafasPersonalController implements Serializable{
      }
      
      public String retorno() {
-    	 String retorno="";
+    	 String retorno="mainPersonal.xhtml";
     	 listaPersonalAdm();
     	 LimpiarCampos();
     	 return retorno;
@@ -307,6 +302,76 @@ public class IafasPersonalController implements Serializable{
       	return "mainPersonal.xhtml";
  	}
      
+   
+      	public void verPersonal(){
+		pdetalleDoc = (String) extContext().getRequestParameterMap().get("pdetalleDoc");
+	     logger.info("Obteniendo Parametros " +pdetalleDoc);
+	    IafasPersona per = new IafasPersona();
+	    per.setVpersonaNumeroDoc(pdetalleDoc);
+	    System.out.println("pdetalleDoc : "+pdetalleDoc);
+		List<IafasPersona> editPersonal = personalDao.listaEditarFamilia(per);
+		for(IafasPersona l : editPersonal) {
+			    setVpersonaNumeroDoc(l.getVpersonaNumeroDoc());
+			    setVpersonaPaterno(l.getVpersonaPaterno());
+			    setVpersonaMaterno(l.getVpersonaMaterno());
+			    setVpersonaNombres(l.getVpersonaNombres());
+			    setCpersonaGenero(l.getCpersonaGenero());
+			    setDpersonaNacimiento(l.getDpersonaNacimiento());
+			    setNestadoCivilCodigo(l.getNestadoCivilCodigo());
+			    setVpersonaCelular(l.getVpersonaCelular());
+			    setVpersonaTelefono(l.getVpersonaTelefono());
+			    setVpersonaCorreo(l.getVpersonaCorreo());
+			    setVpersonaDireccion(l.getVpersonaDireccion());
+			    setCperiodoCodigo(l.getCperiodoCodigo());
+			    setNgradoCodigo(l.getNgradoCodigo());
+			    setCgradoTipo(l.getCgradoTipo());
+			    setAreaLaboral(l.getCareaLaboralCodigo());
+			    setVpersonalCargo(l.getVpersonalCargo());
+			    setCestadoCodigo(l.getCestadoCodigo());
+			    setVcip(l.getVcip());
+			    
+			}
+	}
+      
+      	 public String EditarPersonal() {
+     		int reg = 0;		
+     		try {
+     			logger.info("Ingreso al Metodo Grabar Personal");
+     			 IafasPersona ca = new IafasPersona();
+     			 ca.setVpersonaNumeroDoc(pdetalleDoc);
+     			 ca.setVpersonaPaterno(vpersonaPaterno);
+     			 ca.setVpersonaMaterno(vpersonaMaterno);
+     			 ca.setVpersonaNombres(vpersonaNombres);
+     			 ca.setCpersonaGenero(cpersonaGenero);
+     			 ca.setDpersonaNacimiento(dpersonaNacimiento);
+     			 ca.setCtipoDocumentocodigo(ctipoDocumentocodigo);
+     			 ca.setNestadoCivilCodigo(nestadoCivilCodigo);
+     			 ca.setVpersonaCelular(vpersonaCelular);
+     			 ca.setVpersonaTelefono(vpersonaTelefono);
+     			 ca.setVpersonaCorreo(vpersonaCorreo);
+     			 ca.setVpersonaDireccion(vpersonaDireccion);
+     			 ca.setVusuarioCreador(usuario);
+     			 ca.setVusuarioCodigo(usuario);
+     			 ca.setCperiodoCodigo(cperiodoCodigo);
+     			 ca.setNgradoCodigo(ngradoCodigo);
+     			 ca.setCgradoTipo(cgradoTipo);
+     			 ca.setCareaLaboralCodigo(areaLaboral);
+     			 ca.setVpersonalCargo(vpersonalCargo);
+     			 ca.setCestadoCodigo(cestadoCodigo);
+     			 ca.setVcip(vcip);			 
+     			 reg = personalDao.grabarEdit(ca); 
+     			 logger.info("Actualizo Persona Correctamente {} "+vpersonaNumeroDoc);    			
+     			 showMessages(1);
+     			 retorno();
+     		} catch (Exception e) {
+     			// TODO: handle exception
+     			typeMessages=0;
+     			showMessages(0);
+     			logger.error("[ERROR] No se Registro Personal : "+e);
+     		}
+     	
+          	return "mainPersonal.xhtml";
+     	}
      
      
    	private String showMessages(int opcion) {
