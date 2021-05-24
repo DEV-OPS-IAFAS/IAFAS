@@ -89,6 +89,12 @@
                             <f:selectItem itemValue="SD" itemLabel="N: Servicio a la Deuda"/>
                         </p:selectOneMenu> -->
                     </h:panelGrid>
+                    <h:panelGrid columns="2" style="width: 678px; ">
+                     <h:outputLabel value="Concepto:"/>
+                     <h:inputTextarea id="txtConceptoCertificado" value="#{mbCompAnual.concepto}" styleClass="outLabel" style="width: 840px;"
+                     readonly="true" rows="3">
+                     </h:inputTextarea>
+                    </h:panelGrid>
                 </p:fieldset>
                 <br/>
                 <p:fieldset legend="Datos del Compromiso Anual" id="DatosCA">

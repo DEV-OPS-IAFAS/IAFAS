@@ -1,6 +1,7 @@
 package ep.mil.pe.iafas.administrativo.compromiso.controller;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,7 +21,10 @@ import ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensual;
 import ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensualDet;
 import ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompromisoMensual;
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
+import ep.mil.pe.iafas.configuracion.SQLServerSessionFactory;
 import ep.mil.pe.iafas.configuracion.util.Constantes;
+import ep.mil.pe.iafas.integracion.dao.OrdenesCSDao;
+import ep.mil.pe.iafas.integracion.model.OrdenesCS;
 import ep.mil.pe.iafas.seguridad.controller.IafasUsuariosController;
 import lombok.Data;
 
@@ -66,8 +70,10 @@ public class IafasCompMensualController implements Serializable{
 	private String usuario;
 	
 	private String numCertificado;
+	private String tipOrden;
 	
 	IafasCompromisoMensualDao mensualDao = new IafasCompromisoMensualDao(MySQLSessionFactory.getSqlSessionFactory());
+	OrdenesCSDao OrderDao = new OrdenesCSDao(SQLServerSessionFactory.getSqlServerSessionFactory());
 	private static final Logger logger = Logger.getLogger(IafasCompMensualController.class);
 	Date hoy = new Date();
 	public IafasCompMensualController() {
@@ -108,6 +114,39 @@ public class IafasCompMensualController implements Serializable{
 		for(ViewIafasCompromisoMensual l : registros)
 		{regAnual.add(l);}
 		return regAnual;
+	}
+	
+	public String validarOCS() throws SQLException {
+		try {
+			logger.info("Validando Ordenes {} " +nroDocumentoMen);
+			OrdenesCS oc = new OrdenesCS();
+			if(tipDocumentoMen.equals(Constantes.ID_ORDEN_COMPRA)) {
+				setTipOrden("OC");
+			}
+			else 
+				if(tipDocumentoMen.equals(Constantes.ID_ORDEN_SERVICIO)) {
+					setTipOrden("OS");
+				}
+			
+			oc.setPeriodo(Integer.valueOf(periodo));
+			oc.setNumeroOrden(nroDocumentoMen);
+			oc.setTipoDocumento(tipOrden);
+			List<OrdenesCS> ordenes = OrderDao.findPurchaseOrder(oc);
+			logger.info("Parametros Busqueda {} "+periodo+" "+tipOrden+" "+nroDocumentoMen);
+			if(ordenes.size()==0) {ruc="";razonSocial="";}
+			else {
+				for(OrdenesCS registros: ordenes) {
+					ruc = ordenes.get(0).getRuc();
+					razonSocial = ordenes.get(0).getProveedor();
+				}
+				logger.info("Valores Obtenidos {} "+ruc+" "+razonSocial);
+			}
+
+		} catch (Exception e) {
+			logger.error("Error Valida ORdenes : {} "+e.getMessage()+" "+e.getCause());
+		}
+		
+		return "";
 	}
 	
 	public List<ViewIafasCompromisoMensual> buscarAnualXSecuencia(){

@@ -32,6 +32,27 @@
 		  }
 		  
         }
+        
+        function completaCeros(obj, tam) {
+            var txt = document.getElementById(obj).value;
+            var tamTxt = txt.length;
+            var i;
+            for (i = tam; i > tamTxt; i--)
+                txt = '0' + txt;
+            document.getElementById(obj).value = txt;
+        }
+        
+        function activateBoton(){
+               var tip = document.getElementById('frmCompromisoMensual:cbo_documento').value;
+               if(tip =="031" || tip=="032"){
+               document.getElementById("frmCompromisoMensual:panelOC").style.visibility = "visible";
+              // document.getElementById("frmCompromisoMensual:inptxtRuc").disabled=true;
+               }
+               else{
+               document.getElementById("frmCompromisoMensual:panelOC").style.visibility = "hidden";
+               }
+               
+           }
         </script>
         <h:form id="frmCompromisoMensual" style="border-radius: 5px 5px 5px 5px;border: 1px; width:1020px;">
         <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
@@ -69,8 +90,8 @@
                  </h:panelGrid>
                  <h:panelGrid columns="6" style="width:100%;">
                  <p:outputLabel value="Proveedor:"/>
-                 <h:panelGrid columns="3">
-                      <h:outputText styleClass="outLabel" value="#{mbCompMensual.ruc}" style="display: block;"/>
+                 <h:panelGrid columns="3" id="panel_proveedor">
+                      <h:outputText id="inptxtRuc" styleClass="outLabel" value="#{mbCompMensual.ruc}" style="display: block;"/>
                       <h:outputLabel value="-"/>
                       <h:outputLabel styleClass="outLabel" value="#{mbCompAnual.razonSocial}" style="display: block;"/>
                  </h:panelGrid>
@@ -88,16 +109,25 @@
                 </p:fieldset>
                 <br/>
                 <p:fieldset legend="Datos Compromiso Mensual">
-                   <h:panelGrid columns="6" style="width: 833px; ">
+                   <h:panelGrid columns="7" style="width: 833px; ">
                    <h:outputLabel value="Documento:"/>
-                   <p:selectOneMenu id="cbo_documento" value="#{mbCompMensual.tipDocumentoMen}">
+                   <h:selectOneMenu id="cbo_documento" value="#{mbCompMensual.tipDocumentoMen}"
+                   onchange="activateBoton();" styleClass="select">
                       <f:selectItem itemValue="" itemLabel="--Seleccione--"></f:selectItem>
-                      <f:selectItem itemValue="031" itemLabel="Orden de Compra"></f:selectItem>
-                      <f:selectItem itemValue="032" itemLabel="Orden de Servicios"></f:selectItem>
-                      <f:selectItem itemValue="043" itemLabel="Planilla Viaticos"></f:selectItem>
-                   </p:selectOneMenu>
+                      <f:selectItem itemValue="031" itemLabel="031: Orden de Compra"></f:selectItem>
+                      <f:selectItem itemValue="032" itemLabel="032: Orden de Servicios"></f:selectItem>
+                      <f:selectItem itemValue="043" itemLabel="043: Planilla Viaticos"></f:selectItem>
+                   </h:selectOneMenu>
                    <h:outputLabel value="Nro Documento:"/>
-                   <h:inputText id="inpNroDoc" styleClass="input" value="#{mbCompMensual.nroDocumentoMen}"/>
+                   <h:inputText id="inpNroDoc" styleClass="input" value="#{mbCompMensual.nroDocumentoMen}" size="11" onblur="completaCeros(this.name, 10);"
+                   maxlength="10"/>
+                    <h:panelGrid id="panelOC" style="visibility:hidden;">
+                            <p:commandButton id="btnbuscarOCOS" icon="ui-icon-search" value="Buscar" 
+                            action="#{mbCompAnual.validarOCS}" 
+                            style="height:25px;"
+                            onblur="completaCeros(this.name, 10);" ajax="true"
+                            title="Búsqueda Ordenes Compra o Servicio, validará el RUC y RazonSocial" update="panel_proveedor"/>
+                    </h:panelGrid>
                    <h:outputLabel value="Fecha:"/>
                    <p:inputMask id="inptFecDoc" styleClass="input" mask="99/99/9999" value="#{mbCompMensual.fechaMensual}">
                                            <f:converter converterId="javax.faces.DateTime" />
