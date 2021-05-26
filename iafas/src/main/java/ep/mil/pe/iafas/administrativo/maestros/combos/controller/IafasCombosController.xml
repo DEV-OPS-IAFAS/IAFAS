@@ -18,14 +18,21 @@ parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
  SELECT nfuente_financiamiento_codigo codigo, vfuente_financiamiento_nombre descripcion
  FROM iafas_fuente_financiamiento WHERE cestado_codigo='AC'
 </select>
-
+<!--  
 <select id="tipoGrado" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
 parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
 select NGRADO_CODIGO codigo,
 			 VGRADO_ABREVIATURA descripcion
 			  from iafas_grados where CESTADO_CODIGO='AC' order by NGRADO_CODIGO asc
 </select>
-
+-->
+<select id="tipoGrado" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+select NGRADO_CODIGO codigo,
+			 VGRADO_ABREVIATURA descripcion
+			  from iafas_grados where CESTADO_CODIGO='AC' AND CGRADO_TIPO=#{filtro1} 
+			   order by NGRADO_CODIGO asc
+</select>
 <select id="tipoArea" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
 parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
  select CAREA_LABORAL_CODIGO codigo,

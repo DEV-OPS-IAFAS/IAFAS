@@ -12,11 +12,13 @@ import ep.mil.pe.iafas.administrativo.maestros.combos.dao.IafasCombosDao;
 import ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos;
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
 
+
 @ManagedBean(name = "mbCombos")
 @SessionScoped
 public class IafasCombosController implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
+	
 
 	public IafasCombosController() {
 		// TODO Auto-generated constructor stub
@@ -50,7 +52,7 @@ public class IafasCombosController implements Serializable {
        
         return fuenteFinanciamiento;
     }
-    public List<SelectItem> getgrado() {
+   /* public List<SelectItem> getgrado() {
     	grado = new ArrayList<>();
         IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());    
              List<IafasCombos> lista = cb.getTipoGrado();
@@ -59,7 +61,8 @@ public class IafasCombosController implements Serializable {
              }
        
         return grado;
-    }
+    }*/
+    
     public List<SelectItem> getarea() {
     	area = new ArrayList<>();
         IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());    

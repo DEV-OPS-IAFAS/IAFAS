@@ -7,6 +7,7 @@ public class IafasCombos {
 
 	 private String codigo;
 	 private String descripcion;
+     private String filtro1;
 	 
 	public IafasCombos() {
 		// TODO Auto-generated constructor stub

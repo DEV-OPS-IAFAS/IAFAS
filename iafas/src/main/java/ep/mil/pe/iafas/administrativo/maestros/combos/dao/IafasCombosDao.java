@@ -43,11 +43,11 @@ public class IafasCombosDao {
     }
 
     @SuppressWarnings("unchecked")
- 	public List<IafasCombos> getTipoGrado() {
+ 	public List<IafasCombos> getTipoGrado(String filtro) {
          List<IafasCombos> lista = null;
          SqlSession session = sqlSessionFactory.openSession();
          try{
-               lista = session.selectList("Combos.tipoGrado");
+               lista = session.selectList("Combos.tipoGrado",filtro);
          }
          finally{
               session.close();

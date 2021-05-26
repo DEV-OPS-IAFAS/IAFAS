@@ -17,22 +17,20 @@
         </script>
         <h:form id="frmPersonal" style="border-radius: 5px 5px 5px 5px;border: 1px ; width:100%;">
             <p:panel >
-                <p:panelGrid columns="2" styleClass="panel">
+                <p:panelGrid columns="3" styleClass="panel">
                    <i class="pi pi-calendar-plus" style="height:20px;height:20px;" ></i>
                     <p:outputLabel value="Registro de Personal" styleClass="etiqueta"></p:outputLabel>
-                </p:panelGrid> 
-                <p:panelGrid columns="5" >                  
+                    <p:panelGrid columns="5" >                  
                     <p:commandButton  value="Nuevo"  styleClass="button" action="#{mbPersonal.nuevoRegistro()}" 
                     style="height:30px;" title="Click aqui para Ingresar un Nuevo Personal"/>
                 </p:panelGrid>
-                
-                <br/>
+                </p:panelGrid> 
                 <table style="width:100%">
                     <tr>
                         <td valign="top">
                             <div>
-                                <p:dataTable id="dTablePersonal" var="ca" value="#{mbPersonal.lista}" rows="5" scrollable="true" scrollHeight="175px;"
-                                             style="width: 100%;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
+                                <p:dataTable id="dTablePersonal" var="ca" value="#{mbPersonal.lista}" rows="5" 
+                                             style="width: 100%;font-size:10px;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
                                              paginatorPosition="bottom" paginator="true" stripedRows="true">
                                     <p:column headerText="Nª DOCUMENTO" style="width: 15px;" filterBy="#{ca.vpersonaNumeroDoc}">
                                           <h:commandLink id="cmdLink_Fase" actionListener="#{mbPersonal.verDetalleFamilia}" >
@@ -64,17 +62,24 @@
                                      <p:column headerText="DIRECCION" style="width: 25px;" >
                                         <p:outputLabel value="#{ca.vpersonaDireccion}"/>
                                     </p:column>
-                                    <p:column headerText="Familia" style="width: 10px; text-align:center; ">
+                                    <p:column headerText="FAMILIA" style="width: 10px; text-align:center; ">
                                         <p:commandButton id="btn_fami" icon="pi pi-user-plus" 
                                         action="#{mbPersonal.nuevoRegFamilia}">   
                                         <f:param id="pSecDetalle" name="pSecDetalle" value="#{ca.npersonaCodigo}"></f:param>                                 
 										</p:commandButton> 
                                     </p:column>                               
-      							  <p:column headerText="Editar" style="width: 10px; text-align:center; ">
+      							  <p:column headerText="EDITAR" style="width: 10px; text-align:center; ">
                                         <p:commandButton id="btn_edit" icon="pi pi-calendar-plus" 
                                         oncomplete="PF('pRedit').show();" actionListener="#{mbPersonal.verPersonal()}"
                                         update="frmPersonal:EditPersona" >
                                           <f:param id="pdetalleDoc" name="pdetalleDoc" value="#{ca.vpersonaNumeroDoc}"></f:param>                                    
+										</p:commandButton> 
+                                    </p:column>
+                                     <p:column headerText="VER FOTO" style="width: 10px; text-align:center; ">
+                                        <p:commandButton id="btn_foto" icon="pi pi-image"
+                                         oncomplete="PF('pRfoto').show();" actionListener="#{mbPersonal.verImagen()}"
+                                         update="frmPersonal:EditFoto" >   
+                                        <f:param id="pSecDetallef" name="pSecDetallef" value="#{ca.npersonaCodigo}"></f:param>                                 
 										</p:commandButton> 
                                     </p:column>
                                 </p:dataTable>
@@ -106,7 +111,14 @@
                                     </p:column>                                                                   
                                      <p:column headerText="TELEFONO" style="width: 25px;" >
                                         <p:outputLabel value="#{fa.vpersonaTelefono} "/>
-                                    </p:column>                                     
+                                    </p:column> 
+                                    <p:column headerText="VER FOTO" style="width: 10px; text-align:center; ">
+                                        <p:commandButton id="btn_foto" icon="pi pi-image"
+                                         oncomplete="PF('pRfotodet').show();" actionListener="#{mbPersonal.verImagen()}"
+                                         update="frmPersonal:EditFotodet" >   
+                                        <f:param id="pSecDetallef" name="pSecDetallef" value="#{fa.npersonaCodigo}"></f:param>                                 
+										</p:commandButton> 
+                                    </p:column>
                                 </p:dataTable>
                 </p:tab>
                 </p:tabView>
@@ -171,12 +183,18 @@
                             <h:inputText id="corr"  value="#{mbPersonal.vpersonaCorreo}"
                             styleClass="input" style="text-align: left;" size="50"
                             maxlength="200"/> 
-                            
+                          <p:outputLabel value="TIPO GRADO: "/>
+                        <p:selectOneMenu id="tipGrado" value="#{mbPersonal.cgradoTipo}" style="width: 100px;" >
+                            <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
+                            <f:selectItem itemValue="M" itemLabel="MILITAR"/>
+                            <f:selectItem itemValue="C" itemLabel="CIVIL"/>  
+                             <f:ajax render="grad" listener="#{mbPersonal.cargarGrados()}" />
+                        </p:selectOneMenu>    
                        <p:outputLabel value="GRADO: "/>
                         <p:selectOneMenu id="grad"  value="#{mbPersonal.ngradoCodigo}"
                         style="width:200px;" >
                          <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
-                         <f:selectItems var="documentos" value="#{mbCombos.grado}"/>
+                         <f:selectItems var="documentos" value="#{mbPersonal.grados}"/>
                         </p:selectOneMenu>  
                         <p:outputLabel value="CIP: "/>
                             <h:inputText id="cip" value="#{mbPersonal.vcip}" 
@@ -204,7 +222,40 @@
                                
                     </p:panel>
                 </p:dialog>
-                
+                <center>
+                <p:dialog id="EditFoto" widgetVar="pRfoto" modal="true" header="Foto Personal"
+                showEffect="fade" hideEffect="explode" resizable="false">
+                    <p:panel >
+                        <h:panelGrid columns="1" style="width: 100%">                                                            
+                          <p:graphicImage id="personalImagen" 
+                          value="#{mbPersonal.img}" style="width:300px;height:300px;"
+                          cache="false"> </p:graphicImage>
+                          <h:outputLabel value="#{mbPersonal.messageBlob}" style="font-size:13px;color:red;font-weight:bold;"></h:outputLabel>
+                          <p:commandButton value="Cerrar" action="#{mbPersonal.cerrarFoto()}" styleClass="button"
+                           oncomplete="PF('pRfoto').hide();"
+                          ></p:commandButton>  
+                          
+                          </h:panelGrid>                  
+                    </p:panel>
+                </p:dialog>
+                </center>
+                 <center>
+                <p:dialog id="EditFotodet" widgetVar="pRfotodet" modal="true" header="Foto Personal"
+                showEffect="fade" hideEffect="explode" resizable="false">
+                    <p:panel >
+                        <h:panelGrid columns="1" style="width: 100%">                                                            
+                          <p:graphicImage id="personalImagendet" 
+                          value="#{mbPersonal.img}" style="width:300px;height:300px;"
+                          cache="false"> </p:graphicImage>
+                          <h:outputLabel value="#{mbPersonal.messageBlob}" style="font-size:13px;color:red;font-weight:bold;"></h:outputLabel>
+                          <p:commandButton value="Cerrar" action="#{mbPersonal.cerrarFoto()}" styleClass="button"
+                           oncomplete="PF('pRfotodet').hide();"
+                          ></p:commandButton>  
+                          
+                          </h:panelGrid>                  
+                    </p:panel>
+                </p:dialog>
+                </center>
             </p:panel>
         </h:form>
     </body>

@@ -62,8 +62,8 @@
                              <p:outputLabel value="SEXO: "/>
                         <p:selectOneMenu id="tipSex" value="#{mbPersonal.cpersonaGenero}" style="width: 100px;" >
                             <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
-                            <f:selectItem itemValue="1" itemLabel="MASCULINO"/>
-                            <f:selectItem itemValue="2" itemLabel="FEMENINO"/>
+                            <f:selectItem itemValue="M" itemLabel="MASCULINO"/>
+                            <f:selectItem itemValue="F" itemLabel="FEMENINO"/>
                         </p:selectOneMenu>   
                          <p:outputLabel value="ESTADO CIVIL: "/>
                         <p:selectOneMenu id="tipEstado" value="#{mbPersonal.nestadoCivilCodigo}" style="width: 100px;" >
@@ -94,7 +94,9 @@
                         style="width:200px;" >
                          <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
                          <f:selectItems var="documentos" value="#{mbCombos.familia}"/>
-                        </p:selectOneMenu>                            
+                        </p:selectOneMenu> 
+                        <p:outputLabel value="Foto: "/>
+                        <p:fileUpload id="photo" value="#{mbPersonal.imagenPersonal}" mode="simple"></p:fileUpload>                           
                         </h:panelGrid>                    
                 </p:fieldset>
                 <br/>               

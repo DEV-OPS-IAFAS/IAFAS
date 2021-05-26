@@ -1,9 +1,15 @@
 package ep.mil.pe.iafas.personal.controller;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,11 +18,23 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
+import javax.swing.ImageIcon;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.net.SMTPAppender;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
+
+import com.sun.faces.taglib.html_basic.InputSecretTag;
+
+import ep.mil.pe.iafas.administrativo.maestros.combos.controller.IafasCombosController;
+import ep.mil.pe.iafas.administrativo.maestros.combos.dao.IafasCombosDao;
+import ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos;
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
 import ep.mil.pe.iafas.configuracion.util.BDCon;
 import ep.mil.pe.iafas.personal.dao.IafasPersonalDao;
@@ -62,6 +80,7 @@ public class IafasPersonalController implements Serializable{
 	 private String pSecuencia;
 	 private int pSecDetalle;
 	 private String pdetalleDoc;
+	 private int pSecDetallef;
 	 
 	 private String cperiodoCodigo;
 	 private Integer ngradoCodigo;
@@ -78,7 +97,11 @@ public class IafasPersonalController implements Serializable{
 	 private Integer ntipoFamiliaCodigo;
 	 
 	 private UploadedFile imagenPersonal;
+	 private StreamedContent img;
+	 private String messageBlob;
+	 private byte[] b1;
 	 
+	 private List<SelectItem> grados;
 
 	 private static final long serialVersionUID = 1L;
 	 
@@ -167,6 +190,7 @@ public class IafasPersonalController implements Serializable{
     	  
       }
       
+    
       public String nuevoRegFamilia() {
     	  String page = "insRegistroFamilia.xhtml";
     	  String paramCodPersona = (String) extContext().getRequestParameterMap().get("pSecDetalle");	
@@ -175,6 +199,18 @@ public class IafasPersonalController implements Serializable{
     	  return page;
     	  
       }
+      
+      // Combo dependediente
+      public List<SelectItem> cargarGrados() {
+      	grados = new ArrayList<>();
+          IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());    
+               List<IafasCombos> lista = cb.getTipoGrado(cgradoTipo);
+               for(IafasCombos d : lista){
+              	 grados.add(new SelectItem(d.getCodigo(),d.getCodigo()+"-"+ d.getDescripcion()));
+               }
+         
+          return grados;
+          }
       
        public String grabarPersonal() {
 		int reg = 0;		
@@ -243,7 +279,58 @@ public class IafasPersonalController implements Serializable{
 		}
     }
     
+   
+    public void verImagen() throws ClassNotFoundException {
+  	  String paramCodigo = (String) extContext().getRequestParameterMap().get("pSecDetallef");	
+  	  pSecDetallef = Integer.valueOf(paramCodigo);
+  	 if(img!=null) {
+  		 img = null;
+  		 setB1(null);
+  	 }
+  	try {
+			Statement stm = null;
+				Class.forName(BDCon.DRIVERBD);
+				Connection cn = DriverManager.getConnection(BDCon.CONEXION_PRODUCCION);
+				//Connection cn = DriverManager.getConnection(BDCon.CONEXION_LOCAL);
+				stm = cn.createStatement();
+				String sql = "SELECT BPERSONA_FOTO FROM iafas_persona "
+						+ "where NPERSONA_CODIGO ="+pSecDetallef;
+				ResultSet rs = stm.executeQuery(sql);
+				logger.info("Consultando Imagen del Personal : {}" +pSecDetallef);
+				while(rs.next()) {
+					b1 =  rs.getBytes("BPERSONA_FOTO");
+					logger.info("blobBD : {}" +rs.getBytes("BPERSONA_FOTO"));
+					if(rs.getBytes("BPERSONA_FOTO")==null){
+						img = null;
+						messageBlob = "El personal no tiene registrado la Foto";
+					}
+					else {
+						logger.info("Leyendo stream del archivo Blob");
+						InputStream in = new ByteArrayInputStream(b1);
+						new DefaultStreamedContent();
+					    img = DefaultStreamedContent.builder().stream(() -> in).build();
+					    messageBlob = "";
+					    logger.info("Se Cargo la Imagen del Personal {} " +pSecDetallef);
+					}	
+				}
+				cn.close();
+				
+					
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+			logger.error("ERROR al Obtener la Imagen : "+e.getMessage());
+		}
+  	catch (Exception e) {
+		// TODO: handle exception
+		logger.error("ERROR al Obtener la Imagen : "+e.getMessage());
+	}
+  }
     
+  public void cerrarFoto() {
+	  setImg(null);
+	  setB1(null);
+  }
      public void LimpiarCampos() {
     	 
     	 vpersonaNumeroDoc ="";
@@ -290,6 +377,7 @@ public class IafasPersonalController implements Serializable{
  			 ca.setNpersonaCodigo(pSecDetalle);				 
  			 reg = personalDao.grabarPersonalFamilia(ca); 
  			 logger.info("Inserto Persona Correctamente {} "+vpersonaNumeroDoc);
+ 			 updatePhoto(vpersonaNumeroDoc);
  			 showMessages(1);
  			 retorno();
  		} catch (Exception e) {
@@ -305,7 +393,7 @@ public class IafasPersonalController implements Serializable{
    
       	public void verPersonal(){
 		pdetalleDoc = (String) extContext().getRequestParameterMap().get("pdetalleDoc");
-	     logger.info("Obteniendo Parametros " +pdetalleDoc);
+	     logger.info("Obteniendo Parametros  LOOOO " +pdetalleDoc);
 	    IafasPersona per = new IafasPersona();
 	    per.setVpersonaNumeroDoc(pdetalleDoc);
 	    System.out.println("pdetalleDoc : "+pdetalleDoc);
@@ -329,8 +417,9 @@ public class IafasPersonalController implements Serializable{
 			    setVpersonalCargo(l.getVpersonalCargo());
 			    setCestadoCodigo(l.getCestadoCodigo());
 			    setVcip(l.getVcip());
-			    
+			    cargarGrados();
 			}
+		
 	}
       
       	 public String EditarPersonal() {

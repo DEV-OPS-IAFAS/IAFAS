@@ -89,12 +89,19 @@
                             <h:inputText id="corr"  value="#{mbPersonal.vpersonaCorreo}"
                             styleClass="input" style="text-align: left;" size="50"
                             maxlength="200"/> 
+                             <p:outputLabel value="TIPO GRADO: "/>
+                        <p:selectOneMenu id="tipGrado" value="#{mbPersonal.cgradoTipo}" style="width: 100px;" >
+                            <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
+                            <f:selectItem itemValue="M" itemLabel="MILITAR"/>
+                            <f:selectItem itemValue="C" itemLabel="CIVIL"/>  
+                             <f:ajax render="grad" listener="#{mbPersonal.cargarGrados()}" />
+                        </p:selectOneMenu>  
                             
                        <p:outputLabel value="GRADO: "/>
                         <p:selectOneMenu id="grad"  value="#{mbPersonal.ngradoCodigo}"
                         style="width:200px;" >
                          <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
-                         <f:selectItems var="documentos" value="#{mbCombos.grado}"/>
+                         <f:selectItems var="documentos" value="#{mbPersonal.grados}"/>
                         </p:selectOneMenu>  
                         <p:outputLabel value="CIP: "/>
                             <h:inputText id="cip" value="#{mbPersonal.vcip}" 

@@ -115,7 +115,7 @@
 	<select id="listaEditPersona"
 		resultType="ep.mil.pe.iafas.personal.model.IafasPersona"
 		parameterType="ep.mil.pe.iafas.personal.model.IafasPersona">
-			     SELECT  per.VPERSONA_NUMERO_DOCUMENTO  vpersonaNumeroDoc ,
+	  SELECT  per.VPERSONA_NUMERO_DOCUMENTO  vpersonaNumeroDoc ,
 		  per.VPERSONA_PATERNO vpersonaPaterno  ,
          per.VPERSONA_MATERNO   vpersonaMaterno ,
          per.VPERSONA_NOMBRES vpersonaNombres ,
@@ -133,6 +133,7 @@
         per.VPERSONA_CORREO vpersonaCorreo ,
         per.VPERSONA_DIRECCION  vpersonaDireccion,
         perl.VCIP vcip,
+        perl.CGRADO_TIPO cgradoTipo,
         per.cpersona_genero cpersonaGenero
 		       FROM     iafas_persona per
                inner join iafas_personal perl on (
