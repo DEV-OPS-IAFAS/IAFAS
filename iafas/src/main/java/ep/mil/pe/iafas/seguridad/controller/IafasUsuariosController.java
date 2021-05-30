@@ -1,4 +1,4 @@
-package ep.mil.pe.iafas.seguridad.controller;
+	package ep.mil.pe.iafas.seguridad.controller;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -87,8 +87,8 @@ public class IafasUsuariosController implements Serializable {
 		IafasUsuariosDao usuarioSessionDao = new IafasUsuariosDao(MySQLSessionFactory.getSqlSessionFactory());
 		IafasUsuarios c = new IafasUsuarios();
 		c.setVusuarioCodigo(this.idUsuario);
-		//c.setVusuarioPassword(pasusu);
-		c.setVusuarioPassword(this.passUsuario);
+		c.setVusuarioPassword(pasusu);
+		//c.setVusuarioPassword(this.passUsuario);
 
 		List<IafasUsuarios> usuarioBuscado = usuarioSessionDao.SelectListFiltro2(c);
 
@@ -271,6 +271,18 @@ public class IafasUsuariosController implements Serializable {
 			logger.info("[FIN:] Metodo : anularRegistro");
 		}
 
+	}
+	
+	public String mostrarMenus() {
+		logger.info("[INICIO:] Metodo : mostrarMenus");
+
+		String page = "mainIafasPrivilegiosUsuario.xhtml";
+		String codUsuarioPrivilegio = (String) extContext().getRequestParameterMap().get("codUsuarioPrivilegio");
+		logger.info("privilegios:::."+codUsuarioPrivilegio);
+		
+		logger.info("[FIN:] Metodo : mostrarMenus");
+		
+		return page;
 	}
 	
 	public void cerraSession() {
