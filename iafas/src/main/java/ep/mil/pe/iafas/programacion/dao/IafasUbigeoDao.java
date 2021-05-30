@@ -37,11 +37,33 @@ public class IafasUbigeoDao {
 	    return list;
 	  }
 	
+	public List<IafasUbigeo> obtenerProvinciasEdit(IafasUbigeo objBn) {
+	    List<IafasUbigeo> list = null;
+	    SqlSession session = this.sqlSessionFactory.openSession();
+	    try {
+	      list = session.selectList("IafasUbigeo.obtenerProvinciasEdit",objBn);
+	    } finally {
+	      session.close();
+	    } 
+	    return list;
+	  }
+	
 	public List<IafasUbigeo> obtenerUbigeos(IafasUbigeo objBn) {
 	    List<IafasUbigeo> list = null;
 	    SqlSession session = this.sqlSessionFactory.openSession();
 	    try {
 	      list = session.selectList("IafasUbigeo.obtenerUbigeos",objBn);
+	    } finally {
+	      session.close();
+	    } 
+	    return list;
+	  }
+	
+	public List<IafasUbigeo> obtenerUbigeosEdit(IafasUbigeo objBn) {
+	    List<IafasUbigeo> list = null;
+	    SqlSession session = this.sqlSessionFactory.openSession();
+	    try {
+	      list = session.selectList("IafasUbigeo.obtenerUbigeosEdit",objBn);
 	    } finally {
 	      session.close();
 	    } 

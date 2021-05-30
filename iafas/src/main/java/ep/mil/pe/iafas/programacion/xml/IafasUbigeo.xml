@@ -32,7 +32,7 @@
 		resultType="ep.mil.pe.iafas.programacion.model.IafasUbigeo">
 		SELECT CUBIGEO_CODIGO AS codigoUbigeo  ,
 		VUBIGEO_NOMBRE AS nombreUbigeo
-		from IAFAS_UBIGEO
+		from iafas_ubigeo
 		where 
 		CDEPARTAMENTO_CODIGO = #{codigoDepartamento} AND 
 		CPROVINCIA_CODIGO = #{codigoProvincia} AND

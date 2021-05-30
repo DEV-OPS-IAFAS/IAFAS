@@ -196,7 +196,7 @@ button.ui-button {
 			
 		</p:panel>
 		
-		<p:dialog header="PROGRAMACIÓN MULTIANUAL DE GASTOS" id="modalCabecera" widgetVar="modalCabecera" showEffect="fade" minHeight="600" width="1020" >
+		<p:dialog header="PROGRAMACIÓN MULTIANUAL DE GASTOS" id="modalCabecera" widgetVar="modalCabecera" showEffect="fade" minHeight="600" width="1120" >
 			<p:panelGrid columns="2" colSpans="6,6" size="sm" id="pnlGr_Importes">
 					<h:outputLabel value="Tarea" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />				
 					<h:selectOneMenu  id="cboTarea"  styleClass="select" value="#{programacionMultiAnualController.codTarea}">
@@ -330,10 +330,16 @@ button.ui-button {
 						update="frm_ProgMultiAnual:modalDetalle" >
 						<f:param id="codClaDel" name="codClaDel" value="#{dTableProgramacionDet.codCla}" />
 						<f:param id="codTareaDel" name="codTareaDel" value="#{dTableProgramacionDet.codigoTareaPtal}" />
+						<f:ajax render="frm_ProgMultiAnual:pnl_messages" listener="#{programacionMultiAnualController.refreshMessage()}" />
 					</p:commandButton>
 				</p:column>
 
 			</p:dataTable>	
+			
+			<f:facet name="footer">
+				<p:commandButton value="Cerrar" styleClass="ui-button-outlined ui-button-danger" oncomplete="PF('modalDetalle').hide()"
+				action="#{programacionMultiAnualController.limpiarCamposMtoDetalle()}"  />
+			</f:facet>	
 			
 		</p:dialog>	
 		
@@ -377,10 +383,12 @@ button.ui-button {
 			</h:panelGrid>
 			<f:facet name="footer">
 					<p:commandButton value="Cerrar" styleClass="ui-button-outlined ui-button-danger" oncomplete="PF('modalDetInsert').hide()"
-						action="#{programacionMultiAnualController.limpiarCamposMto()}" update="frm_ProgMultiAnual:modalDetalle" />
+						action="#{programacionMultiAnualController.limpiarCamposMto()}" update="frm_ProgMultiAnual:dTableProgramacionDet" />
 						
 					<p:commandButton value="Grabar" styleClass="ui-button-outlined ui-button-success" oncomplete="PF('modalDetInsert').hide()"
-						action="#{programacionMultiAnualController.insRegistroDet()}" update="frm_ProgMultiAnual:modalDetalle" />
+						action="#{programacionMultiAnualController.insRegistroDet()}" update="frm_ProgMultiAnual:modalDetalle" >
+						<f:ajax render="frm_ProgMultiAnual:pnl_messages" listener="#{programacionMultiAnualController.refreshMessage()}" />
+					</p:commandButton>
 				</f:facet>	
 		</p:dialog>
 

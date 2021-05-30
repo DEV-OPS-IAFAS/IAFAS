@@ -86,7 +86,7 @@ public class ProgramacionMultiAnualDao {
             param.put("ubigeoCodigo", bean.getUbigeoCodigo());
             param.put("importeA", String.valueOf(bean.getImporteA()));
             param.put("importeB", String.valueOf(bean.getImporteB()));
-            param.put("importeC", String.valueOf(bean.getImporteB()));
+            param.put("importeC", String.valueOf(bean.getImporteC()));
             param.put("metaFisicaA", String.valueOf(bean.getMetaFisicaA()));
             param.put("metaFisicaB", String.valueOf(bean.getMetaFisicaB()));
             param.put("metaFisicaC", String.valueOf(bean.getMetaFisicaC()));
