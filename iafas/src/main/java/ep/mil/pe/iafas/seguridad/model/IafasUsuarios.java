@@ -2,7 +2,7 @@ package ep.mil.pe.iafas.seguridad.model;
 
 import java.util.Date;
 
-import com.mysql.cj.jdbc.Blob;
+import com.mysql.jdbc.Blob;
 
 import lombok.Data;
 
