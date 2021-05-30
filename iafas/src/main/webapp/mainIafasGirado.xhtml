@@ -96,16 +96,15 @@
 	<h:form id="frm_Girado"> 
 	<p:panelGrid columns="2" styleClass="panel">
                    <i class="pi pi-calendar-plus" style="height:20px;height:20px;" ></i>
-<!--                     <p:outputLabel value="Registro de Giros" styleClass="etiqueta"></p:outputLabel> -->
  		 <label class="label label-inverse-success">Registro de Giros</label>
                 </p:panelGrid> 
 		<p:panel header="Datos de Busqueda" >
 			<p:panelGrid columns="6" styleClass="panel">
-				<h:outputLabel value="Año" styleClass="etiqueta" style="font-size:11px;font-weight:bold;" />
+				<h:outputLabel value="Año" styleClass="etiqueta" />
 				<h:selectOneMenu  id="cboPeriodo"  styleClass="input" value="#{iafasGiradoController.vano}">
 					<f:selectItem itemValue="2021" itemLabel="2021" />
 				</h:selectOneMenu>
-				<h:outputLabel  value="N° Expediente" styleClass="etiqueta" style="font-size:11px;font-weight:bold;"    />
+				<h:outputLabel  value="N° Expediente" styleClass="etiqueta" />
 				<h:inputText id="inptxtExpediente" onkeypress="completaCeros('frm_Girado:inptxtExpediente', 9)" styleClass="input" value="#{iafasGiradoController.vregSiaf}" onclick="limpiarTexto();" />
 				<p:commandButton id="cmdBtnBuscar"  update="dTableGirado" value="Buscar"  actionListener="#{iafasGiradoController.buscarPorSiafAno()}"
                      ajax="false"   style="height:30px;" title="Click aqui para buscar datos de la fase Devenado"/>
@@ -114,82 +113,75 @@
 		</p:panel>
 
 		<p:separator />	
-		<p:panel header="Datos Encontrados" >
+		<p:panel header="Datos Devengado" >
 			<p:panelGrid columns="6" styleClass="panel">
 			
-				<h:outputLabel value="Ruc" style="font-size:11px;font-weight:bold;" />
-				<h:inputText id="inptxtRuc" disabled="true" styleClass="input" value="#{iafasGiradoController.vruc}" />
+				<h:outputLabel value="Proveedor"  styleClass="etiqueta"/>
+				<h:inputText id="inptxtRuc" disabled="true" style="width: 400px"  styleClass="input" value="#{iafasGiradoController.vruc}:#{iafasGiradoController.descProveedor}" />
 				
-				<h:outputLabel value="Importe" style="font-size:11px;font-weight:bold;" />
-				<h:inputText id="inptxtImporte" disabled="true" styleClass="input"  value="#{iafasGiradoController.impMonSol}"/>
+				<h:outputLabel value="Importe"  styleClass="etiqueta" />
+				<h:inputText id="inptxtImporte" disabled="true" styleClass="input"  value="#{iafasGiradoController.simboloMondea}  #{iafasGiradoController.impMonSol}"/>
 			
-				<h:outputLabel value="Glosa" style="font-size:11px;font-weight:bold;" />
-				<h:inputText id="inptxtGlosa" styleClass="input"  style="width: 1070px" maxlength="500" value="#{iafasGiradoController.vglosa}"/>
+				<h:outputLabel value="Concepto" style="font-size:11px;font-weight:bold;" />
+				<h:inputText id="inptxtGlosa" styleClass="input"  style="width: 950px" maxlength="500" value="#{iafasGiradoController.vglosa}"/>
 				
 				</p:panelGrid>
 				
-				<p:panelGrid columns="8" style="width:100%">
-				<h:outputLabel value="C.C.I" style="font-size:11px;font-weight:bold;" />
-				<h:inputText id="inptxtCci" style="width: 200px" disabled="true" styleClass="input" value="#{iafasGiradoController.vcci}" />
+				<p:panelGrid columns="6" styleClass="panel">
 				
-				<h:outputLabel value="Banco" style="font-size:11px;font-weight:bold;" />
+				<h:outputLabel value="Banco" styleClass="etiqueta" />
 				<h:inputText id="inptxtBanco" disabled="true" style="width: 400px" styleClass="input" />
 				
-				<h:outputLabel value="N° Cuenta" style="font-size:11px;font-weight:bold;" />
+				<h:outputLabel value="N° Cuenta"  styleClass="etiqueta" />
 				<h:inputText id="inptxtCuenta" disabled="true" style="width: 300px" styleClass="input" value="#{iafasGiradoController.cproveedorCuentaBanco}"/>
+				
+				<h:outputLabel value="C.C.I"  styleClass="etiqueta" />
+				<h:inputText id="inptxtCci" style="width: 200px" disabled="true" styleClass="input" value="#{iafasGiradoController.vcci}" />
 				
 			</p:panelGrid>
 		</p:panel>
 
-		<p:panel header="Clasificadores  Encontrados"  >
+		<p:panel header="Clasificadores "  >
 			<p:dataTable id="dTableGirado" var="tblGirado"
 				value="#{iafasGiradoController.listaPorGirarCadenas}"
-				style="font-size:11px;" emptyMessage="No se encontro Usuarios registrados">
+				style="font-size:11px;" emptyMessage="No se encontro Clasificadores">
 
-				<p:column style="width:2px;" headerText="Id. Clasificador">
-					<p:outputLabel value="#{tblGirado.vcodCla}" />
-				</p:column>
+				<p:column style="width:70px;" headerText="Clasificador">
+					<p:outputLabel value="#{tblGirado.cadena} : #{tblGirado.desCadena}" />
+				</p:column> 
 				
-				<p:column style="width:2px;" headerText="Clasificador">
-					<p:outputLabel value="#{tblGirado.cadena}" />
-				</p:column>
-				
-				<p:column style="width:80px;" headerText="Dsecripcion">
-					<p:outputLabel value="#{tblGirado.desCadena}" />
-				</p:column>
-				
-				<p:column headerText="Sec.Fun" style="width: 2px;" 
+				<p:column headerText="Tarea" style="width: 2px;" 
 					filterMatchMode="contains">
-					<p:outputLabel value="#{tblGirado.vcodSecFun}" />
+					<p:outputLabel value="#{tblGirado.vcodSecFun}: #{tblGirado.descTarea}" />
 				</p:column>
 				
 				<p:column headerText="Importe" style="width: 2px;" 
 					filterMatchMode="contains">
-					<p:outputLabel value="#{tblGirado.impSolCad}" />
+					<p:outputLabel value="#{iafasGiradoController.simboloMondea}  #{tblGirado.impSolCad}" >
+					<f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+					</p:outputLabel>
 				</p:column>
 
 			</p:dataTable>
 		</p:panel>
-		<p:panel header="Retenciones Encontradas" >
+		<p:panel header="Retenciones" >
 			<p:dataTable id="dTableGiradoRetencion" var="tblGiradoRet"
 				value="#{iafasGiradoController.listaRetencionesPorGirar}"
 				style="font-size:11px;" emptyMessage="No se encontro Retenciones registradas">
 
-				<p:column style="width:2px;" headerText="Codigo Retencion">
-					<p:outputLabel value="#{tblGiradoRet.vcodImp}" />
+				<p:column style="width:2px;" headerText=" Retencion">
+					<p:outputLabel value="#{tblGiradoRet.vcodImp}: #{tblGiradoRet.descRetencion}" />
 				</p:column>
 				
-				<p:column style="width:2px;" headerText="Retencion">
-					<p:outputLabel value="#{tblGiradoRet.descRetencion}" />
+				<p:column style="width:2px;" headerText="Porcentaje">
+					<p:outputLabel value="#{tblGiradoRet.nporImp} (%)" />
 				</p:column>
 				
-				<p:column style="width:2px;" headerText="% Retencion">
-					<p:outputLabel value="#{tblGiradoRet.nporImp}" />
-				</p:column>
-				
-				<p:column headerText="Importe Retenido" style="width: 2px;" 
-					filterMatchMode="contains">
-					<p:outputLabel value="#{tblGiradoRet.importeRetencion}" />
+				<p:column headerText="Importe Retenido"  style="width:2px; text-align: right">
+				<p:outputLabel value ="#{iafasGiradoController.simboloMondea} " />
+					<p:outputLabel value="#{tblGiradoRet.importeRetencion}" >
+						<f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+					</p:outputLabel>
 				</p:column>
 				
 			</p:dataTable>

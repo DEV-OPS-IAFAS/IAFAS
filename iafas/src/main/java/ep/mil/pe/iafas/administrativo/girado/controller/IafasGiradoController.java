@@ -54,6 +54,8 @@ public class IafasGiradoController implements Serializable{
 	private String msgValidacion;
 	public boolean pasoValidacion = true;
 	public boolean muestraBotonAnular = false;
+	private String descProveedor;
+	private String simboloMondea;
 	
 	public IafasGiradoController() {
 		//buscarGirados();
@@ -102,13 +104,15 @@ public class IafasGiradoController implements Serializable{
 		List<IafasGirado> lstporGirar = giradoDao.TraerDatosFaseDevengado(objBn);
 		if (lstporGirar.size() > 0) {
 			for (IafasGirado objBeanLista : lstporGirar) {
-				setVglosa(objBeanLista.getVglosa());
+				setVglosa(objBeanLista.getVglosa().toUpperCase());
 				setImpMonSol(objBeanLista.getImpMonSol());
 				setVruc(objBeanLista.getVruc());
 				setVcci(objBeanLista.getVcci());
 				setCproveedorCuentaBanco(objBeanLista.getCproveedorCuentaBanco());
 				setMuestraBotonGiro(true);
 				setNtipCam(objBeanLista.getNtipCam());
+				setDescProveedor(objBeanLista.getDescProveedor());
+				setSimboloMondea(objBeanLista.getSimboloMondea());
 				this.listaPorGirar.add(objBeanLista);
 			}
 			
@@ -312,6 +316,8 @@ public class IafasGiradoController implements Serializable{
 		setCproveedorCuentaBanco(Constantes.VACIO);
 		setImpMonSol(null);
 		setMsgSP(Constantes.VACIO);
+		setSimboloMondea(Constantes.VACIO);
+		setDescProveedor(Constantes.VACIO);
 		obtenerCadenasPorGirar();
 		logger.info("[FIN:] Metodo : limpiarcampos");
 	}

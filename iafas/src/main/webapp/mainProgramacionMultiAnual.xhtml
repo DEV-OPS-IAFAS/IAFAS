@@ -111,7 +111,7 @@ button.ui-button {
 				<p:dataTable id="dTableProgramacion" var="tblProgramacion"
 				value="#{programacionMultiAnualController.listaCabecera}" selection="#{programacionMultiAnualController.bean}"
 				 rowKey="#{tblProgramacion.periodo}#{tblProgramacion.codigoTareaPtal}#{tblProgramacion.fuenteFinac}#{programacionMultiAnualController.cperiodo}#{programacionMultiAnualController.cperiodo1}#{programacionMultiAnualController.cperiodo2}#{tblProgramacion.estado}" selectionMode="single"
-				style="font-size:11px;" emptyMessage="No se encontro Usuarios registrados">
+				style="font-size:11px;" emptyMessage="No se encontro Datos registrados">
 
 				<p:column style="width:100px;" headerText="TAREA">
 					<p:outputLabel value="#{tblProgramacion.codigoTareaPtal}-#{tblProgramacion.tarea}" />

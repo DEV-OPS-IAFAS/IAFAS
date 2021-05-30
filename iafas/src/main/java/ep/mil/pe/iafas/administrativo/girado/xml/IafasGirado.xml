@@ -15,7 +15,9 @@
 		cab.VGLOSA AS vglosa, dev.CPROVEEDOR_RUC AS vruc , 
 		(SELECT pv.CPROVEEDOR_CCI FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS vcci, 
 		(SELECT pv.CPROVEEDOR_CUENTA_BANCO FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS cproveedorCuentaBanco,
-		dev.VTIP_DOCUMENTO_COM AS vtipDocumentoCom ,dev.vserie_com AS vserieCom,dev.VNRO_DOCUMENTO_COM  AS vnroCom
+		dev.VTIP_DOCUMENTO_COM AS vtipDocumentoCom ,dev.vserie_com AS vserieCom,dev.VNRO_DOCUMENTO_COM  AS vnroCom,
+        (SELECT pv.VPROVEEDOR_RAZON_SOCIAL FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS descProveedor, 
+        (select VMONEDA_SIMBOLO from iafas_monedas MON WHERE MON.NMONEDA_CODIGO = cab.VTIP_MON) AS simboloMondea
 		FROM iafas_movimiento cab, iafas_devengado dev
 		where 
 		cab.VANO=dev.VANO AND

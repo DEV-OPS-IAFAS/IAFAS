@@ -20,4 +20,5 @@ public class IafasMovimientoCadenas {
 	private String vregSiaf;
 	private String desCadena;
 	private String cadena;
+	private String descTarea;
 }
