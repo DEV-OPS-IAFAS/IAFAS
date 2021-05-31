@@ -11,8 +11,10 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 
 import ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompromisoMensual;
 import ep.mil.pe.iafas.administrativo.devengado.dao.iafasDevengadoDao;
@@ -23,6 +25,7 @@ import ep.mil.pe.iafas.administrativo.devengado.model.IafasDevengado;
 import ep.mil.pe.iafas.administrativo.devengado.model.IafasDevengadoDet;
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
 import ep.mil.pe.iafas.configuracion.util.Constantes;
+import ep.mil.pe.iafas.seguridad.controller.IafasUsuariosController;
 import lombok.Data;
 
 @Data
@@ -88,8 +91,18 @@ public class iafasDevengadoController implements Serializable{
 	
 	private BigDecimal importeRet;
 	
+	private String ctipoActa;
+	private String vnroActa;
+	private Date  dfechaActa;
 	
+    private String messages;
+    private int typeMessages;
 	
+    private String descImpu;
+    private String glosaMensual;
+    private String desMoneda;
+    private String desDocumento;
+	private String usuario;
 	
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(iafasDevengadoController.class);
@@ -97,7 +110,11 @@ public class iafasDevengadoController implements Serializable{
 	iafasDevengadoDao devengadoDao = new iafasDevengadoDao(MySQLSessionFactory.getSqlSessionFactory());
 	
 	public iafasDevengadoController() {
-		
+		HttpSession session=null; 
+		session = (HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		IafasUsuariosController usuarioSession = new IafasUsuariosController();
+		usuarioSession=(IafasUsuariosController)session.getAttribute("iafasUsuariosController");
+		usuario = usuarioSession.getIdUsuario();
 		listarCompMensuales();
 	}
 	
@@ -108,6 +125,12 @@ public class iafasDevengadoController implements Serializable{
 	
 	public String retornar() {
 		listarCompMensuales();
+		LimpiarCampos();
+		return "mainDevengado.xhtml";
+	}
+	
+	public String retornarDev() {
+	
 		return "mainDevengado.xhtml";
 	}
 	
@@ -142,6 +165,10 @@ public class iafasDevengadoController implements Serializable{
 				setVcodProcesoSel(compromiso.get(0).getVcodProcesoSel());
 				setNtipCam(compromiso.get(0).getNtipCam());
 				setVcodMoneda(compromiso.get(0).getVcodMoneda());
+				setGlosaMensual(compromiso.get(0).getGlosaMensual());
+				setDesMoneda(compromiso.get(0).getDesMoneda());
+				setDesDocumento(compromiso.get(0).getDesDocumento());
+				setGlosa(compromiso.get(0).getGlosaMensual());
 				listaComp.add(l);
 			}
 		}
@@ -175,6 +202,10 @@ public class iafasDevengadoController implements Serializable{
 	
 	public String registroDevengado() {
 		int reg =0;
+		if(validarCampos()==true) {
+			showMessages(2);
+		}
+		else {
 		try {
 			IafasDevengado men = new IafasDevengado();
 			IafasDevengadoDet det = new IafasDevengadoDet();
@@ -196,10 +227,13 @@ public class iafasDevengadoController implements Serializable{
 			men.setVnroDocumentoCom(nroDocCom);
 			men.setVserieCom(nroSerieCom);
 			men.setDfechaDevengado(fecDocCom);
-			men.setVusuarioIng("44330586");
+			men.setVusuarioIng(usuario);
 			men.setVexpediente(vexpediente);
+			men.setCtipoActa(ctipoActa);
+			men.setVnroActa(vnroActa);
+			men.setDfechaActa(dfechaActa);
 			logger.info("Datos a Registrar: " +men.toString());
-			devengadoDao.registroDevengado(men);
+			reg= devengadoDao.registroDevengado(men);
 			for(int j =0;j <listaDet.size(); j++) {
 					det.setVano(periodo);
 					det.setVcodSecFunc(listaDet.get(j).getSecFun());
@@ -208,7 +242,7 @@ public class iafasDevengadoController implements Serializable{
 					System.out.println(listaDet.get(j).getIdClasificador());
 					det.setNimpMonSol(listaDet.get(j).getMontoIngresado());
 					System.out.println(listaDet.get(j).getMontoIngresado());
-					det.setVusuarioIng("44330586");
+					det.setVusuarioIng(usuario);
 				if(getListaDet().get(j).getMontoIngresado().doubleValue()>0) {
 					if(getListaDet().get(j).getImpSol().doubleValue() < getListaDet().get(j).getMontoIngresado().doubleValue()) {
 						 FacesContext.getCurrentInstance().addMessage(null, new 
@@ -217,20 +251,28 @@ public class iafasDevengadoController implements Serializable{
 						 return "mainDevengadoRet";
 					}
 					else {
-						devengadoDao.registroDevengadoDet(det);
-					}
+					reg = 	devengadoDao.registroDevengadoDet(det);
+					typeMessages=1;
+					
+					} 
 				}	
 					
 				}
 			
-			retornar();
-			
+			LimpiarCampos();
+			listarCompMensuales();
+			// retornar();
+			// showMessages(1);
 		}
 		catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("Error: "+e.getMessage());
+			typeMessages=0;
+			showMessages(0);
 		}
-		return "mainDevengado";
+	}
+		
+		return "mainDevengado.xhtml";
 	}
 	
 	public void verDevengado(){
@@ -248,7 +290,10 @@ public class iafasDevengadoController implements Serializable{
 				setSerieDoc(l.getVserieCom());
 				setMontoDevengado(l.getNimpMonSol());
 				setRucRet(l.getCproveedorRuc());
+				
 			}
+		buscarRetencion();
+		LimpiarCamposRet();
 	}
 	
 	public String registrarRetencion() {
@@ -262,19 +307,29 @@ public class iafasDevengadoController implements Serializable{
 			retencion.setVsecuencia(psecuencia);
 			retencion.setVcodImp(vcodImp);
 			retencion.setNporImp(nporImp);
-			retencion.setVusuarioIng("44330586");
+			retencion.setVusuarioIng(usuario);
 			System.out.println("paramtros"+retencion.toString());
 			// donde esta el insert
 			devengadoDao.registroRetencionComprobante(retencion);
 			logger.info("Se registro la retencion del comprobante :"+serieDoc+"-"+tipoDoc);
 			buscarRetencion();
+			
+			
 		}
+	
+		
 		catch(Exception e) {
 			logger.error(e.getStackTrace());
 		}
 		
-		
+		LimpiarCamposRet();
 		return null;
+	}
+	
+	public void LimpiarCamposRet() {
+		
+		vcodImp =null;
+		nporImp = null;
 	}
 	
 	public List<IafasCompromisoDet> buscarRetencion(){
@@ -292,6 +347,7 @@ public class iafasDevengadoController implements Serializable{
 			setVcodImp(l.getVcodImp());
 			setNporImp(l.getNporImp());
 			setImporteRet(l.getImporteRetencion());
+		    setDescImpu(l.getDescImpu());
 			
 			
 		}
@@ -307,12 +363,23 @@ public class iafasDevengadoController implements Serializable{
 		return d;
 	}
 	
-	private void limpiarCampos() {
-		setGlosa("");
-		setNroDocCom("");
-		setTipDocCom("");
-		setFecDocCom(null);
-		setNroSerieCom("");
+	private void LimpiarCampos() {
+		glosa="";
+		tipDocCom="";
+		nroSerieCom="";
+		nroDocCom="";
+		fecDocCom= null;
+		ctipoActa=null;
+		vnroActa="";
+		dfechaActa=null;
+		vexpediente="";
+		desDocumento="";
+		listaComp.clear();
+		listaDet.clear();
+		
+		
+		
+		
 	}
 	
     private ExternalContext extContext() {
@@ -325,5 +392,63 @@ public class iafasDevengadoController implements Serializable{
 		String page = "mainDevengadoRet.xhtml";
 		return page;
 	}
+	
+	private String showMessages(int opcion) {
+		messages = "";
+		switch (opcion) {
+		case 0 : typeMessages=0;messages = "";PrimeFaces.current().executeScript("verMensajes()");break;
+		case 1 : typeMessages=1;messages = "";PrimeFaces.current().executeScript("verMensajes()");break;
+		case 2 : typeMessages=2;messages = "";PrimeFaces.current().executeScript("verMensajes()");break;
+		case 3 : typeMessages=3;messages = "";
+							PrimeFaces.current().executeScript("validaCertificado()");break;
+		default : messages="";break;
+		}
+		return messages;
+	}
+	
+	public boolean validarCampos() {
+		if(nroDocCom.equals(Constantes.VACIO)) {showMessages(2);return true;}
+		if(nroSerieCom.equals(Constantes.VACIO)) {showMessages(2);return true;}
+		if(tipDocCom.equals(Constantes.VACIO)) {showMessages(2);return true;}
+		if(fecDocCom==null) {showMessages(2);return true;}
+		else {
+			typeMessages=1;
+			showMessages(1);
+			return false;
+			
+		}		 
+	}
+	
+	/*
+	 public String obtener() {
+	  String page="";
+	  	 p_expediente = (String) extContext().getRequestParameterMap().get("p_expediente");
+	     p_secuenciaEnv = (String) extContext().getRequestParameterMap().get("p_secuenciaEnv");
+	  return page;
+			}
+			
+			public String enviarCompromisoMensual() {
+				String retorno = "mainDevengado.xhtml";
+				int envio=0;
+				try {
+			
+					IafasDevengado ca = new IafasDevengado();
+					ca.setVano(periodo);
+					ca.setSecuencia(psecuencia);
+					ca.setCorrelativo(pcorrelativo);
+					ca.setVexpediente(pexpediente);
+					ca.setVusuarioIng(usuario);			
+					envio = devengadoDao.enviarCompromisoMensual(ca);
+					logger.info("Se Valido el Compromiso Mensual {} "+pexpediente);
+				}
+				catch (Exception e) {
+					logger.error("[ERROR] enviarCompromisoMensual :", e);
+				}
+			    retornar();
+			    
+				return retorno;
+			}
+
+	 */
 	
 }

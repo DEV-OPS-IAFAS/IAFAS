@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensual;
 import ep.mil.pe.iafas.administrativo.devengado.model.IafasComprobanteRetencion;
 import ep.mil.pe.iafas.administrativo.devengado.model.IafasCompromiso;
 import ep.mil.pe.iafas.administrativo.devengado.model.IafasCompromisoDet;
@@ -173,4 +174,6 @@ public class iafasDevengadoDao {
 	        }
 	        return lista;
 		}
+		
+	
 }

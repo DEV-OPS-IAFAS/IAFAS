@@ -117,4 +117,17 @@ public class IafasCombosDao {
          }
          return lista;
      }
+     
+     @SuppressWarnings("unchecked")
+   	public List<IafasCombos> getTipoDocumento() {
+           List<IafasCombos> lista = null;
+           SqlSession session = sqlSessionFactory.openSession();
+           try{
+                 lista = session.selectList("Combos.tipoDocumento");
+           }
+           finally{
+                session.close();
+           }
+           return lista;
+       }
 }

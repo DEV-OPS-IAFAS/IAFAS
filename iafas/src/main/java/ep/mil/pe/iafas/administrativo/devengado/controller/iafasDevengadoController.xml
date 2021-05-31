@@ -28,7 +28,10 @@
 		#{vserieCom mode=IN, jdbcType=VARCHAR},
 		#{dfechaDevengado mode=IN, jdbcType=DATE},
 		#{vusuarioIng mode=IN,jdbcType=VARCHAR},
-		#{vexpediente mode=IN, jdbcType=VARCHAR})}
+		#{vexpediente mode=IN, jdbcType=VARCHAR},
+		#{ctipoActa mode=IN, jdbcType=VARCHAR},
+		#{vnroActa mode=IN, jdbcType=VARCHAR},
+		#{dfechaActa mode=IN, jdbcType=DATE})}
 
 	</select>
 
@@ -68,7 +71,8 @@
 		 vtip_documento_com vtipDocumentoCom,
 		 vcod_imp vcodImp,
 		 por_imp nporImp,
-		 nimp_ret_sol importeRetencion
+		 nimp_ret_sol importeRetencion,
+		 CASE vcod_imp WHEN '01' THEN 'Detraccion' WHEN '02' THEN 'Retencion' END descImpu
 		 FROM iafas_ret_comprobante WHERE 
 		 vtip_documento_com=#{vtipDocumentoCom} 
 		 AND vserie_com=#{vserieCom} AND vnro_com=#{vnroCom} AND vruc=#{ruc} 

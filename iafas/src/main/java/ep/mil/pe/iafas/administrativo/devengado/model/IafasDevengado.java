@@ -38,6 +38,11 @@ public class IafasDevengado {
 	private String siaf;
 	private String Glosa;
 	
+	private String ctipoActa;
+	private String vnroActa;
+	private Date  dfechaActa;
+	
+	
 	
 	
 	

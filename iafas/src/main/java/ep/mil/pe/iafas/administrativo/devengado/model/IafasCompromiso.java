@@ -34,6 +34,10 @@ public class IafasCompromiso {
 	private String razonSocial;
 	private BigDecimal nimpMonSol;
 	
+	private String glosaMensual;
+	private String desMoneda;
+	private String desDocumento;
+	
 	
 
 }

@@ -67,4 +67,13 @@ parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
     FROM iafas_bancos WHERE cestado_codigo = 'AC'
 </select>
 
+<select id="tipoDocumento" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+		 SELECT NTIPO_DOCUMENTO_ADMINISTRATIVO_CODIGO codigo,
+		 VTIPO_DOCUMENTO_ADMINISTRATIVO_ABREVIATURA descripcion
+		 FROM IAFAS_TIPO_DOCUMENTOS_ADMINISTRATIVO 
+		WHERE CTIPO_DOCUMENTO_ADMINISTRATIVO_FASE='D' AND CESTADO_CODIGO='AC'
+		 order by NTIPO_DOCUMENTO_ADMINISTRATIVO_CODIGO asc
+</select>
+
 </mapper>

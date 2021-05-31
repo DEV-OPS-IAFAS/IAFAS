@@ -11,7 +11,22 @@
 </h:head>
 <body class="formulario">
 <script>
-            function limpiarTexto() {
+           
+               function verMensajes(){
+           var tipo = '#{mbDevengado.typeMessages}';
+           if(tipo==0){
+             swal("ERROR", 'Ocurrio Un Error al Registrar',"error");
+           }else
+           if(tipo==1) {
+           	 swal("Aviso", 'Se Registró Con Exito',"success").then(function() {
+    	     window.location = "mainDevengadoRet.xhtml"; });
+           }    
+		  else{
+		     swal("ALERTA", 'No se permite Campos Vacios al Registrar',"info");
+		  }
+        } 
+        
+         function limpiarTexto() {
                 document.getElementById('frmDevengado:txt_nroSiaf').value = "";
             }
             
@@ -22,7 +37,8 @@
                 for (i = tam; i > tamTxt; i--)
                     txt = '0' + txt;
                 document.getElementById(obj).value = txt;
-            }  
+            } 
+            
 </script>
 	<h:form id="frmDevengado">
 	<p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
@@ -39,7 +55,7 @@
                      title="Click aqui para buscar datos del Devengado"/>
 				<p:commandButton  value="Grabar"  action="#{mbDevengado.registroDevengado()}"
                     icon="pi pi-save" style="height:30px;" ajax="false"/>
-                    <p:commandButton value="Cancelar" action="#{mbDevengado.retornar()}"
+                    <p:commandButton value="Cancelar" action="#{mbDevengado.retornarDev()}"
                     icon="pi pi-arrow-left" style="height:30px;"/>
 			</p:panelGrid>
 			<p:outputLabel
@@ -50,55 +66,50 @@
 			
 						</h:panelGrid>
 					    <h:panelGrid columns="4" style="width: 966px; ">
-						<h:outputLabel value="Tip.Documento:" />
-						<h:outputLabel value="#{mbDevengado.vtipoDocumento}" styleClass="outLabel" />
-						<h:outputLabel value="Nro.Documento:" />
+						<p:outputLabel value="Tip.Documento:" />
+						<h:outputLabel value="#{mbDevengado.vtipoDocumento} - #{mbDevengado.desDocumento}" styleClass="outLabel" />
+						<p:outputLabel value="Nro.Documento:" />
 						<h:outputLabel value="#{mbDevengado.nroDocumento}" styleClass="outLabel" />
-						<h:outputLabel value="Fecha Comp.Mensual:" />
+						<p:outputLabel value="Fecha Comp.Mensual:" />
                         <h:inputText id="txt_fechaCert" size="10" styleClass="outLabel" value="#{mbDevengado.fechaCom}"
                         readonly="true">
                                 <f:converter converterId="javax.faces.DateTime" />
                                 <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
                         </h:inputText>
-						<h:outputLabel value="Modalidad Compra:" ></h:outputLabel>
-						<h:outputText value="OM" styleClass="outLabel"></h:outputText>
-						<h:outputLabel value="Tipo Proc. Sel.:" ></h:outputLabel>
+						<p:outputLabel value="Tipo Proc. Sel.:" ></p:outputLabel>
 						 <p:selectOneMenu id="procesoSel"  value="#{mbDevengado.vcodProcesoSel}" style="width: 240px"  disabled="true" >
                          <f:selectItems var="documentos" value="#{mbCombos.procesoSel}" />
                         </p:selectOneMenu>
-						<h:outputLabel value="Ruc.:" ></h:outputLabel>
-						<h:outputText value="#{mbDevengado.ruc} - #{mbDevengado.desRuc} " styleClass="outLabel"></h:outputText>    
-						 <p:outputLabel value="Moneda:"/>
-                        <p:selectOneMenu id="tipMon"  value="#{mbDevengado.vcodMoneda}">
-                 			<f:selectItem itemValue="1" itemLabel="S/."></f:selectItem>
-			                <f:selectItem itemValue="2" itemLabel="USD"></f:selectItem>
-			                <f:selectItem itemValue="3" itemLabel="EURO"></f:selectItem>
-			                <f:selectItem itemValue="57" itemLabel="Y"></f:selectItem>
-                        </p:selectOneMenu>
+						<p:outputLabel value="Proveedor.:" ></p:outputLabel>
+						<h:outputText value="#{mbDevengado.ruc} - #{mbDevengado.desRuc} " styleClass="outLabel"></h:outputText>   						  				
+                        <p:outputLabel value="Moneda:"/>
+                        <h:outputText  value="#{mbDevengado.desMoneda} " styleClass="outLabel"></h:outputText>                    
                         <p:outputLabel value="T.Cambio:"/>
-                        <h:inputText id="tipcam" style="width: 50px; text-align: right;" 
-                        styleClass="input" value="#{mbDevengado.ntipCam}" readonly="true"/>
+                        <h:outputText  value=" #{mbDevengado.ntipCam}" styleClass="outLabel"></h:outputText>      
 						</h:panelGrid> 
-			
+						<br/>
+						  <h:panelGrid columns="2" style="width: 966px; ">
+						<h:outputLabel value="Glosa Mensual.:" ></h:outputLabel>
+						<h:inputTextarea value="#{mbDevengado.glosaMensual} "  readonly="true"
+						rows="3" style="width: 700px;" styleClass="outLabel"></h:inputTextarea>   
+			             </h:panelGrid> 
 			 </p:fieldset>
 					    
 					  <p:fieldset legend="Datos del Devengado" >
 					    <h:panelGrid columns="8" border="0">
 					    <h:outputText value="Tipo Doc:"  ></h:outputText>
-							<h:selectOneMenu id="SelOneMnu_af" value="#{mbDevengado.tipDocCom}" style="width: 300px;"
-							 styleClass="select">
-						    <f:selectItem itemValue="0000" itemLabel="--Seleccione--" />
-						       <f:selectItem itemValue="001" itemLabel="Factura" />
-						      <f:selectItem itemValue="002" itemLabel="Boleta de Venta" />
-						      
-						</h:selectOneMenu>
+					    <p:selectOneMenu id="doc"  value="#{mbDevengado.tipDocCom}"
+                        style="width:200px;" >
+                         <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
+                         <f:selectItems var="documentos" value="#{mbCombos.documento}"/>
+                        </p:selectOneMenu> 
 							<h:outputText value="N° Serie:"></h:outputText>
 							<h:inputText  id="txt_serie" value="#{mbDevengado.nroSerieCom}" maxlength="4" 
-							 styleClass="input"
+							 styleClass="input" onblur="completaCeros(this.name, 4);"
 							></h:inputText>
 							<h:outputText value="N° Comprobante:"></h:outputText>
 							<h:inputText id="txt_numDoc" value="#{mbDevengado.nroDocCom}" styleClass="input" size="11" 
-							 maxlength="11" >
+							 maxlength="11" onblur="completaCeros(this.name, 11);" >
 							 </h:inputText>
 							   
 							<h:outputText value="Fecha:"></h:outputText>
@@ -117,8 +128,34 @@
 					       	<h:inputTextarea styleClass="input" id="txt_Area_notas1"  
 					       	 value="#{mbDevengado.glosa}" style="width: 800px;" >
 					    	</h:inputTextarea>
+					    	
 					    </h:panelGrid>
+					     </p:fieldset>
+					     <p:fieldset legend="Datos del Acta" >
+					      <h:panelGrid columns="6">
+					      <h:outputLabel value="Tipo Acta "/>
+                        <p:selectOneMenu id="acta" value="#{mbDevengado.ctipoActa}" style="width: 100px;"  >
+                            <f:selectItem itemValue="00" itemLabel="--Seleccione--"/>
+                            <f:selectItem itemValue="01" itemLabel="Recepcion de Bienes"/>
+                            <f:selectItem itemValue="02" itemLabel="Conformidad de Servicio"/>
+                        </p:selectOneMenu>    
+                        <h:outputText value="N° Acta:"></h:outputText>
+							<h:inputText  id="txt_acta" value="#{mbDevengado.vnroActa}" maxlength="6" 
+							 styleClass="input" onblur="completaCeros(this.name, 6);"
+							></h:inputText>
+							<h:outputText value="Fecha Acta:"></h:outputText>
+							<h:panelGrid columns="2" border="0">
+							<p:inputMask id="txt_fecActa" mask="99/99/9999" value="#{mbDevengado.dfechaActa}"
+							styleClass="input"
+							style="width:100px; font-weight: bold; color: Black">
+							<f:converter converterId="javax.faces.DateTime" />
+							<f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
+							</p:inputMask>
+							
+							</h:panelGrid>
+					       </h:panelGrid>
  </p:fieldset>
+ 
  
   <h:panelGrid>
                     <p:dataTable id="dTableCla"  value="#{mbDevengado.listaDet}"  var="cad" editable="true"
@@ -132,12 +169,12 @@
                         <p:column headerText="Descripción" style="width: 350px;">
                             <p:outputLabel  value="#{cad.nomCla}" />
                         </p:column>
-                        <p:column headerText="Monto" style="width: 35px;">
+                        <p:column headerText="Monto Afectacion Mensual" style="width: 35px;">
                             <p:outputLabel value="#{cad.impSol}"  style="text-align:right">
                                 <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>  
                             </p:outputLabel>
                         </p:column>
-                        <p:column headerText="Monto Ingresado" style="width: 50px; text-align: right;" >
+                        <p:column headerText="Monto Devengado" style="width: 50px; text-align: right;" >
                           <p:cellEditor >
                                 <f:facet name="output">
                                     <p:outputLabel  value="#{cad.montoIngresado}" style="text-align: right;">

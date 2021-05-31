@@ -18,6 +18,7 @@ public class IafasComprobanteRetencion {
 	private BigDecimal importeRetencion;
 	private String vusuarioIng;
 	private String ruc;
+	private String descImpu;
 	
 	/*Metodo agregado por Elvis Severino*/
 	private String vnroCompag;
