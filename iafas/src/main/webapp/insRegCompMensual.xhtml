@@ -49,16 +49,24 @@
               // document.getElementById("frmCompromisoMensual:inptxtRuc").disabled=true;
                }
                else{
-               document.getElementById("frmCompromisoMensual:panelOC").style.visibility = "hidden";
+                 document.getElementById("frmCompromisoMensual:panelOC").style.visibility = "hidden";
                }
                
            }
+           function deshabilitar(){
+              document.getElementById('frmCompromisoMensual:cbo_documento').disabled=true;
+              document.getElementById('frmCompromisoMensual:inpNroDoc').disabled=true;
+           }
+           
+           function habilitar(){
+             document.getElementById("frmCompromisoMensual:panelOC").style.visibility = "visible";
+           }
         </script>
-        <h:form id="frmCompromisoMensual" style="border-radius: 5px 5px 5px 5px;border: 1px; width:1020px;">
+        <h:form id="frmCompromisoMensual" style="border-radius: 5px 5px 5px 5px;border: 1px; width:100%;">
         <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
             <p:panel >
                 <p:panelGrid columns="2" styleClass="panel">
-                    <p:graphicImage url="img/Bd.png" />
+                    <i class="pi pi-calendar"></i>
                     <h:outputLabel value="Registro de Compromiso Mensual" styleClass="etiqueta"></h:outputLabel>
                 </p:panelGrid> 
                 <p:panelGrid columns="5" >
@@ -106,10 +114,21 @@
                         <h:inputText id="tipcam" style="width: 50px; text-align: right;" 
                         styleClass="input" value="#{mbCompMensual.ntipCam}" readonly="true"/>
                  </h:panelGrid>
+                 <h:panelGrid columns="4" style="width:100%;">
+                    <h:outputLabel value="Documento:"></h:outputLabel>
+                    <h:panelGrid columns="3">
+                      <h:outputLabel value="#{mbCompMensual.tipDocAnual}" styleClass="outLabel"></h:outputLabel>
+                      <h:outputLabel>-</h:outputLabel>
+                      <h:outputLabel value="#{mbCompMensual.nroDocAnual}" styleClass="outLabel"></h:outputLabel>
+                    </h:panelGrid>
+                    <h:outputLabel value="Concepto:"></h:outputLabel>
+                    <h:inputTextarea id="txtConceptoCA" value="#{mbCompMensual.conceptoAnual}" rows="3" styleClass="input"
+                    style="width:500px;" readonly="true"></h:inputTextarea>
+                 </h:panelGrid>
                 </p:fieldset>
                 <br/>
                 <p:fieldset legend="Datos Compromiso Mensual">
-                   <h:panelGrid columns="7" style="width: 833px; ">
+                   <h:panelGrid columns="9" style="width:100%" >
                    <h:outputLabel value="Documento:"/>
                    <h:selectOneMenu id="cbo_documento" value="#{mbCompMensual.tipDocumentoMen}"
                    onchange="activateBoton();" styleClass="select">
@@ -126,18 +145,23 @@
                             action="#{mbCompMensual.validarOCS}" 
                             style="height:25px;"
                             onblur="completaCeros(this.name, 10);" ajax="true"
-                            title="Búsqueda Ordenes Compra o Servicio, validará el RUC y RazonSocial" update="panel_proveedor"/>
+                            title="Búsqueda Ordenes Compra o Servicio, validará el RUC y RazonSocial" update="inpTxtMontoOC"/>
                     </h:panelGrid>
                    <h:outputLabel value="Fecha:"/>
                    <p:inputMask id="inptFecDoc" styleClass="input" mask="99/99/9999" value="#{mbCompMensual.fechaMensual}">
                                            <f:converter converterId="javax.faces.DateTime" />
                         <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
                    </p:inputMask>
-                   </h:panelGrid>
+                     <h:outputText value="Monto (OC/OS):"></h:outputText>
+                    <h:inputText id="inpTxtMontoOC" styleClass="input" value="#{mbCompMensual.montoOrden}" size="11" readonly="true"
+                    style="text-align:right">
+                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                    </h:inputText>
+                   </h:panelGrid> 
                    <h:panelGrid columns="2" style="width:100%">
-                    <p:outputLabel value="Glosa:"/>
+                    <p:outputLabel value="Concepto:"/>
                     <h:inputTextarea id="inpTxtGlosa" value="#{mbCompMensual.glosa}" cols="1" rows="2"
-                    style="width:850px;" styleClass="input"></h:inputTextarea>
+                    style="width:850px;" styleClass="input" ></h:inputTextarea>
                    </h:panelGrid>
                 </p:fieldset>
                 <br/>
@@ -167,16 +191,19 @@
                  -->
                 <p:dataTable id="dataAnualDet" var="det" value="#{mbCompMensual.regAnualDet}"
                 editable="true" editMode="cell">
-                   <p:column headerText="Clasificador" style="width:60px;">
-                      <h:outputText value="#{det.cadena}"/>
+                  <p:column headerText="Tarea" style="width:280px;">
+                      <h:outputText value="#{det.vcodSecFunc}:#{det.descTarea}"/>
                    </p:column>
-                   <p:column headerText="Descricion" style="width:200px;">
-                      <h:outputText value="#{det.nomCla}"/>
+                   <p:column headerText="Clasificador" style="width:260px;">
+                      <h:outputText value="#{det.cadena}:#{det.nomCla}"/>
                    </p:column>
-                   <p:column headerText="Saldo" style="width:40px;text-align:right;">
-                      <h:outputText value="#{det.nimpMontoSol}"/>
+        
+                   <p:column headerText="Disponible" style="width:40px;text-align:right;">
+                      <h:outputText value="#{det.nimpMontoSol}">
+                      <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                      </h:outputText>
                    </p:column>
-					<p:column headerText="Monto Ingresado" style="width: 50px; text-align: right;" >
+					<p:column headerText="Importe" style="width: 50px; text-align: right;" >
                           <p:cellEditor >
                                 <f:facet name="output">
                                     <p:outputLabel value="#{det.montoIngresado}" style="text-align: right;">

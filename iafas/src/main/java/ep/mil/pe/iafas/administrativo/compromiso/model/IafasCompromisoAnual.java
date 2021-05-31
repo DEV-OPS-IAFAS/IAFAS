@@ -33,5 +33,9 @@ public class IafasCompromisoAnual {
     private String tipoCertificacion;
     private String razonSocial;
     private String desPto;
+    
+    private BigDecimal totCert;
+    private BigDecimal totCA;
+    private BigDecimal difCA;
 
 }

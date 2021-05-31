@@ -24,7 +24,11 @@
 		END vcodMoneda,
 		ncertificado_tipo_cambio ntipCam, ncertificado_importe nimpMonSol,
 		PK_AUX_TIPO_PROCESO_SELECCION(npac_procesos_codigo) vcodProcesoSel,
-		CESTADO_CODIGO vcodEstado
+		CESTADO_CODIGO vcodEstado,
+		PK_TOTAL_CERTIFICADO(cperiodo_codigo,ncertificado_codigo) totCert,
+		PK_TOTAL_COMPANUAL(cperiodo_codigo,ncertificado_codigo) totCA,
+		(PK_TOTAL_CERTIFICADO(cperiodo_codigo,ncertificado_codigo) - 
+		PK_TOTAL_COMPANUAL(cperiodo_codigo,ncertificado_codigo)) difCA
 		FROM iafas_certificado_presupuestal
 		WHERE cperiodo_codigo =#{vanoDocumento} AND ncertificado_codigo = #{vnroCertificado}
 		AND CESTADO_CODIGO='AP' 
@@ -43,7 +47,10 @@
 		END vcodMoneda,
 		ntip_cam ntipCam, NIMP_MON_SOL nimpMonSol,
 		vcod_proceso_sel vcodProcesoSel,
-		case vcod_estado WHEN '1' then 'REG' WHEN '2' THEN 'AP' END vcodEstado
+		case vcod_estado WHEN '1' then 'REG' WHEN '2' THEN 'AP' END vcodEstado,
+	    0 totCert,
+		0 totCA,
+		0 difCA
 		FROM iafas_compromiso_anual
 		WHERE vano_documento = #{vanoDocumento} AND vnro_certificado = #{vnroCertificado} and
 		vtipo_movimiento = 'N'
@@ -89,7 +96,8 @@
 		#{vcodMoneda, mode=IN,jdbcType=VARCHAR},
 		#{nimpMonSol, mode=IN,jdbcType=DECIMAL},
 		#{vusuarioIng, mode=IN,jdbcType=VARCHAR},
-		#{vglosa, mode=IN,jdbcType=VARCHAR})}
+		#{vglosa, mode=IN,jdbcType=VARCHAR},
+		#{razonSocial, mode=IN, jdbcType=VARCHAR})}
 		
 	</select>
 	
@@ -173,6 +181,7 @@
 		razonSocial razonSocial,
 		vnroCertificado vnroCertificado,
 		vnroDocumentoPagoA vnroDocumentoPagoA,
+		vtipoDocumentoA vtipoDocumentoA,
 		vglosa vglosa,
 		dfechaDocumento dfechaDocumento,
 		vcodMoneda vcodMoneda,
@@ -213,7 +222,7 @@
 	<select id="testOC" resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
 	parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual">
 	SELECT tipodocumento vtipoDocumentoA, numeroorden vnroDocumentoPagoA, 
-	documento cproveedorRuc, busqueda razonSocial
+	documento cproveedorRuc, busqueda razonSocial, montoTotal nimpMonSol
 	FROM iafas_logistica_temp WHERE YEAR(fechapreparacion) = #{vanoDocumento} AND 
 	numeroOrden =#{vnroDocumentoPagoA} AND
 	estado='CO'

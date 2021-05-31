@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import ep.mil.pe.iafas.administrativo.maestros.combos.controller.IafasCombosController;
 import ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos;
 
 public class IafasCombosDao {
@@ -73,6 +72,45 @@ public class IafasCombosDao {
          SqlSession session = sqlSessionFactory.openSession();
          try{
                lista = session.selectList("Combos.tipoFamilia");
+         }
+         finally{
+              session.close();
+         }
+         return lista;
+     }
+     
+     @SuppressWarnings("unchecked")
+ 	public List<IafasCombos> getMonedas() {
+         List<IafasCombos> lista = null;
+         SqlSession session = sqlSessionFactory.openSession();
+         try{
+               lista = session.selectList("Combos.monedas");
+         }
+         finally{
+              session.close();
+         }
+         return lista;
+     }
+     
+     @SuppressWarnings("unchecked")
+ 	public List<IafasCombos> getProveedores() {
+         List<IafasCombos> lista = null;
+         SqlSession session = sqlSessionFactory.openSession();
+         try{
+               lista = session.selectList("Combos.proveedores");
+         }
+         finally{
+              session.close();
+         }
+         return lista;
+     }
+     
+     @SuppressWarnings("unchecked")
+ 	public List<IafasCombos> getBancos() {
+         List<IafasCombos> lista = null;
+         SqlSession session = sqlSessionFactory.openSession();
+         try{
+               lista = session.selectList("Combos.bancos");
          }
          finally{
               session.close();

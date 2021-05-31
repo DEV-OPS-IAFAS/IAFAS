@@ -30,6 +30,9 @@ public class IafasCombosController implements Serializable {
 	public List<SelectItem> grado;
 	public List<SelectItem> area;
 	public List<SelectItem> familia;
+	public List<SelectItem> monedas;
+	public List<SelectItem> proveedores;
+	public List<SelectItem> bancos;
 	
     public List<SelectItem> getProcesoSel() {
         procesoSel = new ArrayList<>();
@@ -84,4 +87,37 @@ public class IafasCombosController implements Serializable {
        
         return familia;
     }
+    
+    public List<SelectItem> getMonedas() {
+    	monedas = new ArrayList<>();
+        IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());    
+             List<IafasCombos> lista = cb.getMonedas();
+             for(IafasCombos d : lista){
+            	 monedas.add(new SelectItem(d.getCodigo(), d.getDescripcion()));
+             }
+       
+        return monedas;
+    }
+    
+    public List<SelectItem> getProveedores() {
+    	proveedores = new ArrayList<>();
+        IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());    
+             List<IafasCombos> lista = cb.getProveedores();
+             for(IafasCombos d : lista){
+            	 proveedores.add(new SelectItem(d.getCodigo(), d.getCodigo()+":"+d.getDescripcion()));
+             }
+        
+        return proveedores;
+    } 
+    
+    public List<SelectItem> getBancos() {
+    	bancos = new ArrayList<>();
+        IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());    
+             List<IafasCombos> lista = cb.getBancos();
+             for(IafasCombos d : lista){
+            	 bancos.add(new SelectItem(d.getCodigo(), d.getCodigo()+":"+d.getDescripcion()));
+             }
+       
+        return bancos;
+    } 
 }

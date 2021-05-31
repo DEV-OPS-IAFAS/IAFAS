@@ -51,12 +51,14 @@
 		vnroDocumentoPagoA vnroDocumentoPagoA,
 		vfuenteFinanciamiento vfuenteFinanciamiento,
 		proveedorRuc proveedorRuc,
+		razonSocial razonSocial,
 		ntipCam ntipCam, 
 		vcodTipoFinanciamiento vcodTipoFinanciamiento, 
 		vcodProcesoSel vcodProcesoSel,
 		vcodMoneda vcodMoneda,
 		vcodSecFunc vcodSecFunc, 
 		vidClasificador vidClasificador,
+		vglosa vglosa,
 		cadena cadena,
 		descTarea descTarea,
 		nomCla nomCla,
@@ -66,7 +68,7 @@
 		FROM V_movimientoCertificadoAnual
 		WHERE vanoDocumento = #{vanoDocumento} AND
 		vnroCertificado = #{vnroCertificado} AND
-		vsecuenciaA=#{vsecuenciaA} and vtipMovimiento='N'
+		vsecuenciaA=#{vsecuenciaA} 
 	</select>
 		
 	<select id="insertMovCA" parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompAnual"

@@ -30,6 +30,9 @@ public class ViewIafasCompAnual {
 	private String vtipMovimiento;
 	private String vusuarioIng;
 	private String vglosa;
+	private String descTarea;
+	
+	private String razonSocial;
 
 	public ViewIafasCompAnual() {
 		// TODO Auto-generated constructor stub

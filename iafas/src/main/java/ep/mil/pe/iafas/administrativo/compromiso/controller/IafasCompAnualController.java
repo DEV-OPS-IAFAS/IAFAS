@@ -68,6 +68,16 @@ public class IafasCompAnualController implements Serializable {
     private String tipOrden;
     private String conceptoDetalle;
     
+    // Adicionado 30/05
+    private String tipoFase;
+    private BigDecimal montoCompromiso;
+    private String tipDoc;
+    private BigDecimal montoOrden;
+    
+    private BigDecimal totalCertificado;
+    private BigDecimal totalCompAnual;
+    private BigDecimal difTotal;
+    
     Date hoy = new Date();
     
 	private static final long serialVersionUID = 1L;
@@ -100,7 +110,9 @@ public class IafasCompAnualController implements Serializable {
 		for(IafasCompromisoAnual registros: ordenes) {
 				ruc = ordenes.get(0).getCproveedorRuc();
 				razonSocial = ordenes.get(0).getRazonSocial();
+				montoOrden = ordenes.get(0).getNimpMonSol();
 			}
+		logger.info("Valores Obtenidos {} "+ruc+" "+razonSocial+" "+montoOrden);
 		return "";
 	}
 	
@@ -126,6 +138,7 @@ public class IafasCompAnualController implements Serializable {
 				for(OrdenesCS registros: ordenes) {
 					ruc = ordenes.get(0).getRuc();
 					razonSocial = ordenes.get(0).getProveedor();
+					montoOrden = ordenes.get(0).getMontoTotal();
 				}
 				logger.info("Valores Obtenidos {} "+ruc+" "+razonSocial);
 			}
@@ -176,9 +189,13 @@ public class IafasCompAnualController implements Serializable {
 				if(compromiso.get(0).getNtipCam()==0) {
 					setNtipCam(1.0);
 				}
-				else {setNtipCam(compromiso.get(0).getNtipCam());}					
+				else {setNtipCam(compromiso.get(0).getNtipCam());}
+				setTotalCertificado(compromiso.get(0).getTotCert());
+				setTotalCompAnual(compromiso.get(0).getTotCA());
+				setDifTotal(compromiso.get(0).getDifCA());
 			}
 		}
+
 		catch(Exception e) {
 			logger.error("[ERROR] lista Compromiso Anual :"+e);
 		}
@@ -196,13 +213,16 @@ public class IafasCompAnualController implements Serializable {
 			 ca.setVcorrelativoA(pcorrelativo);
 			 List<IafasCompromisoAnual> registro = compAnualDao.listaDetalleCompromisoAnual(ca);
 			 for(IafasCompromisoAnual p: registro) {
-				 setNroDoc(p.getVnroDocumentoPagoA());
+				 setNroDoc(p.getVnroDocumentoPagoA().substring(4));
 				 setSecuencia(p.getVsecuenciaA());
 				 setFecDocumento(p.getDfechaDocumento());
 				 setConceptoDetalle(p.getVglosa());
 				 setRuc(p.getCproveedorRuc());
 				 setRazonSocial(p.getRazonSocial());
 				 setDesPresupuesto(p.getDesPto());
+				 setTipoFase(p.getTipoCertificacion());
+				 setMontoCompromiso(p.getNimpMonSol());
+				 setTipDoc(p.getVtipoDocumentoA());
 			 }
 			 
 		}
@@ -259,8 +279,51 @@ public class IafasCompAnualController implements Serializable {
 		}		 
 	}
 	
+	public boolean validaMontoOC() {
+	
+		boolean flag=false;
+		if(tipDocumentoA.equals(Constantes.ID_ORDEN_COMPRA) ||
+		   tipDocumentoA.equals(Constantes.ID_ORDEN_SERVICIO)) {
+			 int contador=0;
+			 for(int oc=0; oc<listaCertDet.size();oc++) {
+				 logger.info("Monto Ingresado "+listaCertDet.get(oc).getMontoIngresado().doubleValue());
+		          if(listaCertDet.get(oc).getMontoIngresado().doubleValue() > 0) {
+		        	 contador++;
+		          }
+			 }
+			 logger.info("Probando Validadores Contando clasificadores:" + contador);
+			 if(contador > 1) {
+				 
+				 FacesContext.getCurrentInstance().addMessage(null, new 
+				 FacesMessage(FacesMessage.SEVERITY_INFO, "INFO!", "NO ES PERMITIDO COMPROMETER MAS DE UN CLASIFICADOR PARA EL TIPO DE DOCUMENTO, VERIFIQUE!"));
+				 flag = true;
+			 }
+			 else {
+				 if(!(montoOrden.doubleValue() == listaCertDet.get(0).getMontoIngresado().doubleValue())) {
+					 
+					 PrimeFaces.current().executeScript("activateBoton()");
+					 FacesContext.getCurrentInstance().addMessage(null, new 
+							 FacesMessage(FacesMessage.SEVERITY_WARN, "INFO!", 
+									 "EL IMPORTE REGISTRADO DIFIERE DEL MONTO DE LA ORDEN.. VERIFIQUE!"));
+					 flag = true;
+				 }
+			 }
+			 
+		}
+		return flag;
+	}
+	
+	public String confirmarCompAnual() {
+		
+		return "";
+	}
+	
 	public String grabarCompAnual() {
 		int reg = 0;
+		if(validaMontoOC()==true) {
+			return "insRegCompAnual";
+		}
+		
 		if(validarCampos()==true) {
 			showMessages(2);
 		}
@@ -288,6 +351,7 @@ public class IafasCompAnualController implements Serializable {
 			 ca.setVusuarioIng(usuario);
 			 ca.setVglosa(concepto);
 			 ca.setNimpMonSol(BigDecimal.ZERO);
+			 ca.setRazonSocial(razonSocial);
 			 reg = compAnualDao.grabarCompAnual(ca);
 			 logger.info("Inserto Compronmiso Anual {} " +certificado);
 			 for(int j =0;j<getListaCertDet().size();j++){
@@ -308,7 +372,7 @@ public class IafasCompAnualController implements Serializable {
 							 return "insRegCompAnual";
 						 }
 						 else {
-							 reg = compAnualDetDao.grabarCompAnualDet(det);
+							reg = compAnualDetDao.grabarCompAnualDet(det);
 							 typeMessages=1;
 						 }				 
 					 }		 

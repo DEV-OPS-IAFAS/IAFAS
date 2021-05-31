@@ -111,20 +111,21 @@
                                 <p:dataTable id="dTableCompAnual" var="ca" value="#{mbCompAnual.lista}" rows="10" scrollable="true" scrollHeight="175px;"
                                              style="width: 100%;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
                                              paginatorPosition="bottom" paginator="true" stripedRows="true">
-                                    <p:column headerText="Fase" style="width: 65px;">
+                                    <p:column headerText="Fase" style="width: 50px;">
                                         <h:commandLink id="cmdLink_Fase" actionListener="#{mbCompAnual.verDetalleRegistroCA}" >
                                             <p:outputLabel value="#{ca.tipoCertificacion}"/> 
                                           <f:param id="p_secuenciaDet" name="p_secuencia" value="#{ca.vsecuenciaA}"></f:param>
                                          <f:param id="p_correlativoDet" name="p_correlativo" value="#{ca.vcorrelativoA}"></f:param> 
                                        </h:commandLink>
                                     </p:column>
+                                    <!--  
                                     <p:column headerText="Secuencia" style="width: 25px;" filterBy="#{ca.secuencia}">
                                         <p:outputLabel value="#{ca.vsecuenciaA}"/>
-                                    </p:column>
-                                    <p:column headerText="T.Doc-Nro" style="width: 42px;">
+                                    </p:column> -->
+                                    <p:column headerText="T.Doc-Nro" style="width: 75px;font-size:10px;">
                                         <p:outputLabel value="#{ca.vnroDocumentoPagoA}"/>
                                     </p:column>
-                                    <p:column headerText="Ruc" style="width: 42px;">
+                                    <p:column headerText="Proveedor" style="width: 80px;">
                                         <p:outputLabel value="#{ca.cproveedorRuc}"/>
                                     </p:column>
                                     <p:column headerText="Rb." style="width: 10px;">
@@ -212,12 +213,12 @@
                 </table>
                 <br/>
                 <p:tabView id="tabViewDetalle" dynamic="true" cache="false">
-                <p:tab title="Detalle de Registro">
+                <p:tab title="Detalle #{mbCompAnual.tipoFase}">
                  <h:panelGrid columns="6" style="font-weight: bold; font-size: 11px; width: 100%" styleClass="panel">
-                            <p:outputLabel value="Secuencia :"/>
+                            <p:outputLabel value="Nro :"/>
                             <p:outputLabel value="#{mbCompAnual.secuencia}" styleClass="outLabel"/>
-                            <p:outputLabel value="Número:" />
-                            <p:outputLabel value="#{mbCompAnual.nroDoc}" styleClass="outLabel"/>
+                            <p:outputLabel value="Documento:" />
+                            <p:outputLabel value="#{mbCompAnual.tipDoc} - #{mbCompAnual.nroDoc}" styleClass="outLabel"/>
                             <p:outputLabel value="Fecha:" />
                             <p:outputLabel value="#{mbCompAnual.fecDocumento}" styleClass="outLabel">
                                 <f:converter converterId="javax.faces.DateTime" />
@@ -229,13 +230,15 @@
                             <p:outputLabel value="Presupuesto:" />
                             <p:outputLabel value="#{mbCompAnual.desPresupuesto}" styleClass="outLabel"/>
                             <p:outputLabel value="Ruc:" />
-                            <p:outputLabel value="#{mbCompAnual.ruc}" styleClass="outLabel"/>
-                            <p:outputLabel value="Razon Social:" />
-                            <p:outputLabel value="#{mbCompAnual.razonSocial}" styleClass="outLabel"/>
+                            <p:outputLabel value="#{mbCompAnual.ruc}-#{mbCompAnual.razonSocial}" styleClass="outLabel"/>
+                            <p:outputLabel value="Monto"></p:outputLabel>
+                            <p:outputLabel value="#{mbCompAnual.montoCompromiso}" styleClass="outLabel">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                            </p:outputLabel>
                             </h:panelGrid>                     
                         <br/>
                         <h:panelGrid columns="2" style="font-weight: bold; font-size: 11px; width: 100%">
-                            <p:outputLabel value="Glosa:" />
+                            <p:outputLabel value="Concepto:" />
                             <h:inputTextarea value="#{mbCompAnual.conceptoDetalle}" id="texto" styleClass="outLabel"
                             rows="3" readonly="true" style="width:980px;"/>
                         </h:panelGrid>

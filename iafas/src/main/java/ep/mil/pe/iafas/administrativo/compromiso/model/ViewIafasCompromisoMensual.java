@@ -29,6 +29,10 @@ public class ViewIafasCompromisoMensual {
     private String razonSocial;
     private double ntipCam;
     
+    private String concepto;
+    private String abTipoDoc;
+    private String descTarea;
+    
     private BigDecimal montoIngresado = new BigDecimal(0);
 
 	public ViewIafasCompromisoMensual() {

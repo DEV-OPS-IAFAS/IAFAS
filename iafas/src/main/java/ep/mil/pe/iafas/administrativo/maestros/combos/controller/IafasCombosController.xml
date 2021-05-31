@@ -48,4 +48,23 @@ parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
 			  from iafas_tipo_familia where CESTADO_CODIGO='AC' order by NTIPO_FAMILIA_CODIGO asc
 </select>
 
+<select id="monedas" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+     	SELECT nmoneda_codigo codigo,  
+		nmoneda_descripcion descripcion
+		FROM iafas_monedas WHERE cestado_codigo = 'AC'
+</select>
+
+<select id="proveedores" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+        SELECT cproveedor_ruc codigo, vproveedor_razon_social descripcion
+		FROM iafas_proveedores WHERE cestado_codigo = 'AC'
+</select>   
+
+<select id="bancos" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+    SELECT cbanco_codigo codigo, vbanco_descripcion descripcion 
+    FROM iafas_bancos WHERE cestado_codigo = 'AC'
+</select>
+
 </mapper>

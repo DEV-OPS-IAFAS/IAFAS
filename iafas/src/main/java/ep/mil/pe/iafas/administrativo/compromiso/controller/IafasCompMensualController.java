@@ -1,6 +1,7 @@
 package ep.mil.pe.iafas.administrativo.compromiso.controller;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,7 +17,9 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 
+import ep.mil.pe.iafas.administrativo.compromiso.dao.IafasCompromisoAnualDao;
 import ep.mil.pe.iafas.administrativo.compromiso.dao.IafasCompromisoMensualDao;
+import ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual;
 import ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensual;
 import ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensualDet;
 import ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompromisoMensual;
@@ -72,8 +75,16 @@ public class IafasCompMensualController implements Serializable{
 	private String numCertificado;
 	private String tipOrden;
 	
+	private String tipDocAnual;
+	private String nroDocAnual;
+	private String conceptoAnual;
+	
+	private BigDecimal montoOrden;
+	private int reg;
+	
 	IafasCompromisoMensualDao mensualDao = new IafasCompromisoMensualDao(MySQLSessionFactory.getSqlSessionFactory());
 	OrdenesCSDao OrderDao = new OrdenesCSDao(SQLServerSessionFactory.getSqlServerSessionFactory());
+	IafasCompromisoAnualDao compAnualDao = new IafasCompromisoAnualDao(MySQLSessionFactory.getSqlSessionFactory());
 	private static final Logger logger = Logger.getLogger(IafasCompMensualController.class);
 	Date hoy = new Date();
 	public IafasCompMensualController() {
@@ -89,6 +100,7 @@ public class IafasCompMensualController implements Serializable{
 	public List<IafasCompromisoMensual> listadoMensual(){
 		lista = new ArrayList<IafasCompromisoMensual>();
 		List<IafasCompromisoMensual> registros = mensualDao.listaMensual(periodo);
+		reg = registros.size();
 		for(IafasCompromisoMensual reg :registros) {
 			lista.add(reg);
 		}
@@ -116,6 +128,20 @@ public class IafasCompMensualController implements Serializable{
 		return regAnual;
 	}
 	
+	public String validarOCSTest() {
+		IafasCompromisoAnual ca = new IafasCompromisoAnual();
+		ca.setVanoDocumento("2021");
+		ca.setVnroDocumentoPagoA(nroDocumentoMen);
+		List<IafasCompromisoAnual> ordenes = compAnualDao.verOC(ca);
+		for(IafasCompromisoAnual registros: ordenes) {
+				ruc = ordenes.get(0).getCproveedorRuc();
+				razonSocial = ordenes.get(0).getRazonSocial();
+				montoOrden = ordenes.get(0).getNimpMonSol();
+			}
+		logger.info("Valores Obtenidos {} "+ruc+" "+razonSocial+" "+montoOrden);
+		return "";
+	}
+	
 	public String validarOCS() throws SQLException {
 		try {
 			logger.info("Validando Ordenes {} " +nroDocumentoMen);
@@ -138,6 +164,7 @@ public class IafasCompMensualController implements Serializable{
 				for(OrdenesCS registros: ordenes) {
 					ruc = ordenes.get(0).getRuc();
 					razonSocial = ordenes.get(0).getProveedor();
+					montoOrden = ordenes.get(0).getMontoTotal();
 				}
 				logger.info("Valores Obtenidos {} "+ruc+" "+razonSocial);
 			}
@@ -147,6 +174,31 @@ public class IafasCompMensualController implements Serializable{
 		}
 		
 		return "";
+	}
+	
+	public boolean validaMontoOC() {
+		
+		boolean flag=false;
+		if(tipDocumentoMen.equals(Constantes.ID_ORDEN_COMPRA) ||
+				tipDocumentoMen.equals(Constantes.ID_ORDEN_SERVICIO)) {
+			 int contador=0;
+			 for(int oc=0; oc<regAnualDet.size();oc++) {
+				 logger.info("Monto Ingresado "+regAnualDet.get(oc).getMontoIngresado().doubleValue());
+		          if(regAnualDet.get(oc).getMontoIngresado().doubleValue() > 0) {
+		        	  if(!(montoOrden.doubleValue() == regAnualDet.get(0).getMontoIngresado().doubleValue())) {
+							 
+							 PrimeFaces.current().executeScript("activateBoton()");
+							 FacesContext.getCurrentInstance().addMessage(null, new 
+									 FacesMessage(FacesMessage.SEVERITY_WARN, "INFO!", 
+											 "EL IMPORTE REGISTRADO DIFIERE DEL MONTO DE LA ORDEN.. VERIFIQUE!"));
+							 flag = true;
+						 }
+		          }
+			 }
+			 logger.info("Probando Validadores Contando clasificadores:" + contador);
+			 
+		}
+		return flag;
 	}
 	
 	public List<ViewIafasCompromisoMensual> buscarAnualXSecuencia(){
@@ -172,7 +224,24 @@ public class IafasCompMensualController implements Serializable{
 			setVsecuenciaA(l.getVsecuenciaA());
 			setVcorrelativoA(l.getVcorrelativoA());
 			setNumCertificado(l.getVnroCertificado());
+			setTipDocAnual(l.getVtipoDocumentoA());
+			setNroDocAnual(l.getVnroDocumentoPagoA());
+			setConceptoAnual(l.getConcepto());
+			setTipDocAnual(l.getAbTipoDoc());
+			setGlosa(l.getConcepto());
+			if(l.getVtipoDocumentoA().equals(Constantes.ID_ORDEN_COMPRA) || 
+			   l.getVtipoDocumentoA().equals(Constantes.ID_ORDEN_SERVICIO)) {
+				setTipDocumentoMen(l.getVtipoDocumentoA());
+				setNroDocumentoMen(l.getVnroDocumentoPagoA());
+				PrimeFaces.current().executeScript("deshabilitar()");
+			}
+			else {
+				   if(l.getVtipoDocumentoA().equals("060")) {
+				   PrimeFaces.current().executeScript("habilitar()");
+				}
+			}
 		}
+			
 		return regAnualDet;
 	}
 	
@@ -197,6 +266,12 @@ public class IafasCompMensualController implements Serializable{
 		setNroDocumentoMen(Constantes.VACIO);
 		setFechaMensual(hoy);
 		setGlosa(Constantes.VACIO);
+		setConceptoAnual(Constantes.VACIO);
+		setTipDocAnual(Constantes.VACIO);
+		setNroDocAnual(Constantes.VACIO);
+		setRuc(Constantes.VACIO);
+		setRazonSocial(Constantes.VACIO);
+
 	}
 	
 	private boolean validaCampos() {
@@ -217,6 +292,9 @@ public class IafasCompMensualController implements Serializable{
 	}
 	
 	public String registroCompMensual() {
+		if(validaMontoOC()==true) {
+			return "";
+		}
 		if(validaCampos()==true) {
 			typeMessages=2;
 			showMessages(2);
@@ -270,6 +348,7 @@ public class IafasCompMensualController implements Serializable{
 				showMessages(1);		
 				//return retornar();	
 				regAnualDet.clear();
+				limpiarSession();
 			}
 			catch (Exception e) {
 				// TODO: handle exception

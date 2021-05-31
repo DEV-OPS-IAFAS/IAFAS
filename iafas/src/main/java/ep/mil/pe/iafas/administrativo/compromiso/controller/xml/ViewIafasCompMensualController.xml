@@ -51,12 +51,13 @@
 		parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompromisoMensual">
 		SELECT
 		ca.vano_documento vano, ca.vsecuencia_a vsecuenciaA,
-		ca.vcorrelativo_a
-		vcorrelativoA,
+		ca.vcorrelativo_a vcorrelativoA,
 		ca.vtipo_documento_a vtipoDocumentoA,
+		FUN_TIPO_DOCUMENTO_ADMINISTRATIVO_ABREVIATURA(ca.vtipo_documento_a) abTipoDoc,
 		ca.vnro_documento_pago_a vnroDocumentoPagoA,
 		ca.vnro_certificado vnroCertificado,
 		ca.cproveedor_ruc vruc,
+		ca.vglosa concepto,
 		PK_UTIL_RAZON_SOCIAL(ca.cproveedor_ruc) razonSocial,
 		ca.vcod_proceso_sel vcodProcesoSel,
 		ca.vfuente_financiamiento
@@ -71,7 +72,8 @@
 		PK_AUX_NOM_CLASIFICADOR(det.vid_clasificador) nomCla,
 		(PK_TOTAL_CA_SECUENCIA(ca.vano_documento,ca.vnro_certificado,det.vcod_sec_func,det.vid_clasificador,ca.vsecuencia_a)
 		- pk_total_cm(ca.vano_documento,ca.vnro_certificado,ca.vsecuencia_a,
-		det.vcod_sec_func,det.vid_clasificador)) nimpMontoSol
+		det.vcod_sec_func,det.vid_clasificador)) nimpMontoSol,
+		PK_DESC_TAREA(det.vcod_sec_func) descTarea
 		FROM
 		iafas_compromiso_anual ca INNER JOIN iafas_compromiso_anual_det det
 		ON

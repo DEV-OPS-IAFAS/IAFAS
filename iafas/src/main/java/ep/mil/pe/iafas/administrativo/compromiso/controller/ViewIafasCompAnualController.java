@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggerRepository;
+import org.primefaces.PrimeFaces;
 
 import ep.mil.pe.iafas.administrativo.compromiso.dao.IafasCompromisoAnualDetDao;
 import ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompAnual;
@@ -41,6 +42,7 @@ public class ViewIafasCompAnualController implements Serializable {
 	private String justificacion;
 	private String tipProcesoSel;
 	private String tipoMovimiento;
+	private String conceptoInicial;
 	
 	// parametros Externos
 	   private String certificadoP;
@@ -49,6 +51,8 @@ public class ViewIafasCompAnualController implements Serializable {
 	private boolean saldoReb;
 	private boolean saldoAmp;
 	private boolean saldoAnu;
+	
+	private int typeMessages;
 	
 	private static Logger logger = Logger.getLogger(ViewIafasCompAnualController.class);
 	private List<ViewIafasCompAnual> listaMovimiento;
@@ -79,7 +83,10 @@ public class ViewIafasCompAnualController implements Serializable {
 			  setCodMoneda(movimientos.getVcodMoneda());
 			  setRuc(movimientos.getProveedorRuc());
 			  setTipProcesoSel(movimientos.getVcodProcesoSel());
+			  setRazonSocial(movimientos.getRazonSocial());
+			  setConceptoInicial(movimientos.getVglosa());
 			  //listaMovimiento.add(movimientos);
+			  logger.info("Glosa : "+ conceptoInicial);
 		  }
 	  }
 	  catch(Exception e) {
@@ -91,9 +98,9 @@ public class ViewIafasCompAnualController implements Serializable {
 	public void verSaldoMovimiento() {
 		
 		  listaMovimiento = new ArrayList<ViewIafasCompAnual>();
-		  if(listaMovimiento.size()>0) {
+		  //if(listaMovimiento.size()>0) {
 			  listaMovimiento.clear();
-		  }
+		  //}
 		  ViewIafasCompAnual mov = new ViewIafasCompAnual();
 		  mov.setVanoDocumento(periodo);
 		  mov.setVnroCertificado(certificadoP);
@@ -142,11 +149,13 @@ public class ViewIafasCompAnualController implements Serializable {
 			if(j==0) {
 			logger.info("[FIN:] Metodo grabarMovimientoAnual {} Se registro correctamente Movimiento Tipo : "+tipoMovimiento+" en Certificado "+certificadoP);
 			limpiarCampos();
+			//showMessages(1);
 		    p="mainCompromisoAnual";
 			
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
+			showMessages(2);
 			logger.error("[ERROR:] Metodo grabarMovimientoAnual {} ",e);
 		}
 		return p;
@@ -159,6 +168,16 @@ public class ViewIafasCompAnualController implements Serializable {
 			listaMovimiento.clear();
 		}
 		
+	}
+	private String showMessages(int opcion) {
+		String messages = "";
+		switch (opcion) {
+		case 0 : typeMessages=0;messages = "";PrimeFaces.current().executeScript("verMensajes()");break;
+		case 1 : typeMessages=1;messages = "";PrimeFaces.current().executeScript("verMensajes()");break;
+		case 2 : typeMessages=2;messages = "";PrimeFaces.current().executeScript("verMensajes()");break;
+		default : messages="";break;
+		}
+		return messages;
 	}
 	
     private ExternalContext extContext() {
