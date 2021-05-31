@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ViewPaacProcesoDetalle">
+	<resultMap id="viewPaacProcesoDetalle" type="ViewPaacProcesoDetalle" />
+	
+	<select id="findProcessPaacDetail" resultType="ep.mil.pe.iafas.logistica.model.ViewPaacProcesoDetalle"
+		parameterType="ep.mil.pe.iafas.logistica.model.ViewPaacProcesoDetalle">
+		select periodo periodo, presupuesto presupuesto, 
+		codProceso codProceso, codItem codItem,
+		descItem descItem, precioItem precioItem, 
+		cantidadItem cantidadItem, 
+		unidadMedidaCod unidadMedidaCod, unidadMedDesc unidadMedDesc
+		from v_proceso_paac_detalle where periodo = #{periodo} and codProceso = #{codProceso}
+	</select>
+         
+      <select id="saveDetailPAAC" parameterType="ep.mil.pe.iafas.logistica.model.IafasPacAdemdaCF" 
+        statementType="CALLABLE">
+       { CALL SP_IDU_PAAC_CONTRATOS_FIANZA(
+        #{ncontratoCodigo mode=IN, jdbcType=INTEGER},
+        #{cperiodoCodigo mode=IN, jdbcType=VARCHAR},
+		#{npacContratoAdemdaCodigo, mode=IN, jdbcType=INTEGER},
+		#{dpacContratoAdemdaFecha, mode=IN, jdbcType=DATE},
+		#{vpacContratoAdemdaDocumento, mode=IN,jdbcType=VARCHAR},
+		#{vpacContratoAdemdaMotivo, mode=IN,jdbcType=VARCHAR},
+		#{vpacContratoAdemdaArchivo, mode=IN,jdbcType=VARCHAR},
+		#{cestadoCodigo, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR},
+		#{tipo, mode=IN,jdbcType=VARCHAR})}
+   </select>
+      
+</mapper>

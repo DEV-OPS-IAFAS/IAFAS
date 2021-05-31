@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>IAFAS</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
+    </h:head>
+    <body class="formulario">
+        <script>    
+       
+        </script>
+        <h:form id="frmContrato" style="border-radius: 5px 5px 5px 5px;border: 1px ; width:100%;">
+            <p:panel >
+                <p:panelGrid columns="8" styleClass="panel">
+                   <i class="pi pi-calendar-plus" style="height:20px;height:20px;" ></i>
+                    <p:outputLabel value="Contratos PAAC" styleClass="etiqueta"></p:outputLabel>
+                                        <p:outputLabel value="A.F :" styleClass="etiqueta"/>
+                    <p:selectOneMenu id="cboAnio" value="#{mbContratosPaac.periodo}" >
+                      <f:selectItem itemValue="" itemLabel="--Seleccione--"></f:selectItem>
+                      <f:selectItem itemValue="2021" itemLabel="2021"></f:selectItem>
+                     <f:ajax render="dTableContratos" listener="#{mbContratosPaac.showAllContrarcts()}"></f:ajax> 
+                    </p:selectOneMenu>
+                    
+                    <p:commandButton  value="Nuevo"  styleClass="button" action="#{mbContratosPaac.nuevoRegistro()}" ajax="false"
+                    style="height:30px;" title="Click aqui para Ingresar un Nuevo Contrato"/>
+                </p:panelGrid> 
+                <table>
+                    <tr>
+                        <td valign="top">
+                            <div>
+                                <p:dataTable id="dTableContratos" var="con" value="#{mbContratosPaac.lista}" rows="5" 
+                                             style="width: 100%;font-size:11px;" emptyMessage="No se encontro datos registrados" 
+                                             styleClass="grid" 
+                                             paginatorPosition="bottom" paginator="true" stripedRows="true">
+                                    <p:column headerText="N° Contrato" style="width: 14px;text-align:center;" >
+                                    <h:commandLink value="#{con.vnumeroContrato}" actionListener="#{mbContratosPaac.mostrarDetalles()}">
+                                      <f:param id="pId" name="pId" value="#{con.ncontratoCodigo}"></f:param>
+                                      <f:param id="pAnio" name="pAnio" value="#{con.cperiodoCodigo}"></f:param>
+                                    </h:commandLink>
+                                    </p:column>
+                                    <p:column headerText="Descripcion" style="width: 150px;font-size:11px;" >
+                                        <p:outputLabel value="#{con.vcontratoDescripcion}"/>
+                                    </p:column>
+                                    <p:column headerText="Proveedor" style="width: 35px;">
+                                        <p:outputLabel value="#{con.vproveedorRuc}"/>
+                                    </p:column>
+                                    <p:column headerText="Fecha Ini" style="width: 15px;">
+                                        <p:outputLabel value="#{con.dcontratoInicio}">
+                                           <f:converter converterId="javax.faces.DateTime" />
+                                			<f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />	
+                                        </p:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="Fecha Fin" style="width: 15px;">
+                                        <p:outputLabel value="#{con.dcontratoFin}">
+                                           <f:converter converterId="javax.faces.DateTime" />
+                                			<f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />	
+                                        </p:outputLabel>
+                                    </p:column>
+                                     <p:column headerText="Mon." style="width: 5px;">
+                                        <p:outputLabel value="#{con.simboloMoneda}"/>
+                                    </p:column>
+                                    <p:column headerText="Monto" style="text-align: right;width: 20px;">
+                                        <p:outputLabel value="#{con.ncontratoMonto}">
+                                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                                        </p:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="Carta Fianza" style="width:5px;">
+                                       <p:commandButton id="btnCF" onclick="PF('dgCF').show()" icon="pi pi-credit-card" actionListener="#{mbContACF.captureId()}">
+                                          <f:param id="pCartaFianza" name="pContratoID" value="#{con.ncontratoCodigo}"/>
+                                          <f:param id="pPeriodoCF" name="pPeriodoID" value="#{con.cperiodoCodigo}"/>
+                                       </p:commandButton>
+                                    </p:column>
+                                    <p:column headerText="Ademda" style="width:5px;">
+                                      <p:commandButton onclick="PF('dgAdemda').show()" icon="pi pi-list" actionListener="#{mbContACF.captureId()}">
+                                        <f:param id="pAdemda" name="pContratoID" value="#{con.ncontratoCodigo}"/>
+                                        <f:param id="pPeriodoAD" name="pPeriodoID" value="#{con.cperiodoCodigo}"/>
+                                      </p:commandButton>
+                                    </p:column> 
+                                </p:dataTable>
+                            </div>
+                        </td>  
+                    </tr>
+                </table>
+                <p:tabView id="tabDetalleExtras" dynamic="true" cache="false">
+                  <p:tab title="Detalle Contrato">
+                      <p:dataTable id="tableDet" var="detCon" value="#{mbContratosPaac.listaContDetalle}" rows="5">
+                         <p:column headerText="Item">
+                           <h:outputText value="#{detCon.nomItem}"></h:outputText>
+                         </p:column>
+                         <p:column headerText="U.M.">
+                         <h:outputText value="#{detCon.unidadMedida}"></h:outputText>
+                         </p:column>
+                         <p:column headerText="Cantidad">
+                            <h:outputText value="#{detCon.cantidad}"></h:outputText>
+                         </p:column>
+                         <p:column headerText="Total MN">
+                            <h:outputText value="#{detCon.montoMNDetalle}"></h:outputText>
+                         </p:column>
+                         <p:column headerText="Total ME">
+                           <h:outputText value="#{detCon.montoMEDetalle}"></h:outputText>
+                         </p:column>
+                      </p:dataTable>
+                  </p:tab>
+                  <p:tab title="Carta Fianzas" >
+                      <p:dataTable id="tableCF" var="cf" value="#{mbContratosPaac.listaCF}" rows="5">
+                         <p:column headerText="N° Carta Fianza">
+                            <h:outputText value="#{cf.npacContCFNumero}"></h:outputText>
+                         </p:column>
+                         <p:column headerText="Fecha Vigencia">
+                           <h:outputText value="#{cf.npacContCFVigencia}">
+                             <f:converter converterId="javax.faces.DateTime" />
+                             <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
+                           </h:outputText>
+                         </p:column>
+                         <p:column headerText="Banco">
+                            <h:outputText value="#{cf.cbancoCodigo}"></h:outputText>
+                         </p:column>
+                         <p:column headerText="Moneda">
+                            <h:outputText value="#{cf.simboloMon}"></h:outputText>
+                         </p:column>
+                         <p:column headerText="Monto">
+                            <h:outputText value="#{cf.npacContCFMonto}">
+                              <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                            </h:outputText>
+                         </p:column>
+                      </p:dataTable>
+                  </p:tab>
+                  <p:tab title="Ademdas">
+                      <p:dataTable id="tableAdemda" var="ad" value="#{mbContratosPaac.listaAdemda}" rows="5">
+                         <p:column headerText="Nro Ademda">
+                            <h:outputText value="#{ad.vpacContratoAdemdaDocumento}"></h:outputText>
+                         </p:column>
+                         <p:column headerText="Fecha">
+                           <h:outputText value="#{ad.dpacContratoAdemdaFecha}">
+                             <f:converter converterId="javax.faces.DateTime" />
+                             <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
+                           </h:outputText>
+                         </p:column>
+                         <p:column headerText="Estado">
+                           <h:outputText value="#{ad.cestadoCodigo}"></h:outputText>
+                         </p:column>
+                         <p:column headerText="#"></p:column>
+                         <p:column headerText="#"></p:column>
+                      </p:dataTable>
+                  </p:tab>
+                </p:tabView>
+                <!-- dialogos -->
+               <p:dialog id="dialogAdemda" widgetVar="dgAdemda" modal="true" header="Registro Ademda"
+                showEffect="fade" hideEffect="explode" resizable="false" position="top">
+                    <p:panel >
+                        <h:panelGrid columns="2">
+                        <h:outputLabel value="Documento:"/>
+                   		  <h:inputText id="inpNroDoc" styleClass="input" value="#{mbContACF.documentoAdemda}" size="21" onblur="completaCeros(this.name, 10);"
+                   						maxlength="20"/>
+						  <h:outputLabel value="Fecha:"/>
+                   		  <p:inputMask id="inptFecAdemda" styleClass="input" mask="99/99/9999"
+                    		value="#{mbContACF.fechaAdemda}" size="12">
+                        	<f:converter converterId="javax.faces.DateTime" />
+                        	<f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
+                   		  </p:inputMask>
+                   		<h:outputLabel value="Motivo:"/>
+                        <h:inputTextarea id="inpTxtDesc" value="#{mbContACF.motivoAdemda}" cols="1" rows="2"
+                    	style="width:500px;" styleClass="input"></h:inputTextarea>
+                    	<h:outputLabel value="Estado:"></h:outputLabel>
+                    	<h:selectOneMenu id="cbo_estadoAD" styleClass="select" 
+                    	  value="#{mbContACF.estadoAdemda}">
+                    	    <f:selectItem itemValue="AC" itemLabel="Activa" ></f:selectItem>
+                    	</h:selectOneMenu>
+                    	<h:outputLabel value="Archivo:"/>
+                    	<p:fileUpload id="archdemda" mode="simple" value="#{mbContACF.archivoAdemda}"/>
+                        </h:panelGrid>
+                        <br/>
+                        <h:panelGrid columns="2">
+                           <p:commandButton id="btnAceptarAD" value="Registrar" action="#{mbContACF.saveAdemda()}"
+                           oncomplete="PF('dgAdemda').hide();" icon="pi pi-check" style="height:25px;"></p:commandButton>
+                            <p:commandButton id="btnCancelarAD" value="Cancelar" type="button" onclick="PF('dgAdemda').hide();"
+                            icon="pi pi-times" style="height:25px;" action="#{mbContACF.retornar()}"></p:commandButton>
+                        </h:panelGrid>
+                    </p:panel>
+                </p:dialog>
+                 <p:dialog id="dialogCF" widgetVar="dgCF" modal="true" header="Registro Carta Fianza"
+                showEffect="fade" hideEffect="explode" resizable="false" position="top">
+                    <p:panel >
+                        <h:panelGrid columns="4" style="width:700px;">
+                        <h:outputLabel value="Documento:"/>
+                   		  <h:inputText id="inpNroDocCF" styleClass="input" value="#{mbContACF.numeroCF}" size="21" onblur="completaCeros(this.name, 10);" maxlength="20"/>
+						  <h:outputLabel value="Fecha Vigencia:"/>
+                   		  <p:inputMask id="inptFecCF" styleClass="input" mask="99/99/9999"
+                    		value="#{mbContACF.fechaVigencia}" size="12">
+                        	<f:converter converterId="javax.faces.DateTime" />
+                        	<f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
+                   		  </p:inputMask>           		                     	
+                        </h:panelGrid>
+                        <br/>
+                        <h:panelGrid columns="8" style="width:850px;">
+                        <h:outputLabel value="Moneda:"></h:outputLabel>
+                        <p:selectOneMenu id="cboMonCF" value="#{mbContACF.codMoneda}">
+                        <f:selectItems id="monedasContrato" value="#{mbCombos.monedas}"></f:selectItems>
+                       </p:selectOneMenu>
+                        <h:outputLabel value="T.C.:"></h:outputLabel>
+                        <h:inputText id="tipcam" styleClass="input" value="#{mbContACF.tipCam}" size="6" style="text-align:right"></h:inputText>
+                        <h:outputLabel value="Monto MN:"></h:outputLabel>
+                          <h:inputText id="tipCam" styleClass="input" value="#{mbContACF.montoCF}" size="15" style="text-align:right">
+                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                          </h:inputText>
+                        <h:outputLabel value="Monto ME:"></h:outputLabel>
+                        <h:inputText id="montoME" styleClass="input" value="#{mbContACF.montoEXCF}" size="15" style="text-align:right">
+                          <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                         </h:inputText>
+                        </h:panelGrid>
+                        <br/>
+                        <h:panelGrid columns="4" style="width:700px;">
+                        <h:outputLabel value="Banco"/>
+                        <h:selectOneMenu id="cboBanco" value="#{mbContACF.idBanco}" styleClass="select">
+                               <f:selectItem itemValue="" itemLabel="--Seleccione--"/>
+                                 <f:selectItems var="Varbancos" value="#{mbCombos.bancos}"/>
+                        </h:selectOneMenu>
+                            <h:outputLabel value="Estado:"></h:outputLabel>
+                    	<h:selectOneMenu id="cbo_estado" styleClass="select" value="#{mbContACF.estadoCF}">
+                    	    <f:selectItem itemValue="" itemLabel="--Seleccione--" ></f:selectItem>
+                    	    <f:selectItem itemValue="VG" itemLabel="VIGENTE" ></f:selectItem>
+                    	    <f:selectItem itemValue="VE" itemLabel="VENCIDA" ></f:selectItem>
+                    	    <f:selectItem  itemValue="RE" itemLabel="RECHAZADA"></f:selectItem>
+                    	</h:selectOneMenu>
+                    	<h:outputLabel value="Archivo:"/>
+                    	<p:fileUpload id="archCartaFianza" mode="simple"/>
+                        </h:panelGrid>
+                        <br/>
+                        <h:panelGrid columns="2">
+                           <p:commandButton id="btnAceptar" value="Registrar" action="#{mbContACF.saveBailLetter()}"
+                           oncomplete="PF('dgCF').hide();" icon="pi pi-check" style="height:25px;"></p:commandButton>
+                            <p:commandButton id="btnCancelar" value="Cancelar" type="button" onclick="PF('dgCF').hide();"
+                            icon="pi pi-times" style="height:25px;" action="#{mbContACF.retornar()}" update="dialogCF"></p:commandButton>
+                        </h:panelGrid>
+                    </p:panel>
+                </p:dialog>
+            </p:panel>
+        </h:form>
+    </body>
+</html>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="IafasPacContratos">
+	<resultMap id="iafasPacContrato" type="IafasPacContratos" />
+	<select id="findProcessPaac" resultType="ep.mil.pe.iafas.logistica.model.IafasPacContratos"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacContratos">
+		SELECT cperiodo_codigo cprocesoPeriodo,
+		nfuente_financiamiento_codigo nfuenteFinanciamiento,
+		PK_UTIL_PRESUPUESTO(nfuente_financiamiento_codigo) descFuenteFinan,
+		npac_procesos_codigo npacProcesosCodigo,
+		vpac_procesos_numero_paac vpacNumeroPaac, 
+		vpac_procesos_descripcion vpacProcesosDescripcion,
+		NPAC_PROCESOS_MONTO_PROCESO montoProceso
+		FROM iafas_pac_procesos WHERE cperiodo_codigo = #{cprocesoPeriodo}
+	</select>
+	<select id="findProcessPaacFilter" resultType="ep.mil.pe.iafas.logistica.model.IafasPacContratos"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacContratos">
+		SELECT cperiodo_codigo cprocesoPeriodo,
+		nfuente_financiamiento_codigo nfuenteFinanciamiento,
+		PK_UTIL_PRESUPUESTO(nfuente_financiamiento_codigo) descFuenteFinan,
+		npac_procesos_codigo npacProcesosCodigo,
+		vpac_procesos_numero_paac vpacNumeroPaac, 
+		vpac_procesos_descripcion vpacProcesosDescripcion,
+		NPAC_PROCESOS_MONTO_PROCESO montoProceso
+		FROM iafas_pac_procesos WHERE cperiodo_codigo = #{cprocesoPeriodo} 
+		and npac_procesos_codigo = #{npacProcesosCodigo}
+	</select>
+    <select id="showContracts" resultType="ep.mil.pe.iafas.logistica.model.IafasPacContratos"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacContratos">
+    	SELECT ncontrato_codigo ncontratoCodigo,
+    	CPERIODO_CODIGO cperiodoCodigo,
+    	 vcontrato_numero vnumeroContrato, 
+    	 vcontrato_descripcion vcontratoDescripcion,
+		DCONTRATO_INICIO dcontratoInicio,
+		DCONTRATO_FIN dcontratoFin,
+		PK_SIMBOLO_MONEDA(NMONEDA_CODIGO) simboloMoneda,
+		NCONTRATO_TIPO_CAMBIO ncontratoTipoCambio,
+		PK_UTIL_RAZON_SOCIAL(VPROVEEDOR_RUC) vproveedorRuc,
+        CASE NMONEDA_CODIGO WHEN 1 THEN NCONTRATO_MONTO ELSE NCONTRATO_EXTRANJERA END AS ncontratoMonto
+		FROM iafas_pac_contratos WHERE
+		CPERIODO_CODIGO = #{cperiodoCodigo}
+    </select>
+    
+   <select id="saveContracts" parameterType="ep.mil.pe.iafas.logistica.model.IafasPacContratos" statementType="CALLABLE">
+       { CALL SP_IDU_PAAC_CONTRATOS(
+        #{ncontratoCodigo mode=IN, jdbcType=INTEGER},
+        #{cprocesoPeriodo mode=IN, jdbcType=VARCHAR},
+		#{nfuenteFinanciamiento, mode=IN, jdbcType=INTEGER},
+		#{npacProcesosCodigo, mode=IN, jdbcType=INTEGER},
+		#{cperiodoCodigo, mode=IN,jdbcType=VARCHAR},
+		#{vnumeroContrato, mode=IN,jdbcType=VARCHAR},
+		#{vcontratoDescripcion, mode=IN,jdbcType=VARCHAR},
+		#{dcontratoInicio, mode=IN,jdbcType=DATE},
+		#{dcontratoFin, mode=IN,jdbcType=DATE},
+		#{ncontratoMonto, mode=IN,jdbcType=DECIMAL},
+	    #{nmonedaCodigo, mode=IN,jdbcType=INTEGER},
+		#{ncontratoTipoCambio, mode=IN,jdbcType=DECIMAL},
+		#{ncontratoExtranjera, mode=IN,jdbcType=DECIMAL},
+		#{vcontratoArchivo, mode=IN,jdbcType=VARCHAR},
+		#{vproveedorRuc, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR},
+		#{tipo, mode=IN,jdbcType=VARCHAR})}
+   </select>
+
+	<select id="saveContractsDetails" parameterType="ep.mil.pe.iafas.logistica.model.IafasPacContratos" 
+	  statementType="CALLABLE">
+       { CALL SP_IDU_CONTRATOS_DETALLE(
+        #{ncontratoCodigo mode=IN, jdbcType=INTEGER},
+        #{cperiodoCodigo mode=IN, jdbcType=VARCHAR},
+		#{codItem, mode=IN, jdbcType=INTEGER},
+		#{cantidad, mode=IN, jdbcType=DECIMAL},
+		#{montoMNDetalle, mode=IN,jdbcType=DECIMAL},
+		#{montoMEDetalle, mode=IN,jdbcType=DECIMAL},
+		#{unidadMedida, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR},
+		#{tipo, mode=IN,jdbcType=VARCHAR})}
+		
+   </select>
+   
+   <select id="showDetailContract"  resultType="ep.mil.pe.iafas.logistica.model.IafasPacContratos"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacContratos">
+     SELECT ncontrato_codigo ncontratoCodigo, 
+     cperiodo_codigo cperiodoCodigo,
+	LOG_NOM_ITEM(nitem_codigo) as nomItem, 
+	LOG_NOM_UM(cunidad_medida_codigo) unidadMedida, 
+	npac_contrato_detalle_cantidad cantidad, 
+	npac_contrato_detalle_monto montoMNDetalle,
+	npac_contrato_detalle_extranjera montoMEDetalle
+ 	FROM iafas_pac_contratos_detalle WHERE cperiodo_codigo = #{cperiodoCodigo} AND ncontrato_codigo = #{ncontratoCodigo}
+   </select>
+</mapper>

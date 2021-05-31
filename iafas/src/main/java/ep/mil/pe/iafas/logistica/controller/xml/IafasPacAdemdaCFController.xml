@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="IafasPacAdemdaCF">
+	<resultMap id="iafasPacAdemdaCF" type="IafasPacAdemdaCF" />
+	
+	<select id="showCF" resultType="ep.mil.pe.iafas.logistica.model.IafasPacAdemdaCF"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacAdemdaCF">
+	   SELECT ncontrato_codigo ncontratoCodigo,
+        cperiodo_codigo cperiodoCodigo, 
+        npac_contrato_carta_fianza_codigo npacContCFCod,
+ 		dpac_contrato_carta_fianza_vigencia npacContCFVigencia, 
+ 		vpac_contrato_carta_fianza_numero npacContCFNumero, 
+ 		pk_simbolo_moneda(NMONEDA_CODIGO) simboloMon,
+ 		PK_UTIL_AB_BANCO(CBANCO_CODIGO) cbancoCodigo,
+ 		CASE nmoneda_codigo WHEN 1 THEN npac_contrato_carta_fianza_monto 
+ 		ELSE npac_contrato_carta_fianza_extranjera END AS npacContCFMonto
+ 		FROM iafas_pac_contratos_carta_fianza WHERE cperiodo_codigo = #{cperiodoCodigo} AND ncontrato_codigo = #{ncontratoCodigo}
+	</select>
+	
+	<select id="showAdemda" resultType="ep.mil.pe.iafas.logistica.model.IafasPacAdemdaCF"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacAdemdaCF">
+	       SELECT ncontrato_codigo ncontratoCodigo,
+	       cperiodo_codigo cperiodoCodigo, 
+	       npac_contrato_ademda_codigo npacContratoAdemdaCodigo,
+ 		   dpac_contrato_ademda_fecha dpacContratoAdemdaFecha,
+ 		   vpac_contrato_ademda_documento vpacContratoAdemdaDocumento,
+ 		   cestado_codigo cestadoCodigo
+ 		   FROM iafas_pac_contratos_ademdas 
+ 		   WHERE cperiodo_codigo= #{cperiodoCodigo} and ncontrato_codigo="{ncontratoCodigo}
+	</select>
+    
+   <select id="saveCF" parameterType="ep.mil.pe.iafas.logistica.model.IafasPacAdemdaCF" statementType="CALLABLE">
+       { CALL SP_IDU_PAAC_CONTRATOS_FIANZA(
+        #{ncontratoCodigo mode=IN, jdbcType=INTEGER},
+        #{cperiodoCodigo mode=IN, jdbcType=VARCHAR},
+		#{npacContCFCod, mode=IN, jdbcType=INTEGER},
+		#{npacContCFNumero, mode=IN, jdbcType=VARCHAR},
+		#{npacContCFMonto, mode=IN,jdbcType=DECIMAL},
+		#{nmonedaCodigo, mode=IN,jdbcType=INTEGER},
+		#{npacContCFMontoEx, mode=IN,jdbcType=DECIMAL},
+		#{npacContCFTipCam, mode=IN,jdbcType=DECIMAL},
+	    #{npacContCFVigencia, mode=IN,jdbcType=DATE},
+		#{cbancoCodigo, mode=IN,jdbcType=VARCHAR},
+		#{cestadoCodigo, mode=IN,jdbcType=VARCHAR},
+		#{vpacContCFArchivo, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR},
+		#{tipo, mode=IN,jdbcType=VARCHAR})}
+   </select>
+         
+      <select id="saveAdemda" parameterType="ep.mil.pe.iafas.logistica.model.IafasPacAdemdaCF" statementType="CALLABLE">
+       { CALL SP_IDU_PAAC_CONTRATOS_FIANZA(
+        #{ncontratoCodigo mode=IN, jdbcType=INTEGER},
+        #{cperiodoCodigo mode=IN, jdbcType=VARCHAR},
+		#{npacContratoAdemdaCodigo, mode=IN, jdbcType=INTEGER},
+		#{dpacContratoAdemdaFecha, mode=IN, jdbcType=DATE},
+		#{vpacContratoAdemdaDocumento, mode=IN,jdbcType=VARCHAR},
+		#{vpacContratoAdemdaMotivo, mode=IN,jdbcType=VARCHAR},
+		#{vpacContratoAdemdaArchivo, mode=IN,jdbcType=VARCHAR},
+		#{cestadoCodigo, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR},
+		#{tipo, mode=IN,jdbcType=VARCHAR})}
+   </select>
+      
+</mapper>
