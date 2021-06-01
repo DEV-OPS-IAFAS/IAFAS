@@ -48,4 +48,13 @@ public class Constantes {
 	public static final String ESTADO_TECHO_CERRADO = "CE";
 	public static final String MESSAGE_VALIDACION_TECHO_CERRADO = "El registro se encuentra en estado CERRADO!.";
 	public static final String MESSAGE_VALIDACION_SALDOS = "El monto a ingresar no puede ser mayor al SALDO!.";
+	
+	/*Cambios agrehgado para CNV*/
+	public static final String TEXTO_CNV = "CNV-";
+	public static final String GUION="-";
+	public static final String DOS_PUNTOS=":";
+	public static final String VALOR_R="R";
+	public static final String GIRO_TOTAL="T";
+	public static final String GIRO_CLASIFICADOR="C";
+	public static final String GIRO_RETENCION="R";
 }
