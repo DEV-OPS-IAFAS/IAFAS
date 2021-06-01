@@ -16,7 +16,7 @@
 		(SELECT pvb.VPROVEEDOR_BANCO_CCI FROM iafas_proveedores_bancos pvb where pvb.VPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS vcci, 
 		(SELECT pvb.VPROVEEDOR_BANCO_CUENTA FROM iafas_proveedores_bancos pvb where pvb.VPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS cproveedorCuentaBanco,
 		dev.VTIP_DOCUMENTO_COM AS vtipDocumentoCom ,dev.vserie_com AS vserieCom,dev.VNRO_DOCUMENTO_COM  AS vnroCom,
-        (SELECT pv.VPROVEEDOR_RAZON_SOCIAL FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS descProveedor, 
+        (SELECT pv.VPROVEEDOR_RAZON_SOCIAL FROM iafas_proveedores pv where pv.VPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS descProveedor, 
         (select VMONEDA_SIMBOLO from iafas_monedas MON WHERE MON.NMONEDA_CODIGO = cab.VTIP_MON) AS simboloMondea, 
         (select bco.CBANCO_CODIGO from iafas_bancos bco ,iafas_proveedores_bancos pvb
 		 where bco.CBANCO_CODIGO = pvb.CBANCO_CODIGO and pvb.VPROVEEDOR_RUC = dev.CPROVEEDOR_RUC) as codBanco,
