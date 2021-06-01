@@ -9,7 +9,7 @@
 	<select id="listadoPersonal"
 		resultType="ep.mil.pe.iafas.personal.model.IafasPersona"
 		parameterType="ep.mil.pe.iafas.personal.model.IafasPersona">
-			   SELECT  per.VPERSONA_NUMERO_DOCUMENTO  vpersonaNumeroDoc ,
+			  SELECT  per.VPERSONA_NUMERO_DOCUMENTO  vpersonaNumeroDoc ,
 		  per.VPERSONA_PATERNO vpersonaPaterno  ,
          per.VPERSONA_MATERNO   vpersonaMaterno ,
          per.VPERSONA_NOMBRES vpersonaNombres ,
@@ -17,11 +17,11 @@
        per.CPERSONA_GENERO cpersonaGenero,
         per.DPERSONA_NACIMIENTO dpersonaNacimiento  ,
         per.NPERSONA_CODIGO  npersonaCodigo,
-        (SELECT  VTIPO_DOCUMENTO_ABREVIATURA FROM iafas_tipo_documento WHERE CTIPO_DOCUMENTO_CODIGO=per.CTIPO_DOCUMENTO_CODIGO) AS documento,
+       (SELECT  VTIPO_DOCUMENTO_ABREVIATURA FROM iafas_tipo_documento WHERE CTIPO_DOCUMENTO_CODIGO=per.CTIPO_DOCUMENTO_CODIGO) AS documento,
         per.CTIPO_DOCUMENTO_CODIGO   ctipoDocumentocodigo,
         (SELECT VESTADO_CIVIL_ABREVIATURA FROM iafas_estado_civil WHERE NESTADO_CIVIL_CODIGO=per.NESTADO_CIVIL_CODIGO) AS estadoCivil  ,
         (select  VAREA_LABORAL_ABREVIATURA  from iafas_area_laboral where CAREA_LABORAL_CODIGO=perl.CAREA_LABORAL_CODIGO) as desArea,
-         (select  VGRADO_ABREVIATURA  from iafas_grados where NGRADO_CODIGO=perl.NGRADO_CODIGO) as desGrado,
+         (select  VGRADO_ABREVIATURA  from iafas_grados where NGRADO_CODIGO=perl.NGRADO_CODIGO AND CGRADO_TIPO = perl.CGRADO_TIPO) as desGrado,
         perl.VPERSONAL_CARGO vpersonalCargo,
         per.NESTADO_CIVIL_CODIGO nestadoCivilCodigo,
         per.VPERSONA_CELULAR vpersonaCelular ,
@@ -36,8 +36,7 @@
 		       FROM     iafas_persona per
                inner join iafas_personal perl on (
                 per.NPERSONA_CODIGO=perl.NPERSONA_CODIGO
-               ) 
-
+               )
 	</select>
 	
 	<select id="listadoFamilia"
