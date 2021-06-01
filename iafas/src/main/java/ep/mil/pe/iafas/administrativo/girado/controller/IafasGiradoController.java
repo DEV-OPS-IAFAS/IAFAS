@@ -210,7 +210,7 @@ public class IafasGiradoController implements Serializable{
 				
 		List<IafasComprobanteRetencion> lsts = objDao.obtenerRetencionesparaGiro(objBn);
 
-		if (lsts.size() > 0 || lsts != null) {
+		if ( lsts != null ) {
 			for (IafasComprobanteRetencion obj : lsts) {
 				listaRetencionesPorGirar.add(obj);
 			}
