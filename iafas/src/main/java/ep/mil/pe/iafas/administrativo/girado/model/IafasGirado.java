@@ -58,4 +58,9 @@ public class IafasGirado {
 	private String desEstado;
 	private String descProveedor;
 	private String simboloMondea;
+	private String codBanco;
+	private String descBanco;
+	private String tipoInsercion;
+	private String codigoRespuesta;
+	private String mensajeRespuesta;
 }

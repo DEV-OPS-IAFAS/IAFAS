@@ -12,6 +12,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 
 import ep.mil.pe.iafas.administrativo.devengado.dao.iafasDevengadoDao;
 import ep.mil.pe.iafas.administrativo.devengado.model.IafasComprobanteRetencion;
@@ -21,6 +22,7 @@ import ep.mil.pe.iafas.administrativo.girado.model.IafasGirado;
 import ep.mil.pe.iafas.administrativo.girado.model.IafasMovimientoCadenas;
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
 import ep.mil.pe.iafas.configuracion.util.Constantes;
+import ep.mil.pe.iafas.configuracion.util.Response;
 import ep.mil.pe.iafas.seguridad.controller.IafasUsuariosController;
 import lombok.Data;
 
@@ -56,6 +58,12 @@ public class IafasGiradoController implements Serializable{
 	public boolean muestraBotonAnular = false;
 	private String descProveedor;
 	private String simboloMondea;
+	private String mensajeModal;
+	private boolean muestraBotonGiroTodo = false;
+	private String tipoInsercion =Constantes.GIRO_TOTAL ;
+	
+	private int typeMessages = Constantes.UNO_NEGATIVO;
+	private String messages = Constantes.MESSAGE_VALIDACION_PARAMETROS;
 	
 	public IafasGiradoController() {
 		//buscarGirados();
@@ -111,18 +119,24 @@ public class IafasGiradoController implements Serializable{
 				setCproveedorCuentaBanco(objBeanLista.getCproveedorCuentaBanco());
 				setMuestraBotonGiro(true);
 				setNtipCam(objBeanLista.getNtipCam());
-				setDescProveedor(objBeanLista.getDescProveedor());
+				setDescProveedor(Constantes.DOS_PUNTOS.concat(objBeanLista.getDescProveedor()));
 				setSimboloMondea(objBeanLista.getSimboloMondea());
+				setNombreBanco(objBeanLista.getDescBanco());
+				setMuestraBotonGiroTodo(false);
 				this.listaPorGirar.add(objBeanLista);
 			}
 			
 		} else {
 			setMuestraBotonGiro(false);
+			setMuestraBotonGiroTodo(false);
 			setVglosa(Constantes.VACIO);
 			setVruc(Constantes.VACIO);
 			setVcci(Constantes.VACIO);
 			setCproveedorCuentaBanco(Constantes.VACIO);
 			setImpMonSol(null);
+			setNombreBanco(Constantes.VACIO);
+			setSimboloMondea(Constantes.VACIO);
+			setDescProveedor(Constantes.VACIO);
 		}
 		obtenerCadenasPorGirar();
 		obtenerRetencionesparaGiro();
@@ -205,16 +219,15 @@ public class IafasGiradoController implements Serializable{
 		
 	}
 	
-	public String insRegistroGiradoCab() {
-		String retorno=Constantes.VACIO;
+	public void insRegistroGiradoCab() {
 		logger.info("[INICIO:] Metodo : insRegistroGiradoCab:::");
 		IafasGiradoDao giradoDao = new IafasGiradoDao(MySQLSessionFactory.getSqlSessionFactory());
-		HttpSession session=null; 
- 		session = (HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		HttpSession session = null;
+		session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
 		IafasUsuariosController usuarioSession = new IafasUsuariosController();
-		usuarioSession=(IafasUsuariosController)session.getAttribute("iafasUsuariosController");
+		usuarioSession = (IafasUsuariosController) session.getAttribute("iafasUsuariosController");
 		String codUsu = usuarioSession.getIdUsuario();
-		
+		Response response = new Response();
 		IafasGirado objBn = new IafasGirado();
 		objBn.setVano(vano);
 		objBn.setVregSiaf(vregSiaf);
@@ -227,39 +240,44 @@ public class IafasGiradoController implements Serializable{
 		objBn.setNtipCam(ntipCam);
 		objBn.setVtipMon(tipMon);
 		objBn.setVusuarioIng(codUsu);
+		objBn.setTipoInsercion(tipoInsercion);
 
 		try {
-			//if (validarRegistroGiro()) {
-				int i = giradoDao.mantenimientoGiradoCab(objBn);
-				if (i == 0) {
-					setMsgSP("Tu registro de giro se realizó con éxito");
-					retorno = "mainIafasConsultaGirados.xhtml";
-				}
-			//}
+			response = giradoDao.mantenimientoGiradoCab(objBn);
+			if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
+				this.typeMessages = Constantes.CERO_INT;
+				this.messages = response.getMensajeRespuesta();
+				PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
+				refreshMessage();
+				showMessages(typeMessages, messages);
+			}
+
 		} catch (Exception e) {
 			logger.error("error : " + e.getMessage().toString());
 		} finally {
 
 			logger.info("[FIN:] Metodo : insRegistroGiradoCab");
 		}
-
-		return retorno;
 	}
 	
-	public String anularGirado() {
-		
-		String retorno=Constantes.VACIO;
+	public void refreshMessage() {
+		setTypeMessages(typeMessages);
+		setMessages(messages);
+	}
+	
+	public void anularGirado() {
+
 		logger.info("[INICIO:] Metodo : anularGirado:::");
 		IafasGiradoDao giradoDao = new IafasGiradoDao(MySQLSessionFactory.getSqlSessionFactory());
-		HttpSession session=null; 
- 		session = (HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		HttpSession session = null;
+		session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
 		IafasUsuariosController usuarioSession = new IafasUsuariosController();
-		usuarioSession=(IafasUsuariosController)session.getAttribute("iafasUsuariosController");
+		usuarioSession = (IafasUsuariosController) session.getAttribute("iafasUsuariosController");
 		String codUsu = usuarioSession.getIdUsuario();
-		
+		Response response = new Response();
 		String vanoAnu = (String) extContext().getRequestParameterMap().get("vanoAnu");
 		String vsecuenciaAnu = (String) extContext().getRequestParameterMap().get("vsecuenciaAnu");
-		String vsecuenciaIntAnu= (String) extContext().getRequestParameterMap().get("vsecuenciaIntAnu");
+		String vsecuenciaIntAnu = (String) extContext().getRequestParameterMap().get("vsecuenciaIntAnu");
 		IafasGirado objBn = new IafasGirado();
 		objBn.setVano(vanoAnu);
 		objBn.setVsecuencia(vsecuenciaAnu);
@@ -268,11 +286,15 @@ public class IafasGiradoController implements Serializable{
 		objBn.setVusuarioIng(codUsu);
 
 		try {
-				int i = giradoDao.mantenimientoGiradoCab(objBn);
-				if (i == 0) {
-					setMsgSP("Tu ANULACION de giro se realizó con éxito");
-					retorno = "mainIafasConsultaGirados.xhtml";
-				}
+			response = giradoDao.mantenimientoGiradoCab(objBn);
+			logger.info("respueesta de anulacion:.::"+response.getCodigoRespuesta());
+			if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
+				this.typeMessages = Constantes.CERO_INT;
+				this.messages = response.getMensajeRespuesta();
+				PrimeFaces.current().ajax().update("frm_ConsultaGiros:pnl_messages");
+				refreshMessage();
+				showMessages(typeMessages, messages);
+			}
 		} catch (Exception e) {
 			logger.error("error : " + e.getMessage().toString());
 		} finally {
@@ -280,7 +302,6 @@ public class IafasGiradoController implements Serializable{
 			logger.info("[FIN:] Metodo : anularGirado");
 		}
 
-		return retorno;
 	}
 
 	private boolean validarRegistroGiro() {
@@ -321,6 +342,70 @@ public class IafasGiradoController implements Serializable{
 		obtenerCadenasPorGirar();
 		logger.info("[FIN:] Metodo : limpiarcampos");
 	}
+	
+	public void retornoModal(String opcion) {
+		logger.info("[INICIO:] Metodo : retornoModal");
+		if(Constantes.VALOR_R.equals(opcion)) {
+			mensajeModal = "RETENCIONES";
+			tipoInsercion =  Constantes.GIRO_RETENCION;
+		}
+		else {
+			mensajeModal = "CLASIFICADORES";
+			tipoInsercion =  Constantes.GIRO_CLASIFICADOR;
+		}
+		logger.info("[FIN:] Metodo : retornoModal");
+	}
+	
+	public void actualizarBoolean() {
+		logger.info("[INICIO:] Metodo : actualizarBoolean");
+		
+		logger.info("muestraBotonGiroTodo:::>"+muestraBotonGiroTodo);
+		muestraBotonGiro = false;
+		muestraBotonGiroTodo = true;
+		logger.info("muestraBotonGiroTodo........saliendo:::>"+muestraBotonGiroTodo);
+		logger.info("[FIN:] Metodo : actualizarBoolean");
+	}
+	
+	private String showMessages(int opcion, String mensaje) {
+
+		logger.info("[INICIO:] Metodo : showMessages:::");
+		
+		switch (opcion) {
+		
+		case Constantes.CERO_INT:
+			typeMessages = Constantes.CERO_INT;
+			messages = mensaje;
+			PrimeFaces.current().executeScript("verMensajes()");
+			break;
+			
+		case Constantes.UNO_INT:
+			typeMessages = Constantes.UNO_INT;
+			messages = mensaje;
+			PrimeFaces.current().executeScript("verMensajes()");
+			break;
+			
+		case Constantes.DOS_INT:
+			typeMessages = Constantes.DOS_INT;
+			messages = mensaje;
+			PrimeFaces.current().executeScript("verMensajes()");
+			break;
+			
+		case Constantes.TRES_INT:
+			typeMessages = Constantes.TRES_INT;
+			messages = mensaje;
+			PrimeFaces.current().executeScript("verMensajes()");
+			break;
+			
+		default:
+			typeMessages = Constantes.TRES_INT;
+			messages = mensaje;
+			break;
+		}
+		
+		logger.info("[FIN:] Metodo : showMessages:::");
+		return messages;
+	}
+	
 	
 	private ExternalContext extContext() {
 		FacesContext c = FacesContext.getCurrentInstance();

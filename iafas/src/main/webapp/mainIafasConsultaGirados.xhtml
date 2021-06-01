@@ -13,6 +13,7 @@
 	<link rel="stylesheet" type="text/css" href="material_able-main/assets/icon/themify-icons/themify-icons.css" />
     <link rel="stylesheet" type="text/css" href="material_able-main/assets/icon/icofont/css/icofont.css" />
     <link rel="stylesheet" type="text/css" href="material_able-main/assets/icon/font-awesome/css/font-awesome.min.css" />
+      	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
 		<style type="text/css">
     button.ui-button {
         margin-right: .5rem;
@@ -22,7 +23,31 @@
 </h:head>
 
 <body class="formulario">
+
+<script>
+	 
+			function verMensajes() {
+				var option = document.getElementById('frm_ConsultaGiros:hdd_option').value; 
+				var message = document.getElementById('frm_ConsultaGiros:hdd_message').value;
+
+				if (option == 0) {
+					swal("AVISO", message, "success").then(function() {
+						window.location = "mainIafasConsultaGirados.xhtml";
+					});
+				}
+				
+			}
+		</script>
+
+
+
 	<h:form id="frm_ConsultaGiros"> 
+	
+	<p:panel id = "pnl_messages">
+	 	<h:inputHidden value="#{iafasGiradoController.typeMessages}" id="hdd_option"  />
+		<h:inputHidden value="#{iafasGiradoController.messages}" id="hdd_message" /> 
+	 </p:panel>
+	 
 	   <p:panel>
 	   	<p:panelGrid columns="3">
 				<i class="pi pi-money-bill"></i>
@@ -44,9 +69,9 @@
 								<p:column style="width:2px;" headerText="Año">
 									<p:outputLabel value="#{giros.vano}" />
 								</p:column>
-								<p:column style="width:2px;" headerText="Secuencia">
-									<p:outputLabel value="#{giros.vsecuencia}" />
-								</p:column>
+<!-- 								<p:column style="width:2px;" headerText="Secuencia"> -->
+<!-- 									<p:outputLabel value="#{giros.vsecuencia}" /> -->
+<!-- 								</p:column> -->
 								<p:column style="width:2px;" headerText="N° Cheque">
 									<p:outputLabel value="#{giros.vnroCheCar}" />
 								</p:column>
@@ -76,6 +101,7 @@
 										<f:param id="vanoAnu" name="vanoAnu" value="#{giros.vano}"  />
 								 		<f:param id="vsecuenciaAnu" name="vsecuenciaAnu" value="#{giros.vsecuencia}" />
 								 		<f:param id="vsecuenciaIntAnu" name="vsecuenciaIntAnu" value="#{giros.vsecuenciaInt}" />   
+								 		<f:ajax render="frm_ConsultaGiros:pnl_messages" listener="#{iafasGiradoController.refreshMessage()}" />
 									</h:commandButton>	
 								</p:column>
 							</p:dataTable>
