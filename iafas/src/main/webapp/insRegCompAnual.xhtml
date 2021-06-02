@@ -145,7 +145,6 @@
                                     <f:converter converterId="javax.faces.DateTime" />
                                 <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
                                 </p:inputMask>                               
-                                <p:graphicImage url="img/cal.gif"/>
                             </h:panelGrid>
                         </h:panelGrid>
                     <h:panelGrid columns="6" style="width: 100%" styleClass="panel">
@@ -176,19 +175,22 @@
                     </h:panelGrid>  
                     <h:panelGrid columns="8" style="width: 80%">
                         <p:outputLabel value="Moneda:"/>
-                        <p:selectOneMenu id="tipMon"  value="#{mbCompAnual.tipMon}" disabled="true">
+                        <h:selectOneMenu id="tipMon" value="#{mbCompAnual.tipMon}" styleClass="select" disabled="true">
                  			<f:selectItem itemValue="1" itemLabel="S/."></f:selectItem>
 			                <f:selectItem itemValue="2" itemLabel="USD"></f:selectItem>
 			                <f:selectItem itemValue="3" itemLabel="EURO"></f:selectItem>
 			                <f:selectItem itemValue="57" itemLabel="Y"></f:selectItem>
-                        </p:selectOneMenu>
+                        </h:selectOneMenu>
                         <p:outputLabel value="T.Cambio:"/>
                         <h:inputText id="tipcam" style="width: 50px; text-align: right;" 
                         styleClass="input" value="#{mbCompAnual.ntipCam}" readonly="true"/>
                         <h:panelGrid id="panelMontoOC" columns="2" style="visibility:hidden;">
                          <p:outputLabel value="Moneda Orden (C/S):"/>
                         <h:inputText id="montoOCOS" value="#{mbCompAnual.montoOrden}"
-                        style="width: 75px;text-align: right;" disabled="true" styleClass="input"/>
+                        style="width: 75px;text-align: right;" disabled="true" styleClass="input">
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                        </h:inputText>
+                        
                         </h:panelGrid>
                       
                          

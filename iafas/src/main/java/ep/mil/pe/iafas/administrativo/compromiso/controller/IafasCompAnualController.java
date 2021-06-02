@@ -78,6 +78,8 @@ public class IafasCompAnualController implements Serializable {
     private BigDecimal totalCompAnual;
     private BigDecimal difTotal;
     
+    private String simboloMon;
+    
     Date hoy = new Date();
     
 	private static final long serialVersionUID = 1L;
@@ -223,6 +225,7 @@ public class IafasCompAnualController implements Serializable {
 				 setTipoFase(p.getTipoCertificacion());
 				 setMontoCompromiso(p.getNimpMonSol());
 				 setTipDoc(p.getVtipoDocumentoA());
+				 setSimboloMon(p.getVcodMoneda());
 			 }
 			 
 		}
@@ -347,7 +350,10 @@ public class IafasCompAnualController implements Serializable {
 			 ca.setNtipCam(ntipCam);
 			 ca.setVcodTipoFinanciamiento(tipCodFun);
 			 ca.setVcodProcesoSel(tipProcesoSel);
-			 ca.setVcodMoneda(tipMon);	 
+			 if(tipMon==null || tipMon.equals("")) {
+				 ca.setVcodMoneda("1");
+			 }else {
+			 ca.setVcodMoneda(tipMon);	 }
 			 ca.setVusuarioIng(usuario);
 			 ca.setVglosa(concepto);
 			 ca.setNimpMonSol(BigDecimal.ZERO);

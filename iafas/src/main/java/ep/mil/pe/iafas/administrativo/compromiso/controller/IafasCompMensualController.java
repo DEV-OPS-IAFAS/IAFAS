@@ -76,11 +76,13 @@ public class IafasCompMensualController implements Serializable{
 	private String tipOrden;
 	
 	private String tipDocAnual;
+	private String codigoDocAnual;
 	private String nroDocAnual;
 	private String conceptoAnual;
 	
 	private BigDecimal montoOrden;
 	private int reg;
+	private BigDecimal montoCA;
 	
 	IafasCompromisoMensualDao mensualDao = new IafasCompromisoMensualDao(MySQLSessionFactory.getSqlSessionFactory());
 	OrdenesCSDao OrderDao = new OrdenesCSDao(SQLServerSessionFactory.getSqlServerSessionFactory());
@@ -176,31 +178,6 @@ public class IafasCompMensualController implements Serializable{
 		return "";
 	}
 	
-	public boolean validaMontoOC() {
-		
-		boolean flag=false;
-		if(tipDocumentoMen.equals(Constantes.ID_ORDEN_COMPRA) ||
-				tipDocumentoMen.equals(Constantes.ID_ORDEN_SERVICIO)) {
-			 int contador=0;
-			 for(int oc=0; oc<regAnualDet.size();oc++) {
-				 logger.info("Monto Ingresado "+regAnualDet.get(oc).getMontoIngresado().doubleValue());
-		          if(regAnualDet.get(oc).getMontoIngresado().doubleValue() > 0) {
-		        	  if(!(montoOrden.doubleValue() == regAnualDet.get(0).getMontoIngresado().doubleValue())) {
-							 
-							 PrimeFaces.current().executeScript("activateBoton()");
-							 FacesContext.getCurrentInstance().addMessage(null, new 
-									 FacesMessage(FacesMessage.SEVERITY_WARN, "INFO!", 
-											 "EL IMPORTE REGISTRADO DIFIERE DEL MONTO DE LA ORDEN.. VERIFIQUE!"));
-							 flag = true;
-						 }
-		          }
-			 }
-			 logger.info("Probando Validadores Contando clasificadores:" + contador);
-			 
-		}
-		return flag;
-	}
-	
 	public List<ViewIafasCompromisoMensual> buscarAnualXSecuencia(){
 		regAnualDet = new ArrayList<ViewIafasCompromisoMensual>();
 		ViewIafasCompromisoMensual vcm = new ViewIafasCompromisoMensual();
@@ -224,16 +201,19 @@ public class IafasCompMensualController implements Serializable{
 			setVsecuenciaA(l.getVsecuenciaA());
 			setVcorrelativoA(l.getVcorrelativoA());
 			setNumCertificado(l.getVnroCertificado());
-			setTipDocAnual(l.getVtipoDocumentoA());
+			setCodigoDocAnual(l.getVtipoDocumentoA());
 			setNroDocAnual(l.getVnroDocumentoPagoA());
 			setConceptoAnual(l.getConcepto());
 			setTipDocAnual(l.getAbTipoDoc());
 			setGlosa(l.getConcepto());
+			setMontoCA(l.getNimpMontoSol());
+			
 			if(l.getVtipoDocumentoA().equals(Constantes.ID_ORDEN_COMPRA) || 
 			   l.getVtipoDocumentoA().equals(Constantes.ID_ORDEN_SERVICIO)) {
 				setTipDocumentoMen(l.getVtipoDocumentoA());
 				setNroDocumentoMen(l.getVnroDocumentoPagoA());
 				PrimeFaces.current().executeScript("deshabilitar()");
+				
 			}
 			else {
 				   if(l.getVtipoDocumentoA().equals("060")) {
@@ -271,11 +251,13 @@ public class IafasCompMensualController implements Serializable{
 		setNroDocAnual(Constantes.VACIO);
 		setRuc(Constantes.VACIO);
 		setRazonSocial(Constantes.VACIO);
-
+		setMontoCA(new BigDecimal(0));
+		setMontoOrden(new BigDecimal(0));
+        regAnualDet =null;
 	}
 	
 	private boolean validaCampos() {
-		
+		logger.info("Parametros : "+tipDocumentoMen+" "+nroDocumentoMen+" "+fechaMensual+" "+glosa);
 		if(tipDocumentoMen.equals(Constantes.VACIO)) {typeMessages=2;showMessages(2);return true;}
 		else
 		if(nroDocumentoMen.equals(Constantes.VACIO)) {typeMessages=2;showMessages(2);return true;}
@@ -289,6 +271,52 @@ public class IafasCompMensualController implements Serializable{
 			return false;	
 		}
 
+	}
+	
+	public boolean validaMontoOC() {
+		
+		boolean flag=false;
+		if(codigoDocAnual.equals("060")) {
+			if(tipDocumentoMen.equals(Constantes.ID_ORDEN_COMPRA) ||
+					tipDocumentoMen.equals(Constantes.ID_ORDEN_SERVICIO)) {
+				 for(int oc=0; oc<regAnualDet.size();oc++) {
+					 logger.info("Monto Ingresado "+regAnualDet.get(oc).getMontoIngresado().doubleValue());
+			          if(regAnualDet.get(oc).getMontoIngresado().doubleValue() > 0) {
+			        	  if(!(montoOrden.doubleValue() == regAnualDet.get(0).getMontoIngresado().doubleValue())) {
+								 
+								 PrimeFaces.current().executeScript("activateBoton()");
+								 FacesContext.getCurrentInstance().addMessage(null, new 
+										 FacesMessage(FacesMessage.SEVERITY_ERROR, "INFO!", 
+												 "EL IMPORTE REGISTRADO DIFIERE DEL MONTO DE LA ORDEN.. VERIFIQUE!"));
+								 flag = true;
+							 }
+			          }
+				 }
+				 logger.info("Probando Validadores Contando clasificadores:" + montoOrden);
+				 
+			}
+		}
+		else {
+			if(codigoDocAnual.equals(Constantes.ID_ORDEN_COMPRA) ||
+					codigoDocAnual.equals(Constantes.ID_ORDEN_SERVICIO)) {
+				setTipDocumentoMen(codigoDocAnual);
+				 for(int oc=0; oc<regAnualDet.size();oc++) {
+					 logger.info("Monto Ingresado "+regAnualDet.get(oc).getMontoIngresado().doubleValue());
+			          if(regAnualDet.get(oc).getMontoIngresado().doubleValue() > 0) {
+			        	  if(!(montoCA.doubleValue() == regAnualDet.get(0).getMontoIngresado().doubleValue())) {
+								 FacesContext.getCurrentInstance().addMessage(null, new 
+										 FacesMessage(FacesMessage.SEVERITY_FATAL, "INFO!", 
+												 "EL IMPORTE REGISTRADO DIFIERE DEL MONTO DEL COMPROMISO ANUAL.. VERIFIQUE!"));
+								 flag = true;
+							 }
+			          }
+				 }
+				 logger.info("Probando Validadores Contando clasificadores:" + montoOrden);
+				 
+			}
+		}
+
+		return flag;
 	}
 	
 	public String registroCompMensual() {
@@ -347,7 +375,7 @@ public class IafasCompMensualController implements Serializable{
 					}
 				showMessages(1);		
 				//return retornar();	
-				regAnualDet.clear();
+				//regAnualDet.clear();
 				limpiarSession();
 			}
 			catch (Exception e) {

@@ -111,7 +111,7 @@
                                 <p:dataTable id="dTableCompAnual" var="ca" value="#{mbCompAnual.lista}" rows="10" scrollable="true" scrollHeight="175px;"
                                              style="width: 100%;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
                                              paginatorPosition="bottom" paginator="true" stripedRows="true">
-                                    <p:column headerText="Fase" style="width: 50px;">
+                                    <p:column headerText="Fase" style="width: 60px;">
                                         <h:commandLink id="cmdLink_Fase" actionListener="#{mbCompAnual.verDetalleRegistroCA}" >
                                             <p:outputLabel value="#{ca.tipoCertificacion}"/> 
                                           <f:param id="p_secuenciaDet" name="p_secuencia" value="#{ca.vsecuenciaA}"></f:param>
@@ -122,15 +122,16 @@
                                     <p:column headerText="Secuencia" style="width: 25px;" filterBy="#{ca.secuencia}">
                                         <p:outputLabel value="#{ca.vsecuenciaA}"/>
                                     </p:column> -->
-                                    <p:column headerText="T.Doc-Nro" style="width: 75px;font-size:10px;">
-                                        <p:outputLabel value="#{ca.vnroDocumentoPagoA}"/>
+                                    <p:column headerText="Numero" style="width: 75px;font-size:10px;">
+                                        <p:outputLabel value="#{ca.vabrevTipDoc}:#{ca.vnroDocumentoPagoA}"/>
                                     </p:column>
-                                    <p:column headerText="Proveedor" style="width: 80px;">
-                                        <p:outputLabel value="#{ca.cproveedorRuc}"/>
+                                    <p:column headerText="Proveedor" style="width: 150px;">
+                                        <p:outputLabel value="#{ca.cproveedorRuc}:#{ca.razonSocial}"/>
                                     </p:column>
+                                    <!--  
                                     <p:column headerText="Rb." style="width: 10px;">
                                         <p:outputLabel value="#{ca.vfuenteFinanciamiento}"/>
-                                    </p:column>
+                                    </p:column> -->
                                     <p:column headerText="Mon." style="width: 10px;">
                                         <p:outputLabel value="#{ca.vcodMoneda}"/>
                                     </p:column>
@@ -139,7 +140,7 @@
                                             <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
                                         </p:outputLabel>
                                     </p:column>
-                                    <p:column headerText="E.E." style="width: 18px;">
+                                    <p:column headerText="Estado" style="width: 18px;">
                                         <p:outputLabel value="#{ca.vcodEstado}" style="text-align: center"/>
                                     </p:column>
                                    <!--   <p:column headerText="Editar" style="width: 20px;">
@@ -232,7 +233,7 @@
                             <p:outputLabel value="Ruc:" />
                             <p:outputLabel value="#{mbCompAnual.ruc}-#{mbCompAnual.razonSocial}" styleClass="outLabel"/>
                             <p:outputLabel value="Monto"></p:outputLabel>
-                            <p:outputLabel value="#{mbCompAnual.montoCompromiso}" styleClass="outLabel">
+                            <p:outputLabel value="#{mbCompAnual.simboloMon} #{mbCompAnual.montoCompromiso}" styleClass="outLabel">
                             <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
                             </p:outputLabel>
                             </h:panelGrid>                     

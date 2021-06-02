@@ -61,9 +61,25 @@
            function habilitar(){
              document.getElementById("frmCompromisoMensual:panelOC").style.visibility = "visible";
            }
+           
+           function changeOC(objet){
+           alert("Entro")
+             //var tipo = document.getElementById('frmCompromisoMensual:tipoDocAnual').value;
+             alert(objet);
+             if(objet=="031" || objet=="032"){
+                document.getElementById("frmCompromisoMensual:panelTipDocTxt").style.visibility = "visible";
+                document.getElementById("frmCompromisoMensual:panelCboTipDoc").style.visibility = "hidden";
+             }
+             else{
+                  document.getElementById("frmCompromisoMensual:panelTipDocTxt").style.visibility = "hidden";
+                  document.getElementById("frmCompromisoMensual:panelCboTipDoc").style.visibility = "visible";  
+             }
+
+           }
+           
         </script>
         <h:form id="frmCompromisoMensual" style="border-radius: 5px 5px 5px 5px;border: 1px; width:100%;">
-        <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
+        <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true" />
             <p:panel >
                 <p:panelGrid columns="2" styleClass="panel">
                     <i class="pi pi-calendar"></i>
@@ -72,7 +88,7 @@
                 <p:panelGrid columns="5" >
                     <p:outputLabel value="N° Certificado :" styleClass="etiqueta"/>
                     <h:inputText id="inpTxtCertificado" value="#{mbCompMensual.certificado}" 
-                    onclick="limpiarTexto();" styleClass="input" style="text-align:right;" size="8"/>
+                     styleClass="input" style="text-align:right;" size="8"/>
                     <p:commandButton id="cmdBtnBuscar"  value="Ver" actionListener="#{mbCompMensual.verAnuales()}"                  
                      style="height:30px;" ajax="true" update="frmCompromisoMensual:dCompAnual"
                      oncomplete="PF('dialogCA').show();"
@@ -84,7 +100,7 @@
                     icon="pi pi-arrow-left" style="height:30px;"/>
                 </p:panelGrid>
                 <br/>
-                <p:fieldset legend="Datos Compromiso Anual">
+                <p:fieldset  id="tabAnual" legend="Datos Compromiso Anual">
                  <h:panelGrid columns="4" style="width:100%">
                  <h:outputLabel value="Fuente Financiamiento"/>
                          <h:selectOneMenu value="#{mbCompMensual.vcodtipoFinanciamiento}" disabled="true" styleClass="select"> 
@@ -114,29 +130,38 @@
                         <h:inputText id="tipcam" style="width: 50px; text-align: right;" 
                         styleClass="input" value="#{mbCompMensual.ntipCam}" readonly="true"/>
                  </h:panelGrid>
-                 <h:panelGrid columns="4" style="width:100%;">
+                 <h:panelGrid columns="6" style="width:100%;">
                     <h:outputLabel value="Documento:"></h:outputLabel>
                     <h:panelGrid columns="3">
-                      <h:outputLabel value="#{mbCompMensual.tipDocAnual}" styleClass="outLabel"></h:outputLabel>
+                      <h:outputLabel id="tipoDocAnual" value="#{mbCompMensual.tipDocAnual}" styleClass="outLabel"></h:outputLabel>
                       <h:outputLabel>-</h:outputLabel>
                       <h:outputLabel value="#{mbCompMensual.nroDocAnual}" styleClass="outLabel"></h:outputLabel>
                     </h:panelGrid>
                     <h:outputLabel value="Concepto:"></h:outputLabel>
                     <h:inputTextarea id="txtConceptoCA" value="#{mbCompMensual.conceptoAnual}" rows="3" styleClass="input"
                     style="width:500px;" readonly="true"></h:inputTextarea>
+                    <h:outputLabel value="Monto C.A."></h:outputLabel>
+                    <h:inputText value="#{mbCompMensual.montoCA}" size="10" styleClass="input" disabled="true"
+                    style="text-align:right">
+                      <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                    </h:inputText>
                  </h:panelGrid>
                 </p:fieldset>
                 <br/>
-                <p:fieldset legend="Datos Compromiso Mensual">
+                <p:fieldset id="tabMensual" legend="Datos Compromiso Mensual">
                    <h:panelGrid columns="9" style="width:100%" >
                    <h:outputLabel value="Documento:"/>
+
                    <h:selectOneMenu id="cbo_documento" value="#{mbCompMensual.tipDocumentoMen}"
-                   onchange="activateBoton();" styleClass="select">
+                    styleClass="select" onchange="activateBoton();">
                       <f:selectItem itemValue="" itemLabel="--Seleccione--"></f:selectItem>
                       <f:selectItem itemValue="031" itemLabel="031: Orden de Compra"></f:selectItem>
                       <f:selectItem itemValue="032" itemLabel="032: Orden de Servicios"></f:selectItem>
                       <f:selectItem itemValue="043" itemLabel="043: Planilla Viaticos"></f:selectItem>
                    </h:selectOneMenu>
+
+
+
                    <h:outputLabel value="Nro Documento:"/>
                    <h:inputText id="inpNroDoc" styleClass="input" value="#{mbCompMensual.nroDocumentoMen}" size="11" onblur="completaCeros(this.name, 10);"
                    maxlength="10"/>
@@ -154,7 +179,7 @@
                    </p:inputMask>
                      <h:outputText value="Monto (OC/OS):"></h:outputText>
                     <h:inputText id="inpTxtMontoOC" styleClass="input" value="#{mbCompMensual.montoOrden}" size="11" readonly="true"
-                    style="text-align:right">
+                    			 style="text-align:right">
                     <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
                     </h:inputText>
                    </h:panelGrid> 
@@ -220,24 +245,24 @@
                 resizable="true" appendTo="@(body)" width="750" position="top" closeOnEscape="true">
                 <p:panel>
                   <p:dataTable id="dataAnual" var="ca" value="#{mbCompMensual.regAnual}">
-                   <p:column headerText="Secuencia">
+                   <p:column headerText="Compromiso Anual" style="width:35px;">
                       <h:outputText value="#{ca.vsecuenciaA}"/>
                    </p:column>
-                   <p:column headerText="T.Doc-Nro">
-                      <h:outputText value="#{ca.vtipoDocumentoA}-#{ca.vnroDocumentoPagoA}"/>
+                   <p:column headerText="Numero" style="width:45px;">
+                      <h:outputText value="#{ca.abTipoDoc}-#{ca.vnroDocumentoPagoA}"/>
                    </p:column>
-                   <p:column headerText="Proveedor">
-                      <h:outputText value="#{ca.vruc}"/>
+                   <p:column headerText="Proveedor" style="width:135px;">
+                      <h:outputText value="#{ca.vruc}:#{ca.razonSocial}"/>
                    </p:column>
-                   <p:column headerText="Monto">
+                   <p:column headerText="Monto" style="text-align:right;width:75px">
                       <h:outputText value="#{ca.nimpMontoSol}">
-                      
+                      <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
                       </h:outputText>
                    </p:column>
-                   <p:column headerText="#">
+                   <p:column headerText="#" style="width:35px;">
                       <p:commandButton id="btnElegir" icon="pi pi-check" value="Elegir" actionListener="#{mbCompMensual.buscarAnualXSecuencia()}"
-                      immediate="PF('dialogCA').hide();" update="@form" onclick="PF('dialogCA').hide();"
-                      >
+                      immediate="PF('dialogCA').hide();"  onclick="PF('dialogCA').hide();" 
+                      update="frmCompromisoMensual:tabAnual, frmCompromisoMensual:tabMensual, frmCompromisoMensual:dataAnualDet">
                       <f:param id="p_secuencia" name="p_secuencia" value="#{ca.vsecuenciaA}"></f:param>
                       </p:commandButton>
                    </p:column>

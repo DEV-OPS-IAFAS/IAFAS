@@ -37,5 +37,8 @@ public class IafasCompromisoAnual {
     private BigDecimal totCert;
     private BigDecimal totCA;
     private BigDecimal difCA;
+    
+    private String vabrevTipDoc;
+    private String simboloMon;
 
 }

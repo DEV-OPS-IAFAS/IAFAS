@@ -19,6 +19,7 @@
 		ca.vnro_certificado vnroCertificado, ca.cproveedor_ruc vruc,
 		pk_util_razon_social(ca.cproveedor_ruc) razonSocial,
 		ca.vcod_proceso_sel vcodProcesoSel,
+		FUN_TIPO_DOCUMENTO_ADMINISTRATIVO_ABREVIATURA(ca.vtipo_documento_a) abTipoDoc,
 		ca.vfuente_financiamiento,ca.vcod_tipo_financiamiento,
 		ca.ntip_cam,
 		ca.vtipo_operacion,
