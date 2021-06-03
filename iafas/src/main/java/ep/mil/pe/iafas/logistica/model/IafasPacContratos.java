@@ -31,6 +31,7 @@ public class IafasPacContratos {
 	private String vusuarioCodigo;
 	
 	private String descFuenteFinan;
+	private String razonSocial;
 	 // pacProcesos
 	private String vpacNumeroPaac;
 	private String vpacProcesosDescripcion;

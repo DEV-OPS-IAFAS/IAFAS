@@ -91,4 +91,12 @@
 	npac_contrato_detalle_extranjera montoMEDetalle
  	FROM iafas_pac_contratos_detalle WHERE cperiodo_codigo = #{cperiodoCodigo} AND ncontrato_codigo = #{ncontratoCodigo}
    </select>
+   
+   <select id="showContractCA" resultType="ep.mil.pe.iafas.logistica.model.IafasPacContratos"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacContratos">
+    SELECT cperiodo_codigo cperiodoCodigo, vcontrato_numero vnumeroContrato,
+    vcontrato_descripcion vcontratoDescripcion, ncontrato_monto ncontratoMonto,
+    vproveedor_ruc vproveedorRuc, pk_util_razon_social(vproveedor_ruc) razonSocial
+    FROM iafas_pac_contratos where cperiodo_codigo = #{cperiodoCodigo} and vcontrato_numero=#{vnumeroContrato}  
+   </select>
 </mapper>

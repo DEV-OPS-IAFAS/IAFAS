@@ -33,6 +33,7 @@ public class Constantes {
 	
 	public static final String ID_ORDEN_COMPRA = "031"; 
 	public static final String ID_ORDEN_SERVICIO = "032"; 
+	public static final String ID_CONTRATOS = "060"; 
 	
 	/*Cambios agregados el 31.03.2021*/
 	public static final int CERO_INT =0;

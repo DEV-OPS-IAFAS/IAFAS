@@ -109,4 +109,20 @@ public class IafasPaacContratoDao {
 		}
 		return i;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IafasPacContratos> showContractsCA(IafasPacContratos c){
+		List<IafasPacContratos> lista = null;
+		SqlSession session = sqlSessionFactory.openSession();
+		try{
+            lista = session.selectList("IafasPacContratos.showContractCA",c);
+      }
+      catch(Exception e) {
+      	e.printStackTrace();
+      }
+      finally{
+           session.close();
+      }
+		return lista;
+	}
 }

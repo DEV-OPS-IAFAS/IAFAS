@@ -26,6 +26,8 @@ import ep.mil.pe.iafas.configuracion.SQLServerSessionFactory;
 import ep.mil.pe.iafas.configuracion.util.Constantes;
 import ep.mil.pe.iafas.integracion.dao.OrdenesCSDao;
 import ep.mil.pe.iafas.integracion.model.OrdenesCS;
+import ep.mil.pe.iafas.logistica.dao.IafasPaacContratoDao;
+import ep.mil.pe.iafas.logistica.model.IafasPacContratos;
 import ep.mil.pe.iafas.seguridad.controller.IafasUsuariosController;
 import lombok.Data;
 
@@ -59,7 +61,7 @@ public class IafasCompAnualController implements Serializable {
     private BigDecimal nimpCompSol;
     private Date fechaCert;    
     private String usuario;
-    //Parametros
+ 
     private String psecuencia;
     private String pcorrelativo;
     
@@ -68,7 +70,7 @@ public class IafasCompAnualController implements Serializable {
     private String tipOrden;
     private String conceptoDetalle;
     
-    // Adicionado 30/05
+   
     private String tipoFase;
     private BigDecimal montoCompromiso;
     private String tipDoc;
@@ -79,6 +81,7 @@ public class IafasCompAnualController implements Serializable {
     private BigDecimal difTotal;
     
     private String simboloMon;
+    private String conceptoCertificado;
     
     Date hoy = new Date();
     
@@ -88,10 +91,9 @@ public class IafasCompAnualController implements Serializable {
 	
 	IafasCompromisoAnualDetDao compAnualDetDao = new IafasCompromisoAnualDetDao(MySQLSessionFactory.getSqlSessionFactory());
 	IafasCompromisoAnualDao compAnualDao = new IafasCompromisoAnualDao(MySQLSessionFactory.getSqlSessionFactory());
+	IafasPaacContratoDao  contratoDao = new IafasPaacContratoDao(MySQLSessionFactory.getSqlSessionFactory());
 	
 	OrdenesCSDao OrderDao = new OrdenesCSDao(SQLServerSessionFactory.getSqlServerSessionFactory());
-	
-	// Sessiones
      
 	 
 	public IafasCompAnualController() {
@@ -105,48 +107,89 @@ public class IafasCompAnualController implements Serializable {
 	}
 	
 	public String validarOCSTest() {
-		IafasCompromisoAnual ca = new IafasCompromisoAnual();
-		ca.setVanoDocumento("2021");
-		ca.setVnroDocumentoPagoA(nroDoc);
-		List<IafasCompromisoAnual> ordenes = compAnualDao.verOC(ca);
-		for(IafasCompromisoAnual registros: ordenes) {
-				ruc = ordenes.get(0).getCproveedorRuc();
-				razonSocial = ordenes.get(0).getRazonSocial();
-				montoOrden = ordenes.get(0).getNimpMonSol();
+		try {
+			logger.info("Validando Ordenes y Contratos{} " +nroDoc);
+			if(tipDocumentoA.equals(Constantes.ID_CONTRATOS)) {
+				IafasPacContratos c = new IafasPacContratos();
+				c.setCperiodoCodigo(periodo);
+				c.setVnumeroContrato(nroDoc);
+				List<IafasPacContratos> contratos = contratoDao.showContractsCA(c);
+				for(IafasPacContratos con : contratos) {
+					setRuc(con.getVproveedorRuc());
+					setRazonSocial(con.getRazonSocial());
+					setMontoOrden(con.getNcontratoMonto());
+					setConcepto(con.getVcontratoDescripcion());
+				}
+				logger.info("Contrato Encontrado {} "+ruc+" "+razonSocial+" "+montoOrden);
 			}
-		logger.info("Valores Obtenidos {} "+ruc+" "+razonSocial+" "+montoOrden);
+			else {
+				IafasCompromisoAnual ca = new IafasCompromisoAnual();
+				ca.setVanoDocumento("2021");
+				ca.setVnroDocumentoPagoA(nroDoc);
+				List<IafasCompromisoAnual> ordenes = compAnualDao.verOC(ca);
+				for(IafasCompromisoAnual registros: ordenes) {
+						ruc = ordenes.get(0).getCproveedorRuc();
+						razonSocial = ordenes.get(0).getRazonSocial();
+						montoOrden = ordenes.get(0).getNimpMonSol();
+					}
+				logger.info("Valores Obtenidos {} "+ruc+" "+razonSocial+" "+montoOrden);
+				}
+			}
+			
+	    
+		catch (Exception e) {
+			logger.error("Error Busqueda Contratos y Ordenes: {} "+e.getMessage()+" Causa :"+e.getCause());
+		}
+		
+
 		return "";
 	}
 	
 	public String validarOCS() throws SQLException {
 		try {
-			logger.info("Validando Ordenes {} " +nroDoc);
-			OrdenesCS oc = new OrdenesCS();
-			if(tipDocumentoA.equals(Constantes.ID_ORDEN_COMPRA)) {
-				setTipOrden("OC");
-			}
-			else 
-				if(tipDocumentoA.equals(Constantes.ID_ORDEN_SERVICIO)) {
-					setTipOrden("OS");
+			logger.info("Validando Ordenes y Contratos{} " +nroDoc);
+			if(tipDocumentoA.equals(Constantes.ID_CONTRATOS)) {
+				IafasPacContratos c = new IafasPacContratos();
+				c.setCperiodoCodigo(periodo);
+				c.setVnumeroContrato(nroDoc);
+				List<IafasPacContratos> contratos = contratoDao.showContractsCA(c);
+				for(IafasPacContratos con : contratos) {
+					setRuc(con.getVproveedorRuc());
+					setRazonSocial(con.getRazonSocial());
+					setMontoOrden(con.getNcontratoMonto());
+					setConcepto(con.getVcontratoDescripcion());
 				}
-			
-			oc.setPeriodo(Integer.valueOf(periodo));
-			oc.setNumeroOrden(nroDoc);
-			oc.setTipoDocumento(tipOrden);
-			List<OrdenesCS> ordenes = OrderDao.findPurchaseOrder(oc);
-			logger.info("Parametros Busqueda {} "+periodo+" "+tipOrden+" "+nroDoc);
-			if(ordenes.size()==0) {ruc="";razonSocial="";}
+				logger.info("Contrato Encontrado {} "+ruc+" "+razonSocial+" "+montoOrden);
+			}
 			else {
-				for(OrdenesCS registros: ordenes) {
-					ruc = ordenes.get(0).getRuc();
-					razonSocial = ordenes.get(0).getProveedor();
-					montoOrden = ordenes.get(0).getMontoTotal();
+				OrdenesCS oc = new OrdenesCS();
+				if(tipDocumentoA.equals(Constantes.ID_ORDEN_COMPRA)) {
+					setTipOrden("OC");
 				}
-				logger.info("Valores Obtenidos {} "+ruc+" "+razonSocial);
+				else 
+					if(tipDocumentoA.equals(Constantes.ID_ORDEN_SERVICIO)) {
+						setTipOrden("OS");
+					}
+				
+				oc.setPeriodo(Integer.valueOf(periodo));
+				oc.setNumeroOrden(nroDoc);
+				oc.setTipoDocumento(tipOrden);
+				List<OrdenesCS> ordenes = OrderDao.findPurchaseOrder(oc);
+				logger.info("Parametros Busqueda {} "+periodo+" "+tipOrden+" "+nroDoc);
+				if(ordenes.size()==0) {ruc="";razonSocial="";}
+				else {
+					for(OrdenesCS registros: ordenes) {
+						ruc = ordenes.get(0).getRuc();
+						razonSocial = ordenes.get(0).getProveedor();
+						montoOrden = ordenes.get(0).getMontoTotal();
+					}
+					logger.info("Valores Ordenes Obtenidos {} "+ruc+" "+razonSocial);
+				}
 			}
+			
 
 		} catch (Exception e) {
-			logger.error("Error Valida ORdenes : {} "+e.getMessage()+" "+e.getCause());
+			logger.error("Error Busqueda Contratos y Ordenes: {} "+e.getMessage()+" Causa :"+e.getCause());
 		}
 		
 		return "";
@@ -188,6 +231,7 @@ public class IafasCompAnualController implements Serializable {
 				setTipProcesoSel(compromiso.get(0).getVcodProcesoSel());			
 				setFechaCert(compromiso.get(0).getDfechaDocumento());
 				setConcepto(compromiso.get(0).getVglosa());
+				setConceptoCertificado(compromiso.get(0).getVglosa());
 				if(compromiso.get(0).getNtipCam()==0) {
 					setNtipCam(1.0);
 				}
@@ -286,7 +330,8 @@ public class IafasCompAnualController implements Serializable {
 	
 		boolean flag=false;
 		if(tipDocumentoA.equals(Constantes.ID_ORDEN_COMPRA) ||
-		   tipDocumentoA.equals(Constantes.ID_ORDEN_SERVICIO)) {
+		   tipDocumentoA.equals(Constantes.ID_ORDEN_SERVICIO) ||
+		   tipDocumentoA.equals(Constantes.ID_CONTRATOS)) {
 			 int contador=0;
 			 for(int oc=0; oc<listaCertDet.size();oc++) {
 				 logger.info("Monto Ingresado "+listaCertDet.get(oc).getMontoIngresado().doubleValue());
@@ -298,7 +343,7 @@ public class IafasCompAnualController implements Serializable {
 			 if(contador > 1) {
 				 
 				 FacesContext.getCurrentInstance().addMessage(null, new 
-				 FacesMessage(FacesMessage.SEVERITY_INFO, "INFO!", "NO ES PERMITIDO COMPROMETER MAS DE UN CLASIFICADOR PARA EL TIPO DE DOCUMENTO, VERIFIQUE!"));
+				 FacesMessage(FacesMessage.SEVERITY_FATAL, "INFO!", "NO ES PERMITIDO COMPROMETER MAS DE UN CLASIFICADOR PARA EL TIPO DE DOCUMENTO, VERIFIQUE!"));
 				 flag = true;
 			 }
 			 else {
@@ -306,8 +351,8 @@ public class IafasCompAnualController implements Serializable {
 					 
 					 PrimeFaces.current().executeScript("activateBoton()");
 					 FacesContext.getCurrentInstance().addMessage(null, new 
-							 FacesMessage(FacesMessage.SEVERITY_WARN, "INFO!", 
-									 "EL IMPORTE REGISTRADO DIFIERE DEL MONTO DE LA ORDEN.. VERIFIQUE!"));
+							 FacesMessage(FacesMessage.SEVERITY_FATAL, "INFO!", 
+									 "EL IMPORTE REGISTRADO DIFIERE DEL MONTO DEL DOCUMENTO.. VERIFIQUE!"));
 					 flag = true;
 				 }
 			 }

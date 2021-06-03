@@ -38,14 +38,14 @@
            
            function activateBoton(){
                var tip = document.getElementById('frmInsRegCompAnual:cbo_documento').value;
-               if(tip =="031" || tip=="032"){
+               if(tip =="031" || tip=="032" || tip=="060"){
                document.getElementById("frmInsRegCompAnual:panelOC").style.visibility = "visible";
                document.getElementById("frmInsRegCompAnual:inptxtRuc").disabled=true;
                document.getElementById("frmInsRegCompAnual:panelMontoOC").style.visibility = "visible";
                }
                else{
                document.getElementById("frmInsRegCompAnual:panelOC").style.visibility = "hidden";
-               document.getElementById("frmInsRegCompAnual:inptxtRuc").disabled=false;
+               document.getElementById("frmInsRegCompAnual:inptxtRuc").disabled=true;
                document.getElementById("frmInsRegCompAnual:panelMontoOC").style.visibility = "hidden";
                }
                
@@ -110,7 +110,7 @@
                 </h:panelGrid>
 				<h:panelGrid columns="2">
 				      <h:outputLabel value="Concepto:"/>
-                     <h:inputTextarea id="txtConceptoCertificado" value="#{mbCompAnual.concepto}" 
+                     <h:inputTextarea id="txtConceptoCertificado" value="#{mbCompAnual.conceptoCertificado}" 
                      styleClass="outLabel" style="width: 680px;font-size:10px;"
                      readonly="true" rows="4">
                      </h:inputTextarea>
@@ -137,7 +137,7 @@
                             style="height:25px;"
                             onblur="completaCeros(this.name, 10);" ajax="true"
                             title="Búsqueda Ordenes Compra o Servicio, validará el RUC y RazonSocial" 
-                            update="panel_proveedor,montoOCOS"/>
+                            update="panel_proveedor,montoOCOS,txt_concepto"/>
                             </h:panelGrid>     <!-- action="#{mbCompAnual.validarOCS}" -->            
                             <p:outputLabel value="Fecha:"/>
                             <h:panelGrid columns="2" >
