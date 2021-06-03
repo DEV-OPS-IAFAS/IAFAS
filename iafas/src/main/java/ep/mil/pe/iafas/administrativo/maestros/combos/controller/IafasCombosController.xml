@@ -81,4 +81,24 @@ parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
 		 select VCOD_IMP codigo ,VSIGLAS descripcion FROM iafas_impuesto  WHERE VESTADO_CODIGO='AC' order by VCOD_IMP asc
 </select>
 
+<!-- Cambios Agrehado por Elvis Severino -->
+<select id="periodos"
+	resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
+	parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+	SELECT CPERIODO_CODIGO AS codigo
+	from iafas_periodos
+	where
+	CESTADO_CODIGO = 'AC'
+	order by CPERIODO_CODIGO desc
+</select>
+
+<select id="entidades"
+	resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
+	parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+	SELECT CCODIGO_ENTIDAD AS codigo,
+	VENTIDAD_DESCRIPCION AS descripcion
+	from IAFAS_ENTIDADES
+	where
+	CESTADO_CODIGO = 'AC'
+</select>
 </mapper>

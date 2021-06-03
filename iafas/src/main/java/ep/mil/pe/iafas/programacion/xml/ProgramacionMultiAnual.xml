@@ -81,4 +81,17 @@
 		CAB.NFUENTE_FINANCIAMIENTO_CODIGO=#{fuenteFinac}
 	</select>
 	
+	<select id="informacionCuadroNecesidadesValorizadas"
+		parameterType="ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnual"
+		resultType="ep.mil.pe.iafas.programacion.model.ProgramacionMultiAnual">
+		SELECT NTAREA_PRESUPUESTAL_CODIGO, 
+		sum(NPROGRAMACION_MULTIANUAL_IMPORTE) TOTAL, 
+		sum(NPROGRAMACION_MULTIANUAL_IMPORTE) PROGRAMADO, 
+		sum(NPROGRAMACION_MULTIANUAL_META_FISICA) METAFISICA
+		FROM IAFAS_PROGRAMACION_MULTIANUAL_GASTO
+		WHERE
+		CPERIODO_CODIGO = #{periodo}
+		group by NTAREA_PRESUPUESTAL_CODIGO
+	</select>
+	
 </mapper>	

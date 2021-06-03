@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="IafasEntidadesCuentas">
+	<resultMap id="resultado" type="IafasEntidadesCuentas" />
+
+	<select id="cargarCuentasPorEntidades"
+		parameterType="ep.mil.pe.iafas.administrativo.girado.model.IafasEntidadesCuentas"
+		resultType="ep.mil.pe.iafas.administrativo.girado.model.IafasEntidadesCuentas">
+
+		SELECT CCODIGO_ENTIDAD AS codigoEntidad, CENTIDAD_CUENTA AS
+		centidadCuenta,CCODIGO_TIPO_CUENTA AS codigoTipoCuenta,
+		(SELECT
+		VTIPO_CUENTA_DESCRIPCION FROM IAFAS_TIPO_CUENTAS WHERE
+		CCODIGO_TIPO_CUENTA = IEC.CCODIGO_TIPO_CUENTA) AS
+		descripcionTipoCuenta,
+		NMONTO_CUENTA_TECHO AS nmontoCuentaTecho,
+		NMONTO_CUENTA_AVANCE AS nmontoCuentaAvance , NMONTO_CUENTA_SALDO AS
+		nmontoCuentaSaldo
+		FROM IAFAS_ENTIDADES_CUENTAS IEC
+		WHERE
+		IEC.CESTADO_CODIGO='AC'
+		AND IEC.CCODIGO_ENTIDAD=#{codigoEntidad}
+
+	</select>
+
+	<select id="cargarMontosCuenta"
+		parameterType="ep.mil.pe.iafas.administrativo.girado.model.IafasEntidadesCuentas"
+		resultType="ep.mil.pe.iafas.administrativo.girado.model.IafasEntidadesCuentas">
+
+		SELECT CCODIGO_ENTIDAD AS codigoEntidad, 
+		CENTIDAD_CUENTA AS centidadCuenta,
+		NMONTO_CUENTA_TECHO AS nmontoCuentaTecho,
+		NMONTO_CUENTA_AVANCE AS nmontoCuentaAvance , 
+		NMONTO_CUENTA_SALDO AS nmontoCuentaSaldo
+		FROM IAFAS_ENTIDADES_CUENTAS IEC
+		WHERE
+		IEC.CESTADO_CODIGO='AC'
+		AND IEC.CCODIGO_ENTIDAD=#{codigoEntidad}
+		AND IEC.CENTIDAD_CUENTA=#{centidadCuenta}
+
+	</select>
+
+</mapper>

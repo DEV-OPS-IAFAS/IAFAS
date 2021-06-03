@@ -8,6 +8,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.model.SelectItem;
 
+import org.apache.log4j.Logger;
+
 import ep.mil.pe.iafas.administrativo.maestros.combos.dao.IafasCombosDao;
 import ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos;
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
@@ -35,6 +37,12 @@ public class IafasCombosController implements Serializable {
 	public List<SelectItem> bancos;
 	public List<SelectItem> documento;
 	public List<SelectItem> impuesto;
+	
+	
+	/*Cambios agregados por Elvis Severino*/
+	private static final Logger logger = Logger.getLogger(IafasCombosController.class.getName());
+	private List<SelectItem> periodos;
+	private List<SelectItem> entidades;
 	
     public List<SelectItem> getProcesoSel() {
         procesoSel = new ArrayList<>();
@@ -144,4 +152,31 @@ public class IafasCombosController implements Serializable {
        
         return impuesto;
     }
+    
+    /*Cambios agregados por Elvis Severino*/
+	public List<SelectItem> getPeriodos() {
+		logger.info("[INICIO:] Metodo : getPeriodos");
+
+		this.periodos = new ArrayList<>();
+		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasCombos> lstPeriodos = cb.getPeriodos();
+		for (IafasCombos p : lstPeriodos) {
+			this.periodos.add(new SelectItem(p.getCodigo(), p.getCodigo()));
+		}
+		logger.info("[FIN:] Metodo : getPeriodos");
+		return this.periodos;
+	}
+	
+	public List<SelectItem> getEntidades() {
+		logger.info("[INICIO:] Metodo : getEntidades");
+
+		this.entidades = new ArrayList<>();
+		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasCombos> lstEntidades = cb.getEntidades();
+		for (IafasCombos p : lstEntidades) {
+			this.entidades.add(new SelectItem(p.getCodigo(), p.getDescripcion()));
+		}
+		logger.info("[FIN:] Metodo : getEntidades");
+		return this.entidades;
+	}
 }

@@ -11,7 +11,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import ep.mil.pe.iafas.administrativo.girado.model.IafasGirado;
 import ep.mil.pe.iafas.configuracion.util.Constantes;
 import ep.mil.pe.iafas.configuracion.util.Response;
-import ep.mil.pe.iafas.seguridad.model.IafasUsuarios;
 
 public class IafasGiradoDao {
 
@@ -56,7 +55,8 @@ public class IafasGiradoDao {
             param.put("vtipMon", giro.getVtipMon() );
             param.put("vsecuencia",giro.getVsecuencia() );
             param.put("vsecuenciaInt", giro.getVsecuenciaInt());
-            param.put("tipoInsercion", giro.getTipoInsercion());	
+            param.put("tipoInsercion", giro.getTipoInsercion());
+            param.put("bancodBco", giro.getBancodBco());	
             
             
 			System.out.println("datos en el dao:::"+ giro.getVsecuencia()+ " - "+giro.getVsecuenciaInt());

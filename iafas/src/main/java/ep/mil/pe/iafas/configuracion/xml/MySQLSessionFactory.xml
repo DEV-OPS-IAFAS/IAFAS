@@ -41,9 +41,14 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
       <typeAlias alias="IafasPacContratos"   type="ep.mil.pe.iafas.logistica.model.IafasPacContratos"/>
       <typeAlias alias="IafasPacAdemdaCF"     type="ep.mil.pe.iafas.logistica.model.IafasPacAdemdaCF"/>
       <typeAlias alias="ViewPaacProcesoDetalle"     type="ep.mil.pe.iafas.logistica.model.ViewPaacProcesoDetalle"/>
+       <!-- cambios agregados por Elvis Severino -->
+      <typeAlias alias="IafasEventoPrincipal" 		type="ep.mil.pe.iafas.programacion.model.IafasEventoPrincipal"/>
+      <typeAlias alias="IafasCuadroNecesidadesValorizadas" 		type="ep.mil.pe.iafas.programacion.model.IafasCuadroNecesidadesValorizadas"/>
+      <typeAlias alias="IafasEntidadesCuentas" 		type="ep.mil.pe.iafas.administrativo.girado.model.IafasEntidadesCuentas"/>
+		
     </typeAliases>
-    <!--  
-      <environments default="development">
+
+        <environments default="development">
         <environment id="development">
           <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
@@ -54,19 +59,6 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
             </dataSource>
        </environment>
     </environments> 
-    -->
-    
-        <environments default="development">
-        <environment id="development">
-          <transactionManager type="JDBC"/>
-            <dataSource type="POOLED">
-                <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://localhost:3306/iafas"/>
-    			<property name="username" value="root"/>
-                <property name="password" value="iafas"/>
-            </dataSource>
-       </environment>
-    </environments>  
   
     <mappers> 
         <!-- SE TIENE QUE MAPEAR CADA ARCHIVO XML, Q HACE REFERENCIA A CADA BEAN -->
@@ -96,6 +88,10 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
 		<mapper resource="ep/mil/pe/iafas/logistica/controller/xml/IafasPacContratosController.xml" />
 		<mapper resource="ep/mil/pe/iafas/logistica/controller/xml/IafasPacAdemdaCFController.xml" />
 		<mapper resource="ep/mil/pe/iafas/logistica/controller/xml/ViewPaacProcesoDetalle.xml" />
+		<!-- cambios agregados por Elvis Severino -->
+		<mapper resource="ep/mil/pe/iafas/programacion/xml/IafasEventoPrincipal.xml" />
+		<mapper resource="ep/mil/pe/iafas/programacion/xml/IafasCuadroNecesidadesValorizadas.xml" />
+		<mapper resource="ep/mil/pe/iafas/administrativo/girado/xml/IafasEntidadesCuentas.xml" />
     </mappers>
 
 </configuration>

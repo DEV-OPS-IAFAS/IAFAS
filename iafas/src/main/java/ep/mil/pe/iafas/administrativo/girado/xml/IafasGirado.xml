@@ -35,7 +35,7 @@
     <select id="SP_MTO_GIRADO" statementType="CALLABLE" parameterType="ep.mil.pe.iafas.administrativo.girado.model.IafasGirado">
         <![CDATA[call SP_MTO_GIRADO(#{vano, mode=IN}, #{vregSiaf, mode=IN},#{vctaCodigo, mode=IN}, #{vcodTipGiro, mode=IN}, #{vglosa, mode=IN}, #{impMonSol, mode=IN}, 
         #{vruc, mode=IN}, #{vusuarioIng, mode=IN},#{mode, mode=IN}, #{ntipCam, mode=IN}, #{vtipMon, mode=IN}, #{vsecuencia, mode=IN}, #{vsecuenciaInt, mode=IN}, 
-        #{tipoInsercion, mode=IN}, #{codigoRespuesta,mode=OUT,jdbcType=VARCHAR}, #{mensajeRespuesta,mode=OUT,jdbcType=VARCHAR})
+        #{tipoInsercion, mode=IN},  #{bancodBco, mode=IN},#{codigoRespuesta,mode=OUT,jdbcType=VARCHAR}, #{mensajeRespuesta,mode=OUT,jdbcType=VARCHAR})
          ]]>
     </select>
     

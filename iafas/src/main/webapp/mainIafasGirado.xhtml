@@ -128,7 +128,7 @@
                 for (i = tam; i > tamTxt; i--)
                     txt = '0' + txt;
                 document.getElementById(obj).value = txt;
-            }           
+            }          
         
         </script>
         
@@ -150,7 +150,7 @@
 					<f:selectItem itemValue="2021" itemLabel="2021" />
 				</h:selectOneMenu>
 				<h:outputLabel  value="N° Expediente" styleClass="etiqueta" />
-				<h:inputText id="inptxtExpediente" onkeypress="completaCeros('frm_Girado:inptxtExpediente', 9)" styleClass="input" value="#{iafasGiradoController.vregSiaf}" onclick="limpiarTexto();" />
+				<h:inputText id="inptxtExpediente" onblur="completaCeros(this.name, 10);" 	styleClass="input" value="#{iafasGiradoController.vregSiaf}" onclick="limpiarTexto();" />
 				<p:commandButton id="cmdBtnBuscar"  update="dTableGirado" value="Buscar"  actionListener="#{iafasGiradoController.buscarPorSiafAno()}"
                      ajax="false"   style="height:30px;" title="Click aqui para buscar datos de la fase Devenado"/>
 
@@ -183,8 +183,10 @@
 				<h:inputText id="inptxtRuc" disabled="true" style="width: 400px"  styleClass="input" value="#{iafasGiradoController.vruc}#{iafasGiradoController.descProveedor}" />
 				
 				<h:outputLabel value="Importe"  styleClass="etiqueta" />
-				<h:inputText id="inptxtImporte" disabled="true" styleClass="input"  value="#{iafasGiradoController.simboloMondea}  #{iafasGiradoController.impMonSol}"/>
-			
+				<h:inputText id="inptxtImporte" style="text-align: right" disabled="true" styleClass="input"  value="#{iafasGiradoController.simboloMondea}  #{iafasGiradoController.impMonSol}">
+					<p:outputLabel value ="#{iafasGiradoController.simboloMondea} " />
+				</h:inputText>
+				
 				<h:outputLabel value="Concepto" style="font-size:11px;font-weight:bold;" />
 				<h:inputText id="inptxtGlosa" styleClass="input"  style="width: 950px" maxlength="500" value="#{iafasGiradoController.vglosa}"/>
 				
@@ -210,19 +212,20 @@
 				value="#{iafasGiradoController.listaPorGirarCadenas}"
 				style="font-size:11px;" emptyMessage="No se encontro Clasificadores">
 
-				<p:column style="width:70px;" headerText="Clasificador">
-					<p:outputLabel value="#{tblGirado.cadena} : #{tblGirado.desCadena}" />
+				<p:column style="width:40px;" headerText="Tarea">
+					<p:outputLabel value="#{tblGirado.vcodSecFun}: #{tblGirado.descTarea}" />
 				</p:column> 
 				
-				<p:column headerText="Tarea" style="width: 2px;" 
+				<p:column headerText="Clasificador" style="width: 50px;" 
 					filterMatchMode="contains">
-					<p:outputLabel value="#{tblGirado.vcodSecFun}: #{tblGirado.descTarea}" />
+					<p:outputLabel value="#{tblGirado.cadena} : #{tblGirado.desCadena}" />
 				</p:column>
 				
-				<p:column headerText="Importe" style="width: 2px;" 
+				<p:column headerText="Importe" style="width: 2px;text-align: right" 
 					filterMatchMode="contains">
-					<p:outputLabel value="#{iafasGiradoController.simboloMondea}  #{tblGirado.impSolCad}" >
-					<f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+					<p:outputLabel value ="#{iafasGiradoController.simboloMondea} " />
+					<p:outputLabel value="#{tblGirado.impSolCad}" >
+						<f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
 					</p:outputLabel>
 				</p:column>
 
@@ -268,12 +271,30 @@
 
 		<p:panel header="Completar el registro"  rendered="#{iafasGiradoController.muestraBotonGiroTodo}">
 			<p:panelGrid columns="8"  styleClass="panel">
-			<p:outputLabel value="Cta.Cte:" styleClass="etiqueta"  />
-			 <h:selectOneMenu value="#{iafasGiradoController.ctaCte}" styleClass="select"> 
-                <f:selectItem itemValue="054" itemLabel="054 - RO/RDR"></f:selectItem>
-                <f:selectItem itemValue="057" itemLabel="057 - DYT"></f:selectItem>
-                <f:selectItem itemValue="066" itemLabel="066 - ROOC"></f:selectItem>
+			
+			<p:outputLabel value="Entidad de Giro :" styleClass="etiqueta"  />
+			 <h:selectOneMenu value="#{iafasGiradoController.entidadGiro}" styleClass="select"> 
+			 <f:ajax  render="frm_Girado:acCuentaGiro" listener="#{iafasGiradoController.cargarCuentasEntidades()}"/>
+                <f:selectItem itemValue="0" itemLabel="Seleccione" />
+				<f:selectItems var="option" value="#{mbCombos.entidades}" />
               </h:selectOneMenu>
+              
+              <p:outputLabel value="Cuenta de Giro :" styleClass="etiqueta"  />
+              <p:autoComplete  id="acCuentaGiro" value="#{iafasGiradoController.cuentaGiro}"
+                completeMethod="#{iafasGiradoController.completeText}" scrollHeight="250">
+                <f:ajax  render="frm_Girado:intpTxtTecho" listener="#{iafasGiradoController.cargarMontosCuenta()}"/>
+                <f:ajax  render="frm_Girado:intpTxtSaldo" listener="#{iafasGiradoController.cargarMontosCuenta()}"/>
+                </p:autoComplete>
+                <p:outputLabel value="Techo :" styleClass="etiqueta"  />
+                <h:inputText id="intpTxtTecho" styleClass="outLabelMonto"   style="text-align: right;"  disabled="true" maxlength="500" value="#{iafasGiradoController.montoTecho}" >
+               	 <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                </h:inputText>
+			
+				<p:outputLabel value="Saldo :" styleClass="etiqueta"  />
+				<h:inputText id="intpTxtSaldo" styleClass="outLabelMonto"  style="text-align: right;" disabled="true" maxlength="500" value="#{iafasGiradoController.montoSaldo}">
+					<f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+				</h:inputText>
+			
 			<p:outputLabel value="Tipo Giro:" styleClass="etiqueta"  />
 			<h:selectOneMenu value="#{iafasGiradoController.tipoGiro}"  styleClass="select"> 
                 <f:selectItem itemValue="065" itemLabel="065 - CHEQUE GIRADO "></f:selectItem>
@@ -286,10 +307,8 @@
 				<p:outputLabel value="Moneda:" styleClass="etiqueta" />
 				<h:selectOneMenu id="tipMon" styleClass="select"
 					value="#{iafasGiradoController.tipMon}">
-					<f:selectItem itemValue="1" itemLabel="S/."></f:selectItem>
-					<f:selectItem itemValue="2" itemLabel="USD"></f:selectItem>
-					<f:selectItem itemValue="3" itemLabel="EURO"></f:selectItem>
-					<f:selectItem itemValue="57" itemLabel="Y"></f:selectItem>
+					<f:selectItem itemValue="0" itemLabel="Seleccione" />
+					<f:selectItems var="option" value="#{mbCombos.monedas}" />
 				</h:selectOneMenu>
 				<p:outputLabel value="T.Cambio:" styleClass="etiqueta"  />
             <h:inputText id="tipcam" style="width: 50px; text-align: right;" 
@@ -308,7 +327,7 @@
 	 		<p:panel>
 				<p:panelGrid columns="4"  styleClass="panel">
 				<p:outputLabel value="Cta.Cte:" styleClass="etiqueta"  />
-				 <h:selectOneMenu value="#{iafasGiradoController.ctaCte}" styleClass="select"> 
+				 <h:selectOneMenu value="#{iafasGiradoController.entidadGiro}" styleClass="select"> 
 	                <f:selectItem itemValue="054" itemLabel="054 - RO/RDR"></f:selectItem>
 	                <f:selectItem itemValue="057" itemLabel="057 - DYT"></f:selectItem>
 	                <f:selectItem itemValue="066" itemLabel="066 - ROOC"></f:selectItem>

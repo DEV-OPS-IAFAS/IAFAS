@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="IafasCuadroNecesidadesValorizadas">
+	<resultMap id="resultado"
+		type="IafasCuadroNecesidadesValorizadas" />
+
+
+	<select id="mostrarCabecera"
+		parameterType="ep.mil.pe.iafas.programacion.model.IafasCuadroNecesidadesValorizadas"
+		resultType="ep.mil.pe.iafas.programacion.model.IafasCuadroNecesidadesValorizadas">
+		SELECT CPERIODO_CODIGO as cperiodoCodigo, NFUENTE_FINANCIAMIENTO_CODIGO as nfuenteFinanciamientoCodigo,
+		NTAREA_PRESUPUESTAL_CODIGO as ntareaPresupuestalCodigo,
+		(SELECT VTAREA_PRESUPUESTAL_NOMBRE FROM IAFAS_TAREA_PRESUPUESTAL
+		WHERE NTAREA_PRESUPUESTAL_CODIGO = CAB.NTAREA_PRESUPUESTAL_CODIGO) as descripcionTarea
+		FROM ISFAS_CUADRO_NECESIDADES_VALORIZADAS CAB
+		WHERE
+		CAB.CPERIODO_CODIGO=#{cperiodoCodigo} AND
+		CAB.NFUENTE_FINANCIAMIENTO_CODIGO=#{nfuenteFinanciamientoCodigo}
+	</select>
+
+</mapper>	

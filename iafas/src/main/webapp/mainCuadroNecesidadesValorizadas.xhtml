@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>IAFAS</title>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
+	
+	<link href="css/estilos.css" rel="stylesheet" type="text/css" />
+		<link href="css/Botones.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/css/bootstrap/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/css/style.css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/icon/themify-icons/themify-icons.css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/icon/icofont/css/icofont.css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/icon/font-awesome/css/font-awesome.min.css" />
+
+	<style type="text/css">
+button.ui-button {
+	margin-right: .5rem;
+}
+</style>
+
+</h:head>
+
+<body class="formulario">
+
+	<script>
+		
+	</script>
+
+	<h:form id="frm_CuadroNecesidades">
+	<center class="label label-inverse-success">
+	 <label >CUADRO DE NECESIDADES VALORIZADAS</label>
+	 </center>
+
+	 <p:panel header="Datos de Busqueda" >
+			<p:panelGrid columns="6" styleClass="panel">
+				<h:outputLabel value="A.F" styleClass="etiqueta" style="font-size:11px;font-weight:bold;" />
+				<h:selectOneMenu  id="cboPeriodo"  styleClass="select" value="#{iafasCuadroNecesidadesController.cperiodo}">
+				<f:ajax  render="frm_CuadroNecesidades:dTableCnv" listener="#{iafasCuadroNecesidadesController.buscarCabeceraCNV()}"/>
+				 	<f:selectItem itemValue="0" itemLabel="Seleccione" />
+					<f:selectItems var="option" value="#{mbCombos.periodos}" />
+				</h:selectOneMenu>
+				
+				<h:outputLabel  value="Fte.Financ:" styleClass="etiqueta" style="font-size:11px;font-weight:bold;"    />
+				<h:selectOneMenu  id="cboFuenFinanc"  styleClass="select" value="#{iafasCuadroNecesidadesController.fteFinanc}">
+					<f:ajax  render="frm_CuadroNecesidades:dTableCnv" listener="#{iafasCuadroNecesidadesController.buscarCabeceraCNV()}"/>
+					<f:selectItem itemValue="0" itemLabel="Seleccione" />
+						<f:selectItems var="optionFuente" value="#{mbCombos.fuenteFinanciamiento}" />
+				</h:selectOneMenu>
+				 <p:commandButton  title="Click aqui para actualizar la consulta" value="Actualizar" action="#{iafasCuadroNecesidadesController.buscarCabeceraCNV()}"
+				  update="frm_CuadroNecesidades:dTableCnv" />
+   			</p:panelGrid>
+			
+			<p:panel header="Datos Encontrados" >
+				<p:panelGrid columns="6" styleClass="panel">
+			
+				<p:dataTable id="dTableCnv" var="tblCnv"
+				value="#{iafasCuadroNecesidadesController.listaCabeceraCNV}" selection="#{iafasCuadroNecesidadesController.bean}"
+				 rowKey="#{tblCnv.cperiodoCodigo}#{tblCnv.ntareaPresupuestalCodigo}#{tblCnv.nfuenteFinanciamientoCodigo}" selectionMode="single"
+				style="font-size:11px;" emptyMessage="No se encontro Datos registrados">
+
+				<p:column style="width:100px;" headerText="TAREA">
+					<p:outputLabel value="#{tblCnv.ntareaPresupuestalCodigo}-#{tblCnv.descripcionTarea}" />
+				</p:column>
+				
+				<p:column style="width:2px; text-align: right" headerText="META FISICA">
+					<p:outputLabel value="#{tblCnv.ncnvPrecio}" >
+						<f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+					</p:outputLabel>
+				</p:column>
+				
+			</p:dataTable>
+			
+			<p:contextMenu for="dTableCnv" style="width:200px;">
+            <p:menuitem value="Crear Eventos"  action="#{iafasCuadroNecesidadesController.crearEventoPrincipal()}"  />
+        </p:contextMenu>
+        	
+			</p:panelGrid>
+			</p:panel>
+			
+		</p:panel>
+		
+	</h:form>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/jquery/jquery.min.js "></script>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/jquery-ui/jquery-ui.min.js "></script>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/popper.js/popper.min.js"></script>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/bootstrap/js/bootstrap.min.js "></script>
+	<!-- waves js -->
+	<script src="material_able-main/assets/pages/waves/js/waves.min.js"></script>
+	<!-- jquery slimscroll js -->
+	<script type="text/javascript"
+		src="material_able-main/assets/js/jquery-slimscroll/jquery.slimscroll.js"></script>
+
+	<!-- slimscroll js -->
+	<script
+		src="material_able-main/assets/js/jquery.mCustomScrollbar.concat.min.js "></script>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/script.js "></script>
+</body>
+
+</html>

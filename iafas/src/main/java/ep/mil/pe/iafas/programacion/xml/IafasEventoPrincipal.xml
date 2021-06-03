@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="IafasEventoPrincipal">
+    <resultMap id="resultado" type="IafasEventoPrincipal" />
+    
+  <select id="mostrarCabecera"
+		parameterType="ep.mil.pe.iafas.programacion.model.IafasEventoPrincipal"
+		resultType="ep.mil.pe.iafas.programacion.model.IafasEventoPrincipal">
+		SELECT  CPERIODO_CODIGO AS cperiodoCodigo,  NFUENTE_FINANCIAMIENTO_CODIGO AS nfuenteFinanciamientoCodigo, NTAREA_PRESUPUESTAL_CODIGO AS ntareaPresupuestalCodigo, 
+		CANIO_REGISTRO AS canioRegistro, VEVENTO_PRINCIPAL_CODIGO AS veventoPrincipalCodigo, VEVENTO_PRINCIPAL_NOMBRE AS veventoPrinciombre, 
+		VEVENTO_PRINCIPAL_COMENTARIO AS veventoPrincipalComentario, NEVENTO_PRINCIPAL_NIVEL AS neventoPrincipalNivel
+		FROM
+		IAFAS_EVENTO_PRINCIPAL
+		WHERE 
+		CPERIODO_CODIGO=#{cperiodoCodigo} AND 
+		NFUENTE_FINANCIAMIENTO_CODIGO=#{nfuenteFinanciamientoCodigo}
+	</select>
+	
+	<select id="generarCorrelativo"
+		parameterType="ep.mil.pe.iafas.programacion.model.IafasEventoPrincipal"
+		resultType="ep.mil.pe.iafas.programacion.model.IafasEventoPrincipal">
+		SELECT IFNULL(LPAD(MAX(VEVENTO_PRINCIPAL_CODIGO+1),4,0),'1') AS veventoPrincipalCodigo
+		FROM IAFAS_EVENTO_PRINCIPAL
+		WHERE 
+        CPERIODO_CODIGO=#{cperiodoCodigo}
+        AND NFUENTE_FINANCIAMIENTO_CODIGO=#{nfuenteFinanciamientoCodigo}
+        AND NTAREA_PRESUPUESTAL_CODIGO = #{ntareaPresupuestalCodigo}
+        AND CANIO_REGISTRO= #{canioRegistro}
+	</select>
+	
+	
+</mapper>	

@@ -4,11 +4,13 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -16,8 +18,10 @@ import org.primefaces.PrimeFaces;
 
 import ep.mil.pe.iafas.administrativo.devengado.dao.iafasDevengadoDao;
 import ep.mil.pe.iafas.administrativo.devengado.model.IafasComprobanteRetencion;
+import ep.mil.pe.iafas.administrativo.girado.dao.IafasEntidadesCuentasDao;
 import ep.mil.pe.iafas.administrativo.girado.dao.IafasGiradoDao;
 import ep.mil.pe.iafas.administrativo.girado.dao.IafasMovimientoCadenasDao;
+import ep.mil.pe.iafas.administrativo.girado.model.IafasEntidadesCuentas;
 import ep.mil.pe.iafas.administrativo.girado.model.IafasGirado;
 import ep.mil.pe.iafas.administrativo.girado.model.IafasMovimientoCadenas;
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
@@ -25,6 +29,7 @@ import ep.mil.pe.iafas.configuracion.util.Constantes;
 import ep.mil.pe.iafas.configuracion.util.Response;
 import ep.mil.pe.iafas.seguridad.controller.IafasUsuariosController;
 import lombok.Data;
+import lombok.extern.java.Log;
 
 @Data
 @ManagedBean(name = "iafasGiradoController")
@@ -49,7 +54,7 @@ public class IafasGiradoController implements Serializable{
 	private List<IafasComprobanteRetencion> listaRetencionesPorGirar = new ArrayList<IafasComprobanteRetencion>();
 	private boolean muestraBotonGiro = false;
 	private BigDecimal ntipCam;
-	private String ctaCte;
+	private String entidadGiro;
 	private String tipoGiro;
 	private String tipMon;
 	private String msgSP;
@@ -64,11 +69,69 @@ public class IafasGiradoController implements Serializable{
 	
 	private int typeMessages = Constantes.UNO_NEGATIVO;
 	private String messages = Constantes.MESSAGE_VALIDACION_PARAMETROS;
+	private String cuentaGiro;
+	private ArrayList<SelectItem> cuentaEntidadGiro;
+	private BigDecimal montoTecho;
+	private BigDecimal montoSaldo;
 	
 	public IafasGiradoController() {
 		//buscarGirados();
 	}
 	
+	public ArrayList<SelectItem>  cargarCuentasEntidades(){
+		logger.info("[INICIO:] Metodo : cargarCuentasEntidades");
+		
+		this.cuentaEntidadGiro = new ArrayList<>();
+		
+		IafasEntidadesCuentas objBn =  new IafasEntidadesCuentas();
+		objBn.setCodigoEntidad(entidadGiro);
+		IafasEntidadesCuentasDao objDao =  new IafasEntidadesCuentasDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasEntidadesCuentas> lsts = objDao.cargarCuentasPorEntidades(objBn);
+		
+		for(IafasEntidadesCuentas obj : lsts) {
+			this.cuentaEntidadGiro.add(
+					new SelectItem(obj.getCentidadCuenta(), obj.getDescripcionTipoCuenta()+":"+ obj.getCentidadCuenta()));
+		}
+		
+		logger.info("[FIN:] Metodo : cargarCuentasEntidades");
+		return this.cuentaEntidadGiro;
+	}
+	
+	public List<String> completeText(String query) {
+
+		logger.info("[INICIO:] Metodo : completeText");
+		String queryLowerCase = query.toLowerCase();
+		List<String> cuentasList = new ArrayList<>();
+		IafasEntidadesCuentas objBn = new IafasEntidadesCuentas();
+		objBn.setCodigoEntidad(entidadGiro);
+		IafasEntidadesCuentasDao objDao = new IafasEntidadesCuentasDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasEntidadesCuentas> lsts = objDao.cargarCuentasPorEntidades(objBn);
+		for (IafasEntidadesCuentas obj : lsts) {
+			cuentaGiro = obj.getCentidadCuenta();
+			cuentasList.add(cuentaGiro);
+		}
+		logger.info("[FIN:] Metodo : completeText");
+		return cuentasList
+				.stream()
+				.filter(t -> t.toLowerCase().startsWith(queryLowerCase))
+				.collect(Collectors.toList());
+	}
+	
+	public void cargarMontosCuenta() {
+		logger.info("[INICIO:] Metodo : cargarMontosCuenta");
+		IafasEntidadesCuentas objBn = new IafasEntidadesCuentas();
+		objBn.setCodigoEntidad(entidadGiro);
+		objBn.setCentidadCuenta(cuentaGiro);
+		IafasEntidadesCuentasDao objDao = new IafasEntidadesCuentasDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasEntidadesCuentas> lst = objDao.cargarMontosCuenta(objBn);
+		
+		for(IafasEntidadesCuentas obj : lst) {
+			setMontoTecho(obj.getNmontoCuentaTecho());
+			setMontoSaldo(obj.getNmontoCuentaSaldo());
+		}
+		
+		logger.info("[FIN:] Metodo : cargarMontosCuenta");
+	}
 	
 	public List<IafasGirado> buscarGirados() {
 
@@ -231,7 +294,7 @@ public class IafasGiradoController implements Serializable{
 		IafasGirado objBn = new IafasGirado();
 		objBn.setVano(vano);
 		objBn.setVregSiaf(vregSiaf);
-		objBn.setVctaCodigo(ctaCte);
+		objBn.setVctaCodigo(cuentaGiro);
 		objBn.setVcodTipGiro(tipoGiro);
 		objBn.setVglosa(vglosa);
 		objBn.setImpMonSol(impMonSol);
@@ -241,7 +304,8 @@ public class IafasGiradoController implements Serializable{
 		objBn.setVtipMon(tipMon);
 		objBn.setVusuarioIng(codUsu);
 		objBn.setTipoInsercion(tipoInsercion);
-
+		objBn.setBancodBco(entidadGiro); 
+		
 		try {
 			response = giradoDao.mantenimientoGiradoCab(objBn);
 			if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {

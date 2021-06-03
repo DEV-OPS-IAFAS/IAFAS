@@ -143,4 +143,30 @@ public class IafasCombosDao {
             }
             return lista;
         }
+     
+     /*Cambios agregados por Elvis Severino*/
+     @SuppressWarnings("unchecked")
+   	public List<IafasCombos> getPeriodos() {
+           List<IafasCombos> lista = null;
+           SqlSession session = sqlSessionFactory.openSession();
+           try{
+                 lista = session.selectList("Combos.periodos");
+           }
+           finally{
+                session.close();
+           }
+           return lista;
+       }
+     
+     public List<IafasCombos> getEntidades() {
+         List<IafasCombos> lista = null;
+         SqlSession session = sqlSessionFactory.openSession();
+         try{
+               lista = session.selectList("Combos.entidades");
+         }
+         finally{
+              session.close();
+         }
+         return lista;
+     }
 }

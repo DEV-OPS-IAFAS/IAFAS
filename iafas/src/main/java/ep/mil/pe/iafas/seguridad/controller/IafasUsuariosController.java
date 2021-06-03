@@ -82,13 +82,13 @@ public class IafasUsuariosController implements Serializable {
 		String Patron_encripta = "OnXEiGH9eIp8stu7UVWvlmï¿½fq0D2YZï¿½oPQR4AwyFgxhbjk65rcSTz1N3BCdJKLMa";
 		funcionesUtiles encripta = new funcionesUtiles();
 		boolean pasoLogin = false;
-		//String pasusu = encripta.EncriptCadena(Patron_encripta, this.passUsuario, true);
+		String pasusu = encripta.EncriptCadena(Patron_encripta, this.passUsuario, true);
 		logger.info("[INPUT]  :" + idUsuario);
 		IafasUsuariosDao usuarioSessionDao = new IafasUsuariosDao(MySQLSessionFactory.getSqlSessionFactory());
 		IafasUsuarios c = new IafasUsuarios();
 		c.setVusuarioCodigo(this.idUsuario);
-		c.setVusuarioPassword( this.passUsuario);
-		//c.setVusuarioPassword(this.passUsuario);
+		//c.setVusuarioPassword( pasusu);
+		c.setVusuarioPassword(this.passUsuario);
 
 		List<IafasUsuarios> usuarioBuscado = usuarioSessionDao.SelectListFiltro2(c);
 
