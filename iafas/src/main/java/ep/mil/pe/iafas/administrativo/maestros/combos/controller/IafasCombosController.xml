@@ -76,4 +76,9 @@ parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
 		 order by NTIPO_DOCUMENTO_ADMINISTRATIVO_CODIGO asc
 </select>
 
+<select id="tipoImpuesto" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+		 select VCOD_IMP codigo ,VSIGLAS descripcion FROM iafas_impuesto  WHERE VESTADO_CODIGO='AC' order by VCOD_IMP asc
+</select>
+
 </mapper>

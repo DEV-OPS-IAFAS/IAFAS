@@ -185,7 +185,8 @@ public class IafasPersonalController implements Serializable{
 	}
       
       public String nuevoRegistro() {
-    	  String page = "insRegistroPersonal.xhtml";	  
+    	  String page = "insRegistroPersonal.xhtml";	
+    	  LimpiarCampos();
     	  return page;
     	  
       }
@@ -258,8 +259,8 @@ public class IafasPersonalController implements Serializable{
     	try {
 			if(imagenPersonal!=null) {
 				Class.forName(BDCon.DRIVERBD);
-				//Connection cn = DriverManager.getConnection(BDCon.CONEXION_LOCAL);
-				Connection cn = DriverManager.getConnection(BDCon.CONEXION_PRODUCCION);
+				Connection cn = DriverManager.getConnection(BDCon.CONEXION_LOCAL);
+				//Connection cn = DriverManager.getConnection(BDCon.CONEXION_PRODUCCION);
 				PreparedStatement pst = cn.prepareStatement("UPDATE iafas_persona SET "
 						+ "BPERSONA_FOTO = ? "
 						+ "WHERE "
@@ -290,8 +291,8 @@ public class IafasPersonalController implements Serializable{
   	try {
 			Statement stm = null;
 				Class.forName(BDCon.DRIVERBD);
-				Connection cn = DriverManager.getConnection(BDCon.CONEXION_PRODUCCION);
-				//Connection cn = DriverManager.getConnection(BDCon.CONEXION_LOCAL);
+				//Connection cn = DriverManager.getConnection(BDCon.CONEXION_PRODUCCION);
+				Connection cn = DriverManager.getConnection(BDCon.CONEXION_LOCAL);
 				stm = cn.createStatement();
 				String sql = "SELECT BPERSONA_FOTO FROM iafas_persona "
 						+ "where NPERSONA_CODIGO ="+pSecDetallef;
@@ -449,6 +450,7 @@ public class IafasPersonalController implements Serializable{
      			 ca.setCestadoCodigo(cestadoCodigo);
      			 ca.setVcip(vcip);			 
      			 reg = personalDao.grabarEdit(ca); 
+     			 updatePhoto(vpersonaNumeroDoc);
      			 logger.info("Actualizo Persona Correctamente {} "+vpersonaNumeroDoc);    			
      			 showMessages(1);
      			 retorno();

@@ -34,6 +34,7 @@ public class IafasCombosController implements Serializable {
 	public List<SelectItem> proveedores;
 	public List<SelectItem> bancos;
 	public List<SelectItem> documento;
+	public List<SelectItem> impuesto;
 	
     public List<SelectItem> getProcesoSel() {
         procesoSel = new ArrayList<>();
@@ -131,5 +132,16 @@ public class IafasCombosController implements Serializable {
              }
        
         return documento;
+    }
+    
+    public List<SelectItem> getimpuesto() {
+    	impuesto = new ArrayList<>();
+        IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());    
+             List<IafasCombos> lista = cb.getTipoImpuesto();
+             for(IafasCombos d : lista){
+            	 impuesto.add(new SelectItem(d.getCodigo(),d.getCodigo()+"-"+ d.getDescripcion()));
+             }
+       
+        return impuesto;
     }
 }

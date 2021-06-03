@@ -103,6 +103,11 @@ public class iafasDevengadoController implements Serializable{
     private String desMoneda;
     private String desDocumento;
 	private String usuario;
+	private String psecuenciaEn;
+	private String pcorrelativoEn;
+	private String pexpedienteEn;
+	
+	
 	
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(iafasDevengadoController.class);
@@ -124,13 +129,13 @@ public class iafasDevengadoController implements Serializable{
 	}
 	
 	public String retornar() {
-		listarCompMensuales();
 		LimpiarCampos();
+		listarCompMensuales();
 		return "mainDevengado.xhtml";
 	}
 	
 	public String retornarDev() {
-	
+		LimpiarCampos();
 		return "mainDevengado.xhtml";
 	}
 	
@@ -252,7 +257,7 @@ public class iafasDevengadoController implements Serializable{
 					}
 					else {
 					reg = 	devengadoDao.registroDevengadoDet(det);
-					typeMessages=1;
+					    typeMessages=1;
 					
 					} 
 				}	
@@ -262,7 +267,7 @@ public class iafasDevengadoController implements Serializable{
 			LimpiarCampos();
 			listarCompMensuales();
 			// retornar();
-			// showMessages(1);
+			 showMessages(1);
 		}
 		catch (Exception e) {
 			// TODO: handle exception
@@ -272,7 +277,8 @@ public class iafasDevengadoController implements Serializable{
 		}
 	}
 		
-		return "mainDevengado.xhtml";
+		//return "mainDevengado.xhtml";
+		return "";
 	}
 	
 	public void verDevengado(){
@@ -298,23 +304,26 @@ public class iafasDevengadoController implements Serializable{
 	
 	public String registrarRetencion() {
 		try{
-			IafasComprobanteRetencion retencion = new IafasComprobanteRetencion();	
-			retencion.setVano(periodo);
-			retencion.setVtipDocumentoCom(tipoDoc);
-			retencion.setVnroCom(nroDoc);
-			retencion.setVserieCom(serieDoc);
-			retencion.setVexpediente(pregSiaf);
-			retencion.setVsecuencia(psecuencia);
-			retencion.setVcodImp(vcodImp);
-			retencion.setNporImp(nporImp);
-			retencion.setVusuarioIng(usuario);
-			System.out.println("paramtros"+retencion.toString());
-			// donde esta el insert
-			devengadoDao.registroRetencionComprobante(retencion);
-			logger.info("Se registro la retencion del comprobante :"+serieDoc+"-"+tipoDoc);
-			buscarRetencion();
-			
-			
+			if(isDuplicadoRet()==false) {
+				IafasComprobanteRetencion retencion = new IafasComprobanteRetencion();	
+				retencion.setVano(periodo);
+				retencion.setVtipDocumentoCom(tipoDoc);
+				retencion.setVnroCom(nroDoc);
+				retencion.setVserieCom(serieDoc);
+				retencion.setVexpediente(pregSiaf);
+				retencion.setVsecuencia(psecuencia);
+				retencion.setVcodImp(vcodImp);
+				retencion.setNporImp(nporImp);
+				retencion.setVusuarioIng(usuario);
+				System.out.println("paramtros"+retencion.toString());
+				// donde esta el insert
+				devengadoDao.registroRetencionComprobante(retencion);
+				logger.info("Se registro la retencion del comprobante :"+serieDoc+"-"+tipoDoc);
+				buscarRetencion();
+			}
+			else {
+				return "";
+			}
 		}
 	
 		
@@ -352,6 +361,21 @@ public class iafasDevengadoController implements Serializable{
 			
 		}
 		return listaDet;
+	}
+	
+	public boolean isDuplicadoRet() {
+		logger.info("Validando impuestos duplicados");
+	   for(int i =0; i<listaRetencion.size();i++) {
+		   if(vcodImp.equals(listaRetencion.get(0).getVcodImp())){
+			   logger.info("Encontro duplicado : "+listaRetencion.get(0).getVcodImp());
+			   FacesContext.getCurrentInstance().addMessage(null, new 
+						 FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR!", 
+								 "NO SE DEBE INGRESAR DOS VECES LA MISMA AFECTACION EN EL COMPROBANTE!"));
+			   return true;
+			   
+		   }
+	   }
+	   return false;
 	}
 	
 	private int validaDevengadoCab() {
@@ -394,13 +418,12 @@ public class iafasDevengadoController implements Serializable{
 	}
 	
 	private String showMessages(int opcion) {
+		logger.info("Mensajes :"+opcion);
 		messages = "";
 		switch (opcion) {
 		case 0 : typeMessages=0;messages = "";PrimeFaces.current().executeScript("verMensajes()");break;
 		case 1 : typeMessages=1;messages = "";PrimeFaces.current().executeScript("verMensajes()");break;
 		case 2 : typeMessages=2;messages = "";PrimeFaces.current().executeScript("verMensajes()");break;
-		case 3 : typeMessages=3;messages = "";
-							PrimeFaces.current().executeScript("validaCertificado()");break;
 		default : messages="";break;
 		}
 		return messages;
@@ -419,36 +442,38 @@ public class iafasDevengadoController implements Serializable{
 		}		 
 	}
 	
-	/*
+      /*Enviar DEvengados*/
 	 public String obtener() {
 	  String page="";
-	  	 p_expediente = (String) extContext().getRequestParameterMap().get("p_expediente");
-	     p_secuenciaEnv = (String) extContext().getRequestParameterMap().get("p_secuenciaEnv");
+
+		psecuenciaEn = (String) extContext().getRequestParameterMap().get("psecuenciaEn");
+		pcorrelativoEn = (String) extContext().getRequestParameterMap().get("pcorrelativoEn");
+		pexpedienteEn = (String) extContext().getRequestParameterMap().get("pexpedienteEn");
 	  return page;
 			}
 			
-			public String enviarCompromisoMensual() {
+			public String enviarDevengado() {
 				String retorno = "mainDevengado.xhtml";
 				int envio=0;
 				try {
 			
 					IafasDevengado ca = new IafasDevengado();
 					ca.setVano(periodo);
-					ca.setSecuencia(psecuencia);
-					ca.setCorrelativo(pcorrelativo);
-					ca.setVexpediente(pexpediente);
+					ca.setSecuencia(psecuenciaEn);
+					ca.setCorrelativo(pcorrelativoEn);
+					ca.setVexpediente(pexpedienteEn);
 					ca.setVusuarioIng(usuario);			
-					envio = devengadoDao.enviarCompromisoMensual(ca);
-					logger.info("Se Valido el Compromiso Mensual {} "+pexpediente);
+					envio = devengadoDao.enviarDeve(ca);
+					logger.info("Se Valido el Devengado {} "+pexpedienteEn);
 				}
 				catch (Exception e) {
-					logger.error("[ERROR] enviarCompromisoMensual :", e);
+					logger.error("[ERROR] enviarDEvengado :", e);
 				}
-			    retornar();
+				listarCompMensuales();
 			    
 				return retorno;
 			}
 
-	 */
+	
 	
 }

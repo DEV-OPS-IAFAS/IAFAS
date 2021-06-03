@@ -13,7 +13,10 @@
     </h:head>
     <h:body class="formulario">
     <script>
-       
+       function upperCase(obj) {
+        	  var x = document.getElementById(obj);
+        	  x.value = x.value.toUpperCase();
+        	}
     </script>
         <h:form id="frmInsRegPersonal" enctype="multipart/form-data">
               <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
@@ -38,19 +41,19 @@
                             <p:outputLabel value="Nº DOCUMENTO: "/>
                             <h:inputText id="nrodocumento"   value="#{mbPersonal.vpersonaNumeroDoc}"
                             styleClass="input" style="text-align: left;" size="50" 
-                            maxlength="8"/> 
+                            maxlength="8" /> 
                             <p:outputLabel value="APELLIDO PARTENO: "/>
                             <h:inputText id="apepar" value="#{mbPersonal.vpersonaPaterno}"
                             styleClass="input" style="text-align: left;" size="50"
-                            maxlength="200"/> 
+                            maxlength="200" onkeyup="upperCase(this.name)"/> 
                             <p:outputLabel value="APELLIDO MATERNO: "/>
                             <h:inputText id="apemat" value="#{mbPersonal.vpersonaMaterno}"
                             styleClass="input" style="text-align: left;" size="50"
-                            maxlength="200"/> 
+                            maxlength="200" onkeyup="upperCase(this.name)"/> 
                             <p:outputLabel value="NOMBRE: "/>
                             <h:inputText id="nom"  value="#{mbPersonal.vpersonaNombres}"
                             styleClass="input" style="text-align: left;" size="50"
-                            maxlength="200"/>                                                                                        
+                            maxlength="200" onkeyup="upperCase(this.name)"/>                                                                                        
                             <p:outputLabel value="FECHA DE NACIMIENTO: "/>
                             <h:panelGrid columns="2" >
                                 <p:inputMask id="fec_doc" mask="99/99/9999" size="12" value="#{mbPersonal.dpersonaNacimiento}" styleClass="input">
@@ -84,7 +87,7 @@
                             <p:outputLabel value="DIRECCION: "/>
                             <h:inputText id="dir"  value="#{mbPersonal.vpersonaDireccion}"
                             styleClass="input" style="text-align: left;" size="50"
-                            maxlength="500"/>   
+                            maxlength="500" onkeyup="upperCase(this.name)"/>   
                             <p:outputLabel value="CORREO: "/>
                             <h:inputText id="corr"  value="#{mbPersonal.vpersonaCorreo}"
                             styleClass="input" style="text-align: left;" size="50"
@@ -116,7 +119,7 @@
                         <p:outputLabel value="CARGO: "/>
                             <h:inputText id="carg" value="#{mbPersonal.vpersonalCargo}" 
                             styleClass="input" style="text-align: left;" size="50"
-                            maxlength="100"/> 
+                            maxlength="100" onkeyup="upperCase(this.name)"/> 
                         <p:outputLabel value="Foto: "/>
                         <p:fileUpload id="photo" value="#{mbPersonal.imagenPersonal}" mode="simple"></p:fileUpload>
                         </h:panelGrid>                    

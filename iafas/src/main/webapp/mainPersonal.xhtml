@@ -12,7 +12,10 @@
     </h:head>
     <body class="formulario">
         <script>
-           
+               function upperCase(obj) {
+        	  var x = document.getElementById(obj);
+        	  x.value = x.value.toUpperCase();
+        	}
 	
         </script>
         <h:form id="frmPersonal" style="border-radius: 5px 5px 5px 5px;border: 1px ; width:100%;">
@@ -38,7 +41,7 @@
                                           <f:param id="pSecuencia" name="pSecuencia" value="#{ca.npersonaCodigo}"></f:param>
                                        </h:commandLink>
                                     </p:column>                                  
-                                     <p:column headerText="NOMBRE y APELLIDOS" style="width:45px;" >
+                                     <p:column headerText="NOMBRES y APELLIDOS" style="width:45px;"  >
                                         <p:outputLabel value="#{ca.vpersonaNombres} #{ca.vpersonaPaterno} #{ca.vpersonaMaterno}"/>
                                     </p:column>
                                     <p:column headerText="GRADO" style="width: 10px;" >
@@ -56,7 +59,7 @@
                                     <p:column headerText="CARGO" style="width: 25px;" >
                                         <p:outputLabel value="#{ca.vpersonalCargo}"/>
                                     </p:column>
-                                     <p:column headerText="TELEFONO" style="width: 25px;" >
+                                     <p:column headerText="TELEFONO FIJO" style="width: 25px;" >
                                         <p:outputLabel value="#{ca.vpersonaTelefono} "/>
                                     </p:column>
                                      <p:column headerText="DIRECCION" style="width: 25px;" >
@@ -100,7 +103,7 @@
                                     <p:column headerText="Nª DOCUMENTO" style="width: 15px;" >                                        
                                             <p:outputLabel value="#{fa.vpersonaNumeroDoc}"/>                                           
                                     </p:column>                                                                     
-									<p:column headerText="NOMBRE y APELLIDOS" style="width:45px;" >
+									<p:column headerText="NOMBRES y APELLIDOS" style="width:45px;" >
                                         <p:outputLabel value="#{fa.vpersonaNombres} #{fa.vpersonaPaterno} #{fa.vpersonaMaterno}"/>
                                     </p:column>                                    
                                     <p:column headerText="FECHA NACIMIENTO" style="width: 10px;">
@@ -109,7 +112,7 @@
                                 			<f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />	
                                         </p:outputLabel>
                                     </p:column>                                                                   
-                                     <p:column headerText="TELEFONO" style="width: 25px;" >
+                                     <p:column headerText="TELEFONO FIJO" style="width: 25px;" >
                                         <p:outputLabel value="#{fa.vpersonaTelefono} "/>
                                     </p:column> 
                                     <p:column headerText="VER FOTO" style="width: 10px; text-align:center; ">
@@ -132,19 +135,19 @@
                             <p:outputLabel value="Nº DOCUMENTO: "/>
                             <h:inputText id="nrodocumento"   value="#{mbPersonal.vpersonaNumeroDoc}" readonly="true"
                             styleClass="input" style="text-align: left;" size="50" 
-                            maxlength="8"/> 
+                            maxlength="8" /> 
                             <p:outputLabel value="APELLIDO PARTENO: "/>
                             <h:inputText id="apepar" value="#{mbPersonal.vpersonaPaterno}"
                             styleClass="input" style="text-align: left;" size="50"
-                            maxlength="200"/> 
+                            maxlength="200" onkeyup="upperCase(this.name)"/> 
                             <p:outputLabel value="APELLIDO MATERNO: "/>
                             <h:inputText id="apemat" value="#{mbPersonal.vpersonaMaterno}"
                             styleClass="input" style="text-align: left;" size="50"
-                            maxlength="200"/> 
+                            maxlength="200" onkeyup="upperCase(this.name)"/> 
                             <p:outputLabel value="NOMBRE: "/>
                             <h:inputText id="nom"  value="#{mbPersonal.vpersonaNombres}"
                             styleClass="input" style="text-align: left;" size="50"
-                            maxlength="200"/>                                                                                        
+                            maxlength="200" onkeyup="upperCase(this.name)"/>                                                                                        
                             <p:outputLabel value="FECHA DE NACIMIENTO: "/>
                             <h:panelGrid columns="2" >
                                 <p:inputMask id="fec_doc" mask="99/99/9999" size="12" value="#{mbPersonal.dpersonaNacimiento}" styleClass="input">
@@ -178,7 +181,7 @@
                             <p:outputLabel value="DIRECCION: "/>
                             <h:inputText id="dir"  value="#{mbPersonal.vpersonaDireccion}"
                             styleClass="input" style="text-align: left;" size="50"
-                            maxlength="500"/>   
+                            maxlength="500" onkeyup="upperCase(this.name)"/>   
                             <p:outputLabel value="CORREO: "/>
                             <h:inputText id="corr"  value="#{mbPersonal.vpersonaCorreo}"
                             styleClass="input" style="text-align: left;" size="50"
@@ -209,7 +212,9 @@
                         <p:outputLabel value="CARGO: "/>
                             <h:inputText id="carg" value="#{mbPersonal.vpersonalCargo}" 
                             styleClass="input" style="text-align: left;" size="50"
-                            maxlength="100"/>
+                            maxlength="100" onkeyup="upperCase(this.name)"/>
+                         <p:outputLabel value="Foto: "/>
+                        <p:fileUpload id="photo" value="#{mbPersonal.imagenPersonal}" mode="simple"></p:fileUpload>      
                         </h:panelGrid>                    
                 </p:fieldset>
                 <br/>

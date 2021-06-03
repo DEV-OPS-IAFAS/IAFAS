@@ -130,4 +130,17 @@ public class IafasCombosDao {
            }
            return lista;
        }
+     
+     @SuppressWarnings("unchecked")
+    	public List<IafasCombos> getTipoImpuesto() {
+            List<IafasCombos> lista = null;
+            SqlSession session = sqlSessionFactory.openSession();
+            try{
+                  lista = session.selectList("Combos.tipoImpuesto");
+            }
+            finally{
+                 session.close();
+            }
+            return lista;
+        }
 }

@@ -175,5 +175,16 @@ public class iafasDevengadoDao {
 	        return lista;
 		}
 		
+		public int enviarDeve(IafasDevengado ret) {
+			int reg =0;
+		       SqlSession session = sqlSessionFactory.openSession();
+		       try{
+		        reg = session.insert("DevengadoRet.enviarDeve",ret);
+		       }
+		       finally{
+		        session.close();
+		       }
+			return reg;
+		}
 	
 }

@@ -16,8 +16,40 @@
                 document.getElementById('frmCompromisoAnual:inpTxtCertificado').value = "";
             }
             */
+             function enviarDatos(tipo){
+	    var valor;
+		if(validaEnvio(tipo)){
+			valor = false;
+		}
+		else
+		{ valor = true;}
+		return valor
+	}     
+        function validaEnvio(tipo){
+		var valor;
+		if(tipo!="REG") {
+		swal("Alerta", 'Esta opción es solo para Devengado',"warning");
+		valor = true;
+		}
+		
+		return valor
+	}   
                       
-        
+        function upperCase(obj) {
+        	  var x = document.getElementById(obj);
+        	  x.value = x.value.toUpperCase();
+        	}
+         function roundNumber(num, dec) {
+		var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
+		return result;
+    } 
+    
+        function verPorcentaje(){
+           var monto = document.getElementById('frmDevengado:montoDev').value;
+           var porc = document.getElementById('frmDevengado:txt_imp').value;
+           var result = roundNumber(((monto*porc)/100),2);
+           document.getElementById('frmDevengado:txt_monto').value = result;
+        }
         </script>
         <h:form id="frmDevengado" style="border-radius: 5px 5px 5px 5px;border: 1px ; width:100%;">
             <p:panel >
@@ -72,8 +104,15 @@
                                         <p:outputLabel value="#{men.vcodEstado}" />
                                     </p:column>
                                    <p:column headerText="Envio" style="text-align: center; width: 15px;">
-                                        <p:commandButton icon="pi pi-play">
-                                        </p:commandButton>
+                                        <p:commandButton id="btn_envio" icon="pi pi-play" 
+                                        onclick="if (!enviarDatos('#{men.vcodEstado}')) return false"
+                                        action="#{mbDevengado.obtener()}"
+                                        oncomplete="PF('pDevengado').show();"
+                                        update="frmDevengado:EnvioDevengado">
+                                          <f:param id="psecuenciaEn" name="psecuenciaEn" value="#{men.secuencia}"></f:param>
+                                         <f:param id="pcorrelativoEn" name="pcorrelativoEn" value="#{men.correlativo}"></f:param>
+										 <f:param id="pexpedienteEn" name="pexpedienteEn" value="#{men.vexpediente}"></f:param>                                       
+										</p:commandButton> 
                                     </p:column> 
                                                                     
                                    <p:column headerText="Afectacion" style="text-align: center; width: 10px;">
@@ -95,44 +134,47 @@
                 <p:dialog id="DevRetencion" widgetVar="pRetdev" modal="true" header="Registro de Afectación"
                 showEffect="fade" hideEffect="explode" resizable="false">
                     <p:panel >
+                    <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true" 
+                    style="font-weight:bold;color:red;" />
                     <h:panelGrid columns="6">
                       <p:outputLabel value="Tipo Documento:"/>
                       <p:selectOneMenu id="SelOneMnu_af" value="#{mbDevengado.tipoDoc}" style="width: 300px;"
 							  disabled="true" >
 						    <f:selectItem itemValue="0000" itemLabel="--Seleccione--" />
 						       <f:selectItem itemValue="001" itemLabel="Factura" />
-						      <f:selectItem itemValue="002" itemLabel="Boleta de Venta" />
-						      
+						      <f:selectItem itemValue="002" itemLabel="Boleta de Venta" />					      
 						</p:selectOneMenu>
                       <p:outputLabel value="Serie:"/>
                       <h:outputText styleClass="outLabel" value="#{mbDevengado.serieDoc}"/>
                       <p:outputLabel value="Numero:"/>
                       <h:outputText styleClass="outLabel" value="#{mbDevengado.nroDoc}"/>
                        <p:outputLabel value="Monto Devengado:"/>
-                      <h:inputText styleClass="outLabel" value="#{mbDevengado.montoDevengado}" readonly="true"/>
+                      <h:inputText id="montoDev" styleClass="outLabel" value="#{mbDevengado.montoDevengado}" readonly="true"
+                      style="text-align:right"/>
                     </h:panelGrid>
                         <h:panelGrid columns="6" style="width: 817px; ">
-                        <h:outputText value="Tipo Impuesto:"  ></h:outputText>
-							<h:selectOneMenu id="SelImpuesto" value="#{mbDevengado.vcodImp}" style="width: 150px;"
-							 styleClass="select">
-						    <f:selectItem itemValue="00" itemLabel="--Seleccione--" />
-						       <f:selectItem itemValue="01" itemLabel="Detraccion" />
-						      <f:selectItem itemValue="02" itemLabel="Retencion" />						      
-						</h:selectOneMenu>
+                        <h:outputText value="Tipo Impuesto:"  ></h:outputText>						
+						 <p:selectOneMenu id="SelImpuesto"  value="#{mbDevengado.vcodImp}"
+                        style="width:200px;" >
+                         <f:selectItem itemValue="00" itemLabel="--Seleccione--"/>
+                         <f:selectItems var="impt" value="#{mbCombos.impuesto}"/>
+                        </p:selectOneMenu> 
 						<h:outputText value="% Impuesto"></h:outputText>
-							<h:inputText  id="txt_imp"  maxlength="4" 
-							 styleClass="input" value="#{mbDevengado.nporImp}"
+							<h:inputText  id="txt_imp"  maxlength="4" size="6"
+							 styleClass="input" value="#{mbDevengado.nporImp}" style="text-align:right"
+							  onkeyup="verPorcentaje();"
 							></h:inputText>
 							<h:outputText value="Importe"></h:outputText>
-							<h:inputText  id="txt_monto"  maxlength="4" 
-							 styleClass="input" disabled="true"
-							></h:inputText>
-							
-							<p:commandButton  value="Grabar"  action="#{mbDevengado.registrarRetencion()}"
-		                    icon="pi pi-save" style="height:30px;" ajax="false"/>
+							<h:inputText  id="txt_monto"  maxlength="15" size="18"
+							 styleClass="input" disabled="true" style="text-align:right;"
+							></h:inputText>			
+		               </h:panelGrid> 
+		               <h:panelGrid columns="2" columnClasses="col1col1">
+		               							<p:commandButton  value="Grabar"  action="#{mbDevengado.registrarRetencion()}"
+		                    icon="pi pi-save" style="height:30px;" ajax="true" update="frmDevengado:mensaje,frmDevengado:dTableRetencion"/>
 		                    <p:commandButton value="Cancelar" oncomplete="PF('pRetdev').hide();"
 		                    icon="pi pi-arrow-left" style="height:30px;"/>
-		               </h:panelGrid>      
+		               </h:panelGrid>     
 		                    <h:panelGrid columns="8">
                                 <p:dataTable id="dTableRetencion" var="Retd" value="#{mbDevengado.listaRetencion}"  rows="10" scrollable="true" scrollHeight="175px;"
                                              style="width: 1000px;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
@@ -161,7 +203,23 @@
                          -->                  
                     </p:panel>
                 </p:dialog>
-              
+               <p:dialog id="EnvioDevengado" widgetVar="pDevengado" modal="true" header="Confirmar Envio"
+                showEffect="fade" hideEffect="explode" resizable="false">
+                    <p:panel >
+                        <h:panelGrid columns="2">
+                        <i class="pi pi-exclamation-circle" style="width:30px;height:30px;"></i>
+                            <p:outputLabel value="Desea Enviar El Devengado?" 
+                            style="font-weight:bold;font-size:12px;"></p:outputLabel>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                           <p:commandButton id="btnAceptar" value="Si" action="#{mbDevengado.enviarDevengado()}"
+                           oncomplete="PF('pDevengado').hide();" icon="pi pi-check" style="height:25px;"
+                           update="dTableDevengado"></p:commandButton>
+                            <p:commandButton id="btnCancelar" value="No" type="button" onclick="PF('pDevengado').hide();"
+                            icon="pi pi-times" style="height:25px;"></p:commandButton>
+                        </h:panelGrid>
+                    </p:panel>
+                </p:dialog>
                 
             </p:panel>
         </h:form>

@@ -8,12 +8,13 @@
 	<title>IAFAS</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<link href="css/estilos.css" rel="stylesheet" type="text/css" />
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </h:head>
 <body class="formulario">
 <script>
            
-               function verMensajes(){
-           var tipo = '#{mbDevengado.typeMessages}';
+          function verMensajes(){
+           var tipo = document.getElementById("frmDevengado:inpTxtmessages").value;
            if(tipo==0){
              swal("ERROR", 'Ocurrio Un Error al Registrar',"error");
            }else
@@ -39,9 +40,16 @@
                 document.getElementById(obj).value = txt;
             } 
             
+                    function upperCase(obj) {
+        	  var x = document.getElementById(obj);
+        	  x.value = x.value.toUpperCase();
+        	}
+        	
+            
 </script>
 	<h:form id="frmDevengado">
 	<p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
+      <h:inputHidden id="inpTxtmessages" value="#{mbDevengado.typeMessages}"></h:inputHidden>	
 		<p:panel>
 			<p:panelGrid columns="8">
 				<i class="pi pi-money-bill"></i>
@@ -66,10 +74,8 @@
 			
 						</h:panelGrid>
 					    <h:panelGrid columns="4" style="width: 966px; ">
-						<p:outputLabel value="Tip.Documento:" />
-						<h:outputLabel value="#{mbDevengado.vtipoDocumento} - #{mbDevengado.desDocumento}" styleClass="outLabel" />
-						<p:outputLabel value="Nro.Documento:" />
-						<h:outputLabel value="#{mbDevengado.nroDocumento}" styleClass="outLabel" />
+						<p:outputLabel value="Documento:" />
+						<h:outputLabel value=" #{mbDevengado.desDocumento} : #{mbDevengado.nroDocumento}" styleClass="outLabel" />						
 						<p:outputLabel value="Fecha Comp.Mensual:" />
                         <h:inputText id="txt_fechaCert" size="10" styleClass="outLabel" value="#{mbDevengado.fechaCom}"
                         readonly="true">
@@ -80,7 +86,7 @@
 						 <p:selectOneMenu id="procesoSel"  value="#{mbDevengado.vcodProcesoSel}" style="width: 240px"  disabled="true" >
                          <f:selectItems var="documentos" value="#{mbCombos.procesoSel}" />
                         </p:selectOneMenu>
-						<p:outputLabel value="Proveedor.:" ></p:outputLabel>
+						<p:outputLabel value="Proveedor:" ></p:outputLabel>
 						<h:outputText value="#{mbDevengado.ruc} - #{mbDevengado.desRuc} " styleClass="outLabel"></h:outputText>   						  				
                         <p:outputLabel value="Moneda:"/>
                         <h:outputText  value="#{mbDevengado.desMoneda} " styleClass="outLabel"></h:outputText>                    
@@ -89,7 +95,7 @@
 						</h:panelGrid> 
 						<br/>
 						  <h:panelGrid columns="2" style="width: 966px; ">
-						<h:outputLabel value="Glosa Mensual.:" ></h:outputLabel>
+						<h:outputLabel value="Concepto:" ></h:outputLabel>
 						<h:inputTextarea value="#{mbDevengado.glosaMensual} "  readonly="true"
 						rows="3" style="width: 700px;" styleClass="outLabel"></h:inputTextarea>   
 			             </h:panelGrid> 
@@ -100,12 +106,12 @@
 					    <h:outputText value="Tipo Doc:"  ></h:outputText>
 					    <p:selectOneMenu id="doc"  value="#{mbDevengado.tipDocCom}"
                         style="width:200px;" >
-                         <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
+                         <f:selectItem itemValue="000" itemLabel="--Seleccione--"/>
                          <f:selectItems var="documentos" value="#{mbCombos.documento}"/>
                         </p:selectOneMenu> 
 							<h:outputText value="N° Serie:"></h:outputText>
 							<h:inputText  id="txt_serie" value="#{mbDevengado.nroSerieCom}" maxlength="4" 
-							 styleClass="input" onblur="completaCeros(this.name, 4);"
+							 styleClass="input" onblur="completaCeros(this.name, 4);" onkeyup="upperCase(this.name)"
 							></h:inputText>
 							<h:outputText value="N° Comprobante:"></h:outputText>
 							<h:inputText id="txt_numDoc" value="#{mbDevengado.nroDocCom}" styleClass="input" size="11" 
@@ -124,9 +130,9 @@
 							</h:panelGrid>
 							 </h:panelGrid>
 							  <h:panelGrid columns="2">
-							 <h:outputText value="Glosa: "></h:outputText>
+							 <h:outputText value="Concepto: "></h:outputText>
 					       	<h:inputTextarea styleClass="input" id="txt_Area_notas1"  
-					       	 value="#{mbDevengado.glosa}" style="width: 800px;" >
+					       	 value="#{mbDevengado.glosa}" style="width: 800px;" onkeyup="upperCase(this.name)" >
 					    	</h:inputTextarea>
 					    	
 					    </h:panelGrid>
@@ -169,15 +175,15 @@
                         <p:column headerText="Descripción" style="width: 350px;">
                             <p:outputLabel  value="#{cad.nomCla}" />
                         </p:column>
-                        <p:column headerText="Monto Afectacion Mensual" style="width: 35px;">
-                            <p:outputLabel value="#{cad.impSol}"  style="text-align:right">
+                        <p:column headerText="Monto Afectacion Mensual" style="width: 35px; text-align: rigth;" >
+                            <p:outputLabel value="#{cad.impSol}"  style="text-align: rigth;" >
                                 <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>  
                             </p:outputLabel>
                         </p:column>
-                        <p:column headerText="Monto Devengado" style="width: 50px; text-align: right;" >
+                        <p:column headerText="Monto Devengado" style="width: 50px; text-align: rigth;" >
                           <p:cellEditor >
                                 <f:facet name="output">
-                                    <p:outputLabel  value="#{cad.montoIngresado}" style="text-align: right;">
+                                    <p:outputLabel  value="#{cad.montoIngresado}" style="text-align: rigth;">
                                       <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>  
                                    </p:outputLabel>
                                 </f:facet>

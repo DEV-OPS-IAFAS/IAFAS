@@ -72,7 +72,7 @@
 		 vcod_imp vcodImp,
 		 por_imp nporImp,
 		 nimp_ret_sol importeRetencion,
-		 CASE vcod_imp WHEN '01' THEN 'Detraccion' WHEN '02' THEN 'Retencion' END descImpu
+		 (select vsiglas from iafas_impuesto where vcod_imp=iafas_ret_comprobante.vcod_imp and VESTADO_CODIGO='AC' ) descImpu
 		 FROM iafas_ret_comprobante WHERE 
 		 vtip_documento_com=#{vtipDocumentoCom} 
 		 AND vserie_com=#{vserieCom} AND vnro_com=#{vnroCom} AND vruc=#{ruc} 
@@ -109,5 +109,17 @@
         dev.VNRO_DOCUMENTO_COM = ret.VNRO_COM and 
         dev.CPROVEEDOR_RUC = ret.VRUC
 		
+	</select>
+	
+	
+		<select id="enviarDeve"
+		parameterType="ep.mil.pe.iafas.administrativo.devengado.model.IafasDevengado"
+		statementType="CALLABLE">
+	   { CALL SP_ENVIAR_DEVENGADO(
+	    #{vano mode=IN, jdbcType=VARCHAR},
+		#{secuencia, mode=IN, jdbcType=VARCHAR},
+		#{correlativo, mode=IN,jdbcType=VARCHAR},
+		#{vexpediente, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioIng, mode=IN,jdbcType=VARCHAR})}
 	</select>
 </mapper>
