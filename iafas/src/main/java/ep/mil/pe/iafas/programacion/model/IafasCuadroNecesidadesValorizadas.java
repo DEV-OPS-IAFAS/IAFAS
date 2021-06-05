@@ -25,5 +25,8 @@ public class IafasCuadroNecesidadesValorizadas {
 	private String vusuarioCodigo;
 	private Date dusuarioFecha;
 	private String descripcionTarea;
-
+	private String descripcionUnidadMedida;
+	private BigDecimal total;
+	private BigDecimal totalProgramado;
+	private BigDecimal totalMetaFisica;
 }

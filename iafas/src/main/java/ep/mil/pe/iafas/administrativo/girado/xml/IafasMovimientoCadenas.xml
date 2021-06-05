@@ -25,7 +25,7 @@
         AND CAD.VANO = DEV.VANO
         AND CAD.VSECUENCIA = DEV.VSECUENCIA
         AND CAD.vsecuencia_int = DEV.vsecuencia_int
-        
+        AND CAB.VCOD_ESTADO='2'
 	</select>
     
  

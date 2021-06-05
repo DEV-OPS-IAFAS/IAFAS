@@ -23,6 +23,9 @@ public class IafasComprobanteRetencion {
 	/*Metodo agregado por Elvis Severino*/
 	private String vnroCompag;
 	private String descRetencion;
+	private String idClasificador;
+	private String cadena;
+	private String desCadena;
 	
 	public IafasComprobanteRetencion() {
 		// TODO Auto-generated constructor stub

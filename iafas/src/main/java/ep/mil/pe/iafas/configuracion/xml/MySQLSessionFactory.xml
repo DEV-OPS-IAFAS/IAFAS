@@ -53,9 +53,9 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
           <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://localhost:3306/IAFASEP"/>
-    			<property name="username" value="iafasep"/>
-                <property name="password" value="iafasEP$2021"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/iafas"/>
+    			<property name="username" value="root"/>
+                <property name="password" value="esc240789"/>
             </dataSource>
        </environment>
     </environments> 

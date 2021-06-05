@@ -52,7 +52,6 @@ public class IafasGiradoController implements Serializable{
 	private List<IafasMovimientoCadenas> listaPorGirarCadenas = new ArrayList<IafasMovimientoCadenas>();
 	private List<IafasMovimientoCadenas> listaGiradasCadenas = new ArrayList<IafasMovimientoCadenas>();
 	private List<IafasComprobanteRetencion> listaRetencionesPorGirar = new ArrayList<IafasComprobanteRetencion>();
-	private boolean muestraBotonGiro = false;
 	private BigDecimal ntipCam;
 	private String entidadGiro;
 	private String tipoGiro;
@@ -64,7 +63,6 @@ public class IafasGiradoController implements Serializable{
 	private String descProveedor;
 	private String simboloMondea;
 	private String mensajeModal;
-	private boolean muestraBotonGiroTodo = false;
 	private String tipoInsercion =Constantes.GIRO_TOTAL ;
 	
 	private int typeMessages = Constantes.UNO_NEGATIVO;
@@ -73,6 +71,12 @@ public class IafasGiradoController implements Serializable{
 	private ArrayList<SelectItem> cuentaEntidadGiro;
 	private BigDecimal montoTecho;
 	private BigDecimal montoSaldo;
+	/*booleanos para mostrar objetos*/
+	private boolean muestraCheckGiro = false;
+	private boolean muestraBotonGiroTodo = false;
+	private boolean muestraGiroCadenas = false;
+	private boolean muestraGiroRetenciones = false;
+	private boolean valueCheckGiro = false;
 	
 	public IafasGiradoController() {
 		//buscarGirados();
@@ -180,18 +184,24 @@ public class IafasGiradoController implements Serializable{
 				setVruc(objBeanLista.getVruc());
 				setVcci(objBeanLista.getVcci());
 				setCproveedorCuentaBanco(objBeanLista.getCproveedorCuentaBanco());
-				setMuestraBotonGiro(true);
 				setNtipCam(objBeanLista.getNtipCam());
 				setDescProveedor(Constantes.DOS_PUNTOS.concat(objBeanLista.getDescProveedor()));
 				setSimboloMondea(objBeanLista.getSimboloMondea());
 				setNombreBanco(objBeanLista.getDescBanco());
-				setMuestraBotonGiroTodo(false);
+				setMuestraCheckGiro(true);
+				setValueCheckGiro(false);
 				this.listaPorGirar.add(objBeanLista);
 			}
-			
+			obtenerCadenasPorGirar();
+			obtenerRetencionesparaGiro();
 		} else {
-			setMuestraBotonGiro(false);
-			setMuestraBotonGiroTodo(false);
+			logger.info("en el else de bsuquedas");
+			obtenerCadenasPorGirar();
+			obtenerRetencionesparaGiro();
+			setMuestraCheckGiro(false);
+			setValueCheckGiro(false);
+			setMuestraGiroCadenas(false);
+			setMuestraGiroRetenciones(false);
 			setVglosa(Constantes.VACIO);
 			setVruc(Constantes.VACIO);
 			setVcci(Constantes.VACIO);
@@ -200,9 +210,12 @@ public class IafasGiradoController implements Serializable{
 			setNombreBanco(Constantes.VACIO);
 			setSimboloMondea(Constantes.VACIO);
 			setDescProveedor(Constantes.VACIO);
+			this.typeMessages = Constantes.UNO_NEGATIVO;
+			this.messages = Constantes.MESSAGE_VALIDACION_BUSQUEDA_GIRO;
+			PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
+			refreshMessage();
+			showMessages(typeMessages,messages );
 		}
-		obtenerCadenasPorGirar();
-		obtenerRetencionesparaGiro();
 
 		logger.info("[FIN:] Metodo : buscarPorSiafAno");
 		return listaPorGirar;
@@ -222,7 +235,8 @@ public class IafasGiradoController implements Serializable{
 
 		List<IafasMovimientoCadenas> lsts = objDao.obtenerCadenasPorGirar(objBn);
 
-		if (lsts.size() > 0 || lsts!= null) {
+		if (lsts.size() > 0) {
+			setMuestraGiroCadenas(true);
 			for (IafasMovimientoCadenas obj : lsts) {
 				listaPorGirarCadenas.add(obj);
 			}
@@ -274,6 +288,7 @@ public class IafasGiradoController implements Serializable{
 		List<IafasComprobanteRetencion> lsts = objDao.obtenerRetencionesparaGiro(objBn);
 
 		if ( lsts != null ) {
+			setMuestraGiroRetenciones(true);
 			for (IafasComprobanteRetencion obj : lsts) {
 				listaRetencionesPorGirar.add(obj);
 			}
@@ -284,6 +299,7 @@ public class IafasGiradoController implements Serializable{
 	
 	public void insRegistroGiradoCab() {
 		logger.info("[INICIO:] Metodo : insRegistroGiradoCab:::");
+		
 		IafasGiradoDao giradoDao = new IafasGiradoDao(MySQLSessionFactory.getSqlSessionFactory());
 		HttpSession session = null;
 		session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
@@ -307,13 +323,15 @@ public class IafasGiradoController implements Serializable{
 		objBn.setBancodBco(entidadGiro); 
 		
 		try {
-			response = giradoDao.mantenimientoGiradoCab(objBn);
-			if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
-				this.typeMessages = Constantes.CERO_INT;
-				this.messages = response.getMensajeRespuesta();
-				PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
-				refreshMessage();
-				showMessages(typeMessages, messages);
+			if(!validacionesGiro()){
+				response = giradoDao.mantenimientoGiradoCab(objBn);
+				if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
+					this.typeMessages = Constantes.CERO_INT;
+					this.messages = response.getMensajeRespuesta();
+					PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
+					refreshMessage();
+					showMessages(typeMessages, messages);
+				}
 			}
 
 		} catch (Exception e) {
@@ -368,24 +386,6 @@ public class IafasGiradoController implements Serializable{
 
 	}
 
-	private boolean validarRegistroGiro() {
-
-		logger.info("[INICIO:] Metodo : validarRegistroGiro:::");
-
-		logger.info(ntipCam);
-		if (Constantes.UNO_STRING.equals(tipMon) && !Constantes.UNO_BG.equals(ntipCam)) {
-			setMsgValidacion("No puede ingresar un tipo de Cambio diferente a 1, ya que el tipo de Moneda es Soles");
-			pasoValidacion = false;
-
-		} else if (!Constantes.UNO_STRING.equals(tipMon) && Constantes.UNO_BG.equals(ntipCam)) {
-			setMsgValidacion("Debe registrar un tipo de cambio correspondiente a la moneda seleccionada");
-			pasoValidacion = false;
-		}
-
-		logger.info("[FIN:] Metodo : validarRegistroGiro:::" + pasoValidacion);
-		return pasoValidacion;
-	}
-	
 	public String retornar() {
 		limpiarcampos();
 		return "mainIafasGirado.xhtml";
@@ -394,7 +394,7 @@ public class IafasGiradoController implements Serializable{
 	private void limpiarcampos() {
 		logger.info("[INICIO:] Metodo : limpiarcampos");
 		setVregSiaf(Constantes.VACIO);
-		setMuestraBotonGiro(false);
+		setMuestraCheckGiro(false);
 		setVglosa(Constantes.VACIO);
 		setVruc(Constantes.VACIO);
 		setVcci(Constantes.VACIO);
@@ -404,6 +404,14 @@ public class IafasGiradoController implements Serializable{
 		setSimboloMondea(Constantes.VACIO);
 		setDescProveedor(Constantes.VACIO);
 		obtenerCadenasPorGirar();
+		obtenerRetencionesparaGiro();
+		setMuestraCheckGiro(false);
+		setValueCheckGiro(false);
+		setMuestraGiroCadenas(false);
+		setMuestraGiroRetenciones(false);
+		setEntidadGiro(Constantes.VACIO);
+		setCuentaGiro(Constantes.VACIO);
+		setMuestraBotonGiroTodo(false);
 		logger.info("[FIN:] Metodo : limpiarcampos");
 	}
 	
@@ -422,11 +430,17 @@ public class IafasGiradoController implements Serializable{
 	
 	public void actualizarBoolean() {
 		logger.info("[INICIO:] Metodo : actualizarBoolean");
-		
-		logger.info("muestraBotonGiroTodo:::>"+muestraBotonGiroTodo);
-		muestraBotonGiro = false;
-		muestraBotonGiroTodo = true;
-		logger.info("muestraBotonGiroTodo........saliendo:::>"+muestraBotonGiroTodo);
+		boolean value = valueCheckGiro ? true : false;
+		if (value) {
+			muestraGiroCadenas = false;
+			muestraGiroRetenciones = false;
+			muestraBotonGiroTodo = true;
+		} else {
+			obtenerCadenasPorGirar();
+			obtenerRetencionesparaGiro();
+			muestraBotonGiroTodo = false;
+		}
+
 		logger.info("[FIN:] Metodo : actualizarBoolean");
 	}
 	
@@ -435,6 +449,12 @@ public class IafasGiradoController implements Serializable{
 		logger.info("[INICIO:] Metodo : showMessages:::");
 		
 		switch (opcion) {
+		
+		case Constantes.UNO_NEGATIVO:
+			typeMessages = Constantes.UNO_NEGATIVO;
+			messages = mensaje;
+			PrimeFaces.current().executeScript("verMensajes()");
+			break;
 		
 		case Constantes.CERO_INT:
 			typeMessages = Constantes.CERO_INT;
@@ -468,6 +488,42 @@ public class IafasGiradoController implements Serializable{
 		
 		logger.info("[FIN:] Metodo : showMessages:::");
 		return messages;
+	}
+	
+	private boolean validacionesGiro() {
+		boolean pasoGrabar = false;
+		logger.info(" validando monto ::::>"+impMonSol + " - "+montoTecho + " - "+montoSaldo + " - "+tipMon + " - "+entidadGiro +" - "+cuentaGiro);
+		if (Constantes.CERO_STRING.equals(entidadGiro)) {
+			this.typeMessages = Constantes.DOS_INT;
+			this.messages = Constantes.MESSAGE_VALIDACION_ENTIDAD_GIRO;
+			PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
+			refreshMessage();
+			showMessages(typeMessages, messages);
+			return pasoGrabar = true;
+		} else if (Constantes.CERO_STRING.equals(cuentaGiro)) {
+			this.typeMessages = Constantes.DOS_INT;
+			this.messages = Constantes.MESSAGE_VALIDACION_CUENTA_GIRO;
+			PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
+			refreshMessage();
+			showMessages(typeMessages, messages);
+			return pasoGrabar = true;
+		} 
+		else if (impMonSol.compareTo(montoTecho) == Constantes.UNO_INT) {
+			this.typeMessages = Constantes.DOS_INT;
+			this.messages = Constantes.MESSAGE_VALIDACION_MONTO_GIRO;
+			PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
+			refreshMessage();
+			showMessages(typeMessages, messages);
+			return pasoGrabar = true;
+		} else if (impMonSol.compareTo(montoSaldo) == Constantes.UNO_INT) {
+			this.typeMessages = Constantes.DOS_INT;
+			this.messages = Constantes.MESSAGE_VALIDACION_SALDO_GIRO;
+			PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
+			refreshMessage();
+			showMessages(typeMessages, messages);
+			pasoGrabar = true;
+		}
+		return pasoGrabar;
 	}
 	
 	

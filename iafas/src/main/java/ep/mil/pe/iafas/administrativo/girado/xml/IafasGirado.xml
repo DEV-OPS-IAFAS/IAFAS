@@ -30,6 +30,7 @@
 		cab.VANO=#{vano}  AND 
 		cab.VREG_SIAF=#{vregSiaf} AND 
 		cab.VFASE = 'D'
+		AND cab.VCOD_ESTADO='2'
 	</select>
     
     <select id="SP_MTO_GIRADO" statementType="CALLABLE" parameterType="ep.mil.pe.iafas.administrativo.girado.model.IafasGirado">
@@ -61,5 +62,29 @@
 		cab.VUSUARIO_ING=#{vusuarioIng} AND 
 		cab.VFASE = 'G'
 	</select>
+ 
+  <select id="obtenerGirados"
+		parameterType="ep.mil.pe.iafas.administrativo.girado.model.IafasGirado"
+		resultType="ep.mil.pe.iafas.administrativo.girado.model.IafasGirado">
+		SELECT cab.VSECUENCIA AS vsecuencia, cab.VANO AS vano, cab.VSECUENCIA_INT AS vsecuenciaInt,  
+		cab.VREG_SIAF AS vregSiaf, cab.VFUENTE_FINANCIAMIENTO AS vfuenteFinanciamiento, 
+		cab.NTIP_CAM AS ntipCam, cab.NIMP_MON_SOL AS impMonSol, cab.NIMP_MON_EXT AS impMonExt , cab.VTIP_MON AS vtipMon,  
+		cab.VGLOSA AS vglosa , gir.VNRO_CHE_CAR AS vnroCheCar,
+		 CASE cab.VCOD_ESTADO
+    	WHEN '2' THEN 'REGISTRADO'
+    	ELSE 'ANULADO'  END desEstado
+        ##dev.CPROVEEDOR_RUC AS vruc , 
+		##(SELECT pv.CPROVEEDOR_CCI FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS vcci, 
+		##(SELECT pv.CPROVEEDOR_CUENTA_BANCO FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS cproveedorCuentaBanco
+		FROM iafas_movimiento cab, iafas_girado gir
+		where 
+		cab.VANO=gir.VANO AND
+		cab.VSECUENCIA=gir.VSECUENCIA AND
+		cab.VSECUENCIA_INT=gir.VSECUENCIA_INT AND
+		cab.VANO='2021'  AND 
+		cab.VREG_SIAF=#{vregSiaf} AND 
+		cab.VFASE = 'G'
+	</select>
+ 
  
 </mapper>

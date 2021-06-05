@@ -60,6 +60,7 @@
 					});
 				}
 			}
+			
 		</script>
 
 
@@ -151,14 +152,16 @@
 				</h:selectOneMenu>
 				<h:outputLabel  value="N° Expediente" styleClass="etiqueta" />
 				<h:inputText id="inptxtExpediente" onblur="completaCeros(this.name, 10);" 	styleClass="input" value="#{iafasGiradoController.vregSiaf}" onclick="limpiarTexto();" />
-				<p:commandButton id="cmdBtnBuscar"  update="dTableGirado" value="Buscar"  actionListener="#{iafasGiradoController.buscarPorSiafAno()}"
-                     ajax="false"   style="height:30px;" title="Click aqui para buscar datos de la fase Devenado"/>
-
-			<p:panel rendered="#{iafasGiradoController.muestraBotonGiro}">
+				<p:commandButton id="cmdBtnBuscar"  update="frm_Girado" value="Buscar"  action="#{iafasGiradoController.buscarPorSiafAno()}"
+                     title="Click aqui para buscar datos de la fase Devengado">
+                     <f:ajax  render="frm_Girado:pnl_messages" listener="#{iafasGiradoController.refreshMessage()}" />
+                 </p:commandButton>
+                 
+			<p:panel rendered="#{iafasGiradoController.muestraCheckGiro}">
 			
 			<div class="checkbox-fade fade-in-primary d-">
 				<label>
-					<h:selectBooleanCheckbox value="#{iafasGiradoController.muestraBotonGiroTodo}"  >
+					<h:selectBooleanCheckbox value="#{iafasGiradoController.valueCheckGiro}"  >
 					Girar Todo
 						<f:ajax render="frm_Girado:pnl_body" listener="#{iafasGiradoController.actualizarBoolean()}"/>
 					</h:selectBooleanCheckbox>
@@ -180,15 +183,15 @@
 			<p:panelGrid columns="6" styleClass="panel">
 			
 				<h:outputLabel value="Proveedor"  styleClass="etiqueta"/>
-				<h:inputText id="inptxtRuc" disabled="true" style="width: 400px"  styleClass="input" value="#{iafasGiradoController.vruc}#{iafasGiradoController.descProveedor}" />
+				<h:inputText id="inptxtRuc" disabled="true" style="width: 300px"  styleClass="input" value="#{iafasGiradoController.vruc}#{iafasGiradoController.descProveedor}" />
 				
-				<h:outputLabel value="Importe"  styleClass="etiqueta" />
-				<h:inputText id="inptxtImporte" style="text-align: right" disabled="true" styleClass="input"  value="#{iafasGiradoController.simboloMondea}  #{iafasGiradoController.impMonSol}">
-					<p:outputLabel value ="#{iafasGiradoController.simboloMondea} " />
+				<h:outputLabel value="Importe (#{iafasGiradoController.simboloMondea})"  styleClass="etiqueta" />
+				<h:inputText id="inptxtImporte" style="text-align: right" disabled="true" styleClass="input"  value="#{iafasGiradoController.impMonSol}">
+					<f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
 				</h:inputText>
 				
 				<h:outputLabel value="Concepto" style="font-size:11px;font-weight:bold;" />
-				<h:inputText id="inptxtGlosa" styleClass="input"  style="width: 950px" maxlength="500" value="#{iafasGiradoController.vglosa}"/>
+				<h:inputText id="inptxtGlosa" styleClass="input"  style="width: 800px" maxlength="500" value="#{iafasGiradoController.vglosa}"/>
 				
 				</p:panelGrid>
 				
@@ -212,16 +215,16 @@
 				value="#{iafasGiradoController.listaPorGirarCadenas}"
 				style="font-size:11px;" emptyMessage="No se encontro Clasificadores">
 
-				<p:column style="width:40px;" headerText="Tarea">
+				<p:column style="width:35px;text-align: center" headerText="Tarea">
 					<p:outputLabel value="#{tblGirado.vcodSecFun}: #{tblGirado.descTarea}" />
 				</p:column> 
 				
-				<p:column headerText="Clasificador" style="width: 50px;" 
+				<p:column headerText="Clasificador" style="width: 45px;text-align: center" 
 					filterMatchMode="contains">
 					<p:outputLabel value="#{tblGirado.cadena} : #{tblGirado.desCadena}" />
 				</p:column>
 				
-				<p:column headerText="Importe" style="width: 2px;text-align: right" 
+				<p:column headerText="Importe" style="width: 15px;text-align: right" 
 					filterMatchMode="contains">
 					<p:outputLabel value ="#{iafasGiradoController.simboloMondea} " />
 					<p:outputLabel value="#{tblGirado.impSolCad}" >
@@ -231,7 +234,7 @@
 
 			</p:dataTable>
 			
-			<p:toolbar  rendered="#{iafasGiradoController.muestraBotonGiro}">
+			<p:toolbar  rendered="#{iafasGiradoController.muestraGiroCadenas}">
 				<p:toolbarGroup>
 					<p:commandButton value="Girar Clasificadores" oncomplete="PF('modalCabecera').show()"  update="frm_Girado:modalCabecera"
 					action="#{iafasGiradoController.retornoModal('C')}"  />
@@ -248,8 +251,12 @@
 					<p:outputLabel value="#{tblGiradoRet.vcodImp}: #{tblGiradoRet.descRetencion}" />
 				</p:column>
 				
-				<p:column style="width:2px;" headerText="Porcentaje">
+				<p:column style="width:2px;text-align: right" headerText="Porcentaje">
 					<p:outputLabel value="#{tblGiradoRet.nporImp} (%)" />
+				</p:column>
+				
+				<p:column style="width:2px;text-align: center" headerText="Clasificador">
+					<p:outputLabel value="#{tblGiradoRet.cadena} : #{tblGiradoRet.desCadena}" />
 				</p:column>
 				
 				<p:column headerText="Importe Retenido"  style="width:2px; text-align: right">
@@ -261,7 +268,7 @@
 				
 			</p:dataTable>
 			
-			<p:toolbar  rendered="#{iafasGiradoController.muestraBotonGiro}">
+			<p:toolbar  rendered="#{iafasGiradoController.muestraGiroRetenciones}">
 				<p:toolbarGroup>
 					<p:commandButton value="Girar Retenciones" oncomplete="PF('modalCabecera').show()" update="frm_Girado:modalCabecera" 
 					action="#{iafasGiradoController.retornoModal('R')}" />
@@ -273,24 +280,31 @@
 			<p:panelGrid columns="8"  styleClass="panel">
 			
 			<p:outputLabel value="Entidad de Giro :" styleClass="etiqueta"  />
-			 <h:selectOneMenu value="#{iafasGiradoController.entidadGiro}" styleClass="select"> 
+			 <h:selectOneMenu id = "cboEntidadGiro" value="#{iafasGiradoController.entidadGiro}" styleClass="select"> 
 			 <f:ajax  render="frm_Girado:acCuentaGiro" listener="#{iafasGiradoController.cargarCuentasEntidades()}"/>
                 <f:selectItem itemValue="0" itemLabel="Seleccione" />
 				<f:selectItems var="option" value="#{mbCombos.entidades}" />
               </h:selectOneMenu>
               
               <p:outputLabel value="Cuenta de Giro :" styleClass="etiqueta"  />
-              <p:autoComplete  id="acCuentaGiro" value="#{iafasGiradoController.cuentaGiro}"
+              <!-- <p:autoComplete  id="acCuentaGiro" value="#{iafasGiradoController.cuentaGiro}"
                 completeMethod="#{iafasGiradoController.completeText}" scrollHeight="250">
                 <f:ajax  render="frm_Girado:intpTxtTecho" listener="#{iafasGiradoController.cargarMontosCuenta()}"/>
                 <f:ajax  render="frm_Girado:intpTxtSaldo" listener="#{iafasGiradoController.cargarMontosCuenta()}"/>
-                </p:autoComplete>
-                <p:outputLabel value="Techo :" styleClass="etiqueta"  />
+                </p:autoComplete> -->
+                <h:selectOneMenu id="acCuentaGiro"  value="#{iafasGiradoController.cuentaGiro}"  styleClass="select"> 
+	                <f:selectItem itemValue="0" itemLabel="Seleccione "></f:selectItem>
+	                <f:selectItems var="optionCuenta" value="#{iafasGiradoController.cuentaEntidadGiro}" />
+	                <f:ajax  render="frm_Girado:intpTxtTecho" listener="#{iafasGiradoController.cargarMontosCuenta()}"/>
+                	<f:ajax  render="frm_Girado:intpTxtSaldo" listener="#{iafasGiradoController.cargarMontosCuenta()}"/>
+    	        </h:selectOneMenu>
+              
+                <p:outputLabel value="Techo (#{iafasGiradoController.simboloMondea}):" styleClass="etiqueta"  />
                 <h:inputText id="intpTxtTecho" styleClass="outLabelMonto"   style="text-align: right;"  disabled="true" maxlength="500" value="#{iafasGiradoController.montoTecho}" >
                	 <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
                 </h:inputText>
 			
-				<p:outputLabel value="Saldo :" styleClass="etiqueta"  />
+				<p:outputLabel value="Saldo (#{iafasGiradoController.simboloMondea}):" styleClass="etiqueta"  />
 				<h:inputText id="intpTxtSaldo" styleClass="outLabelMonto"  style="text-align: right;" disabled="true" maxlength="500" value="#{iafasGiradoController.montoSaldo}">
 					<f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
 				</h:inputText>
@@ -305,10 +319,9 @@
               </h:selectOneMenu>
 
 				<p:outputLabel value="Moneda:" styleClass="etiqueta" />
-				<h:selectOneMenu id="tipMon" styleClass="select"
-					value="#{iafasGiradoController.tipMon}">
-					<f:selectItem itemValue="0" itemLabel="Seleccione" />
-					<f:selectItems var="option" value="#{mbCombos.monedas}" />
+				<h:selectOneMenu id="tipMon" styleClass="select"  value="#{iafasGiradoController.tipMon}">
+<!-- 					<f:selectItem itemValue="0" itemLabel="Seleccione" ></f:selectItem> -->
+					<f:selectItems var="optionMoneda" value="#{mbCombos.monedas}" />
 				</h:selectOneMenu>
 				<p:outputLabel value="T.Cambio:" styleClass="etiqueta"  />
             <h:inputText id="tipcam" style="width: 50px; text-align: right;" 
@@ -319,47 +332,61 @@
 				</h:commandButton>		
 			</p:panelGrid>
 		</p:panel>
-		<h:outputLabel value="#{iafasGiradoController.msgSP}" styleClass="etiqueta" />  
- 		<h:outputLabel value="#{iafasGiradoController.msgValidacion}" styleClass="etiquetaErr" /> 
  		
- 		
- 		<p:dialog header="REGISTRO DE GIROS DE #{iafasGiradoController.mensajeModal}" id="modalCabecera" widgetVar="modalCabecera" showEffect="fade" minHeight="600" width="800" >
+ 		<p:dialog header="REGISTRO DE GIROS DE #{iafasGiradoController.mensajeModal}" id="modalCabecera" widgetVar="modalCabecera" showEffect="fade" minHeight="600" width="900" >
 	 		<p:panel>
 				<p:panelGrid columns="4"  styleClass="panel">
-				<p:outputLabel value="Cta.Cte:" styleClass="etiqueta"  />
-				 <h:selectOneMenu value="#{iafasGiradoController.entidadGiro}" styleClass="select"> 
-	                <f:selectItem itemValue="054" itemLabel="054 - RO/RDR"></f:selectItem>
-	                <f:selectItem itemValue="057" itemLabel="057 - DYT"></f:selectItem>
-	                <f:selectItem itemValue="066" itemLabel="066 - ROOC"></f:selectItem>
-	              </h:selectOneMenu>
-				<p:outputLabel value="Tipo Giro:" styleClass="etiqueta"  />
-				<h:selectOneMenu value="#{iafasGiradoController.tipoGiro}"  styleClass="select"> 
-	                <f:selectItem itemValue="065" itemLabel="065 - CHEQUE GIRADO "></f:selectItem>
-	                <f:selectItem itemValue="068" itemLabel="068 - CARTA ORDEN"></f:selectItem>
-	                <f:selectItem itemValue="081" itemLabel="081 - TRANSFERENCIA A CUENTA DE TERCEROS (CCI)"></f:selectItem>
-	                <f:selectItem itemValue="082" itemLabel="082 - OPERACIONES SIN CHEQUE"></f:selectItem>
-	                <f:selectItem itemValue="084" itemLabel="084 - CARTA ORDEN ELECTRONICA"></f:selectItem>
-	              </h:selectOneMenu>
-	
-					<p:outputLabel value="Moneda:" styleClass="etiqueta" />
-					<h:selectOneMenu id="tipMonPopup" styleClass="select"
-						value="#{iafasGiradoController.tipMon}">
-						<f:selectItem itemValue="1" itemLabel="S/."></f:selectItem>
-						<f:selectItem itemValue="2" itemLabel="USD"></f:selectItem>
-						<f:selectItem itemValue="3" itemLabel="EURO"></f:selectItem>
-						<f:selectItem itemValue="57" itemLabel="Y"></f:selectItem>
-					</h:selectOneMenu>
-					<p:outputLabel value="T.Cambio:" styleClass="etiqueta"  />
-	            <h:inputText id="tipcamPopup" style="width: 50px; text-align: right;" 
-	            styleClass="input" value="#{iafasGiradoController.ntipCam}" />
-			  	
-				 <h:commandButton styleClass="btn waves-effect waves-light btn btn-danger waves-effect waves-light" 
-				 title="Click aqui para Generar el Girado" value="Salir" />
+				<p:outputLabel value="Entidad de Giro :" styleClass="etiqueta"  />
+			 <h:selectOneMenu id = "cboEntidadGiro1" value="#{iafasGiradoController.entidadGiro}" styleClass="select"> 
+			 <f:ajax  render="frm_Girado:acCuentaGiro1" listener="#{iafasGiradoController.cargarCuentasEntidades()}"/>
+                <f:selectItem itemValue="0" itemLabel="Seleccione" />
+				<f:selectItems var="option" value="#{mbCombos.entidades}" />
+              </h:selectOneMenu>
+              
+              <p:outputLabel value="Cuenta Giro :" styleClass="etiqueta"  />
+                <h:selectOneMenu id="acCuentaGiro1"  value="#{iafasGiradoController.cuentaGiro}"  styleClass="select"> 
+	                <f:selectItem itemValue="0" itemLabel="Seleccione "></f:selectItem>
+	                <f:selectItems var="optionCuenta" value="#{iafasGiradoController.cuentaEntidadGiro}" />
+	                <f:ajax  render="frm_Girado:intpTxtTecho1" listener="#{iafasGiradoController.cargarMontosCuenta()}"/>
+                	<f:ajax  render="frm_Girado:intpTxtSaldo1" listener="#{iafasGiradoController.cargarMontosCuenta()}"/>	
+    	        </h:selectOneMenu>
+              
+                <p:outputLabel value="Techo (#{iafasGiradoController.simboloMondea}):" styleClass="etiqueta"  />
+                <h:inputText id="intpTxtTecho1" styleClass="outLabelMonto"   style="text-align: right;"  disabled="true" maxlength="500" value="#{iafasGiradoController.montoTecho}" >
+               	 <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                </h:inputText>
+			
+				<p:outputLabel value="Saldo (#{iafasGiradoController.simboloMondea}):" styleClass="etiqueta"  />
+				<h:inputText id="intpTxtSaldo1" styleClass="outLabelMonto"  style="text-align: right;" disabled="true" maxlength="500" value="#{iafasGiradoController.montoSaldo}">
+					<f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+				</h:inputText>
+			
+			<p:outputLabel value="Tipo Giro:" styleClass="etiqueta"  />
+			<h:selectOneMenu value="#{iafasGiradoController.tipoGiro}" id="cboTipoGiro1"  styleClass="select"> 
+                <f:selectItem itemValue="065" itemLabel="065 - CHEQUE GIRADO "></f:selectItem>
+                <f:selectItem itemValue="068" itemLabel="068 - CARTA ORDEN"></f:selectItem>
+                <f:selectItem itemValue="081" itemLabel="081 - TRANSFERENCIA A CUENTA DE TERCEROS (CCI)"></f:selectItem>
+                <f:selectItem itemValue="082" itemLabel="082 - OPERACIONES SIN CHEQUE"></f:selectItem>
+                <f:selectItem itemValue="084" itemLabel="084 - CARTA ORDEN ELECTRONICA"></f:selectItem>
+              </h:selectOneMenu>
 
-				<h:commandButton styleClass="btn waves-effect waves-light btn btn-success waves-effect waves-light" 
-				 title="Click aqui para Generar el Girado" value="girar" action="#{iafasGiradoController.insRegistroGiradoCab()}">
-					<f:ajax render="frm_Girado:pnl_messages" listener="#{iafasGiradoController.refreshMessage()}" />
-				</h:commandButton>								 
+				<p:outputLabel value="Moneda:" styleClass="etiqueta" />
+				<h:selectOneMenu id="tipMonPopUp" styleClass="select"
+					value="#{iafasGiradoController.tipMon}">
+<!-- 					<f:selectItem itemValue="0" itemLabel="Seleccione" /> -->
+					<f:selectItems var="optionMon" value="#{mbCombos.monedas}" />
+				</h:selectOneMenu>
+				<p:outputLabel value="T.Cambio:" styleClass="etiqueta"  />
+            <h:inputText id="tipcam1" style="width: 50px; text-align: right;" 
+            styleClass="input" value="#{iafasGiradoController.ntipCam}" />
+			
+			<h:commandButton styleClass="btn waves-effect waves-light btn btn-danger waves-effect waves-light" 
+				 title="Click aqui para Generar el Girado" value="Salir" />
+			
+		  	<h:commandButton styleClass="btn waves-effect waves-light btn-success btn-outline-success" 
+			 title="Click aqui para Generar el Girado" value="girar" action="#{iafasGiradoController.insRegistroGiradoCab()}">
+			 <f:ajax render="frm_Girado:pnl_messages" listener="#{iafasGiradoController.refreshMessage()}" />
+				</h:commandButton>							 
 				</p:panelGrid>
 			</p:panel>
  		

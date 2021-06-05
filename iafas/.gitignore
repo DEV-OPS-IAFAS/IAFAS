@@ -1,0 +1,18 @@
+######################
+# Project Specific
+######################
+target/
+/target/
+target
+/target
+.factorypath
+.classpath
+.settings/
+.settings
+/.settings
+/.settings/
+.project
+.metadata
+tmp/
+tmp/**/*
+bin

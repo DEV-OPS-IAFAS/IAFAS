@@ -58,4 +58,10 @@ public class Constantes {
 	public static final String GIRO_TOTAL="T";
 	public static final String GIRO_CLASIFICADOR="C";
 	public static final String GIRO_RETENCION="R";
+	public static final String MESSAGE_VALIDACION_BUSQUEDA_GIRO = "El expediente no esta aprobado por devengado o no existe!";
+	public static final String MESSAGE_VALIDACION_MONTO_GIRO = "El Monto a girar es mayor al Techo asignado a esta cuenta!";
+	public static final String MESSAGE_VALIDACION_SALDO_GIRO = "El Monto a girar es mayor al Saldo de esta cuenta!";
+	public static final String MESSAGE_VALIDACION_ENTIDAD_GIRO = "Debe seleccionar la entidad del giro.";
+	public static final String MESSAGE_VALIDACION_CUENTA_GIRO = "Debe seleccionar la Cuenta  del giro.";
+	public static final String MESSAGE_VALIDACION_MONEDA_GIRO = "Debe seleccionar la Moneda del giro.";
 }
