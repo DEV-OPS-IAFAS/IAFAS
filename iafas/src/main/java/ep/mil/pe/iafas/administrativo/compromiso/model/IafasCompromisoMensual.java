@@ -33,6 +33,8 @@ public class IafasCompromisoMensual {
 	private String razonSocial;
 	private BigDecimal nimpMonSol;
 	
+	private String abrevTipoDoc;
+	
 	public IafasCompromisoMensual() {
 		// TODO Auto-generated constructor stub
 	}

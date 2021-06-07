@@ -120,4 +120,21 @@ public class IafasCompromisoAnualDao {
         }
         return lista;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IafasCompromisoAnual> validaDuplicados(IafasCompromisoAnual ca) {
+		
+        List<IafasCompromisoAnual> lista = null;
+        SqlSession session = sqlSessionFactory.openSession();
+        try{
+              lista = session.selectList("CompromisoAnual.validarDuplicados",ca);
+        }
+        catch(Exception e) {
+        	e.printStackTrace();
+        }
+        finally{
+             session.close();
+        }
+        return lista;
+	}
 }

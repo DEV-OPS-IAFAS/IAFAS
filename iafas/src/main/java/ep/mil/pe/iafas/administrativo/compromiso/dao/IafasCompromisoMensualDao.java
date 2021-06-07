@@ -119,4 +119,21 @@ public class IafasCompromisoMensualDao {
 	       }
 		return reg;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IafasCompromisoMensual> validaDuplicado(IafasCompromisoMensual ca) {
+		
+        List<IafasCompromisoMensual> lista = null;
+        SqlSession session = sqlSessionFactory.openSession();
+        try{
+              lista = session.selectList("CompromisoMensual.validaDuplicados",ca);
+        }
+        catch(Exception e) {
+        	e.printStackTrace();
+        }
+        finally{
+             session.close();
+        }
+        return lista;
+	}
 }

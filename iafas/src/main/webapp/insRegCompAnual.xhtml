@@ -66,7 +66,7 @@
                 <p:fieldset legend="Datos del Certificado">
                 <h:panelGrid columns="2">
                        <h:panelGrid columns="4" >
-                        <h:outputLabel value="Fuente Financiamiento"/>
+                        <h:outputLabel value="F. Financiamiento"/>
                         <h:selectOneMenu value="#{mbCompAnual.tipCodFun}" disabled="true" styleClass="select"> 
                         <f:selectItems var="fuenteFinanciamiento" value="#{mbCombos.fuenteFinanciamiento}"></f:selectItems>
                         </h:selectOneMenu>  
@@ -94,18 +94,20 @@
                     </h:panelGrid>
                     <p:panelGrid columns="2">
                      <h:outputLabel value="Monto Certificado:" style="font-weight:bold;"></h:outputLabel>
-                     <h:outputLabel value="#{mbCompAnual.totalCertificado}" styleClass="outLabel" style="text-align:right;">
+                     <h:inputText value="#{mbCompAnual.simboloMon} #{mbCompAnual.totalCertificado}" styleClass="outLabel" 
+                     style="text-align:right;" size="12" readonly="true">
                       <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
-                     </h:outputLabel>
-                     <h:outputLabel value="Monto Comprometido:" style="font-weight:bold;"></h:outputLabel>
-                       
-                      <h:outputLabel value="#{mbCompAnual.totalCompAnual}" styleClass="outLabel" style="text-align:right;">
+                     </h:inputText>
+                     <h:outputLabel value="Monto Comprometido:" style="font-weight:bold;"></h:outputLabel>              
+                      <h:inputText value="#{mbCompAnual.simboloMon} #{mbCompAnual.totalCompAnual}" styleClass="outLabel" 
+                      style="text-align:right;" size="12" readonly="true">
                       <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
-                     </h:outputLabel>
+                     </h:inputText>
                      <h:outputLabel value="Disponible:" style="font-weight:bold;"></h:outputLabel>
-                     <h:outputLabel value="#{mbCompAnual.difTotal}" styleClass="outLabel" style="text-align:right;">
+                     <h:inputText value="#{mbCompAnual.simboloMon} #{mbCompAnual.difTotal}" styleClass="outLabel" 
+                     style="text-align:right;" size="12" readonly="true">
                       <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
-                     </h:outputLabel>
+                     </h:inputText>
                     </p:panelGrid>
                 </h:panelGrid>
 				<h:panelGrid columns="2">
@@ -185,7 +187,7 @@
                         <h:inputText id="tipcam" style="width: 50px; text-align: right;" 
                         styleClass="input" value="#{mbCompAnual.ntipCam}" readonly="true"/>
                         <h:panelGrid id="panelMontoOC" columns="2" style="visibility:hidden;">
-                         <p:outputLabel value="Moneda Orden (C/S):"/>
+                         <p:outputLabel value="Monto Documento:"/>
                         <h:inputText id="montoOCOS" value="#{mbCompAnual.montoOrden}"
                         style="width: 75px;text-align: right;" disabled="true" styleClass="input">
                         <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>

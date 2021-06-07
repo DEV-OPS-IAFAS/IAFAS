@@ -319,8 +319,42 @@ public class IafasCompMensualController implements Serializable{
 		return flag;
 	}
 	
+	public boolean validaDuplicidad() {
+		boolean flag = false;
+		List<IafasCompromisoMensual> v = null;
+		String nroDocBD ="";
+		nroDocBD = nroDocumentoMen.substring(2, 10);
+		logger.info("NroDoc: "+nroDocBD);
+		IafasCompromisoMensual ca = new IafasCompromisoMensual();
+		ca.setVano(periodo);
+		ca.setVtipDocumentoMen(tipDocumentoMen);
+		ca.setVnroDocumentoMen(nroDocBD);
+		logger.info("Parametros Filtros : "+periodo+" "+tipDocumentoMen+" "+nroDocBD);
+		   v = mensualDao.validaDuplicado(ca);
+		   logger.info("Resultado COnsulta: "+ v.size());
+		if(v.size()>0) {
+			logger.info("Entro a validacion de Duplicidad");
+			if(nroDocBD.equals(v.get(0).getVnroDocumentoMen())) {
+				String resultado = v.get(0).getAbrevTipoDoc()+" "+v.get(0).getVnroDocumentoMen()+" SE ENCUENTRA REGISTRADO EN EL "
+						+ "EXPEDIENTE N° "+v.get(0).getVexpediente()+". VERIFIQUE";
+				 FacesContext.getCurrentInstance().addMessage(null, new 
+						 FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR!", 
+								 resultado));
+				 PrimeFaces.current().executeScript("activateBoton()");
+				 flag = true;
+			}
+		}
+		
+
+		return flag;
+	}
+	
 	public String registroCompMensual() {
+		
 		if(validaMontoOC()==true) {
+			return "";
+		}
+		if(validaDuplicidad()==true) {
 			return "";
 		}
 		if(validaCampos()==true) {

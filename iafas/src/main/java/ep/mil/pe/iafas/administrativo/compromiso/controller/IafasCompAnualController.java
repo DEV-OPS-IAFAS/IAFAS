@@ -231,6 +231,7 @@ public class IafasCompAnualController implements Serializable {
 				setTipProcesoSel(compromiso.get(0).getVcodProcesoSel());			
 				setFechaCert(compromiso.get(0).getDfechaDocumento());
 				setConcepto(compromiso.get(0).getVglosa());
+				setSimboloMon(compromiso.get(0).getVcodMoneda());
 				setConceptoCertificado(compromiso.get(0).getVglosa());
 				if(compromiso.get(0).getNtipCam()==0) {
 					setNtipCam(1.0);
@@ -361,6 +362,30 @@ public class IafasCompAnualController implements Serializable {
 		return flag;
 	}
 	
+	public boolean validaDuplicados() {
+		boolean flag = false;
+		String nroDocBD = nroDoc.substring(2, 10);
+		IafasCompromisoAnual ca = new IafasCompromisoAnual();
+		ca.setVanoDocumento(periodo);
+		ca.setVtipoDocumentoA(tipDocumentoA);
+		ca.setVnroDocumentoPagoA(nroDocBD);
+		logger.info("Parametros Filtros : "+periodo+" "+tipDocumentoA+" "+nroDocBD);
+		List<IafasCompromisoAnual> v = compAnualDao.validaDuplicados(ca);
+		if(v.size()>0) {
+			if(nroDocBD.equals(v.get(0).getVnroDocumentoPagoA())) {
+				String resultado = v.get(0).getVabrevTipDoc()+" "+v.get(0).getVnroDocumentoPagoA()+" SE ENCUENTRA REGISTRADO EN EL "
+						+ "CERTIFICADO N° "+v.get(0).getVnroCertificado()+". VERIFIQUE";
+				 FacesContext.getCurrentInstance().addMessage(null, new 
+						 FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR!", 
+								 resultado));
+				 PrimeFaces.current().executeScript("activateBoton()");
+				 flag = true;
+			}
+		
+	   }
+		return flag;
+	}
+	
 	public String confirmarCompAnual() {
 		
 		return "";
@@ -368,6 +393,10 @@ public class IafasCompAnualController implements Serializable {
 	
 	public String grabarCompAnual() {
 		int reg = 0;
+		
+		if(validaDuplicados()== true) {
+			return "insRegCompAnual";
+		}
 		if(validaMontoOC()==true) {
 			return "insRegCompAnual";
 		}

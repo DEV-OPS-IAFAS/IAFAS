@@ -204,4 +204,16 @@
 	estado='CO'
 	</select>
 	
+	<!-- Validadores -->
+	
+	<select id="validarDuplicados" resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
+	parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual">
+			SELECT vnro_documento_pago_a vnroDocumentoPagoA, 
+			vnro_certificado vnroCertificado,
+			FUN_TIPO_DOCUMENTO_ADMINISTRATIVO_ABREVIATURA(vtipo_documento_a) vabrevTipDoc
+			FROM iafas_compromiso_anual 
+			WHERE vano_documento = #{vanoDocumento} AND vtipo_documento_a = #{vtipoDocumentoA} 
+			AND vnro_documento_pago_a = #{vnroDocumentoPagoA}
+	</select>
+	
 </mapper>
