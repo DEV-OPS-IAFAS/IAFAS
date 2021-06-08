@@ -107,5 +107,20 @@ public class IafasPersonalDao {
 			return reg;
 		}
 		 	
-	 
+		@SuppressWarnings("unchecked")
+		public List<IafasPersona> listaPersonaFam(IafasPersona pe) {
+			
+	        List<IafasPersona> lista = null;
+	        SqlSession session = sqlSessionFactory.openSession();
+	        try{
+	              lista = session.selectList("IafasPersona.listaVerPersona",pe);
+	        }
+	        catch(Exception e) {
+	        	e.printStackTrace();
+	        }
+	        finally{
+	             session.close();
+	        }
+	        return lista;
+		}
 }

@@ -13,19 +13,26 @@
 <body class="formulario">
 <script>
            
-          function verMensajes(){
-           var tipo = document.getElementById("frmDevengado:inpTxtmessages").value;
+       
+        function verMensajes(){
+        alert("lll");
+        	var tipo = document.getElementById("frmDevengado:inpTxtmessages").value;
+           alert(tipo);
            if(tipo==0){
-             swal("ERROR", 'Ocurrio Un Error al Registrar',"error");
-           }else
-           if(tipo==1) {
-           	 swal("Aviso", 'Se Registró Con Exito',"success").then(function() {
+             swal("ERROR", 'Ocurrio Un Error al Registrar',"error").then(function() {
+    	     window.location = "mainDevengado.xhtml"; });
+           }
+           
+           if(tipo==1){
+             swal("Aviso", 'Se Registró Con Exito',"success").then(function() {
     	     window.location = "mainDevengadoRet.xhtml"; });
-           }    
-		  else{
-		     swal("ALERTA", 'No se permite Campos Vacios al Registrar',"info");
-		  }
-        } 
+           }
+           
+           if(tipo==2){
+          swal("ALERTA", 'No se permite Campos Vacios al Registrar',"info");
+           }
+            
+        }
         
          function limpiarTexto() {
                 document.getElementById('frmDevengado:txt_nroSiaf').value = "";
@@ -44,12 +51,21 @@
         	  var x = document.getElementById(obj);
         	  x.value = x.value.toUpperCase();
         	}
-        	
+			
+				function validarSiNumero(object)
+				{
+				numero = object.value;
+				if (!/^([0-9])*$/.test(numero))
+				object.value = numero.substring(0,numero.length-1);
+				}
             
 </script>
 	<h:form id="frmDevengado">
-	<p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
-      <h:inputHidden id="inpTxtmessages" value="#{mbDevengado.typeMessages}"></h:inputHidden>	
+	 <p:panel>
+	 <h:inputHidden value="#{mbDevengado.typeMessages}" id="inpTxtmessages" />
+	 </p:panel>
+      <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true" 
+                    style="font-weight:bold;color:red;" />	
 		<p:panel>
 			<p:panelGrid columns="8">
 				<i class="pi pi-money-bill"></i>
@@ -58,11 +74,11 @@
 				<h:inputText  id="txt_nroSiaf" value="#{mbDevengado.vexpediente}"   
 							 styleClass="input" onblur="completaCeros(this.name, 10);"></h:inputText>
 				<p:commandButton id="cmdBtnBuscar"  value="Buscar" action="#{mbDevengado.verMensuales()}"
-                     style="height:30px;" ajax="false" update="frmDevengado:fieldCompromiso" 
+                     style="height:30px;" ajax="false" update="frmDevengado:mensaje,frmDevengado:dTableCla"
                      icon="pi pi-plus" onblur="completaCeros(this, 10);"
                      title="Click aqui para buscar datos del Devengado"/>
 				<p:commandButton  value="Grabar"  action="#{mbDevengado.registroDevengado()}"
-                    icon="pi pi-save" style="height:30px;" ajax="false"/>
+                    icon="pi pi-save" style="height:30px;" ajax="false" />
                     <p:commandButton value="Cancelar" action="#{mbDevengado.retornarDev()}"
                     icon="pi pi-arrow-left" style="height:30px;"/>
 			</p:panelGrid>
@@ -91,7 +107,12 @@
                         <p:outputLabel value="Moneda:"/>
                         <h:outputText  value="#{mbDevengado.desMoneda} " styleClass="outLabel"></h:outputText>                    
                         <p:outputLabel value="T.Cambio:"/>
-                        <h:outputText  value=" #{mbDevengado.ntipCam}" styleClass="outLabel"></h:outputText>      
+                        <h:outputText  value=" #{mbDevengado.ntipCam}" styleClass="outLabel"></h:outputText>   
+                         <p:outputLabel value="Monto Comprometido:"/>                           
+                       <h:inputText id="inpTxtMontoOC" styleClass="input" value="#{mbDevengado.nimpMonSol}" size="11" readonly="true"
+                    			 style="text-align:right">
+                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                    </h:inputText>
 						</h:panelGrid> 
 						<br/>
 						  <h:panelGrid columns="2" style="width: 966px; ">
@@ -115,7 +136,7 @@
 							></h:inputText>
 							<h:outputText value="N° Comprobante:"></h:outputText>
 							<h:inputText id="txt_numDoc" value="#{mbDevengado.nroDocCom}" styleClass="input" size="11" 
-							 maxlength="11" onblur="completaCeros(this.name, 11);" >
+							 maxlength="11" onblur="completaCeros(this.name, 11);" onkeyup="validarSiNumero(this);" >
 							 </h:inputText>
 							   
 							<h:outputText value="Fecha:"></h:outputText>
@@ -147,7 +168,7 @@
                         </p:selectOneMenu>    
                         <h:outputText value="N° Acta:"></h:outputText>
 							<h:inputText  id="txt_acta" value="#{mbDevengado.vnroActa}" maxlength="6" 
-							 styleClass="input" onblur="completaCeros(this.name, 6);"
+							 styleClass="input" onblur="completaCeros(this.name, 6);" onkeyup="validarSiNumero(this);"
 							></h:inputText>
 							<h:outputText value="Fecha Acta:"></h:outputText>
 							<h:panelGrid columns="2" border="0">

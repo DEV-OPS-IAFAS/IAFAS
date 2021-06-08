@@ -169,6 +169,17 @@
 		#{vcip, mode=IN,jdbcType=VARCHAR})}
 
 	</select>
-	
+	<select id="listaVerPersona"
+		resultType="ep.mil.pe.iafas.personal.model.IafasPersona"
+		parameterType="ep.mil.pe.iafas.personal.model.IafasPersona">
+	    SELECT  per.VPERSONA_NUMERO_DOCUMENTO  numeroVer ,
+		  per.VPERSONA_PATERNO paternoVer  ,
+         per.VPERSONA_MATERNO   maternoVer ,
+         per.VPERSONA_NOMBRES nombreVer ,
+         per.NPERSONA_CODIGO  codigoVer
+        FROM iafas_persona per
+        where per.VPERSONA_NUMERO_DOCUMENTO=#{numeroVer}
+
+	</select>
 	
 </mapper>

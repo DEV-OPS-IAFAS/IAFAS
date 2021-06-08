@@ -68,14 +68,16 @@
                                     <p:column headerText="FAMILIA" style="width: 10px; text-align:center; ">
                                         <p:commandButton id="btn_fami" icon="pi pi-user-plus" 
                                         action="#{mbPersonal.nuevoRegFamilia}">   
-                                        <f:param id="pSecDetalle" name="pSecDetalle" value="#{ca.npersonaCodigo}"></f:param>                                 
+                                        <f:param id="pSecDetalle" name="pSecDetalle" value="#{ca.npersonaCodigo}"></f:param> 
+                                        <f:param id="pdetalleFam" name="pdetalleFam" value="#{ca.vpersonaNumeroDoc}"></f:param>                                 
 										</p:commandButton> 
                                     </p:column>                               
       							  <p:column headerText="EDITAR" style="width: 10px; text-align:center; ">
                                         <p:commandButton id="btn_edit" icon="pi pi-calendar-plus" 
                                         oncomplete="PF('pRedit').show();" actionListener="#{mbPersonal.verPersonal()}"
                                         update="frmPersonal:EditPersona" >
-                                          <f:param id="pdetalleDoc" name="pdetalleDoc" value="#{ca.vpersonaNumeroDoc}"></f:param>                                    
+                                          <f:param id="pdetalleDoc" name="pdetalleDoc" value="#{ca.vpersonaNumeroDoc}"></f:param>  
+                                          <f:param id="pcodigoPer" name="pcodigoPer" value="#{ca.npersonaCodigo}"></f:param>                                   
 										</p:commandButton> 
                                     </p:column>
                                      <p:column headerText="VER FOTO" style="width: 10px; text-align:center; ">
@@ -131,11 +133,17 @@
                     <p:panel >
                     <br/>
                 <p:fieldset legend="Editar Personal" id="DatosCA">
-                        <h:panelGrid columns="2" style="width: 100%">                                                            
-                            <p:outputLabel value="Nº DOCUMENTO: "/>
+                     <div align="right">
+                            <p:graphicImage id="personalImagenE" 
+                          value="#{mbPersonal.img}" style="width:100px;height:100px;"
+                          cache="false"> </p:graphicImage>
+                     </div>
+
+                        <h:panelGrid columns="2" style="width: 100%">  
+                        <p:outputLabel value="Nº DOCUMENTO: "/>
                             <h:inputText id="nrodocumento"   value="#{mbPersonal.vpersonaNumeroDoc}" readonly="true"
-                            styleClass="input" style="text-align: left;" size="50" 
-                            maxlength="8" /> 
+                            styleClass="input" style="text-align: left;" size="35" 
+                            maxlength="8" />                                                          
                             <p:outputLabel value="APELLIDO PARTENO: "/>
                             <h:inputText id="apepar" value="#{mbPersonal.vpersonaPaterno}"
                             styleClass="input" style="text-align: left;" size="50"

@@ -50,6 +50,13 @@
            var result = roundNumber(((monto*porc)/100),2);
            document.getElementById('frmDevengado:txt_monto').value = result;
         }
+        
+		 function validarSiNumero(object)
+			{
+			numero = object.value;
+			if (!/^[0-9]+([.])?([0-9]+)?$/.test(numero))
+			object.value = numero.substring(0,numero.length-1); 
+			}
         </script>
         <h:form id="frmDevengado" style="border-radius: 5px 5px 5px 5px;border: 1px ; width:100%;">
             <p:panel >
@@ -136,6 +143,7 @@
                     <p:panel >
                     <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true" 
                     style="font-weight:bold;color:red;" />
+                 <p:fieldset legend="Datos del Devengado" id="fieldCompromiso" >
                     <h:panelGrid columns="6">
                       <p:outputLabel value="Tipo Documento:"/>
                       <p:selectOneMenu id="SelOneMnu_af" value="#{mbDevengado.tipoDoc}" style="width: 300px;"
@@ -148,10 +156,16 @@
                       <h:outputText styleClass="outLabel" value="#{mbDevengado.serieDoc}"/>
                       <p:outputLabel value="Numero:"/>
                       <h:outputText styleClass="outLabel" value="#{mbDevengado.nroDoc}"/>
+                      <p:outputLabel value="Moneda:"/>
+                      <h:outputText styleClass="outLabel" value="#{mbDevengado.desMoneda}"/>
                        <p:outputLabel value="Monto Devengado:"/>
-                      <h:inputText id="montoDev" styleClass="outLabel" value="#{mbDevengado.montoDevengado}" readonly="true"
-                      style="text-align:right"/>
+                      <h:inputText id="montoDev" styleClass="input" value="#{mbDevengado.montoDevengado}" size="11" readonly="true"
+                    			 style="text-align:right">
+                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                    </h:inputText>
                     </h:panelGrid>
+                    </p:fieldset>
+                  <p:fieldset legend="Datos de Afectación" id="fieldAfect" >
                         <h:panelGrid columns="6" style="width: 817px; ">
                         <h:outputText value="Tipo Impuesto:"  ></h:outputText>						
 						 <p:selectOneMenu id="SelImpuesto"  value="#{mbDevengado.vcodImp}"
@@ -160,21 +174,27 @@
                          <f:selectItems var="impt" value="#{mbCombos.impuesto}"/>
                         </p:selectOneMenu> 
 						<h:outputText value="% Impuesto"></h:outputText>
-							<h:inputText  id="txt_imp"  maxlength="4" size="6"
+							 <h:inputText  id="txt_imp"  maxlength="4" size="6"
 							 styleClass="input" value="#{mbDevengado.nporImp}" style="text-align:right"
-							  onkeyup="verPorcentaje();"
-							></h:inputText>
+							  onkeyup="verPorcentaje(); validarSiNumero(this);"
+							/> 
+							
 							<h:outputText value="Importe"></h:outputText>
 							<h:inputText  id="txt_monto"  maxlength="15" size="18"
 							 styleClass="input" disabled="true" style="text-align:right;"
-							></h:inputText>			
-		               </h:panelGrid> 
+							>
+						
+							</h:inputText>			
+		               </h:panelGrid>
+		                </p:fieldset>
+		                <br/>
 		               <h:panelGrid columns="2" columnClasses="col1col1">
-		               							<p:commandButton  value="Grabar"  action="#{mbDevengado.registrarRetencion()}"
+		               							<p:commandButton  value="Agregar"  action="#{mbDevengado.registrarRetencion()}"
 		                    icon="pi pi-save" style="height:30px;" ajax="true" update="frmDevengado:mensaje,frmDevengado:dTableRetencion"/>
-		                    <p:commandButton value="Cancelar" oncomplete="PF('pRetdev').hide();"
+		                    <p:commandButton value="Grabar" oncomplete="PF('pRetdev').hide();"
 		                    icon="pi pi-arrow-left" style="height:30px;"/>
-		               </h:panelGrid>     
+		               </h:panelGrid>   
+		               <br/>
 		                    <h:panelGrid columns="8">
                                 <p:dataTable id="dTableRetencion" var="Retd" value="#{mbDevengado.listaRetencion}"  rows="10" scrollable="true" scrollHeight="175px;"
                                              style="width: 1000px;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 

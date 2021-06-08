@@ -45,5 +45,11 @@ public class IafasPersona {
 	 private Integer npersonaFamiliaCodigo;
 	 private Integer npersonaFamilaPersona;
 	 private Integer ntipoFamiliaCodigo;
+	 
+	 private String numeroVer;
+	 private String paternoVer;
+	 private String maternoVer;
+	 private String nombreVer;
+	 private String codigoVer;
     
 }

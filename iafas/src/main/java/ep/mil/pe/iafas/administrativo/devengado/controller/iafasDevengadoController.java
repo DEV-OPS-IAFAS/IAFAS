@@ -50,6 +50,7 @@ public class iafasDevengadoController implements Serializable{
 	private String nroCertificado;
 	private String nroDocumento;
 	private String vcodProcesoSel;
+	private BigDecimal nimpMonSol;
 	
 	private String secFun;
 	private String vidClasificador;
@@ -76,6 +77,7 @@ public class iafasDevengadoController implements Serializable{
 	private String pcorrelativo;
 	private String pexpediente;
 	private BigDecimal nimpMontoSol;
+	
 	private Date fecDevengado;
 	
 	private String nroDoc;
@@ -135,8 +137,10 @@ public class iafasDevengadoController implements Serializable{
 	}
 	
 	public String retornarDev() {
-		LimpiarCampos();
-		return "mainDevengado.xhtml";
+		String page = "mainDevengado.xhtml";
+	    return page;
+		/*LimpiarCampos();
+		return "/mainDevengado.xhtml";*/
 	}
 	
 	public List<IafasCompromiso> listarCompMensuales(){
@@ -152,7 +156,10 @@ public class iafasDevengadoController implements Serializable{
 	public String verMensuales() {
 		// TODO Auto-generated method stub
 		String page="mainDevengadoRet";
+		 
 		try {
+			
+			
 			listaComp = new ArrayList<IafasCompromiso>();
 			IafasCompromiso ca = new IafasCompromiso();
 			ca.setVano(periodo);
@@ -174,9 +181,14 @@ public class iafasDevengadoController implements Serializable{
 				setDesMoneda(compromiso.get(0).getDesMoneda());
 				setDesDocumento(compromiso.get(0).getDesDocumento());
 				setGlosa(compromiso.get(0).getGlosaMensual());
+				setNimpMonSol(compromiso.get(0).getNimpMonSol());
 				listaComp.add(l);
 			}
+			
+			
 		}
+			
+			
 		catch(Exception e) {
 			System.out.println("Ver Error :"+e.getMessage());
 		}
@@ -185,6 +197,8 @@ public class iafasDevengadoController implements Serializable{
 	}
 	
 	public List<IafasCompromisoDet> buscarMensualesDet(){
+		//if(isDuplicadoDevengado()==false) {
+		
 		listaDet = new ArrayList<IafasCompromisoDet>();
 		IafasCompromisoDet vcm = new IafasCompromisoDet();
 		// String psecuencia = (String) extContext().getRequestParameterMap().get("p_secuencia");
@@ -192,26 +206,44 @@ public class iafasDevengadoController implements Serializable{
 		vcm.setVexpediente(vexpediente);
 		//vcm.setSecuencia(psecuencia);
 		List<IafasCompromisoDet> registros = devengadoDao.buscaCompromisoMensualDet(vcm);
+		
+		if(registros.size()==0 || registros== null ){
+			   logger.info("Encontro DEvengado mas de lo comprometido : "+listaDet.size());
+			   FacesContext.getCurrentInstance().addMessage(null, new 
+						 FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR!", 
+								 "NO PUEDE DEVENGAR MAS DE LO COMPROMETIDO!"));
+			  // return true;
+			   
+		   }
+		else {
 		for(IafasCompromisoDet l : registros)
 		{
-			listaDet.add(l);
+			
 			setSecFun(l.getSecFun());
 			setVidClasificador(l.getIdClasificador());
 			setImporte(l.getImpSol());
 			setCadena(l.getCadena());
 			setNomCla(l.getNomCla());
-			
+			listaDet.add(l);
 		}
+		}
+		/*}
+		else {
+			return "";
+		}*/
+		
 		return listaDet;
 	}
 	
 	public String registroDevengado() {
 		int reg =0;
-		if(validarCampos()==true) {
+		if(validarCampos()) {
+			logger.info("registros encontrados:::::::>");
 			showMessages(2);
 		}
 		else {
 		try {
+			
 			IafasDevengado men = new IafasDevengado();
 			IafasDevengadoDet det = new IafasDevengadoDet();
 			men.setVano(periodo);
@@ -264,6 +296,8 @@ public class iafasDevengadoController implements Serializable{
 					
 				}
 			
+			
+			
 			LimpiarCampos();
 			listarCompMensuales();
 			// retornar();
@@ -277,8 +311,8 @@ public class iafasDevengadoController implements Serializable{
 		}
 	}
 		
-		//return "mainDevengado.xhtml";
-		return "";
+		return "mainDevengado.xhtml";
+		//return "";
 	}
 	
 	public void verDevengado(){
@@ -296,6 +330,7 @@ public class iafasDevengadoController implements Serializable{
 				setSerieDoc(l.getVserieCom());
 				setMontoDevengado(l.getNimpMonSol());
 				setRucRet(l.getCproveedorRuc());
+				setDesMoneda(l.getDesMoneda());
 				
 			}
 		buscarRetencion();
@@ -365,12 +400,36 @@ public class iafasDevengadoController implements Serializable{
 	
 	public boolean isDuplicadoRet() {
 		logger.info("Validando impuestos duplicados");
+		double totRet = 0;
 	   for(int i =0; i<listaRetencion.size();i++) {
-		   if(vcodImp.equals(listaRetencion.get(0).getVcodImp())){
+		   if(vcodImp.equals(listaRetencion.get(i).getVcodImp())){
 			   logger.info("Encontro duplicado : "+listaRetencion.get(0).getVcodImp());
 			   FacesContext.getCurrentInstance().addMessage(null, new 
 						 FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR!", 
 								 "NO SE DEBE INGRESAR DOS VECES LA MISMA AFECTACION EN EL COMPROBANTE!"));
+			   return true;
+			   
+		   }
+			   totRet = totRet+listaRetencion.get(i).getNporImp().doubleValue();
+	   }
+	   if((totRet+nporImp.doubleValue())>=100) {
+		   FacesContext.getCurrentInstance().addMessage(null, new 
+					 FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR!", 
+							 "EL PORCENTAJE DE AFECTACION DEL COMPROBANTE DEBE SER MENOR AL 100%. VALIDE!"));
+		   return true;
+	   }
+	   
+	   return false;
+	}
+	
+	public boolean isDuplicadoDevengado() {
+		logger.info("Validando devengado no devengar mas de lo comprometido");
+	   for(int i =0; i<listaDet.size();i++) {
+		   if(listaDet.size()==0 || listaDet== null ){
+			   logger.info("Encontro DEvengado mas de lo comprometido : "+listaDet.size());
+			   FacesContext.getCurrentInstance().addMessage(null, new 
+						 FacesMessage(FacesMessage.SEVERITY_FATAL, "ERROR!", 
+								 "NO PUEDE DEVENGAR MAS DE LO COMPROMETIDO!"));
 			   return true;
 			   
 		   }
@@ -388,16 +447,16 @@ public class iafasDevengadoController implements Serializable{
 	}
 	
 	private void LimpiarCampos() {
-		glosa="";
-		tipDocCom="";
-		nroSerieCom="";
-		nroDocCom="";
+		glosa=Constantes.VACIO;
+		tipDocCom=Constantes.VACIO;
+		nroSerieCom=Constantes.VACIO;
+		nroDocCom=Constantes.VACIO;
 		fecDocCom= null;
 		ctipoActa=null;
-		vnroActa="";
+		vnroActa=Constantes.VACIO;
 		dfechaActa=null;
-		vexpediente="";
-		desDocumento="";
+		vexpediente=Constantes.VACIO;
+		desDocumento=Constantes.VACIO;
 		listaComp.clear();
 		listaDet.clear();
 		

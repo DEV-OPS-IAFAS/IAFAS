@@ -30,6 +30,17 @@
                     icon="pi pi-arrow-left" style="height:35px;"/>
                 </p:panelGrid>                         
                 <br/>
+                <p:fieldset legend="Datos del Personal" id="DatosPE"> 
+                <h:panelGrid columns="4" >
+                <p:outputLabel value="Nº DOCUMENTO: "/>
+                 <h:outputText styleClass="outLabel" value="#{mbPersonal.numeroVer}"/>
+                  <p:outputLabel value="NOMBRES Y APELLIDOS: "/>
+                 <h:outputText styleClass="outLabel"  value="#{mbPersonal.paternoVer} #{mbPersonal.maternoVer} #{mbPersonal.nombreVer}"/>
+               
+               
+                </h:panelGrid> 
+                </p:fieldset>
+                <br/>
                 <p:fieldset legend="Datos de la Familia" id="DatosCA">
                         <h:panelGrid columns="2" style="width: 100%"> 
                                 <p:outputLabel value="TIPO DOCUMENTO: "/>

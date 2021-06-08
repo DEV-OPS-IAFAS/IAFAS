@@ -96,12 +96,22 @@ public class IafasPersonalController implements Serializable{
 	 private Integer npersonaFamilaPersona;
 	 private Integer ntipoFamiliaCodigo;
 	 
+	 private String numeroVer;
+	 private String paternoVer;
+	 private String maternoVer;
+	 private String nombreVer;
+	 private String codigoVer;
+	 
 	 private UploadedFile imagenPersonal;
 	 private StreamedContent img;
 	 private String messageBlob;
 	 private byte[] b1;
 	 
 	 private List<SelectItem> grados;
+	 
+	
+	
+
 
 	 private static final long serialVersionUID = 1L;
 	 
@@ -196,10 +206,25 @@ public class IafasPersonalController implements Serializable{
     	  String page = "insRegistroFamilia.xhtml";
     	  String paramCodPersona = (String) extContext().getRequestParameterMap().get("pSecDetalle");	
     	  pSecDetalle = Integer.valueOf(paramCodPersona);
+    	  String pdetalleFam = (String) extContext().getRequestParameterMap().get("pdetalleFam");	
+    	  System.out.println(" detalled "+pdetalleFam);
+    	  IafasPersona per = new IafasPersona();
+    	  per.setNumeroVer(pdetalleFam);
+    	  List<IafasPersona> editPersonal = personalDao.listaPersonaFam(per);
+    	  System.out.println("paramCodPersona: "+pdetalleFam);
+    	  logger.info("registro Encontrsdo:"+editPersonal.size());
+  		  for(IafasPersona l : editPersonal) {
+  			    setNumeroVer(l.getNumeroVer());
+  			    setNombreVer(l.getNombreVer());
+  			    setMaternoVer(l.getMaternoVer());
+  			    setPaternoVer(l.getPaternoVer());
+  			    System.out.println("nombre nuevo  "+pdetalleFam);
+  			}
     	  logger.info("Codigo de Persona para la Referencia {} "+pSecDetalle);
     	  return page;
     	  
       }
+      
       
       // Combo dependediente
       public List<SelectItem> cargarGrados() {
@@ -259,8 +284,8 @@ public class IafasPersonalController implements Serializable{
     	try {
 			if(imagenPersonal!=null) {
 				Class.forName(BDCon.DRIVERBD);
-				Connection cn = DriverManager.getConnection(BDCon.CONEXION_LOCAL);
-				//Connection cn = DriverManager.getConnection(BDCon.CONEXION_PRODUCCION);
+				//Connection cn = DriverManager.getConnection(BDCon.CONEXION_LOCAL);
+				Connection cn = DriverManager.getConnection(BDCon.CONEXION_PRODUCCION);
 				PreparedStatement pst = cn.prepareStatement("UPDATE iafas_persona SET "
 						+ "BPERSONA_FOTO = ? "
 						+ "WHERE "
@@ -328,6 +353,51 @@ public class IafasPersonalController implements Serializable{
 	}
   }
     
+    public void verImagenEdit(int codigo ) throws ClassNotFoundException {
+    	 if(img!=null) {
+    		 img = null;
+    		 setB1(null);
+    	 }
+    	try {
+  			Statement stm = null;
+  				Class.forName(BDCon.DRIVERBD);
+  				Connection cn = DriverManager.getConnection(BDCon.CONEXION_PRODUCCION);
+  				//Connection cn = DriverManager.getConnection(BDCon.CONEXION_LOCAL);
+  				stm = cn.createStatement();
+  				String sql = "SELECT BPERSONA_FOTO FROM iafas_persona "
+  						+ "where NPERSONA_CODIGO ="+codigo;
+  				ResultSet rs = stm.executeQuery(sql);
+  				logger.info("Consultando Imagen del Personal : {}" +pSecDetallef);
+  				while(rs.next()) {
+  					b1 =  rs.getBytes("BPERSONA_FOTO");
+  					logger.info("blobBD : {}" +rs.getBytes("BPERSONA_FOTO"));
+  					if(rs.getBytes("BPERSONA_FOTO")==null){
+  						img = null;
+  						messageBlob = "El personal no tiene registrado la Foto";
+  					}
+  					else {
+  						logger.info("Leyendo stream del archivo Blob");
+  						InputStream in = new ByteArrayInputStream(b1);
+  						new DefaultStreamedContent();
+  					    img = DefaultStreamedContent.builder().stream(() -> in).build();
+  					    messageBlob = "";
+  					    logger.info("Se Cargo la Imagen del Personal {} " +pSecDetallef);
+  					}	
+  				}
+  				cn.close();
+  				
+  					
+  			
+  		} catch (SQLException e) {
+  			// TODO: handle exception
+  			logger.error("ERROR al Obtener la Imagen : "+e.getMessage());
+  		}
+    	catch (Exception e) {
+  		// TODO: handle exception
+  		logger.error("ERROR al Obtener la Imagen : "+e.getMessage());
+  	}
+    }
+    
   public void cerrarFoto() {
 	  setImg(null);
 	  setB1(null);
@@ -394,6 +464,7 @@ public class IafasPersonalController implements Serializable{
    
       	public void verPersonal(){
 		pdetalleDoc = (String) extContext().getRequestParameterMap().get("pdetalleDoc");
+		String codigoPersona =(String) extContext().getRequestParameterMap().get("pcodigoPer");
 	     logger.info("Obteniendo Parametros  LOOOO " +pdetalleDoc);
 	    IafasPersona per = new IafasPersona();
 	    per.setVpersonaNumeroDoc(pdetalleDoc);
@@ -420,7 +491,15 @@ public class IafasPersonalController implements Serializable{
 			    setVcip(l.getVcip());
 			    cargarGrados();
 			}
-		
+		try {
+			verImagenEdit(Integer.valueOf(codigoPersona));
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
       
       	 public String EditarPersonal() {
@@ -450,7 +529,7 @@ public class IafasPersonalController implements Serializable{
      			 ca.setCestadoCodigo(cestadoCodigo);
      			 ca.setVcip(vcip);			 
      			 reg = personalDao.grabarEdit(ca); 
-     			 updatePhoto(vpersonaNumeroDoc);
+     			 updatePhoto(pdetalleDoc);
      			 logger.info("Actualizo Persona Correctamente {} "+vpersonaNumeroDoc);    			
      			 showMessages(1);
      			 retorno();

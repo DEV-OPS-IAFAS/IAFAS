@@ -57,7 +57,8 @@
 		mov.vsecuencia= men.vsecuencia AND
 		mov.vsecuencia_int = men.vsecuencia_int
 		) WHERE mov.vano=#{vano} AND mov.vreg_siaf=#{vexpediente} AND
-		mov.vfase='C' AND mov.vcod_estado='2'
+		mov.vfase='C' AND mov.vcod_estado='2'  having  min(men.nimp_mon_sol - PK_TOTAL_DEVENGADO(mov.vano,mov.vreg_siaf,mov.vsecuencia,
+		men.vcod_sec_func,men.vid_clasificador)) >0
 
 	</select>
 
@@ -96,7 +97,8 @@
 		det.dfecha_devengado dfechaDevengado,
 		det.cproveedor_ruc cproveedorRuc,
 		pk_util_razon_social(det.cproveedor_ruc) razonSocial,
-		m.nimp_mon_sol nimpMonSol
+		m.nimp_mon_sol nimpMonSol,
+		(select vmoneda_simbolo from iafas_monedas where nmoneda_codigo=m.vtip_mon) desMoneda
 		FROM iafas_movimiento m INNER JOIN iafas_devengado det ON (
 		m.vano = det.vano AND
 		m.vsecuencia = det.vsecuencia AND
