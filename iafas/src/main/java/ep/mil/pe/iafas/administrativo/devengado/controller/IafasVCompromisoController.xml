@@ -57,7 +57,7 @@
 		mov.vsecuencia= men.vsecuencia AND
 		mov.vsecuencia_int = men.vsecuencia_int
 		) WHERE mov.vano=#{vano} AND mov.vreg_siaf=#{vexpediente} AND
-		mov.vfase='C' AND mov.vcod_estado='2'  having  min(men.nimp_mon_sol - PK_TOTAL_DEVENGADO(mov.vano,mov.vreg_siaf,mov.vsecuencia,
+		mov.vfase='C' AND mov.vcod_estado='2'  and  (men.nimp_mon_sol - PK_TOTAL_DEVENGADO(mov.vano,mov.vreg_siaf,mov.vsecuencia,
 		men.vcod_sec_func,men.vid_clasificador)) >0
 
 	</select>
