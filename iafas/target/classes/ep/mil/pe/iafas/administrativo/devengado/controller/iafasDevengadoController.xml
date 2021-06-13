@@ -28,7 +28,10 @@
 		#{vserieCom mode=IN, jdbcType=VARCHAR},
 		#{dfechaDevengado mode=IN, jdbcType=DATE},
 		#{vusuarioIng mode=IN,jdbcType=VARCHAR},
-		#{vexpediente mode=IN, jdbcType=VARCHAR})}
+		#{vexpediente mode=IN, jdbcType=VARCHAR},
+		#{ctipoActa mode=IN, jdbcType=VARCHAR},
+		#{vnroActa mode=IN, jdbcType=VARCHAR},
+		#{dfechaActa mode=IN, jdbcType=DATE})}
 
 	</select>
 
@@ -68,7 +71,8 @@
 		 vtip_documento_com vtipDocumentoCom,
 		 vcod_imp vcodImp,
 		 por_imp nporImp,
-		 nimp_ret_sol importeRetencion
+		 nimp_ret_sol importeRetencion,
+		 (select vsiglas from iafas_impuesto where vcod_imp=iafas_ret_comprobante.vcod_imp and VESTADO_CODIGO='AC' ) descImpu
 		 FROM iafas_ret_comprobante WHERE 
 		 vtip_documento_com=#{vtipDocumentoCom} 
 		 AND vserie_com=#{vserieCom} AND vnro_com=#{vnroCom} AND vruc=#{ruc} 
@@ -91,8 +95,9 @@
 		ret.vcod_imp vcodImp,
 		ret.por_imp nporImp,
 		ret.nimp_ret_sol importeRetencion, 
-        (select imp.vdes_imp from iafas_impuesto imp where imp.vcod_imp=ret.vcod_imp) descRetencion
-		FROM iafas_movimiento cab, iafas_devengado dev , iafas_ret_comprobante ret
+        (select imp.vdes_imp from iafas_impuesto imp where imp.vcod_imp=ret.vcod_imp) descRetencion, 
+        cad.VID_CLASIFICADOR AS idClasificador , PK_AUX_CLASIFICADOR(cad.VID_CLASIFICADOR) AS cadena, PK_AUX_NOM_CLASIFICADOR(cad.VID_CLASIFICADOR) desCadena
+		FROM iafas_movimiento cab, iafas_devengado dev , iafas_ret_comprobante ret , iafas_ret_comprobante_cad cad
 		where 
 		cab.VANO=dev.VANO AND
 		cab.VSECUENCIA=dev.VSECUENCIA AND
@@ -103,7 +108,24 @@
         dev.VTIP_DOCUMENTO_COM= ret.VTIP_DOCUMENTO_COM and
         dev.VSERIE_COM= ret.VSERIE_COM and
         dev.VNRO_DOCUMENTO_COM = ret.VNRO_COM and 
-        dev.CPROVEEDOR_RUC = ret.VRUC
-		
+        dev.CPROVEEDOR_RUC = ret.VRUC AND         
+		ret.VTIP_DOCUMENTO_COM= cad.VTIP_DOCUMENTO_COM and
+        ret.VSERIE_COM= cad.VSERIE_COM and
+        ret.VNRO_COM = cad.VNRO_COM and 
+        ret.VRUC = cad.VRUC and 
+        ret.VSECUENCIA = cad.VSECUENCIA AND
+        cab.VCOD_ESTADO='2'
+	</select>
+	
+	
+		<select id="enviarDeve"
+		parameterType="ep.mil.pe.iafas.administrativo.devengado.model.IafasDevengado"
+		statementType="CALLABLE">
+	   { CALL SP_ENVIAR_DEVENGADO(
+	    #{vano mode=IN, jdbcType=VARCHAR},
+		#{secuencia, mode=IN, jdbcType=VARCHAR},
+		#{correlativo, mode=IN,jdbcType=VARCHAR},
+		#{vexpediente, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioIng, mode=IN,jdbcType=VARCHAR})}
 	</select>
 </mapper>

@@ -10,60 +10,84 @@
 		resultType="ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompromisoMensual"
 		parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompromisoMensual">
 		SELECT
-		ca.vano_documento vano, ca.vsecuencia_a vsecuenciaA,
+		ca.vano_documento vano, ca.vsecuencia_a
+		vsecuenciaA,
 		ca.vcorrelativo_a vcorrelativoA,
-		ca.vtipo_documento_a vtipoDocumentoA, 
-		ca.vnro_documento_pago_a vnroDocumentoPagoA, 
+		ca.vtipo_documento_a
+		vtipoDocumentoA,
+		ca.vnro_documento_pago_a vnroDocumentoPagoA,
 		ca.vnro_certificado vnroCertificado, ca.cproveedor_ruc vruc,
 		pk_util_razon_social(ca.cproveedor_ruc) razonSocial,
 		ca.vcod_proceso_sel vcodProcesoSel,
-		ca.vfuente_financiamiento,ca.vcod_tipo_financiamiento, 
-		ca.ntip_cam, 
+		FUN_TIPO_DOCUMENTO_ADMINISTRATIVO_ABREVIATURA(ca.vtipo_documento_a) abTipoDoc,
+		ca.vfuente_financiamiento,ca.vcod_tipo_financiamiento,
+		ca.ntip_cam,
 		ca.vtipo_operacion,
 		ca.vcod_moneda, det.vcod_sec_func,
-		det.vid_clasificador,det.nimp_monto_sol nimpMontoSol
-		FROM iafas_compromiso_anual ca INNER JOIN iafas_compromiso_anual_det det
-		ON (
+		det.vid_clasificador,
+		(PK_TOTAL_CA_SECUENCIA(ca.vano_documento,ca.vnro_certificado,det.vcod_sec_func,det.vid_clasificador,ca.vsecuencia_a)
+		- pk_total_cm(ca.vano_documento,ca.vnro_certificado,ca.vsecuencia_a,
+		det.vcod_sec_func,det.vid_clasificador)) nimpMontoSol
+		FROM
+		iafas_compromiso_anual ca INNER JOIN iafas_compromiso_anual_det det
+		ON
+		(
 		ca.vano_documento = det.vano_documento AND
-		ca.vsecuencia_a = det.vsecuencia_a AND
+		ca.vsecuencia_a =
+		det.vsecuencia_a AND
 		ca.vcorrelativo_a = det.vcorrelativo_a AND
 		ca.vnro_certificado = det.vnro_certificado)
-		WHERE ca.vnro_certificado = #{vnroCertificado} AND 
-		ca.vtipo_movimiento ='N' AND
-		ca.vano_documento = #{vano}
+		WHERE ca.vnro_certificado =
+		#{vnroCertificado} AND ca.vcod_estado='2' and
+		ca.vtipo_movimiento ='N'
+		AND
+		ca.vano_documento = #{vano} and
+		(PK_TOTAL_CA_SECUENCIA(ca.vano_documento,ca.vnro_certificado,det.vcod_sec_func,det.vid_clasificador,ca.vsecuencia_a)
+		- pk_total_cm(ca.vano_documento,ca.vnro_certificado,ca.vsecuencia_a,
+		det.vcod_sec_func,det.vid_clasificador)) >0
 
 	</select>
 	<select id="listadoAnualDetalle"
 		resultType="ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompromisoMensual"
 		parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.ViewIafasCompromisoMensual">
-	    SELECT
+		SELECT
 		ca.vano_documento vano, ca.vsecuencia_a vsecuenciaA,
 		ca.vcorrelativo_a vcorrelativoA,
-		ca.vtipo_documento_a vtipoDocumentoA, 
-		ca.vnro_documento_pago_a vnroDocumentoPagoA, 
-		ca.vnro_certificado vnroCertificado, 
+		ca.vtipo_documento_a vtipoDocumentoA,
+		FUN_TIPO_DOCUMENTO_ADMINISTRATIVO_ABREVIATURA(ca.vtipo_documento_a) abTipoDoc,
+		ca.vnro_documento_pago_a vnroDocumentoPagoA,
+		ca.vnro_certificado vnroCertificado,
 		ca.cproveedor_ruc vruc,
+		ca.vglosa concepto,
 		PK_UTIL_RAZON_SOCIAL(ca.cproveedor_ruc) razonSocial,
 		ca.vcod_proceso_sel vcodProcesoSel,
-		ca.vfuente_financiamiento vfuenteFinanciamiento,
-		ca.vcod_tipo_financiamiento vcodTipoFinanciamiento, 
-		ca.ntip_cam ntipCam, 
-		ca.vcod_moneda vcodMoneda, 
+		ca.vfuente_financiamiento
+		vfuenteFinanciamiento,
+		ca.vcod_tipo_financiamiento
+		vcodTipoFinanciamiento,
+		ca.ntip_cam ntipCam,
+		ca.vcod_moneda vcodMoneda,
 		det.vcod_sec_func vcodSecFunc,
 		det.vid_clasificador vidClasificador,
 		PK_AUX_CLASIFICADOR(det.vid_clasificador) cadena,
 		PK_AUX_NOM_CLASIFICADOR(det.vid_clasificador) nomCla,
-	    (PK_TOTAL_CA_SECUENCIA(ca.vano_documento,ca.vnro_certificado,det.vcod_sec_func,det.vid_clasificador,ca.vsecuencia_a)
-	     - pk_total_cm(ca.vano_documento,ca.vnro_certificado,ca.vsecuencia_a,
-		det.vcod_sec_func,det.vid_clasificador)) nimpMontoSol
-		FROM iafas_compromiso_anual ca INNER JOIN iafas_compromiso_anual_det det
-		ON (
+		(PK_TOTAL_CA_SECUENCIA(ca.vano_documento,ca.vnro_certificado,det.vcod_sec_func,det.vid_clasificador,ca.vsecuencia_a)
+		- pk_total_cm(ca.vano_documento,ca.vnro_certificado,ca.vsecuencia_a,
+		det.vcod_sec_func,det.vid_clasificador)) nimpMontoSol,
+		PK_DESC_TAREA(det.vcod_sec_func) descTarea
+		FROM
+		iafas_compromiso_anual ca INNER JOIN iafas_compromiso_anual_det det
+		ON
+		(
 		ca.vano_documento = det.vano_documento AND
-		ca.vsecuencia_a = det.vsecuencia_a AND
+		ca.vsecuencia_a =
+		det.vsecuencia_a AND
 		ca.vcorrelativo_a = det.vcorrelativo_a AND
 		ca.vnro_certificado = det.vnro_certificado)
-		WHERE ca.vnro_certificado = #{vnroCertificado} AND 
+		WHERE ca.vnro_certificado =
+		#{vnroCertificado} AND
 		ca.vtipo_movimiento ='N' AND
-		ca.vano_documento = #{vano} and ca.vsecuencia_a=#{vsecuenciaA}
+		ca.vano_documento = #{vano} and
+		ca.vsecuencia_a=#{vsecuenciaA}
 	</select>
 </mapper>

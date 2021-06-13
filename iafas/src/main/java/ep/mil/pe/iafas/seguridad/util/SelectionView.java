@@ -2,7 +2,7 @@ package ep.mil.pe.iafas.seguridad.util;
 
 import java.io.Serializable;
 
-import javax.annotation.PostConstruct;
+//import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 
 //import com.javacodegeeks.enterprise.jsf.treeselectionjsf.DocumentService;
@@ -31,7 +31,7 @@ public class SelectionView implements Serializable{
 	@ManagedProperty("#{documentService}")
     private DocumentService service;
 	
-	@PostConstruct
+	//@PostConstruct
     public void init() {
 //		DocumentService service = new DocumentService(); 
  

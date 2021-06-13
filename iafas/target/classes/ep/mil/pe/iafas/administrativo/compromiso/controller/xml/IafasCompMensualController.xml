@@ -84,4 +84,19 @@
 		#{secuencia, mode=IN,jdbcType=VARCHAR},
 		#{vexpediente, mode=IN,jdbcType=VARCHAR})}
 		</select>
+		
+		<select id="validaDuplicados" resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensual" 
+		parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoMensual">
+		   SELECT m.vtip_documento_men vtipDocumentoMen, 
+		   m.vnro_documento_men vnroDocumentoMen, 
+		   FUN_TIPO_DOCUMENTO_ADMINISTRATIVO_ABREVIATURA(m.vtip_documento_men) abrevTipoDoc,
+		   v.vreg_siaf vexpediente
+			FROM iafas_compromiso_mensual m INNER JOIN iafas_movimiento v
+			ON (m.vano = v.vano AND
+    		m.vsecuencia = v.vsecuencia AND
+    		m.vsecuencia_int = v.vsecuencia_int)
+			WHERE m.vano =#{vano} AND 
+			m.vtip_documento_men = #{vtipDocumentoMen} AND
+			m.vnro_documento_men = #{vnroDocumentoMen}
+		</select>
 </mapper>

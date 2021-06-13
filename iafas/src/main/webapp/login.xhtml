@@ -4,31 +4,23 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui">
-
 <head>
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <link href="css/login.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="js/login.js"></script>
 <title>SISTEMA INTEGRADO IAFAS</title>
 </head>
-
-<h:body  >
-
+<h:body>
 	<div>
 		<center>
 			<h1>SISTEMA INTEGRADO DE GESTION ADMINISTRATIVA - IAFAS</h1>
-			 
 		</center>
 	</div>
-
 	<center>
-		<h:graphicImage value="/img/logoSF.png" class="img-responsive" />
+		<h:graphicImage value="/img/logoSF.png" class="img-responsive"
+			height="240px" width="280px" />
 	</center>
-
-	<div>
-	</div>
 	<div class="container" style="margin-top: 150px;">
-
 		<div class="backbox">
 			<div class="loginMsg">
 				<div class="textcontent">
@@ -37,29 +29,29 @@
 					<button id="switch1">Registrarse</button>
 				</div>
 			</div>
-
 			<div class="signupMsg visibility">
 				<div class="textcontent">
-					<p class="title" style="color: white">Ya tiene usuario de acceso?</p>
-					<p style="color: white; font: bold">Inicia session en el sistema.</p>
+					<p class="title" style="color: white">Ya tiene usuario de
+						acceso?</p>
+					<p style="color: white; font: bold">Inicia sessión en el
+						sistema.</p>
 					<button id="switch2">Ingresar</button>
 				</div>
 			</div>
 		</div>
-
 		<div class="frontbox">
 			<div class="login">
 				<h2>Iniciar Sesion</h2>
 				<div class="inputbox">
 					<h:form>
-						<p:inputText id="p_inptxt_usuario" required="true" maxlength="8"
+						<p:inputText id="p_inptxt_usuario" required="true" maxlength="8" autocomplete="off"
 							value="#{iafasUsuariosController.idUsuario}"
-							placeholder="Usuario">
+							placeholder="Usuario"> 
 							<f:facet name="prepend">
 							</f:facet>
 						</p:inputText>
 						<p:password id="p_inptxt_clave"
-							value="#{iafasUsuariosController.passUsuario}"
+							value="#{iafasUsuariosController.passUsuario}" autocomplete="off"
 							label="Campo Contraseña" required="true" placeholder="Contraseña">
 							<f:facet name="prepend">
 							</f:facet>
@@ -71,19 +63,18 @@
 					</h:form>
 				</div>
 			</div>
-
 			<div class="signup hide">
 				<h2>Pre-Registro</h2>
 				<div class="inputbox">
 					<h:form>
-						<p:inputText id="p_inptxt_dni" required="true" maxlength="8"
+						<p:inputText id="p_inptxt_dni" required="true" maxlength="8" autocomplete="off"
 							value="#{iafasUsuariosController.dni}" placeholder="D.N.I" />
-						<p:inputText id="p_inptxt_nombre" required="true"
+						<p:inputText id="p_inptxt_nombre" required="true" autocomplete="off"
 							value="#{iafasUsuariosController.nombreUsuario}"
-							placeholder="Nombre" />
-						<p:inputText id="p_inptxt_aPaternoUsuario" required="true"
+							placeholder="Nombres" />
+						<p:inputText id="p_inptxt_aPaternoUsuario" required="true" autocomplete="off"
 							value="#{iafasUsuariosController.APaternoUsuario}"
-							placeholder="Apellido Paterno" />
+							placeholder="Apellidos" />
 						<p:commandButton type="submit" ajax="false" value="Registrarse"
 							action="#{iafasUsuariosController.preRegistroUsuario}" />
 					</h:form>
@@ -104,5 +95,4 @@
 	<!-- 			</h:form> -->
 
 </h:body>
-
 </html>

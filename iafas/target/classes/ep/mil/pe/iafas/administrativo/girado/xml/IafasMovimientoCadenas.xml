@@ -12,7 +12,8 @@
 		
 		SELECT  CAD.VID_CLASIFICADOR AS vcodCla, CAD.VSECUENCIA AS vsecuencia, CAD.VSECUENCIA_INT AS vsecuenciaInt, 
         CAD.VCOD_SEC_FUNC AS vcodSecFun, CAD.NIMP_MON_SOL AS impSolCad , PK_AUX_CLASIFICADOR(CAD.VID_CLASIFICADOR) AS cadena, 
-        PK_AUX_NOM_CLASIFICADOR(CAD.VID_CLASIFICADOR) desCadena
+        PK_AUX_NOM_CLASIFICADOR(CAD.VID_CLASIFICADOR) desCadena, 
+        PK_DESC_TAREA(CAD.VCOD_SEC_FUNC) descTarea
         FROM iafas_movimiento CAB , iafas_movimiento_mensual_cad CAD, iafas_devengado DEV
         WHERE 
         CAB.VANO=#{vano}  AND 
@@ -24,7 +25,7 @@
         AND CAD.VANO = DEV.VANO
         AND CAD.VSECUENCIA = DEV.VSECUENCIA
         AND CAD.vsecuencia_int = DEV.vsecuencia_int
-        
+        AND CAB.VCOD_ESTADO='2'
 	</select>
     
  

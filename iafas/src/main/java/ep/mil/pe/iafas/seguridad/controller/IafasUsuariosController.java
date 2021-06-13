@@ -1,4 +1,4 @@
-	package ep.mil.pe.iafas.seguridad.controller;
+package ep.mil.pe.iafas.seguridad.controller;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class IafasUsuariosController implements Serializable {
 	private boolean bllBotonAcciones = false;
 	private List<IafasAreasLaboral> listaAreas = new ArrayList<>();
 	private List<SelectItem> area;
-	private String idAreaLaboral;  
+	private String idAreaLaboral;
 
 	public List<IafasUsuarios> mostrarAllUsuarios() {
 
@@ -75,9 +75,7 @@ public class IafasUsuariosController implements Serializable {
 	}
 
 	public String validaUsuario() {
-
 		logger.info("[INICIO:] Metodo : validaUsuario");
-
 		String valor = Constantes.VACIO;
 		String Patron_encripta = "OnXEiGH9eIp8stu7UVWvlmï¿½fq0D2YZï¿½oPQR4AwyFgxhbjk65rcSTz1N3BCdJKLMa";
 		funcionesUtiles encripta = new funcionesUtiles();
@@ -86,29 +84,24 @@ public class IafasUsuariosController implements Serializable {
 		logger.info("[INPUT]  :" + idUsuario);
 		IafasUsuariosDao usuarioSessionDao = new IafasUsuariosDao(MySQLSessionFactory.getSqlSessionFactory());
 		IafasUsuarios c = new IafasUsuarios();
-		c.setVusuarioCodigo(this.idUsuario);
-		//c.setVusuarioPassword( pasusu);
+		c.setVusuarioCodigo(this.idUsuario);		
 		c.setVusuarioPassword(this.passUsuario);
-
 		List<IafasUsuarios> usuarioBuscado = usuarioSessionDao.SelectListFiltro2(c);
-
 		if (usuarioBuscado.size() > 0) {
 			for (IafasUsuarios usuario : usuarioBuscado) {
-
 				setAPaternoUsuario(usuario.getVusuarioPaterno());
 				setAMaternoUsuario(usuario.getVusuarioMaterno());
 				setNombreUsuario(usuario.getVusuarioNombres());
 				setIdUsuario(usuario.getVusuarioCodigo());
 			}
 			pasoLogin = true;
-			//valor = Constantes.MAIN_PRINCIPAL;
+			// valor = Constantes.MAIN_PRINCIPAL;
 			valor = "mainPrincipal2.xhtml";
 		} else {
 			setMsgErr("El Usuario no Existe o no esta Activo!!");
 			valor = Constantes.LOGIN;
 			limpiarCampos();
 		}
-
 		logger.info("[FIN:] Metodo : validaUsuario");
 		return valor;
 	}
@@ -203,23 +196,22 @@ public class IafasUsuariosController implements Serializable {
 		objUsuario.setVusuarioMaterno(aMaternoUsuarioMto);
 		objUsuario.setAreaLaboralCodigo(idAreaLaboral);
 		objUsuario.setCestadoCodigo(Constantes.ESTADO_ACTIVO);
-		if(!bllBotonAcciones) {
-			objUsuario.setVusuarioPassword(pasusu);	
+		if (!bllBotonAcciones) {
+			objUsuario.setVusuarioPassword(pasusu);
 		}
-		
+
 		objUsuario.setModo(modo);
 		try {
 			response = usuarioSessionDao.mantenimientoUsuarios(objUsuario);
-			
-			if(Constantes.CERO_STRING!= response.getCodigoRespuesta()) {
+
+			if (Constantes.CERO_STRING != response.getCodigoRespuesta()) {
 				setMsgErr(response.getMensajeRespuesta());
 			}
-			
-			
+
 		} catch (Exception e) {
 			logger.error("error : " + response.getMensajeRespuesta());
 		} finally {
-			
+
 			mostrarAllUsuarios();
 			logger.info("[FIN:] Metodo : mantenimientoUsuarios");
 		}
@@ -230,7 +222,7 @@ public class IafasUsuariosController implements Serializable {
 		limpiarCamposMto();
 		logger.info("[FIN:] Metodo : nuevoRegistro");
 	}
-	
+
 	public List<SelectItem> getArea() {
 		logger.info("[INICIO:] Metodo : cargarAreasLaborales");
 		this.area = new ArrayList<>();
@@ -244,7 +236,7 @@ public class IafasUsuariosController implements Serializable {
 		return this.area;
 
 	}
-	
+
 	public void anularRegistro() {
 		logger.info("[INICIO:] Metodo : anularRegistro");
 
@@ -256,11 +248,11 @@ public class IafasUsuariosController implements Serializable {
 		objUsuario.setCestadoCodigo(Constantes.ESTADO_ANULADO);
 		objUsuario.setModo(Constantes.MODE_ELIMINACION_LOGICA);
 		try {
-			//int i = usuarioSessionDao.mantenimientoUsuarios(objUsuario);
+			// int i = usuarioSessionDao.mantenimientoUsuarios(objUsuario);
 			response = usuarioSessionDao.mantenimientoUsuarios(objUsuario);
 
-			//if (i == 0) {
-			if(response.getCodigoRespuesta() == Constantes.CERO_STRING) {
+			// if (i == 0) {
+			if (response.getCodigoRespuesta() == Constantes.CERO_STRING) {
 				logger.info("La anulación se realizo con exito");
 			}
 
@@ -272,19 +264,19 @@ public class IafasUsuariosController implements Serializable {
 		}
 
 	}
-	
+
 	public String mostrarMenus() {
 		logger.info("[INICIO:] Metodo : mostrarMenus");
 
 		String page = "mainIafasPrivilegiosUsuario.xhtml";
 		String codUsuarioPrivilegio = (String) extContext().getRequestParameterMap().get("codUsuarioPrivilegio");
-		logger.info("privilegios:::."+codUsuarioPrivilegio);
-		
+		logger.info("privilegios:::." + codUsuarioPrivilegio);
+
 		logger.info("[FIN:] Metodo : mostrarMenus");
-		
+
 		return page;
 	}
-	
+
 	public void cerraSession() {
 		System.out.println("[INICIO:] Metodo : cerraSession");
 		HttpSession session = null;
@@ -293,7 +285,7 @@ public class IafasUsuariosController implements Serializable {
 		httpSession.invalidate();
 		System.out.println("[FIN:] Metodo : cerraSession");
 	}
-	
+
 	private ExternalContext extContext() {
 		FacesContext c = FacesContext.getCurrentInstance();
 		ExternalContext ec = c.getExternalContext();

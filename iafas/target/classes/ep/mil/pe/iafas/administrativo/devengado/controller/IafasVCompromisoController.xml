@@ -14,6 +14,10 @@
 		m.vreg_siaf vexpediente,
 		CASE m.vcod_estado WHEN '1' THEN 'REG' WHEN '2' THEN 'AP' END vcodEstado,
 		det.vtip_documento_men vtipDocumentoMen,
+		(SELECT 
+		 VTIPO_DOCUMENTO_ADMINISTRATIVO_ABREVIATURA 
+		 FROM IAFAS_TIPO_DOCUMENTOS_ADMINISTRATIVO 
+		WHERE CTIPO_DOCUMENTO_ADMINISTRATIVO_FASE='C' AND CESTADO_CODIGO='AC' AND NTIPO_DOCUMENTO_ADMINISTRATIVO_CODIGO=det.vtip_documento_men) desDocumento,
 		det.vnro_documento_men vnroDocumentoMen,
 		det.dfecha_documento_men dfechaDocumento,
 		det.vnro_certificado vnroCertificado,
@@ -21,12 +25,14 @@
 		det.cproveedor_ruc cproveedorRuc,
 		det.vcod_proceso_sel vcodProcesoSel,
 		m.nimp_mon_sol nimpMonSol,
-		m.ntip_cam ntipCam, m.vtip_mon vcodMoneda
+		m.ntip_cam ntipCam, m.vtip_mon vcodMoneda,
+		(select vmoneda_simbolo from iafas_monedas where nmoneda_codigo=m.vtip_mon) desMoneda,
+		 m.VGLOSA glosaMensual
 		FROM iafas_movimiento m INNER JOIN iafas_compromiso_mensual det ON (
 		m.vano = det.vano AND
 		m.vsecuencia = det.vsecuencia AND
 		m.vsecuencia_int = det.vsecuencia_int)
-		WHERE m.vano=#{vano} and m.vreg_siaf=#{vexpediente}
+		WHERE m.vano=#{vano} and m.vreg_siaf=#{vexpediente} and m.vcod_estado='2'
 	</select>
 
 
@@ -51,7 +57,8 @@
 		mov.vsecuencia= men.vsecuencia AND
 		mov.vsecuencia_int = men.vsecuencia_int
 		) WHERE mov.vano=#{vano} AND mov.vreg_siaf=#{vexpediente} AND
-		mov.vfase='C' AND mov.vcod_estado='2'
+		mov.vfase='C' AND mov.vcod_estado='2'  and  (men.nimp_mon_sol - PK_TOTAL_DEVENGADO(mov.vano,mov.vreg_siaf,mov.vsecuencia,
+		men.vcod_sec_func,men.vid_clasificador)) >0
 
 	</select>
 
@@ -90,7 +97,8 @@
 		det.dfecha_devengado dfechaDevengado,
 		det.cproveedor_ruc cproveedorRuc,
 		pk_util_razon_social(det.cproveedor_ruc) razonSocial,
-		m.nimp_mon_sol nimpMonSol
+		m.nimp_mon_sol nimpMonSol,
+		(select vmoneda_simbolo from iafas_monedas where nmoneda_codigo=m.vtip_mon) desMoneda
 		FROM iafas_movimiento m INNER JOIN iafas_devengado det ON (
 		m.vano = det.vano AND
 		m.vsecuencia = det.vsecuencia AND

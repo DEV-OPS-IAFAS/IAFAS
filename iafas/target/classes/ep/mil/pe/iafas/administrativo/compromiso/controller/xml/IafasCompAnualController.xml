@@ -9,49 +9,32 @@
 	<select id="listadoCab"
 		resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
 		parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual">
-		SELECT cperiodo_codigo vanoDocumento, '001' vsecuenciaA, 
-		'001' vcorrelativoA,
-		'CERTIFICACION' tipoCertificacion,
-		CASE nfuente_financiamiento_codigo WHEN 1 THEN '00'
-		WHEN 2 THEN '09' ELSE '' END vfuenteFinanciamiento,
-		nfuente_financiamiento_codigo vcodTipoFinanciamiento,
-		'' cproveedorRuc,
-		ncertificado_codigo vnroCertificado,
-		vcertificado_documento vnroDocumentoPagoA,
-		vcertificado_concepto vglosa,
-		dcertificado_fecha dfechaDocumento,
-		CASE nmoneda_codigo WHEN 1 THEN 'S/.' WHEN 2 THEN 'US$' WHEN 3 THEN 'EURO'
-		END vcodMoneda,
-		ncertificado_tipo_cambio ntipCam, ncertificado_importe nimpMonSol,
-		PK_AUX_TIPO_PROCESO_SELECCION(npac_procesos_codigo) vcodProcesoSel,
-		CESTADO_CODIGO vcodEstado
-		FROM iafas_certificado_presupuestal
-		WHERE cperiodo_codigo =#{vanoDocumento} AND ncertificado_codigo = #{vnroCertificado}
-		AND CESTADO_CODIGO='AP' 
-		UNION
-		SELECT vano_documento vanoDocumento,vsecuencia_a vsecuenciaA,
-		vcorrelativo_a vcorrelativoA,
-		'COMPROMISO ANUAL' tipoCertificacion,
-		vfuente_financiamiento vfuenteFinanciamiento,
-		vcod_tipo_financiamiento vcodTipoFinanciamiento,
-		cproveedor_ruc cproveedorRuc,
-		vnro_certificado vnroCertificado,
-		CONCAT(vtipo_documento_a,"-",vnro_documento_pago_a) vnroDocumentoPagoA,
+		SELECT vanoDocumento vanoDocumento,vsecuenciaA vsecuenciaA,
+		vcorrelativoA vcorrelativoA,
+		tipoCertificacion tipoCertificacion,
+		vfuenteFinanciamiento vfuenteFinanciamiento,
+		vcodTipoFinanciamiento vcodTipoFinanciamiento,
+		cproveedorRuc cproveedorRuc,
+		razonSocial razonSocial,
+		vnroCertificado vnroCertificado,
+		vtipoDocumentoA vtipoDocumentoA,
+		vnroDocumentoPagoA vnroDocumentoPagoA,
+		vabrevTipDoc vabrevTipDoc,
 		vglosa vglosa,
-		dfecha_documento_a dfechaDocumento,
-		CASE vcod_moneda WHEN 1 THEN 'S/.' WHEN 2 THEN 'US$' WHEN 3 THEN 'EURO'
-		END vcodMoneda,
-		ntip_cam ntipCam, NIMP_MON_SOL nimpMonSol,
-		vcod_proceso_sel vcodProcesoSel,
-		case vcod_estado WHEN '1' then 'REG' WHEN '2' THEN 'AP' END vcodEstado
-		FROM iafas_compromiso_anual
-		WHERE vano_documento = #{vanoDocumento} AND vnro_certificado = #{vnroCertificado} and
-		vtipo_movimiento = 'N'
-		order by vsecuenciaA
+		dfechaDocumento dfechaDocumento,
+		vcodMoneda vcodMoneda,
+		ntipCam ntipCam, nimpMonSol nimpMonSol,
+		vcodProcesoSel vcodProcesoSel,
+		vcodEstado vcodEstado,
+	    totCert totCert,
+		totCA totCA,
+		difCA difCA
+		FROM v_consulta_cert_cab
+		WHERE vanoDocumento = #{vanoDocumento} AND vnroCertificado = #{vnroCertificado} 
 
 	</select>
-
-	<select id="listadoDet"
+	
+		<select id="listadoDet"
 		resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnualDet"
 		parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnualDet">
 		SELECT cperiodo_codigo vanoDocumento, ncertificado_codigo vnroCertificado,
@@ -59,6 +42,7 @@
 		PK_AUX_NOM_CLASIFICADOR(NCLASIFICADOR_PRESUPUESTAL_CODIGO) as
 		nomClasificador,
 		ntarea_presupuestal_codigo vcodSec,
+		PK_DESC_TAREA(ntarea_presupuestal_codigo) descTarea,
 		PK_AUX_CLASIFICADOR(NCLASIFICADOR_PRESUPUESTAL_CODIGO) cadena,
 		(PK_TOTAL_CERT_AMP(cperiodo_codigo,ncertificado_codigo,ntarea_presupuestal_codigo,NCLASIFICADOR_PRESUPUESTAL_CODIGO) 
 		- PK_TOTAL_CA(cperiodo_codigo,ncertificado_codigo,ntarea_presupuestal_codigo,NCLASIFICADOR_PRESUPUESTAL_CODIGO)) nimpMontoSol
@@ -88,7 +72,8 @@
 		#{vcodMoneda, mode=IN,jdbcType=VARCHAR},
 		#{nimpMonSol, mode=IN,jdbcType=DECIMAL},
 		#{vusuarioIng, mode=IN,jdbcType=VARCHAR},
-		#{vglosa, mode=IN,jdbcType=VARCHAR})}
+		#{vglosa, mode=IN,jdbcType=VARCHAR},
+		#{razonSocial, mode=IN, jdbcType=VARCHAR})}
 		
 	</select>
 	
@@ -115,7 +100,7 @@
 		#{vusuarioIng, mode=IN,jdbcType=VARCHAR})}
 	</select>
 	
-	<select  id="detalleCompAnual" resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
+	<select  id="detalleCompAnualOLD" resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
 	parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual">
 			SELECT cperiodo_codigo vanoDocumento, '001' vsecuenciaA, 
 		'001' vcorrelativoA,
@@ -160,6 +145,31 @@
 		order by vsecuenciaA
 	</select>
 	
+	<select id="detalleCompAnual" resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
+	parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual">
+	     SELECT vanoDocumento vanoDocumento,vsecuenciaA vsecuenciaA,
+		vcorrelativoA vcorrelativoA,
+		tipoCertificacion tipoCertificacion,
+		vfuenteFinanciamiento vfuenteFinanciamiento,
+		vcodTipoFinanciamiento vcodTipoFinanciamiento,
+		desPto desPto,
+		cproveedorRuc cproveedorRuc,
+		razonSocial razonSocial,
+		vnroCertificado vnroCertificado,
+		vnroDocumentoPagoA vnroDocumentoPagoA,
+		vtipoDocumentoA vtipoDocumentoA,
+		vglosa vglosa,
+		dfechaDocumento dfechaDocumento,
+		vcodMoneda vcodMoneda,
+		ntipCam ntipCam, nimpMonSol nimpMonSol,
+		vcodProcesoSel vcodProcesoSel
+		from V_ConsultaCertificadoAnual
+		WHERE vanoDocumento = #{vanoDocumento} AND vnroCertificado = #{vnroCertificado} and
+		vsecuenciaA = #{vsecuenciaA} and vcorrelativoA = #{vcorrelativoA}
+		order by vsecuenciaA
+	     
+	</select>
+	
 	<select id="dropCompAnual" parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
 	statementType="CALLABLE">
 	   { CALL SP_DROP_COMP_ANUAL(
@@ -175,7 +185,8 @@
 	CASE vtipo_movimiento WHEN 'M' THEN 'AMPLIACION' 
 	WHEN 'R' THEN 'REBAJA'
 	WHEN 'A' THEN 'ANULACION' END vtipoMovimiento,
-	nimp_mon_sol nimpMonSol, CASE vcod_estado WHEN '2' THEN 'AP' END vcodEstado,
+	nimp_mon_sol nimpMonSol,
+	 CASE vcod_estado WHEN '1' THEN 'REG' when '2' THEN 'AP' END vcodEstado,
 	(SELECT vmoneda_simbolo FROM iafas_monedas WHERE nmoneda_codigo = VCOD_MONEDA) vcodMoneda
  	FROM iafas_compromiso_anual WHERE 
  	vano_documento = #{vanoDocumento} AND
@@ -183,4 +194,26 @@
  	vnro_certificado =#{vnroCertificado} AND
  	vtipo_movimiento NOT IN ('N')
 	</select>
+	
+	<select id="testOC" resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
+	parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual">
+	SELECT tipodocumento vtipoDocumentoA, numeroorden vnroDocumentoPagoA, 
+	documento cproveedorRuc, busqueda razonSocial, montoTotal nimpMonSol
+	FROM iafas_logistica_temp WHERE YEAR(fechapreparacion) = #{vanoDocumento} AND 
+	numeroOrden =#{vnroDocumentoPagoA} AND
+	estado='CO'
+	</select>
+	
+	<!-- Validadores -->
+	
+	<select id="validarDuplicados" resultType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual"
+	parameterType="ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual">
+			SELECT vnro_documento_pago_a vnroDocumentoPagoA, 
+			vnro_certificado vnroCertificado,
+			FUN_TIPO_DOCUMENTO_ADMINISTRATIVO_ABREVIATURA(vtipo_documento_a) vabrevTipDoc
+			FROM iafas_compromiso_anual 
+			WHERE vano_documento = #{vanoDocumento} AND vtipo_documento_a = #{vtipoDocumentoA} 
+			AND vnro_documento_pago_a = #{vnroDocumentoPagoA}
+	</select>
+	
 </mapper>

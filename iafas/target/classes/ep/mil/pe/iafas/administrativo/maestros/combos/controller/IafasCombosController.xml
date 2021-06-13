@@ -10,6 +10,95 @@
 parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
   SELECT ctipo_procedimiento_codigo codigo, 
   vtipo_procedimiento_descripcion descripcion
- FROM iafas_tipo_procedimiento_seleccion
+ FROM iafas_tipo_procedimiento_seleccion where cestado_codigo = 'AC'
+</select>
+
+<select id="tipoFinanciamiento" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+ SELECT nfuente_financiamiento_codigo codigo, vfuente_financiamiento_nombre descripcion
+ FROM iafas_fuente_financiamiento WHERE cestado_codigo='AC'
+</select>
+<!--  
+<select id="tipoGrado" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+select NGRADO_CODIGO codigo,
+			 VGRADO_ABREVIATURA descripcion
+			  from iafas_grados where CESTADO_CODIGO='AC' order by NGRADO_CODIGO asc
+</select>
+-->
+<select id="tipoGrado" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+select NGRADO_CODIGO codigo,
+			 VGRADO_ABREVIATURA descripcion
+			  from iafas_grados where CESTADO_CODIGO='AC' AND CGRADO_TIPO=#{filtro1} 
+			   order by NGRADO_CODIGO asc
+</select>
+<select id="tipoArea" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+ select CAREA_LABORAL_CODIGO codigo,
+			 VAREA_LABORAL_ABREVIATURA descripcion
+			  from iafas_area_laboral where CESTADO_CODIGO='AC' order by CAREA_LABORAL_CODIGO asc
+</select>
+
+
+<select id="tipoFamilia" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+		select NTIPO_FAMILIA_CODIGO codigo,
+			 VTIPO_FAMILIA_ABREVIATURA descripcion
+			  from iafas_tipo_familia where CESTADO_CODIGO='AC' order by NTIPO_FAMILIA_CODIGO asc
+</select>
+
+<select id="monedas" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+     	SELECT nmoneda_codigo codigo,  
+		nmoneda_descripcion descripcion
+		FROM iafas_monedas WHERE cestado_codigo = 'AC'
+</select>
+
+<select id="proveedores" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+        SELECT cproveedor_ruc codigo, vproveedor_razon_social descripcion
+		FROM iafas_proveedores WHERE cestado_codigo = 'AC'
+</select>   
+
+<select id="bancos" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+    SELECT cbanco_codigo codigo, vbanco_descripcion descripcion 
+    FROM iafas_bancos WHERE cestado_codigo = 'AC'
+</select>
+
+<select id="tipoDocumento" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+		 SELECT NTIPO_DOCUMENTO_ADMINISTRATIVO_CODIGO codigo,
+		 VTIPO_DOCUMENTO_ADMINISTRATIVO_ABREVIATURA descripcion
+		 FROM IAFAS_TIPO_DOCUMENTOS_ADMINISTRATIVO 
+		WHERE CTIPO_DOCUMENTO_ADMINISTRATIVO_FASE='D' AND CESTADO_CODIGO='AC'
+		 order by NTIPO_DOCUMENTO_ADMINISTRATIVO_CODIGO asc
+</select>
+
+<select id="tipoImpuesto" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+		 select VCOD_IMP codigo ,VSIGLAS descripcion FROM iafas_impuesto  WHERE VESTADO_CODIGO='AC' order by VCOD_IMP asc
+</select>
+
+<!-- Cambios Agrehado por Elvis Severino -->
+<select id="periodos"
+	resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
+	parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+	SELECT CPERIODO_CODIGO AS codigo
+	from iafas_periodos
+	where
+	CESTADO_CODIGO = 'AC'
+	order by CPERIODO_CODIGO desc
+</select>
+
+<select id="entidades"
+	resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
+	parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+	SELECT CCODIGO_ENTIDAD AS codigo,
+	VENTIDAD_DESCRIPCION AS descripcion
+	from IAFAS_ENTIDADES
+	where
+	CESTADO_CODIGO = 'AC'
 </select>
 </mapper>

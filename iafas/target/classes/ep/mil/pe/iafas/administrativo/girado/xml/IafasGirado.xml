@@ -13,9 +13,15 @@
 		cab.VREG_SIAF AS vregSiaf, cab.VFUENTE_FINANCIAMIENTO AS vfuenteFinanciamiento, 
 		cab.NTIP_CAM AS ntipCam, cab.NIMP_MON_SOL AS impMonSol, cab.NIMP_MON_EXT AS impMonExt , cab.VTIP_MON AS vtipMon,  
 		cab.VGLOSA AS vglosa, dev.CPROVEEDOR_RUC AS vruc , 
-		(SELECT pv.CPROVEEDOR_CCI FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS vcci, 
-		(SELECT pv.CPROVEEDOR_CUENTA_BANCO FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS cproveedorCuentaBanco,
-		dev.VTIP_DOCUMENTO_COM AS vtipDocumentoCom ,dev.vserie_com AS vserieCom,dev.VNRO_DOCUMENTO_COM  AS vnroCom
+		(SELECT pvb.VPROVEEDOR_BANCO_CCI FROM iafas_proveedores_bancos pvb where pvb.VPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS vcci, 
+		(SELECT pvb.VPROVEEDOR_BANCO_CUENTA FROM iafas_proveedores_bancos pvb where pvb.VPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS cproveedorCuentaBanco,
+		dev.VTIP_DOCUMENTO_COM AS vtipDocumentoCom ,dev.vserie_com AS vserieCom,dev.VNRO_DOCUMENTO_COM  AS vnroCom,
+        (SELECT pv.VPROVEEDOR_RAZON_SOCIAL FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS descProveedor, 
+        (select VMONEDA_SIMBOLO from iafas_monedas MON WHERE MON.NMONEDA_CODIGO = cab.VTIP_MON) AS simboloMondea, 
+        (select bco.CBANCO_CODIGO from iafas_bancos bco ,iafas_proveedores_bancos pvb
+		 where bco.CBANCO_CODIGO = pvb.CBANCO_CODIGO and pvb.VPROVEEDOR_RUC = dev.CPROVEEDOR_RUC) as codBanco,
+        (select bco.VBANCO_DESCRIPCION from iafas_bancos bco ,iafas_proveedores_bancos pvb
+		 where bco.CBANCO_CODIGO = pvb.CBANCO_CODIGO and pvb.VPROVEEDOR_RUC = dev.CPROVEEDOR_RUC) descBanco
 		FROM iafas_movimiento cab, iafas_devengado dev
 		where 
 		cab.VANO=dev.VANO AND
@@ -24,11 +30,14 @@
 		cab.VANO=#{vano}  AND 
 		cab.VREG_SIAF=#{vregSiaf} AND 
 		cab.VFASE = 'D'
+		AND cab.VCOD_ESTADO='2'
 	</select>
     
     <select id="SP_MTO_GIRADO" statementType="CALLABLE" parameterType="ep.mil.pe.iafas.administrativo.girado.model.IafasGirado">
-        call SP_MTO_GIRADO(#{vano}, #{vregSiaf},#{vctaCodigo}, #{vcodTipGiro}, #{vglosa}, #{impMonSol}, 
-        #{vruc}, #{vusuarioIng},#{mode}, #{ntipCam}, #{vtipMon}, #{vsecuencia}, #{vsecuenciaInt})
+        <![CDATA[call SP_MTO_GIRADO(#{vano, mode=IN}, #{vregSiaf, mode=IN},#{vctaCodigo, mode=IN}, #{vcodTipGiro, mode=IN}, #{vglosa, mode=IN}, #{impMonSol, mode=IN}, 
+        #{vruc, mode=IN}, #{vusuarioIng, mode=IN},#{mode, mode=IN}, #{ntipCam, mode=IN}, #{vtipMon, mode=IN}, #{vsecuencia, mode=IN}, #{vsecuenciaInt, mode=IN}, 
+        #{tipoInsercion, mode=IN},  #{bancodBco, mode=IN},#{codigoRespuesta,mode=OUT,jdbcType=VARCHAR}, #{mensajeRespuesta,mode=OUT,jdbcType=VARCHAR})
+         ]]>
     </select>
     
     <select id="obtenerExpedientesGirados"
@@ -53,5 +62,29 @@
 		cab.VUSUARIO_ING=#{vusuarioIng} AND 
 		cab.VFASE = 'G'
 	</select>
+ 
+  <select id="obtenerGirados"
+		parameterType="ep.mil.pe.iafas.administrativo.girado.model.IafasGirado"
+		resultType="ep.mil.pe.iafas.administrativo.girado.model.IafasGirado">
+		SELECT cab.VSECUENCIA AS vsecuencia, cab.VANO AS vano, cab.VSECUENCIA_INT AS vsecuenciaInt,  
+		cab.VREG_SIAF AS vregSiaf, cab.VFUENTE_FINANCIAMIENTO AS vfuenteFinanciamiento, 
+		cab.NTIP_CAM AS ntipCam, cab.NIMP_MON_SOL AS impMonSol, cab.NIMP_MON_EXT AS impMonExt , cab.VTIP_MON AS vtipMon,  
+		cab.VGLOSA AS vglosa , gir.VNRO_CHE_CAR AS vnroCheCar,
+		 CASE cab.VCOD_ESTADO
+    	WHEN '2' THEN 'REGISTRADO'
+    	ELSE 'ANULADO'  END desEstado
+        ##dev.CPROVEEDOR_RUC AS vruc , 
+		##(SELECT pv.CPROVEEDOR_CCI FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS vcci, 
+		##(SELECT pv.CPROVEEDOR_CUENTA_BANCO FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS cproveedorCuentaBanco
+		FROM iafas_movimiento cab, iafas_girado gir
+		where 
+		cab.VANO=gir.VANO AND
+		cab.VSECUENCIA=gir.VSECUENCIA AND
+		cab.VSECUENCIA_INT=gir.VSECUENCIA_INT AND
+		cab.VANO='2021'  AND 
+		cab.VREG_SIAF=#{vregSiaf} AND 
+		cab.VFASE = 'G'
+	</select>
+ 
  
 </mapper>
