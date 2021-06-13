@@ -38,15 +38,24 @@
            
            function activateBoton(){
                var tip = document.getElementById('frmInsRegCompAnual:cbo_documento').value;
+               if(tip=="099"){
+               document.getElementById("frmInsRegCompAnual:panelOC").style.visibility = "visible";
+               document.getElementById("frmInsRegCompAnual:inptxtRuc").disabled=true;
+               document.getElementById("frmInsRegCompAnual:panelMontoOC").style.visibility = "visible";
+               document.getElementById("frmInsRegCompAnual:panel_PeriodoDoc").style.visibility = "hidden";
+               }
+               else
                if(tip =="031" || tip=="032" || tip=="060"){
                document.getElementById("frmInsRegCompAnual:panelOC").style.visibility = "visible";
                document.getElementById("frmInsRegCompAnual:inptxtRuc").disabled=true;
                document.getElementById("frmInsRegCompAnual:panelMontoOC").style.visibility = "visible";
+               document.getElementById("frmInsRegCompAnual:panel_PeriodoDoc").style.visibility = "visible";
                }
                else{
                document.getElementById("frmInsRegCompAnual:panelOC").style.visibility = "hidden";
                document.getElementById("frmInsRegCompAnual:inptxtRuc").disabled=true;
                document.getElementById("frmInsRegCompAnual:panelMontoOC").style.visibility = "hidden";
+               document.getElementById("frmInsRegCompAnual:panel_PeriodoDoc").style.visibility = "hidden";
                }
                
            }
@@ -93,18 +102,18 @@
                         </p:selectOneMenu> -->
                     </h:panelGrid>
                     <p:panelGrid columns="2">
-                     <h:outputLabel value="Monto Certificado:" style="font-weight:bold;"></h:outputLabel>
-                     <h:inputText value="#{mbCompAnual.simboloMon} #{mbCompAnual.totalCertificado}" styleClass="outLabel" 
+                     <h:outputLabel value="Monto Certificado(#{mbCompAnual.simboloMon}):" style="font-weight:bold;font-size:10px;"></h:outputLabel>
+                     <h:inputText value="#{mbCompAnual.totalCertificado}" styleClass="outLabel" 
                      style="text-align:right;" size="12" readonly="true">
-                      <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
-                     </h:inputText>
-                     <h:outputLabel value="Monto Comprometido:" style="font-weight:bold;"></h:outputLabel>              
-                      <h:inputText value="#{mbCompAnual.simboloMon} #{mbCompAnual.totalCompAnual}" styleClass="outLabel" 
+                      <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en" />
+                     </h:inputText>  
+                     <h:outputLabel value="Monto Compromiso(#{mbCompAnual.simboloMon}):" style="font-weight:bold;font-size:10px;"></h:outputLabel>              
+                      <h:inputText value="#{mbCompAnual.totalCompAnual}" styleClass="outLabel" 
                       style="text-align:right;" size="12" readonly="true">
                       <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
                      </h:inputText>
-                     <h:outputLabel value="Disponible:" style="font-weight:bold;"></h:outputLabel>
-                     <h:inputText value="#{mbCompAnual.simboloMon} #{mbCompAnual.difTotal}" styleClass="outLabel" 
+                     <h:outputLabel value="Disponible(#{mbCompAnual.simboloMon}):"  style="font-weight:bold;font-size:10px;"></h:outputLabel>
+                     <h:inputText value="#{mbCompAnual.difTotal}" styleClass="outLabel" 
                      style="text-align:right;" size="12" readonly="true">
                       <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
                      </h:inputText>
@@ -120,7 +129,7 @@
                 </p:fieldset>
                 <br/>
                 <p:fieldset legend="Datos del Compromiso Anual" id="DatosCA">
-                        <h:panelGrid columns="7" style="width: 100%">
+                        <h:panelGrid columns="8" style="width: 100%">
                             <p:outputLabel value="Documento:"/>
                             <h:selectOneMenu id="cbo_documento" style="width: 300px;" 
                             value="#{mbCompAnual.tipDocumentoA}" styleClass="select" onchange="activateBoton();">
@@ -128,11 +137,22 @@
                                 <f:selectItem itemValue="031" itemLabel="031: Orden de Compra"/>
                                 <f:selectItem itemValue="032" itemLabel="032: Orden de Servicio"/>
                                <f:selectItem itemValue="060" itemLabel="060: Contrato Suscrito"/>
+                               <f:selectItem itemValue="099" itemLabel="099: Carta de Garantia"/>
                             </h:selectOneMenu>
+                            <h:panelGrid id="panel_PeriodoDoc" columns="2" style="visibility:hidden;">
+                               <p:outputLabel value="Periodo:"/>
+                               <h:selectOneMenu id="periodoDoc" styleClass="select" value="#{mbCompAnual.periodoDoc}">
+                                 <f:selectItem itemValue="0" itemLabel="--Seleccione --"/>
+                                <f:selectItem itemValue="2021" itemLabel="2021"/>
+                                <f:selectItem itemValue="2020" itemLabel="2020"/>
+                                <f:selectItem itemValue="2019" itemLabel="2019"/>
+                                <f:selectItem itemValue="2018" itemLabel="2018"/>
+                                </h:selectOneMenu>
+                            </h:panelGrid>
                             <p:outputLabel value="Número:"/>
                             <h:inputText id="nrodocumento" value="#{mbCompAnual.nroDoc}" onblur="completaCeros(this.name, 10);"
-                            styleClass="input" style="text-align: right;" size="11"
-                            maxlength="10"/>
+                            styleClass="input" style="text-align: right;" size="16"
+                            maxlength="15"/>
                             <h:panelGrid id="panelOC" style="visibility:hidden;">
                             <p:commandButton id="btnbuscarOCOS" icon="ui-icon-search" value="Buscar" 
                              action = "#{mbCompAnual.validarOCS()}"

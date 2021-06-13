@@ -22,8 +22,10 @@ import ep.mil.pe.iafas.administrativo.compromiso.dao.IafasCompromisoAnualDetDao;
 import ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnual;
 import ep.mil.pe.iafas.administrativo.compromiso.model.IafasCompromisoAnualDet;
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
+import ep.mil.pe.iafas.configuracion.SQLServer2SessionFactory;
 import ep.mil.pe.iafas.configuracion.SQLServerSessionFactory;
 import ep.mil.pe.iafas.configuracion.util.Constantes;
+import ep.mil.pe.iafas.integracion.dao.CartaGarantiaDao;
 import ep.mil.pe.iafas.integracion.dao.OrdenesCSDao;
 import ep.mil.pe.iafas.integracion.model.OrdenesCS;
 import ep.mil.pe.iafas.logistica.dao.IafasPaacContratoDao;
@@ -83,6 +85,8 @@ public class IafasCompAnualController implements Serializable {
     private String simboloMon;
     private String conceptoCertificado;
     
+    private String periodoDoc;
+    
     Date hoy = new Date();
     
 	private static final long serialVersionUID = 1L;
@@ -94,6 +98,7 @@ public class IafasCompAnualController implements Serializable {
 	IafasPaacContratoDao  contratoDao = new IafasPaacContratoDao(MySQLSessionFactory.getSqlSessionFactory());
 	
 	OrdenesCSDao OrderDao = new OrdenesCSDao(SQLServerSessionFactory.getSqlServerSessionFactory());
+	CartaGarantiaDao garantiaDao = new CartaGarantiaDao(SQLServer2SessionFactory.getSqlServerSessionFactory());
      
 	 
 	public IafasCompAnualController() {
@@ -111,7 +116,7 @@ public class IafasCompAnualController implements Serializable {
 			logger.info("Validando Ordenes y Contratos{} " +nroDoc);
 			if(tipDocumentoA.equals(Constantes.ID_CONTRATOS)) {
 				IafasPacContratos c = new IafasPacContratos();
-				c.setCperiodoCodigo(periodo);
+				c.setCperiodoCodigo(periodoDoc);
 				c.setVnumeroContrato(nroDoc);
 				List<IafasPacContratos> contratos = contratoDao.showContractsCA(c);
 				for(IafasPacContratos con : contratos) {
@@ -124,7 +129,7 @@ public class IafasCompAnualController implements Serializable {
 			}
 			else {
 				IafasCompromisoAnual ca = new IafasCompromisoAnual();
-				ca.setVanoDocumento("2021");
+				ca.setVanoDocumento(periodoDoc);
 				ca.setVnroDocumentoPagoA(nroDoc);
 				List<IafasCompromisoAnual> ordenes = compAnualDao.verOC(ca);
 				for(IafasCompromisoAnual registros: ordenes) {
@@ -150,7 +155,7 @@ public class IafasCompAnualController implements Serializable {
 			logger.info("Validando Ordenes y Contratos{} " +nroDoc);
 			if(tipDocumentoA.equals(Constantes.ID_CONTRATOS)) {
 				IafasPacContratos c = new IafasPacContratos();
-				c.setCperiodoCodigo(periodo);
+				c.setCperiodoCodigo(periodoDoc);
 				c.setVnumeroContrato(nroDoc);
 				List<IafasPacContratos> contratos = contratoDao.showContractsCA(c);
 				for(IafasPacContratos con : contratos) {
@@ -161,32 +166,44 @@ public class IafasCompAnualController implements Serializable {
 				}
 				logger.info("Contrato Encontrado {} "+ruc+" "+razonSocial+" "+montoOrden);
 			}
-			else {
-				OrdenesCS oc = new OrdenesCS();
-				if(tipDocumentoA.equals(Constantes.ID_ORDEN_COMPRA)) {
-					setTipOrden("OC");
-				}
-				else 
-					if(tipDocumentoA.equals(Constantes.ID_ORDEN_SERVICIO)) {
-						setTipOrden("OS");
+			else 
+				if(tipDocumentoA.equals(Constantes.ID_ORDEN_COMPRA) || tipDocumentoA.equals(Constantes.ID_ORDEN_SERVICIO)) {
+					OrdenesCS oc = new OrdenesCS();
+					if(tipDocumentoA.equals(Constantes.ID_ORDEN_COMPRA)) {
+						setTipOrden("OC");
 					}
-				
-				oc.setPeriodo(Integer.valueOf(periodo));
-				oc.setNumeroOrden(nroDoc);
-				oc.setTipoDocumento(tipOrden);
-				List<OrdenesCS> ordenes = OrderDao.findPurchaseOrder(oc);
-				logger.info("Parametros Busqueda {} "+periodo+" "+tipOrden+" "+nroDoc);
-				if(ordenes.size()==0) {ruc="";razonSocial="";}
-				else {
-					for(OrdenesCS registros: ordenes) {
-						ruc = ordenes.get(0).getRuc();
-						razonSocial = ordenes.get(0).getProveedor();
-						montoOrden = ordenes.get(0).getMontoTotal();
+					else 
+						if(tipDocumentoA.equals(Constantes.ID_ORDEN_SERVICIO)) {
+							setTipOrden("OS");
+						}
+					
+					oc.setPeriodo(Integer.valueOf(periodoDoc));
+					oc.setNumeroOrden(nroDoc);
+					oc.setTipoDocumento(tipOrden);
+					List<OrdenesCS> ordenes = OrderDao.findPurchaseOrder(oc);
+					logger.info("Parametros Busqueda {} "+periodo+" "+tipOrden+" "+nroDoc);
+					if(ordenes.size()==0) {ruc="";razonSocial="";}
+					else {
+						for(OrdenesCS registros: ordenes) {
+							ruc = ordenes.get(0).getRuc();
+							razonSocial = ordenes.get(0).getProveedor();
+							montoOrden = ordenes.get(0).getMontoTotal();
+						}
+						logger.info("Valores Ordenes Obtenidos {} "+ruc+" "+razonSocial);
 					}
-					logger.info("Valores Ordenes Obtenidos {} "+ruc+" "+razonSocial);
 				}
+		
+		 else 
+			if(tipDocumentoA.equals("099")) {
+				List<OrdenesCS> ordenes = garantiaDao.findCartaGarantia(nroDoc);
+				logger.info("Parametros Busqueda Carta Garantia {} "+nroDoc);
+				for(OrdenesCS cartas: ordenes) {
+					ruc = ordenes.get(0).getRuc();
+					razonSocial = ordenes.get(0).getProveedor();
+					montoOrden = ordenes.get(0).getMontoTotal();
+				}
+				logger.info("Parametros Obtenidos Carta Garantia {} "+nroDoc+" "+ruc+" "+razonSocial+" "+montoOrden);
 			}
-			
 
 		} catch (Exception e) {
 			logger.error("Error Busqueda Contratos y Ordenes: {} "+e.getMessage()+" Causa :"+e.getCause());

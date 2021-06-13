@@ -19,5 +19,12 @@
         from spring2021.dbo.v_OrdenCompraServicio
         where YEAR(FechaPreparacion) = #{periodo} and NumeroOrden = #{numeroOrden} and TipoDocumento = #{tipoDocumento}
 	</select>
-
+	<select id="listCartaGarantia"
+		resultType="ep.mil.pe.iafas.integracion.model.OrdenesCS"
+		parameterType="ep.mil.pe.iafas.integracion.model.OrdenesCS">
+        select id_carta_garantia numeroOrden, 
+        cip_tit ruc, apellidos_nombres_tit proveedor,
+        justificacion_medica descripcion, monto_acumulado montoTotal
+        from db_iafas.dbo.v_cartagarantia where id_carta_garantia = #{numeroOrden}      
+	</select>
 </mapper>
