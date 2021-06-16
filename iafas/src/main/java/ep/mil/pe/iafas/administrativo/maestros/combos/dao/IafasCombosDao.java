@@ -169,4 +169,68 @@ public class IafasCombosDao {
          }
          return lista;
      }
+     
+     public List<IafasCombos> getProcesoContratacion() {
+         List<IafasCombos> lista = null;
+         SqlSession session = sqlSessionFactory.openSession();
+         try{
+               lista = session.selectList("Combos.procesoContratacion");
+         }
+         finally{
+              session.close();
+         }
+         return lista;
+     }
+     
+     @SuppressWarnings("unchecked")
+  	public List<IafasCombos> getTipoEtapa(String filtro) {
+          List<IafasCombos> lista = null;
+          SqlSession session = sqlSessionFactory.openSession();
+          try{
+                lista = session.selectList("Combos.tipoEtapa",filtro);
+          }
+          finally{
+               session.close();
+          }
+          return lista;
+      }
+     
+     @SuppressWarnings("unchecked")
+   	public List<IafasCombos> getProcesoDocumento() {
+           List<IafasCombos> lista = null;
+           SqlSession session = sqlSessionFactory.openSession();
+           try{
+                 lista = session.selectList("Combos.procesoDocumento");
+           }
+           finally{
+                session.close();
+           }
+           return lista;
+       }
+     
+     @SuppressWarnings("unchecked")
+   	public List<IafasCombos> getItem() {
+           List<IafasCombos> lista = null;
+           SqlSession session = sqlSessionFactory.openSession();
+           try{
+                 lista = session.selectList("Combos.item");
+           }
+           finally{
+                session.close();
+           }
+           return lista;
+       }
+     
+     @SuppressWarnings("unchecked")
+   	public List<IafasCombos> getUnidadMedida() {
+           List<IafasCombos> lista = null;
+           SqlSession session = sqlSessionFactory.openSession();
+           try{
+                 lista = session.selectList("Combos.unidadMedida");
+           }
+           finally{
+                session.close();
+           }
+           return lista;
+       }
 }
