@@ -233,4 +233,17 @@ public class IafasCombosDao {
            }
            return lista;
        }
+     
+     @SuppressWarnings("unchecked")
+  	public List<IafasCombos> getTipoProcedimiento(String filtro) {
+          List<IafasCombos> lista = null;
+          SqlSession session = sqlSessionFactory.openSession();
+          try{
+                lista = session.selectList("Combos.tipoProcedimiento",filtro);
+          }
+          finally{
+               session.close();
+          }
+          return lista;
+      }
 }

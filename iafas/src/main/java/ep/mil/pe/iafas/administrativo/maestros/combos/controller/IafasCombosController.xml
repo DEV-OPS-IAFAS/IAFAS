@@ -132,4 +132,10 @@ parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
 		SELECT cunidad_medida_codigo codigo, vunidad_medida_abreviatura descripcion
 		FROM iafas_unidad_medida WHERE CESTADO_CODIGO = 'AC'
 </select>
+<select  id="tipoProcedimiento" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+		parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+		SELECT ctipo_procedimiento_codigo codigo,  
+		FUN_DESC_TIPO_PROCEDIMIENTO(ctipo_procedimiento_codigo) descripcion
+		FROM iafas_proceso_documento_tipo_procedimiento WHERE nproceso_documento_codigo = #{filtro1}
+</select>
 </mapper>
