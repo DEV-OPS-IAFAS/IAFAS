@@ -64,4 +64,10 @@ public class Constantes {
 	public static final String MESSAGE_VALIDACION_ENTIDAD_GIRO = "Debe seleccionar la entidad del giro.";
 	public static final String MESSAGE_VALIDACION_CUENTA_GIRO = "Debe seleccionar la Cuenta  del giro.";
 	public static final String MESSAGE_VALIDACION_MONEDA_GIRO = "Debe seleccionar la Moneda del giro.";
+	public static final BigDecimal ZERO_BIG_DECIMAL= BigDecimal.ZERO;
+	public static final String MESSAGE_IS_GIRO = "El expediente se encuentra Girado!, dar click en visualizar para ver su detalle";
+	public static final String CONSULTA_PRINCIPAL_GIROS = "mainIafasConsultaGiradosExpediente.xhtml";
+	public static final String MESSAGE_VALIDACION_TIPO_CAMBIO= "Debe llenar correctamente el tipo de cambio.";
+	public static final boolean FALSE = false;
+	public static final boolean TRUE = true;
 }
