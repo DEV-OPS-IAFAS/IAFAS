@@ -37,6 +37,10 @@ public class IafasCombosController implements Serializable {
 	public List<SelectItem> bancos;
 	public List<SelectItem> documento;
 	public List<SelectItem> impuesto;
+	public List<SelectItem> tipoContratacion;
+	public List<SelectItem> procesoDocumento;
+	public List<SelectItem> item;
+	public List<SelectItem> unidadMedida;
 	
 	
 	/*Cambios agregados por Elvis Severino*/
@@ -178,5 +182,49 @@ public class IafasCombosController implements Serializable {
 		}
 		logger.info("[FIN:] Metodo : getEntidades");
 		return this.entidades;
+	}
+
+	public List<SelectItem> getTipoContratacion() {
+		tipoContratacion = new ArrayList<SelectItem>();
+		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasCombos> lstContratacion = cb.getProcesoContratacion();
+		for(IafasCombos tc : lstContratacion) {
+			tipoContratacion.add(new SelectItem(tc.getCodigo(), tc.getDescripcion()));
+		}
+		
+		return tipoContratacion;
+	}	
+	
+	public List<SelectItem> getProcesoDocumento() {
+		procesoDocumento = new ArrayList<SelectItem>();
+		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasCombos> lstProcesoDocumento = cb.getProcesoDocumento();
+		for(IafasCombos tc : lstProcesoDocumento) {
+			procesoDocumento.add(new SelectItem(tc.getCodigo(), tc.getDescripcion()));
+		}
+		
+		return procesoDocumento;
+	}
+	
+	public List<SelectItem> getItem(){
+		item = new ArrayList<SelectItem>();
+		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasCombos> lstItem = cb.getItem();
+		for(IafasCombos tc : lstItem) {
+			item.add(new SelectItem(tc.getCodigo(), tc.getDescripcion()));
+		}
+		
+		return item;
+	}
+	
+	public List<SelectItem> getUnidadMedida(){
+		unidadMedida = new ArrayList<SelectItem>();
+		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasCombos> lstItem = cb.getUnidadMedida();
+		for(IafasCombos tc : lstItem) {
+			unidadMedida.add(new SelectItem(tc.getCodigo(), tc.getDescripcion()));
+		}
+		
+		return unidadMedida;
 	}
 }
