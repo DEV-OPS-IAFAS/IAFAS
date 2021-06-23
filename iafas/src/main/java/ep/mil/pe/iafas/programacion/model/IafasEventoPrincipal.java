@@ -13,7 +13,7 @@ public class IafasEventoPrincipal {
 	private int ntareaPresupuestalCodigo;
 	private String canioRegistro;
 	private String veventoPrincipalCodigo;
-	private String veventoPrinciombre;
+	private String veventoPrincipalNombre;
 	private String veventoPrincipalComentario;
 	private int neventoPrincipalNivel;
 	private int neventoPrincipalNiveles;
@@ -24,5 +24,8 @@ public class IafasEventoPrincipal {
 	private String vusuarioCodigo;
 	private Date dusuarioFecha;
 	private BigDecimal monto;
-
+	private String veventoPrincipalAnexo;
+	private String mode;
+	private String codigoRespuesta;
+	private String mensajeRespuesta;
 }

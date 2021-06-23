@@ -59,7 +59,6 @@ public class IafasGiradoDao {
             param.put("bancodBco", giro.getBancodBco());	
             
             
-			System.out.println("datos en el dao:::"+ giro.getVsecuencia()+ " - "+giro.getVsecuenciaInt());
 			String respuesta  =(String) session.selectOne("IafasGirado.SP_MTO_GIRADO", param);
 			 
 			response.setCodigoRespuesta(param.get("codigoRespuesta"));
@@ -71,16 +70,47 @@ public class IafasGiradoDao {
 		return response;
 	}
 	
-	public List<IafasGirado> obtenerExpedientesGirados(String usuario){
+	public List<IafasGirado> obtenerExpedientesGirados(IafasGirado giro){
 		List<IafasGirado> list = null;
 	    SqlSession session = this.sqlSessionFactory.openSession();
 	    try {
-	      list = session.selectList("IafasGirado.obtenerExpedientesGirados",usuario);
+	      list = session.selectList("IafasGirado.obtenerExpedientesGirados",giro);
 	    } finally {
 	      session.close();
 	    } 
 	    return list;
 	}
 	
+	public List<IafasGirado> obtenerMontoCabeceraGiro(IafasGirado giro){
+		List<IafasGirado> list = null;
+	    SqlSession session = this.sqlSessionFactory.openSession();
+	    try {
+	      list = session.selectList("IafasGirado.obtenerMontoCabeceraGiro",giro);
+	    } finally {
+	      session.close();
+	    } 
+	    return list;
+	}
 	
+	public List<IafasGirado> obtenerMontoCabeceraDevengado(IafasGirado giro){
+		List<IafasGirado> list = null;
+	    SqlSession session = this.sqlSessionFactory.openSession();
+	    try {
+	      list = session.selectList("IafasGirado.obtenerMontoCabeceraDevengado",giro);
+	    } finally {
+	      session.close();
+	    } 
+	    return list;
+	}
+	
+	public List<IafasGirado> obtenerGiradosPorExpediente(IafasGirado giro){
+		List<IafasGirado> list = null;
+	    SqlSession session = this.sqlSessionFactory.openSession();
+	    try {
+	      list = session.selectList("IafasGirado.obtenerGiradosPorExpediente",giro);
+	    } finally {
+	      session.close();
+	    } 
+	    return list;
+	}
 }

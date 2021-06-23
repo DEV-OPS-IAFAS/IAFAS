@@ -63,4 +63,7 @@ public class IafasGirado {
 	private String tipoInsercion;
 	private String codigoRespuesta;
 	private String mensajeRespuesta;
+	
+	private BigDecimal importeCabeceraGiro;
+	private BigDecimal importeCabeceraDevengado;
 }

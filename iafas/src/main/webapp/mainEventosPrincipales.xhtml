@@ -38,7 +38,7 @@ button.ui-button {
 
 	<h:form id="frm_EventoPrincipal">
 	<center class="label label-inverse-success">
-	 <label >EVENTOS PRINCIPALES</label>
+	 <label> LISTADO EVENTOS PRINCIPALES</label>
 	 </center>
 
 	 <p:panel header="Datos de Busqueda" >
@@ -69,20 +69,27 @@ button.ui-button {
 			<p:panel>
 				<p:panel header="Datos Encontrados">
 					<p:panelGrid columns="6" styleClass="panel">
+						
+						<f:facet name="header">
+					            <div class="p-d-flex p-jc-between p-ai-center">
+					               <p:outputLabel style="text-align: left" value="TAREA:#{iafasCuadroNecesidadesController.nombreTarea}" />
+					            </div>
+					    </f:facet>
 
 						<p:dataTable id="dTableEventoPrincipal" var="tbleEventoPrincipal"
 							value="#{iafasCuadroNecesidadesController.listaCabecera}"
-							selection="#{iafasCuadroNecesidadesController.bean}"
-							rowKey="#{tblCnv.cperiodoCodigo}#{tblCnv.ntareaPresupuestalCodigo}#{tblCnv.nfuenteFinanciamientoCodigo}"
+							selection="#{iafasCuadroNecesidadesController.beanEvp}"
+							rowKey="#{tbleEventoPrincipal.cperiodoCodigo}#{tbleEventoPrincipal.ntareaPresupuestalCodigo}#{tbleEventoPrincipal.nfuenteFinanciamientoCodigo}
+							#{tbleEventoPrincipal.veventoPrincipalCodigo}#{tbleEventoPrincipal.neventoPrincipalNivel}#{tbleEventoPrincipal.neventoPrincipalNiveles}"
 							selectionMode="single" style="font-size:11px;"
 							emptyMessage="No se encontro Datos registrados">
 
-							<p:column style="width:100px;" headerText="CÓDIGO">
+							<p:column style="width:5px;" headerText="CÓDIGO">
 								<p:outputLabel value="#{tbleEventoPrincipal.veventoPrincipalCodigo}" />
 							</p:column>
 
-							<p:column style="width:2px; text-align: right" headerText="EVENTO">
-								<p:outputLabel value="#{tbleEventoPrincipal.veventoPrinciombre}" /> 
+							<p:column style="width:80px; text-align: left" headerText="EVENTO">
+								<p:outputLabel value="#{tbleEventoPrincipal.veventoPrincipalNombre}" /> 
 							</p:column>
 
 							<p:column style="width:2px; text-align: right" headerText="NIVEL">
@@ -90,21 +97,30 @@ button.ui-button {
 							</p:column>
 						
 							<p:column style="width:2px; text-align: right" headerText="EVE. F">
-								<p:outputLabel value="#{tbleEventoPrincipal.ceventoPrincipalFinal}" /> 
+								<p:outputLabel value="#{tbleEventoPrincipal.neventoPrincipalNiveles}" /> 
 							</p:column>
 							
-							<p:column style="width:2px; text-align: right" headerText="MONTO">
-								<p:outputLabel value="#{tbleEventoPrincipal.monto}">
+							<p:column style="width:30px; text-align: right" headerText="MONTO">
+							<p:outputLabel value="0.00" />
+								<!-- <p:outputLabel value="#{tbleEventoPrincipal.monto}">
 									<f:convertNumber maxFractionDigits="2" minFractionDigits="2"
 										type="number" locale="en" />
-								</p:outputLabel>
+								</p:outputLabel>  -->
+								
 							</p:column>		
 						</p:dataTable>
 
+				<p:contextMenu for="dTableEventoPrincipal" style="width:200px;">
+            		<p:menuitem value="Editar"  />
+            		<p:menuitem value="Eliminar" />
+            		<p:menuitem value="Cantidades Fisicas" />
+            		<p:menuitem value="Ver Evento" action="#{iafasCuadroNecesidadesController.verEvento()}" />            		
+        		</p:contextMenu>
+        	
+        	
 					</p:panelGrid>
 				</p:panel>
 			</p:panel>
-
 		</p:panel>
 		
 		<p:dialog header="REGISTRO DE EVENTO PRINCIPAL" id="modalCabecera" widgetVar="modalCabecera" showEffect="fade" minHeight="200" width="400" >
@@ -112,23 +128,29 @@ button.ui-button {
 			<h:panelGrid columns="2" styleClass="panel">
 				<h:outputLabel value="Código:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />	
 				<h:inputText styleClass="input"  id="inpt_codigo" value="#{iafasCuadroNecesidadesController.codigoEventoPrincipal}"  disabled="true"/>
-				<h:outputLabel value="Evento:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-				<p:inputText styleClass="input"  placeholder="NOMBRE EVENTO" id="inpt_evento" value="#{iafasCuadroNecesidadesController.nombreEvento}" />
+				<h:outputLabel value="Evento:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
+				<p:inputText styleClass="input"  placeholder="NOMBRE EVENTO" style="text-transform:uppercase" id="inpt_evento" 
+				value="#{iafasCuadroNecesidadesController.nombreEvento}" />
 				<h:outputLabel value="Comentario:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-				<p:inputTextarea rows="5" cols="30" counter="display" maxlength="200" value="#{iafasCuadroNecesidadesController.comentario}"
-                         counterTemplate="{0} Caracteres Faltantes." autoResize="false"/>
+				<p:inputTextarea rows="5" cols="30" counter="display" maxlength="200" style="text-transform:uppercase"
+				 value="#{iafasCuadroNecesidadesController.comentario}" counterTemplate="{0} Caracteres Faltantes." autoResize="false"/>
 				<h:outputText value="" class="p-d-block" />
         		<h:outputText id="display" class="p-d-block" />
-        		<h:outputLabel value="#Niveles:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
-        		<p:inputNumber  id="inpt_niveles" value="#{iafasCuadroNecesidadesController.cperiodo}" maxlength="2" size="10"  modifyValueOnWheel="false" />
-	        		
+        		<h:outputLabel value="#Niveles:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; text-align: right" />
+        		<p:inputText  id="inpt_niveles" disabled="#{iafasCuadroNecesidadesController.desactivarObjetos}" value="#{iafasCuadroNecesidadesController.niveles}" maxlength="2" size="2"  modifyValueOnWheel="false" >
+	        		<f:convertNumber maxFractionDigits="0" minFractionDigits="0" type="number" locale="en" />
 				</p:inputText>
         		<h:outputLabel value="Ultimo Evento:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
+					<h:selectBooleanCheckbox value="#{iafasCuadroNecesidadesController.boolCheckEventoAnexo}"  >
+						<f:ajax render="frm_EventoPrincipal:inpt_niveles" listener="#{iafasCuadroNecesidadesController.actualizarBoolean()}"/>
+					</h:selectBooleanCheckbox>
 			</h:panelGrid>
 			
 				<f:facet name="footer">
 					<p:commandButton value="Cerrar" styleClass="ui-button-outlined ui-button-danger" oncomplete="PF('modalCabecera').hide()" />
-					<p:commandButton  value="Grabar" styleClass="ui-button-outlined ui-button-success" oncomplete="PF('modalCabecera').hide()"   />
+					<p:commandButton  value="Grabar" styleClass="ui-button-outlined ui-button-success"
+						update="frm_EventoPrincipal:dTableEventoPrincipal"  oncomplete="PF('modalCabecera').hide()"
+					  	action="#{iafasCuadroNecesidadesController.insRegEventoPrincipal()}" />
 				</f:facet>	
 		</p:dialog>	
 		

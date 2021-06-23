@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html 	xmlns="http://www.w3.org/1999/xhtml"
+	    xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>IAFAS</title>
+	<link href="css/estilos.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" type="text/css" href="material_able-main/assets/css/bootstrap/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="material_able-main/assets/css/style.css" />
+	<link rel="stylesheet" type="text/css" href="material_able-main/assets/icon/themify-icons/themify-icons.css" />
+    <link rel="stylesheet" type="text/css" href="material_able-main/assets/icon/icofont/css/icofont.css" />
+    <link rel="stylesheet" type="text/css" href="material_able-main/assets/icon/font-awesome/css/font-awesome.min.css" />
+      	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
+		<style type="text/css">
+    button.ui-button {
+        margin-right: .5rem;
+    }
+</style>
+
+</h:head>
+
+<body class="formulario">
+
+<script>
+	 
+			function verMensajes() {
+				var option = document.getElementById('frm_ConsultaGiros:hdd_option').value; 
+				var message = document.getElementById('frm_ConsultaGiros:hdd_message').value;
+
+				if (option == 0) {
+					swal("AVISO", message, "success").then(function() {
+						window.location = "mainIafasConsultaGirados.xhtml";
+					});
+				}
+				
+			}
+		</script>
+
+
+
+	<h:form id="frm_ConsultaGiros"> 
+	
+	<p:panel id = "pnl_messages">
+	 	<h:inputHidden value="#{iafasGiradoController.typeMessages}" id="hdd_option"  />
+		<h:inputHidden value="#{iafasGiradoController.messages}" id="hdd_message" /> 
+	 </p:panel>
+	 
+	   <p:panel>
+	   	<p:panelGrid columns="3">
+				<i class="pi pi-money-bill"></i>
+				<h:outputLabel value="Consulta de Giros" styleClass="etiqueta"  style="font-size:11px;font-weight:bold;" />
+				 <p:commandButton value="Retornar" action="#{iafasGiradoController.retornar()}"
+                    icon="pi pi-arrow-left" style="height:35px;"/>
+		</p:panelGrid>
+	   	
+	   	<br />
+			<table>
+				<tr>
+					<td valign="top">
+						<div>
+							<p:dataTable id="dTableGiros" var="giros"
+								value="#{iafasGiradoController.listaGiradosExp}"
+								rows="10" style="font-size:11px;"
+								emptyMessage="No se encontro Usuarios registrados"
+								paginatorPosition="bottom" paginator="true">
+								<p:column style="width:2px;" headerText="Año">
+									<p:outputLabel value="#{giros.vano}" />
+								</p:column>
+<!-- 								<p:column style="width:2px;" headerText="Secuencia"> -->
+<!-- 									<p:outputLabel value="#{giros.vsecuencia}" /> -->
+<!-- 								</p:column> -->
+								<p:column style="width:2px;" headerText="N° Cheque">
+									<p:outputLabel value="#{giros.vnroCheCar}" />
+								</p:column>
+								<p:column style="width:50px;" headerText="Expediente">
+								 <h:commandLink id="cmdLink_Detalle" styleClass="form-control form-txt-success" actionListener="#{iafasGiradoController.obtenerCadenasGiradas()}" >
+								 	<p:outputLabel value="#{giros.vregSiaf}" />
+								 		<f:param id="vano" name="vano" value="#{giros.vano}" />
+								 		<f:param id="vregSiaf" name="vregSiaf" value="#{giros.vregSiaf}" />
+								 		<f:param id="vsecuencia" name="vsecuencia" value="#{giros.vsecuencia}" />
+								 		<f:param id="vsecuenciaInt" name="vsecuenciaInt" value="#{giros.vsecuenciaInt}" />    
+								 </h:commandLink>
+									
+								</p:column>
+								<p:column style="width:250px;" headerText="Glosa">
+									<p:outputLabel value="#{giros.vglosa}" />
+								</p:column>
+								<p:column style="width:20px;" headerText="Importe">
+									<p:outputLabel value="#{giros.impMonSol}" />
+								</p:column>
+								
+								<p:column style="width:20px;" headerText="Estado">
+									<p:outputLabel value="#{giros.desEstado}" />
+								</p:column>
+								
+								<p:column style="width:50px;" headerText="Opciones">
+									<h:commandButton value="Anular" styleClass="btn waves-effect waves-light btn-danger btn-outline-danger" action="#{iafasGiradoController.anularGirado()}"  >
+										<f:param id="vanoAnu" name="vanoAnu" value="#{giros.vano}"  />
+								 		<f:param id="vsecuenciaAnu" name="vsecuenciaAnu" value="#{giros.vsecuencia}" />
+								 		<f:param id="vsecuenciaIntAnu" name="vsecuenciaIntAnu" value="#{giros.vsecuenciaInt}" />   
+								 		<f:ajax render="frm_ConsultaGiros:pnl_messages" listener="#{iafasGiradoController.refreshMessage()}" />
+									</h:commandButton>	
+								</p:column>
+							</p:dataTable>
+						</div>
+					</td>
+				</tr>
+			</table>			
+		</p:panel>	
+		
+		<div class="card">
+        <p:accordionPanel multiple="true" widgetVar="multiple">
+            <p:tab title="Detalle del Girado">
+                <p class="p-m-0">
+                    <p:dataTable id="dTableDetalleGiros" var="girosDet"
+								 value="#{iafasGiradoController.listaGiradasCadenas}"
+								rows="10" style="font-size:11px;"
+								emptyMessage="No se encontro Usuarios registrados"
+								paginatorPosition="bottom" paginator="true">
+								
+								<p:column style="width:2px;" headerText="Cod.Cla">
+									<p:outputLabel value="#{girosDet.vcodCla}" />
+								</p:column>
+								<p:column style="width:2px;" headerText="Sec.Func">
+									<p:outputLabel value="#{girosDet.vcodSecFun}" />
+								</p:column>
+								<p:column style="width:2px;" headerText="Cadena">
+									<p:outputLabel value="#{girosDet.cadena}" />
+								</p:column>
+								<p:column style="width:2px;" headerText="Descripcion">
+									<p:outputLabel value="#{girosDet.desCadena}" />
+								</p:column>
+								<p:column style="width:2px;" headerText="Importe">
+									<p:outputLabel value="#{girosDet.impSolCad}" />
+								</p:column>
+					</p:dataTable>
+                </p>
+            </p:tab>
+           
+        </p:accordionPanel>
+    </div>
+	
+</h:form>
+</body>	
+</html>

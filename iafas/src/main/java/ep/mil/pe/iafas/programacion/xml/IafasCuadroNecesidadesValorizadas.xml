@@ -31,5 +31,35 @@
 		CAB.NFUENTE_FINANCIAMIENTO_CODIGO=#{nfuenteFinanciamientoCodigo}
 		group by NTAREA_PRESUPUESTAL_CODIGO
 	</select>
+	
+	
+	<select id="mostrarCNV"
+		parameterType="ep.mil.pe.iafas.programacion.model.IafasCuadroNecesidadesValorizadas"
+		resultType="ep.mil.pe.iafas.programacion.model.IafasCuadroNecesidadesValorizadas">
+		
+		SELECT NTAREA_PRESUPUESTAL_CODIGO AS ntareaPresupuestalCodigo ,  
+		(SELECT VTAREA_PRESUPUESTAL_NOMBRE FROM IAFAS_TAREA_PRESUPUESTAL 
+		WHERE NTAREA_PRESUPUESTAL_CODIGO = CAB.NTAREA_PRESUPUESTAL_CODIGO) AS  descripcionTarea ,
+		(select vunidad_medida_nombre 
+		from  IAFAS_UNIDAD_MEDIDA 
+		WHERE 
+		CESTADO_CODIGO='AC'
+		AND CUNIDAD_MEDIDA_CODIGO = 
+		(SELECT CUNIDAD_MEDIDA_CODIGO FROM IAFAS_TAREA_PRESUPUESTAL
+		 WHERE NTAREA_PRESUPUESTAL_CODIGO = CAB.NTAREA_PRESUPUESTAL_CODIGO) ) AS descripcionUnidadMedida,
+		NCNV_CANTIDAD AS ncnvCantidad ,NCNV_PRECIO AS  ncnvPrecio, 
+		NCLASIFICADOR_PRESUPUESTAL_CODIGO AS  nclasificadorPresupuestalCodigo , 
+		PK_AUX_CLASIFICADOR(NCLASIFICADOR_PRESUPUESTAL_CODIGO) AS cadenaGasto,
+		PK_AUX_NOM_CLASIFICADOR(NCLASIFICADOR_PRESUPUESTAL_CODIGO) descripcionCadenaGasto
+		FROM ISFAS_CUADRO_NECESIDADES_VALORIZADAS CAB
+		WHERE
+		CAB.CPERIODO_CODIGO=#{cperiodoCodigo} AND
+		CAB.NFUENTE_FINANCIAMIENTO_CODIGO=#{nfuenteFinanciamientoCodigo} AND 
+		CAB.NTAREA_PRESUPUESTAL_CODIGO=#{ntareaPresupuestalCodigo} AND 
+		CAB.CANIO_REGISTRO=#{canioRegistro} AND
+		CAB.VEVENTO_PRINCIPAL_CODIGO = #{veventoPrincipalCodigo} AND 
+		CAB.NEVENTO_FINAL_CODIGO =#{neventoFinalCodigo}
+		
+	</select>
 
 </mapper>	

@@ -73,16 +73,32 @@ button.ui-button {
 				</p:column>
 				
 				<p:column style="width:2px; text-align: right" headerText="META FISICA">
-					<p:outputLabel value="#{tblCnv.ncnvPrecio}" >
+					<p:outputLabel value="#{tblCnv.totalMetaFisica}" >
 						<f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
 					</p:outputLabel>
 				</p:column>
 				
+				<p:column style="width:2px; text-align: right" headerText="UU/MM">
+					<p:outputLabel value="#{tblCnv.descripcionUnidadMedida}" />
+				</p:column>
+				
+				<p:column style="width:2px; text-align: right" headerText="TOTAL">
+					<p:outputLabel value="#{tblCnv.total}" >
+						<f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+					</p:outputLabel>
+				</p:column>
+			
+				<p:column style="width:2px; text-align: right" headerText="PROGRAMADO">
+					<p:outputLabel value="#{tblCnv.totalProgramado}" >
+						<f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+					</p:outputLabel>
+				</p:column>
+					
 			</p:dataTable>
 			
 			<p:contextMenu for="dTableCnv" style="width:200px;">
-            <p:menuitem value="Crear Eventos"  action="#{iafasCuadroNecesidadesController.crearEventoPrincipal()}"  />
-        </p:contextMenu>
+            	<p:menuitem value="Crear Eventos"  action="#{iafasCuadroNecesidadesController.crearEventoPrincipal()}"  />
+        	</p:contextMenu>
         	
 			</p:panelGrid>
 			</p:panel>

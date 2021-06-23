@@ -21,4 +21,5 @@ public class IafasEventoFinal {
 	private Date dusuarioCreador;
 	private String vusuarioCodigo;
 	private Date dusuarioFecha;
+	private String descEstado;
 }

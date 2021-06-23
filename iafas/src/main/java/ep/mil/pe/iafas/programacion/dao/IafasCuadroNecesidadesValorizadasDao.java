@@ -26,4 +26,14 @@ public class IafasCuadroNecesidadesValorizadasDao {
 		return list;
 	}
 	
+	public List<IafasCuadroNecesidadesValorizadas> mostrarCNV(IafasCuadroNecesidadesValorizadas objBn) {
+		List<IafasCuadroNecesidadesValorizadas> list = null;
+		SqlSession session = this.sqlSessionFactory.openSession();
+		try {
+			list = session.selectList("IafasCuadroNecesidadesValorizadas.mostrarCNV",objBn);
+		} finally {
+			session.close();
+		}
+		return list;
+	}
 }

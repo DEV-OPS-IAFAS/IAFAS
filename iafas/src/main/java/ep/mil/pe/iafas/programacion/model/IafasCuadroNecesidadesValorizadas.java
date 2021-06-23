@@ -29,4 +29,7 @@ public class IafasCuadroNecesidadesValorizadas {
 	private BigDecimal total;
 	private BigDecimal totalProgramado;
 	private BigDecimal totalMetaFisica;
+	private String descripcionItem;
+	private String descripcionCadenaGasto;
+	private String cadenaGasto;
 }

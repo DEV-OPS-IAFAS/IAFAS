@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>IAFAS</title>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
+	
+	<link href="css/estilos.css" rel="stylesheet" type="text/css" />
+		<link href="css/Botones.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/css/bootstrap/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/css/style.css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/icon/themify-icons/themify-icons.css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/icon/icofont/css/icofont.css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/icon/font-awesome/css/font-awesome.min.css" />
+
+	<style type="text/css">
+button.ui-button {
+	margin-right: .5rem;
+}
+</style>
+
+</h:head>
+
+<body class="formulario">
+
+	<script>
+		
+	</script>
+
+	<h:form id="frm_EventoSecundarios">
+	<center class="label label-inverse-success">
+	 <label >LISTADO DE EVENTOS SECUNDARIOS</label>
+	 </center>
+
+	 <p:panel header="Datos de Busqueda" >
+			<p:panelGrid columns="6" styleClass="panel">
+				<h:outputLabel value="A.F" styleClass="etiqueta" style="font-size:11px;font-weight:bold;" />
+				<h:selectOneMenu  id="cboPeriodo"  styleClass="select" value="#{iafasCuadroNecesidadesController.cperiodo}">
+				<f:ajax  render="frm_EventoSecundarios:dTableEventoFinal" listener="#{iafasCuadroNecesidadesController.buscarCabeceraEvtSecundario()}"/>
+				 	<f:selectItem itemValue="0" itemLabel="Seleccione" />
+					<f:selectItems var="option" value="#{mbCombos.periodos}" />
+				</h:selectOneMenu>
+				
+				<h:outputLabel  value="Fte.Financ:" styleClass="etiqueta" style="font-size:11px;font-weight:bold;"    />
+				<h:selectOneMenu  id="cboFuenFinanc"  styleClass="select" value="#{iafasCuadroNecesidadesController.fteFinanc}">
+				<f:ajax  render="frm_EventoSecundarios:dTableEventoFinal" listener="#{iafasCuadroNecesidadesController.buscarCabeceraEvtSecundario()}"/>
+					<f:selectItem itemValue="0" itemLabel="Seleccione" />
+						<f:selectItems var="optionFuente" value="#{mbCombos.fuenteFinanciamiento}" />
+				</h:selectOneMenu>
+
+				<p:commandButton oncomplete="PF('modalCabecera').show()" 
+				 	title="Click aqui para Nuevo Registro" value="Nuevo" action="#{iafasCuadroNecesidadesController.nuevoEventoSecundario()}" update="frm_EventoSecundarios:modalCabecera" >
+				 </p:commandButton>
+				  
+   			</p:panelGrid>
+
+			<p:panel>
+				<p:panel header="Datos Encontrados" >
+					<p:panelGrid columns="1" styleClass="panel">
+						<f:facet name="header">
+						  <div class="p-d-flex p-jc-between p-ai-center">
+							 <p:panelGrid columns="3">	
+							    <p:outputLabel style="text-align: left" value="EVENTO ANTERIOR:#{iafasCuadroNecesidadesController.varEventoAnteriorSecundario}" />
+							    <p:outputLabel style="text-align: left" value="TAREA:#{iafasCuadroNecesidadesController.nombreTarea}" />
+							    <p:outputLabel style="text-align: left" value="NIVEL : #{iafasCuadroNecesidadesController.varInicioNivelSecundario} de #{iafasCuadroNecesidadesController.varFinNivelSecundario}" />
+							 </p:panelGrid>
+						   </div>
+						</f:facet>
+					        
+						 <p:dataTable id="dTableEventoSecundario" var="tbleEventoSecundario"
+							value="#{iafasCuadroNecesidadesController.listaCabeceraEvtSecundario}"
+							selection="#{iafasCuadroNecesidadesController.beanEveSec}"
+							rowKey="#{tbleEventoSecundario.cperiodoCodigo}#{tbleEventoSecundario.ntareaPresupuestalCodigo}#{tbleEventoSecundario.nfuenteFinanciamientoCodigo}
+							#{tbleEventoSecundario.veventoPrincipalCodigo}#{tbleEventoSecundario.ntareaPresupuestalCodigo}"
+							selectionMode="single" style="font-size:11px;"
+							emptyMessage="No se encontro Datos registrados">
+ 							
+							<p:column style="width:5px; text-align: center" headerText="CODIGO">
+								<p:outputLabel value="#{tbleEventoSecundario.veventoPrincipalCodigo}" /> 
+							</p:column>
+
+							<p:column style="width:80px; text-align: center" headerText="EVENTO SECUNDARIO">
+								<p:outputLabel value="#{tbleEventoSecundario.veventoPrincipalNombre}" /> 
+							</p:column>
+							
+							
+							<p:column style="width:10px; text-align: right" headerText="MONTO">
+								<p:outputLabel value="0.00" >
+									<f:convertNumber maxFractionDigits="2" minFractionDigits="2"
+										type="number" locale="en" />
+								</p:outputLabel> 
+							</p:column>
+						
+						</p:dataTable> 
+        	
+        		<p:contextMenu for="dTableEventoSecundario" style="width:200px;">
+            		<p:menuitem value="Editar"  />
+            		<p:menuitem value="Eliminar" />
+            		<p:menuitem value="Anterior"   update="frm_EventoSecundarios" action="#{iafasCuadroNecesidadesController.verEventoAnterior()}"  />
+            		<p:menuitem value="Siguiente " update="frm_EventoSecundarios" action="#{iafasCuadroNecesidadesController.verEventoSiguiente()}" />            		
+        		</p:contextMenu>
+        		
+					</p:panelGrid>
+				</p:panel>
+			</p:panel>
+		</p:panel>
+		
+		<p:dialog header="EVENTO SECUNDARIO - Nivel #{iafasCuadroNecesidadesController.varInicioNivelSecundario}" id="modalCabecera" widgetVar="modalCabecera" showEffect="fade" minHeight="200" width="400" >
+			
+			<h:panelGrid columns="2" styleClass="panel">
+				<h:outputLabel value="Evento: " styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />	
+				<h:inputText styleClass="input"  id="inpt_codigo" value="#{iafasCuadroNecesidadesController.codigoEventoSecundario}"  disabled="true"/>
+				<h:outputLabel value="Nombre:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
+				<p:inputText styleClass="input"  placeholder="NOMBRE EVENTO" style="text-transform:uppercase" id="inpt_evento" 
+				value="#{iafasCuadroNecesidadesController.nombreEventoSecundario}" />
+				
+			</h:panelGrid>
+			
+				<f:facet name="footer">
+					<p:commandButton value="Cerrar" styleClass="ui-button-outlined ui-button-danger" oncomplete="PF('modalCabecera').hide()" />
+					<p:commandButton  value="Grabar" styleClass="ui-button-outlined ui-button-success" 
+						update="frm_EventoSecundarios:dTableEventoSecundario" oncomplete="PF('modalCabecera').hide()"
+					  action="#{iafasCuadroNecesidadesController.insRegEventoSecundario()}" />
+				</f:facet>	 
+		</p:dialog>	
+		
+	</h:form>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/jquery/jquery.min.js "></script>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/jquery-ui/jquery-ui.min.js "></script>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/popper.js/popper.min.js"></script>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/bootstrap/js/bootstrap.min.js "></script>
+	<!-- waves js -->
+	<script src="material_able-main/assets/pages/waves/js/waves.min.js"></script>
+	<!-- jquery slimscroll js -->
+	<script type="text/javascript"
+		src="material_able-main/assets/js/jquery-slimscroll/jquery.slimscroll.js"></script>
+
+	<!-- slimscroll js -->
+	<script
+		src="material_able-main/assets/js/jquery.mCustomScrollbar.concat.min.js "></script>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/script.js "></script>
+</body>
+
+</html>

@@ -96,7 +96,8 @@
 		ret.por_imp nporImp,
 		ret.nimp_ret_sol importeRetencion, 
         (select imp.vdes_imp from iafas_impuesto imp where imp.vcod_imp=ret.vcod_imp) descRetencion, 
-        cad.VID_CLASIFICADOR AS idClasificador , PK_AUX_CLASIFICADOR(cad.VID_CLASIFICADOR) AS cadena, PK_AUX_NOM_CLASIFICADOR(cad.VID_CLASIFICADOR) desCadena
+        cad.VID_CLASIFICADOR AS idClasificador , PK_AUX_CLASIFICADOR(cad.VID_CLASIFICADOR) AS cadena, PK_AUX_NOM_CLASIFICADOR(cad.VID_CLASIFICADOR) desCadena,
+        ret.VNRO_COM AS vnroCom , ret.VSERIE_COM as vserieCom, ret.VTIP_DOCUMENTO_COM AS vtipDocumentoCom
 		FROM iafas_movimiento cab, iafas_devengado dev , iafas_ret_comprobante ret , iafas_ret_comprobante_cad cad
 		where 
 		cab.VANO=dev.VANO AND

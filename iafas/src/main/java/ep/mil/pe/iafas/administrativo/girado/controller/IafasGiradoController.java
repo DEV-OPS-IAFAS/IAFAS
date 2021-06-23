@@ -29,7 +29,6 @@ import ep.mil.pe.iafas.configuracion.util.Constantes;
 import ep.mil.pe.iafas.configuracion.util.Response;
 import ep.mil.pe.iafas.seguridad.controller.IafasUsuariosController;
 import lombok.Data;
-import lombok.extern.java.Log;
 
 @Data
 @ManagedBean(name = "iafasGiradoController")
@@ -52,7 +51,8 @@ public class IafasGiradoController implements Serializable{
 	private List<IafasMovimientoCadenas> listaPorGirarCadenas = new ArrayList<IafasMovimientoCadenas>();
 	private List<IafasMovimientoCadenas> listaGiradasCadenas = new ArrayList<IafasMovimientoCadenas>();
 	private List<IafasComprobanteRetencion> listaRetencionesPorGirar = new ArrayList<IafasComprobanteRetencion>();
-	private BigDecimal ntipCam;
+	private BigDecimal ntipCam= BigDecimal.ONE;
+	private BigDecimal ntipCamPopUp = BigDecimal.ONE;
 	private String entidadGiro;
 	private String tipoGiro;
 	private String tipMon;
@@ -69,14 +69,26 @@ public class IafasGiradoController implements Serializable{
 	private String messages = Constantes.MESSAGE_VALIDACION_PARAMETROS;
 	private String cuentaGiro;
 	private ArrayList<SelectItem> cuentaEntidadGiro;
-	private BigDecimal montoTecho;
-	private BigDecimal montoSaldo;
+	private BigDecimal montoTecho = Constantes.ZERO_BIG_DECIMAL;
+	private BigDecimal montoSaldo = Constantes.ZERO_BIG_DECIMAL;
 	/*booleanos para mostrar objetos*/
 	private boolean muestraCheckGiro = false;
 	private boolean muestraBotonGiroTodo = false;
 	private boolean muestraGiroCadenas = false;
 	private boolean muestraGiroRetenciones = false;
 	private boolean valueCheckGiro = false;
+	private boolean esGiro = false;
+	private boolean esDevengado = false;
+	private List<IafasGirado> listaGiradosExp = new ArrayList<IafasGirado>();
+	private boolean noEsSoles = false;
+	private String cuentaGiroPopUp;
+	private ArrayList<SelectItem> cuentaEntidadGiroPopUp;
+	private BigDecimal montoTechoPopUp = Constantes.ZERO_BIG_DECIMAL;
+	private BigDecimal montoSaldoPopUp = Constantes.ZERO_BIG_DECIMAL;
+	private String entidadGiroPopUp;
+	private String tipoGiroPopUp;
+	private String tipMonPopUp;
+	
 	
 	public IafasGiradoController() {
 		//buscarGirados();
@@ -99,6 +111,25 @@ public class IafasGiradoController implements Serializable{
 		
 		logger.info("[FIN:] Metodo : cargarCuentasEntidades");
 		return this.cuentaEntidadGiro;
+	}
+	
+	public ArrayList<SelectItem>  cargarCuentasEntidadesPopUp(){
+		logger.info("[INICIO:] Metodo : cargarCuentasEntidadesPopUp");
+		
+		this.cuentaEntidadGiroPopUp = new ArrayList<>();
+		
+		IafasEntidadesCuentas objBn =  new IafasEntidadesCuentas();
+		objBn.setCodigoEntidad(entidadGiroPopUp);
+		IafasEntidadesCuentasDao objDao =  new IafasEntidadesCuentasDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasEntidadesCuentas> lsts = objDao.cargarCuentasPorEntidades(objBn);
+		
+		for(IafasEntidadesCuentas obj : lsts) {
+			this.cuentaEntidadGiroPopUp.add(
+					new SelectItem(obj.getCentidadCuenta(), obj.getDescripcionTipoCuenta()+":"+ obj.getCentidadCuenta()));
+		}
+		
+		logger.info("[FIN:] Metodo : cargarCuentasEntidadesPopUp");
+		return this.cuentaEntidadGiroPopUp;
 	}
 	
 	public List<String> completeText(String query) {
@@ -129,12 +160,38 @@ public class IafasGiradoController implements Serializable{
 		IafasEntidadesCuentasDao objDao = new IafasEntidadesCuentasDao(MySQLSessionFactory.getSqlSessionFactory());
 		List<IafasEntidadesCuentas> lst = objDao.cargarMontosCuenta(objBn);
 		
-		for(IafasEntidadesCuentas obj : lst) {
-			setMontoTecho(obj.getNmontoCuentaTecho());
-			setMontoSaldo(obj.getNmontoCuentaSaldo());
+		if(lst.size()>0  ) {
+			for(IafasEntidadesCuentas obj : lst) {
+				setMontoTecho(obj.getNmontoCuentaTecho());
+				setMontoSaldo(obj.getNmontoCuentaSaldo());
+			}
+		}else {
+			setMontoTecho(montoTecho);
+			setMontoSaldo(montoSaldo);
 		}
 		
 		logger.info("[FIN:] Metodo : cargarMontosCuenta");
+	}
+	
+	public void cargarMontosCuentaPopUp() {
+		logger.info("[INICIO:] Metodo : cargarMontosCuentaPopUp");
+		IafasEntidadesCuentas objBn = new IafasEntidadesCuentas();
+		objBn.setCodigoEntidad(entidadGiroPopUp);
+		objBn.setCentidadCuenta(cuentaGiroPopUp);
+		IafasEntidadesCuentasDao objDao = new IafasEntidadesCuentasDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasEntidadesCuentas> lst = objDao.cargarMontosCuenta(objBn);
+		
+		if(lst.size()>0  ) {
+			for(IafasEntidadesCuentas obj : lst) {
+				setMontoTechoPopUp(obj.getNmontoCuentaTecho());
+				setMontoSaldoPopUp(obj.getNmontoCuentaSaldo());
+			}
+		}else {
+			setMontoTechoPopUp(montoTechoPopUp);
+			setMontoSaldoPopUp(montoSaldoPopUp);
+		}
+		
+		logger.info("[FIN:] Metodo : cargarMontosCuentaPopUp");
 	}
 	
 	public List<IafasGirado> buscarGirados() {
@@ -151,7 +208,11 @@ public class IafasGiradoController implements Serializable{
 		usuarioSession=(IafasUsuariosController)session.getAttribute("iafasUsuariosController");
 		String codUsu = usuarioSession.getIdUsuario();
 		IafasGiradoDao giradoDao = new IafasGiradoDao(MySQLSessionFactory.getSqlSessionFactory());
-		List<IafasGirado> lstGirados = giradoDao.obtenerExpedientesGirados(codUsu);
+		IafasGirado objbn =  new IafasGirado();
+		objbn.setVano(vano);
+		objbn.setVusuarioIng(codUsu);
+		
+		List<IafasGirado> lstGirados = giradoDao.obtenerExpedientesGirados(objbn);
 		
 		if (lstGirados.size() > 0) {
 			for (IafasGirado objBeanLista : lstGirados) {
@@ -176,50 +237,79 @@ public class IafasGiradoController implements Serializable{
 		IafasGirado objBn = new IafasGirado();
 		objBn.setVano(vano);
 		objBn.setVregSiaf(vregSiaf);
-		List<IafasGirado> lstporGirar = giradoDao.TraerDatosFaseDevengado(objBn);
-		if (lstporGirar.size() > 0) {
-			for (IafasGirado objBeanLista : lstporGirar) {
-				setVglosa(objBeanLista.getVglosa().toUpperCase());
-				setImpMonSol(objBeanLista.getImpMonSol());
-				setVruc(objBeanLista.getVruc());
-				setVcci(objBeanLista.getVcci());
-				setCproveedorCuentaBanco(objBeanLista.getCproveedorCuentaBanco());
-				setNtipCam(objBeanLista.getNtipCam());
-				setDescProveedor(Constantes.DOS_PUNTOS.concat(objBeanLista.getDescProveedor()));
-				setSimboloMondea(objBeanLista.getSimboloMondea());
-				setNombreBanco(objBeanLista.getDescBanco());
-				setMuestraCheckGiro(true);
-				setValueCheckGiro(false);
-				this.listaPorGirar.add(objBeanLista);
-			}
-			obtenerCadenasPorGirar();
-			obtenerRetencionesparaGiro();
-		} else {
-			logger.info("en el else de bsuquedas");
-			obtenerCadenasPorGirar();
-			obtenerRetencionesparaGiro();
-			setMuestraCheckGiro(false);
-			setValueCheckGiro(false);
-			setMuestraGiroCadenas(false);
-			setMuestraGiroRetenciones(false);
-			setVglosa(Constantes.VACIO);
-			setVruc(Constantes.VACIO);
-			setVcci(Constantes.VACIO);
-			setCproveedorCuentaBanco(Constantes.VACIO);
-			setImpMonSol(null);
-			setNombreBanco(Constantes.VACIO);
-			setSimboloMondea(Constantes.VACIO);
-			setDescProveedor(Constantes.VACIO);
+		
+		if(isGirado()) {
 			this.typeMessages = Constantes.UNO_NEGATIVO;
-			this.messages = Constantes.MESSAGE_VALIDACION_BUSQUEDA_GIRO;
+			this.messages = Constantes.MESSAGE_IS_GIRO;
 			PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
 			refreshMessage();
-			showMessages(typeMessages,messages );
-		}
-
+			showMessages(typeMessages, messages);
+		}else {
+			List<IafasGirado> lstporGirar = giradoDao.TraerDatosFaseDevengado(objBn);
+			if (lstporGirar.size() > 0) {
+				for (IafasGirado objBeanLista : lstporGirar) {
+					setVglosa(objBeanLista.getVglosa().toUpperCase());
+					setImpMonSol(objBeanLista.getImpMonSol());
+					setVruc(objBeanLista.getVruc());
+					setVcci(objBeanLista.getVcci());
+					setCproveedorCuentaBanco(objBeanLista.getCproveedorCuentaBanco());
+					//setNtipCam(objBeanLista.getNtipCam());
+					setDescProveedor(Constantes.DOS_PUNTOS.concat(objBeanLista.getDescProveedor()));
+					setSimboloMondea(objBeanLista.getSimboloMondea());
+					setNombreBanco(objBeanLista.getDescBanco());
+					setMuestraCheckGiro(true);
+					setValueCheckGiro(false);
+					this.listaPorGirar.add(objBeanLista);
+				}
+				obtenerCadenasPorGirar();
+				obtenerRetencionesparaGiro();
+			} else {
+				logger.info("en el else de busquedas");
+				setMuestraCheckGiro(false);
+				setValueCheckGiro(false);
+				setMuestraGiroCadenas(false);
+				setMuestraGiroRetenciones(false);
+				obtenerCadenasPorGirar();
+				obtenerRetencionesparaGiro();
+				setVglosa(Constantes.VACIO);
+				setVruc(Constantes.VACIO);
+				setVcci(Constantes.VACIO);
+				setCproveedorCuentaBanco(Constantes.VACIO);
+				setImpMonSol(null);
+				setNombreBanco(Constantes.VACIO);
+				setSimboloMondea(Constantes.VACIO);
+				setDescProveedor(Constantes.VACIO);
+				this.typeMessages = Constantes.UNO_NEGATIVO;
+				this.messages = Constantes.MESSAGE_VALIDACION_BUSQUEDA_GIRO;
+				PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
+				refreshMessage();
+				showMessages(typeMessages, messages);
+			}
+		}	
 		logger.info("[FIN:] Metodo : buscarPorSiafAno");
 		return listaPorGirar;
 	}
+	
+	public boolean isGirado() {
+		logger.info("[INICIO:] Metodo : isGirado");
+		IafasGiradoDao giradoDao = new IafasGiradoDao(MySQLSessionFactory.getSqlSessionFactory());
+		IafasGirado objBn = new IafasGirado();
+		objBn.setVano(vano);
+		objBn.setVregSiaf(vregSiaf);
+		List<IafasGirado> lst = giradoDao.obtenerMontoCabeceraGiro(objBn);
+		BigDecimal montoGiro = lst.get(0).getImporteCabeceraGiro();
+		
+		if (montoGiro.compareTo(BigDecimal.ZERO)!= 0) {
+			esGiro = true;
+			setEsGiro(true);
+		}else {
+			setEsGiro(false);
+		}
+
+		logger.info("[FIN:] Metodo : isGirado"+esGiro);
+		return esGiro;
+	}
+	
 	
 	private void obtenerCadenasPorGirar() {
 		logger.info("[INICIO:] Metodo : obtenerCadenasPorGirar");
@@ -265,10 +355,14 @@ public class IafasGiradoController implements Serializable{
 		
 		List<IafasMovimientoCadenas> lsts = objDao.obtenerCadenasGiradas(objBn);
 
-		if (lsts.size() > 0 || lsts != null) {
+		if ( lsts.size()>0) {
 			for (IafasMovimientoCadenas obj : lsts) {
 				listaGiradasCadenas.add(obj);
 			}
+			muestraGiroCadenas = true;
+		}
+		else {
+			muestraGiroCadenas = false;
 		}
 		logger.info("[FIN:] Metodo : obtenerCadenasPorGirar");
 	}
@@ -287,17 +381,21 @@ public class IafasGiradoController implements Serializable{
 				
 		List<IafasComprobanteRetencion> lsts = objDao.obtenerRetencionesparaGiro(objBn);
 
-		if ( lsts != null ) {
+		if ( lsts.size()>0) {
 			setMuestraGiroRetenciones(true);
 			for (IafasComprobanteRetencion obj : lsts) {
 				listaRetencionesPorGirar.add(obj);
 			}
+			muestraGiroRetenciones = true;
+		}
+		else {
+			muestraGiroRetenciones = false;
 		}
 		logger.info("[FIN:] Metodo : obtenerRetencionesparaGiro");
 		
 	}
 	
-	public void insRegistroGiradoCab() {
+	public void  insRegistroGiradoCab() {
 		logger.info("[INICIO:] Metodo : insRegistroGiradoCab:::");
 		
 		IafasGiradoDao giradoDao = new IafasGiradoDao(MySQLSessionFactory.getSqlSessionFactory());
@@ -310,14 +408,23 @@ public class IafasGiradoController implements Serializable{
 		IafasGirado objBn = new IafasGirado();
 		objBn.setVano(vano);
 		objBn.setVregSiaf(vregSiaf);
-		objBn.setVctaCodigo(cuentaGiro);
-		objBn.setVcodTipGiro(tipoGiro);
 		objBn.setVglosa(vglosa);
 		objBn.setImpMonSol(impMonSol);
 		objBn.setMode(Constantes.MODE_REGISTRO);
 		objBn.setVruc(vruc);
-		objBn.setNtipCam(ntipCam);
-		objBn.setVtipMon(tipMon);
+		if(tipoInsercion.equals(Constantes.GIRO_TOTAL)) {
+			objBn.setVtipMon(tipMon);
+			objBn.setNtipCam(ntipCam);	
+			objBn.setVctaCodigo(cuentaGiro);
+			objBn.setVcodTipGiro(tipoGiro);
+		}
+		else {
+			objBn.setVtipMon(tipMonPopUp);
+			objBn.setNtipCam(ntipCamPopUp);
+			objBn.setVctaCodigo(cuentaGiroPopUp);
+			objBn.setVcodTipGiro(tipoGiroPopUp);
+		}
+		
 		objBn.setVusuarioIng(codUsu);
 		objBn.setTipoInsercion(tipoInsercion);
 		objBn.setBancodBco(entidadGiro); 
@@ -369,7 +476,6 @@ public class IafasGiradoController implements Serializable{
 
 		try {
 			response = giradoDao.mantenimientoGiradoCab(objBn);
-			logger.info("respueesta de anulacion:.::"+response.getCodigoRespuesta());
 			if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
 				this.typeMessages = Constantes.CERO_INT;
 				this.messages = response.getMensajeRespuesta();
@@ -412,6 +518,11 @@ public class IafasGiradoController implements Serializable{
 		setEntidadGiro(Constantes.VACIO);
 		setCuentaGiro(Constantes.VACIO);
 		setMuestraBotonGiroTodo(false);
+		setEsGiro(false);
+		setMontoSaldo(BigDecimal.ZERO);
+		setMontoSaldoPopUp(BigDecimal.ZERO);
+		setMontoTecho(BigDecimal.ZERO);
+		setMontoTechoPopUp(BigDecimal.ZERO);
 		logger.info("[FIN:] Metodo : limpiarcampos");
 	}
 	
@@ -435,6 +546,14 @@ public class IafasGiradoController implements Serializable{
 			muestraGiroCadenas = false;
 			muestraGiroRetenciones = false;
 			muestraBotonGiroTodo = true;
+			setTipoInsercion(tipoInsercion);
+			if(Constantes.UNO_STRING.equals(tipMon)) {
+				noEsSoles = false;
+			}
+			else {
+				noEsSoles = true;
+			}
+			
 		} else {
 			obtenerCadenasPorGirar();
 			obtenerRetencionesparaGiro();
@@ -492,40 +611,132 @@ public class IafasGiradoController implements Serializable{
 	
 	private boolean validacionesGiro() {
 		boolean pasoGrabar = false;
-		logger.info(" validando monto ::::>"+impMonSol + " - "+montoTecho + " - "+montoSaldo + " - "+tipMon + " - "+entidadGiro +" - "+cuentaGiro);
-		if (Constantes.CERO_STRING.equals(entidadGiro)) {
-			this.typeMessages = Constantes.DOS_INT;
-			this.messages = Constantes.MESSAGE_VALIDACION_ENTIDAD_GIRO;
-			PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
-			refreshMessage();
-			showMessages(typeMessages, messages);
-			return pasoGrabar = true;
-		} else if (Constantes.CERO_STRING.equals(cuentaGiro)) {
-			this.typeMessages = Constantes.DOS_INT;
-			this.messages = Constantes.MESSAGE_VALIDACION_CUENTA_GIRO;
-			PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
-			refreshMessage();
-			showMessages(typeMessages, messages);
-			return pasoGrabar = true;
-		} 
-		else if (impMonSol.compareTo(montoTecho) == Constantes.UNO_INT) {
-			this.typeMessages = Constantes.DOS_INT;
-			this.messages = Constantes.MESSAGE_VALIDACION_MONTO_GIRO;
-			PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
-			refreshMessage();
-			showMessages(typeMessages, messages);
-			return pasoGrabar = true;
-		} else if (impMonSol.compareTo(montoSaldo) == Constantes.UNO_INT) {
-			this.typeMessages = Constantes.DOS_INT;
-			this.messages = Constantes.MESSAGE_VALIDACION_SALDO_GIRO;
-			PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
-			refreshMessage();
-			showMessages(typeMessages, messages);
-			pasoGrabar = true;
+		if (Constantes.GIRO_TOTAL.equals(tipoInsercion)) {
+			if (Constantes.CERO_STRING.equals(entidadGiro)) {
+				this.typeMessages = Constantes.DOS_INT;
+				this.messages = Constantes.MESSAGE_VALIDACION_ENTIDAD_GIRO;
+				PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
+				refreshMessage();
+				showMessages(typeMessages, messages);
+				return pasoGrabar = true;
+			} else if (Constantes.CERO_STRING.equals(cuentaGiro)) {
+				this.typeMessages = Constantes.DOS_INT;
+				this.messages = Constantes.MESSAGE_VALIDACION_CUENTA_GIRO;
+				PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
+				refreshMessage();
+				showMessages(typeMessages, messages);
+				return pasoGrabar = true;
+			} else if (impMonSol.compareTo(montoTecho) == Constantes.UNO_INT) {
+				this.typeMessages = Constantes.DOS_INT;
+				this.messages = Constantes.MESSAGE_VALIDACION_MONTO_GIRO;
+				PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
+				refreshMessage();
+				showMessages(typeMessages, messages);
+				return pasoGrabar = true;
+			} else if (impMonSol.compareTo(montoSaldo) == Constantes.UNO_INT) {
+				this.typeMessages = Constantes.DOS_INT;
+				this.messages = Constantes.MESSAGE_VALIDACION_SALDO_GIRO;
+				PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
+				refreshMessage();
+				showMessages(typeMessages, messages);
+				pasoGrabar = true;
+			} else if (!Constantes.UNO_STRING.equals(tipMon)) {
+				if (ntipCam.equals(BigDecimal.ONE) || ntipCam == null || ntipCam.equals(BigDecimal.ZERO)) {
+					logger.info("en el ifffff:::." + tipMon + " - " + ntipCam);
+					this.typeMessages = Constantes.DOS_INT;
+					this.messages = Constantes.MESSAGE_VALIDACION_TIPO_CAMBIO;
+					PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
+					refreshMessage();
+					showMessages(typeMessages, messages);
+					pasoGrabar = true;
+				}
+			}
 		}
+		else {
+			if (Constantes.CERO_STRING.equals(entidadGiroPopUp)) {
+				this.typeMessages = Constantes.DOS_INT;
+				this.messages = Constantes.MESSAGE_VALIDACION_ENTIDAD_GIRO;
+				PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
+				refreshMessage();
+				showMessages(typeMessages, messages);
+				return pasoGrabar = true;
+			} else if (Constantes.CERO_STRING.equals(cuentaGiroPopUp)) {
+				this.typeMessages = Constantes.DOS_INT;
+				this.messages = Constantes.MESSAGE_VALIDACION_CUENTA_GIRO;
+				PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
+				refreshMessage();
+				showMessages(typeMessages, messages);
+				return pasoGrabar = true;
+			} else if (impMonSol.compareTo(montoTechoPopUp) == Constantes.UNO_INT) {
+				this.typeMessages = Constantes.DOS_INT;
+				this.messages = Constantes.MESSAGE_VALIDACION_MONTO_GIRO;
+				PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
+				refreshMessage();
+				showMessages(typeMessages, messages);
+				return pasoGrabar = true;
+			} else if (impMonSol.compareTo(montoSaldoPopUp) == Constantes.UNO_INT) {
+				this.typeMessages = Constantes.DOS_INT;
+				this.messages = Constantes.MESSAGE_VALIDACION_SALDO_GIRO;
+				PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
+				refreshMessage();
+				showMessages(typeMessages, messages);
+				pasoGrabar = true;
+			} else if (!Constantes.UNO_STRING.equals(tipMonPopUp)) {
+				if (ntipCamPopUp.equals(BigDecimal.ONE) || ntipCamPopUp == null || ntipCamPopUp.equals(BigDecimal.ZERO)) {
+					logger.info("en el ifffff:::." + tipMon + " - " + ntipCam);
+					this.typeMessages = Constantes.DOS_INT;
+					this.messages = Constantes.MESSAGE_VALIDACION_TIPO_CAMBIO;
+					PrimeFaces.current().ajax().update("frm_Girado:pnl_messages");
+					refreshMessage();
+					showMessages(typeMessages, messages);
+					pasoGrabar = true;
+				}
+			}
+		}
+		
 		return pasoGrabar;
 	}
 	
+	public void limpiarPopUp() {
+		logger.info("[INICIO:] Metodo : limpiarPopUp:::");
+		this.tipoInsercion = Constantes.GIRO_TOTAL;
+		setTipoInsercion(tipoInsercion);
+		logger.info("[FIN:] Metodo : limpiarPopUp:::");
+	}
+	
+	public String buscarGiradosPorExpediente() {
+
+		logger.info("[INICIO:] Metodo : buscarGiradosPorExpediente");
+
+		this.listaGiradosExp = new ArrayList<>();
+		if (this.listaGiradosExp != null)
+			this.listaGiradosExp.clear();
+
+		IafasGiradoDao giradoDao = new IafasGiradoDao(MySQLSessionFactory.getSqlSessionFactory());
+		IafasGirado objBn = new IafasGirado();
+		objBn.setVano(vano);
+		objBn.setVregSiaf(vregSiaf);
+		List<IafasGirado> lstGirados = giradoDao.obtenerGiradosPorExpediente(objBn);
+
+		if (lstGirados.size() > 0) {
+			for (IafasGirado objBeanLista : lstGirados) {
+				this.listaGiradosExp.add(objBeanLista);
+			}
+		}
+
+		logger.info("[FIN:] Metodo : buscarGiradosPorExpediente");
+		return Constantes.CONSULTA_PRINCIPAL_GIROS;
+	}
+	
+	public void cambiarEstadoTipocambio() {
+		logger.info("[INICIO:] Metodo : cambiarEstadoTipocambio:::");
+		if (Constantes.UNO_STRING.equals(tipMon)) {
+			noEsSoles = false;
+		} else {
+			noEsSoles = true;
+		}
+		logger.info("[FIN:] Metodo : cambiarEstadoTipocambio:::");
+	}
 	
 	private ExternalContext extContext() {
 		FacesContext c = FacesContext.getCurrentInstance();

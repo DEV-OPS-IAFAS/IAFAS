@@ -50,20 +50,48 @@
 		 CASE cab.VCOD_ESTADO
     	WHEN '2' THEN 'REGISTRADO'
     	ELSE 'ANULADO'  END desEstado
-        ##dev.CPROVEEDOR_RUC AS vruc , 
-		##(SELECT pv.CPROVEEDOR_CCI FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS vcci, 
-		##(SELECT pv.CPROVEEDOR_CUENTA_BANCO FROM iafas_proveedores pv where pv.CPROVEEDOR_RUC = dev.CPROVEEDOR_RUC ) AS cproveedorCuentaBanco
-		FROM iafas_movimiento cab, iafas_girado gir
+        FROM iafas_movimiento cab, iafas_girado gir
 		where 
 		cab.VANO=gir.VANO AND
 		cab.VSECUENCIA=gir.VSECUENCIA AND
 		cab.VSECUENCIA_INT=gir.VSECUENCIA_INT AND
-		cab.VANO='2021'  AND 
+		cab.VANO=#{vano}  AND 
 		cab.VUSUARIO_ING=#{vusuarioIng} AND 
 		cab.VFASE = 'G'
 	</select>
  
-  <select id="obtenerGirados"
+  <select id="obtenerMontoCabeceraGiro"
+		parameterType="ep.mil.pe.iafas.administrativo.girado.model.IafasGirado"
+		resultType="ep.mil.pe.iafas.administrativo.girado.model.IafasGirado">
+		SELECT IFNULL(SUM(cab.NIMP_MON_SOL), 0) as importeCabeceraGiro
+        FROM iafas_movimiento cab, iafas_girado gir
+		where 
+		cab.VANO=gir.VANO AND
+		cab.VSECUENCIA=gir.VSECUENCIA AND
+		cab.VSECUENCIA_INT=gir.VSECUENCIA_INT AND
+		cab.VANO=#{vano}  AND 
+		cab.VREG_SIAF=#{vregSiaf} AND 
+		cab.VFASE = 'G' and 
+        cab.VCOD_ESTADO = '2'
+	</select>
+ 
+  <select id="obtenerMontoCabeceraDevengado"
+		parameterType="ep.mil.pe.iafas.administrativo.girado.model.IafasGirado"
+		resultType="ep.mil.pe.iafas.administrativo.girado.model.IafasGirado">
+		SELECT IFNULL(SUM(cab.NIMP_MON_SOL), 0) as importeCabeceraDevengado
+        FROM iafas_movimiento cab, iafas_devengado dev
+		where 
+		cab.VANO=dev.VANO AND
+		cab.VSECUENCIA=dev.VSECUENCIA AND
+		cab.VSECUENCIA_INT=dev.VSECUENCIA_INT AND
+		cab.VANO=#{vano}  AND 
+		cab.VREG_SIAF=#{vregSiaf} AND 
+		cab.VFASE = 'D' and 
+        cab.VCOD_ESTADO = '2'
+	</select>
+	
+	
+	<select id="obtenerGiradosPorExpediente"
 		parameterType="ep.mil.pe.iafas.administrativo.girado.model.IafasGirado"
 		resultType="ep.mil.pe.iafas.administrativo.girado.model.IafasGirado">
 		SELECT cab.VSECUENCIA AS vsecuencia, cab.VANO AS vano, cab.VSECUENCIA_INT AS vsecuenciaInt,  
@@ -81,10 +109,10 @@
 		cab.VANO=gir.VANO AND
 		cab.VSECUENCIA=gir.VSECUENCIA AND
 		cab.VSECUENCIA_INT=gir.VSECUENCIA_INT AND
-		cab.VANO='2021'  AND 
+		cab.VANO=#{vano}  AND 
 		cab.VREG_SIAF=#{vregSiaf} AND 
-		cab.VFASE = 'G'
+		cab.VFASE = 'G'  
+		
 	</select>
- 
  
 </mapper>

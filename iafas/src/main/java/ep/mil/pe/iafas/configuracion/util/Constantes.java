@@ -70,4 +70,5 @@ public class Constantes {
 	public static final String MESSAGE_VALIDACION_TIPO_CAMBIO= "Debe llenar correctamente el tipo de cambio.";
 	public static final boolean FALSE = false;
 	public static final boolean TRUE = true;
+	public static final String TEXTO_HTS = "HTS-";
 }

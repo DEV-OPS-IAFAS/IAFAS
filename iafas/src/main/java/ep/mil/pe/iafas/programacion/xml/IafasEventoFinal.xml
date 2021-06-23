@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="IafasEventoFinal">
+    <resultMap id="resultado" type="IafasEventoFinal" />
+    
+<select id="mostrarCabeceraEvtFinal"
+		parameterType="ep.mil.pe.iafas.programacion.model.IafasEventoFinal"
+		resultType="ep.mil.pe.iafas.programacion.model.IafasEventoFinal">
+		SELECT CAB.CPERIODO_CODIGO AS cperiodoCodigo, CAB.NFUENTE_FINANCIAMIENTO_CODIGO AS nfuenteFinanciamientoCodigo, 
+		CAB.NTAREA_PRESUPUESTAL_CODIGO AS ntareaPresupuestalCodigo, CAB.CANIO_REGISTRO AS canioRegistro, 
+		CAB.VEVENTO_PRINCIPAL_CODIGO AS veventoPrincipalCodigo, FIN.NEVENTO_FINAL_CODIGO AS neventoFinalCodigo,
+		FIN.VEVENTO_FINAL_NOMBRE AS veventoFinalNombre, FIN.NEVENTO_FINAL_PRIORIDAD AS neventoFinalPrioridad,
+		FIN.NEVENTO_FINAL_META_FISICA AS neventoFinalMetaFisica , FIN.CESTADO_CODIGO AS cestadoCodigo,
+		(SELECT e.VESTADO_DESCRIPCION FROM iafas_estados e where CAB.CESTADO_CODIGO = e.cestado_codigo) as descEstado 
+		 FROM IAFAS_EVENTO_PRINCIPAL CAB , IAFAS_EVENTO_FINAL FIN
+		WHERE 
+		CAB.VEVENTO_PRINCIPAL_CODIGO = FIN.VEVENTO_PRINCIPAL_CODIGO AND
+		CAB.CPERIODO_CODIGO=#{cperiodoCodigo} AND 
+		CAB.NFUENTE_FINANCIAMIENTO_CODIGO=#{nfuenteFinanciamientoCodigo} 
+		AND CAB.NTAREA_PRESUPUESTAL_CODIGO = #{ntareaPresupuestalCodigo}
+		AND CAB.VEVENTO_PRINCIPAL_ANEXO=#{veventoPrincipalCodigo}
+		
+	</select>
+	  <!-- 
+	<select id="generarCorrelativo"
+		parameterType="ep.mil.pe.iafas.programacion.model.IafasEventoPrincipal"
+		resultType="ep.mil.pe.iafas.programacion.model.IafasEventoPrincipal">
+		SELECT COUNT(*)+1 AS veventoPrincipalCodigo
+		 ###IFNULL(LPAD(MAX(VEVENTO_PRINCIPAL_CODIGO+1),4,0),'1') AS veventoPrincipalCodigo
+		FROM IAFAS_EVENTO_PRINCIPAL
+		WHERE 
+        CPERIODO_CODIGO=#{cperiodoCodigo}
+        AND NFUENTE_FINANCIAMIENTO_CODIGO=#{nfuenteFinanciamientoCodigo}
+        AND NTAREA_PRESUPUESTAL_CODIGO = #{ntareaPresupuestalCodigo}
+        AND CANIO_REGISTRO= #{canioRegistro}
+	</select>
+	
+	
+	  <select id="SP_IDU_EVENTO_PRINCIPAL" statementType="CALLABLE" parameterType="ep.mil.pe.iafas.programacion.model.IafasEventoPrincipal">
+        <![CDATA[call SP_IDU_EVENTO_PRINCIPAL(#{cperiodoCodigo, mode=IN}, #{nfuenteFinanciamientoCodigo, mode=IN},#{ntareaPresupuestalCodigo, mode=IN}, #{veventoPrincipalCodigo, mode=IN}, #{veventoPrincipalAnexo, mode=IN}, #{veventoPrincipalNombre, mode=IN}, 
+        #{veventoPrincipalComentario, mode=IN}, #{neventoPrincipalNivel, mode=IN},#{neventoPrincipalNiveles, mode=IN}, #{ceventoPrincipalFinal, mode=IN}, #{vusuarioCodigo, mode=IN}, #{mode, mode=IN},#{codigoRespuesta,mode=OUT,jdbcType=VARCHAR}, #{mensajeRespuesta,mode=OUT,jdbcType=VARCHAR})
+         ]]>
+    </select>
+    -->
+	
+</mapper>	
