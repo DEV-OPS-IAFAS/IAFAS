@@ -58,7 +58,7 @@ button.ui-button {
 				</h:selectOneMenu>
 
 				<p:commandButton oncomplete="PF('modalCabecera').show()" 
-				 	title="Click aqui para Nuevo Registro" value="Nuevo" action="#{iafasCuadroNecesidadesController.nuevoEventoSecundario()}" update="frm_MantCNV:modalCabecera" >
+				 	title="Click aqui para Nuevo Registro" value="Nuevo" action="#{iafasCuadroNecesidadesController.nuevoCNV()}" update="frm_MantCNV:modalCabecera" >
 				 </p:commandButton>
 				  
    			</p:panelGrid>
@@ -107,42 +107,49 @@ button.ui-button {
 							</p:column>
 						
 							<p:column style="width:80px; text-align: center" headerText="CADENA GASTO">
-								<p:outputLabel value="#{tbleCNV.descripcionCadenaGasto}" /> 
+								<p:outputLabel value="#{tbleCNV.cadenaGasto}:#{tbleCNV.descripcionCadenaGasto}" /> 
 							</p:column>
 							
 						</p:dataTable> 
         	
-        		<!-- <p:contextMenu for="dTableCNV" style="width:200px;">
-            		<p:menuitem value="Editar"  />
-            		<p:menuitem value="Eliminar" />
-            		<p:menuitem value="Anterior"   update="frm_MantCNV" action="#{iafasCuadroNecesidadesController.verEventoAnterior()}"  />
-            		<p:menuitem value="Siguiente " update="frm_MantCNV" action="#{iafasCuadroNecesidadesController.verEventoSiguiente()}" />            		
-        		</p:contextMenu> -->
-        		
 					</p:panelGrid>
 				</p:panel>
 			</p:panel>
 		</p:panel>
 		
-		<!-- <p:dialog header="EVENTO SECUNDARIO - Nivel #{iafasCuadroNecesidadesController.varInicioNivelSecundario}" id="modalCabecera" widgetVar="modalCabecera" showEffect="fade" minHeight="200" width="400" >
-			
+		 <p:dialog header="CUADR DE NECESIDADES VALORIZADAS" id="modalCabecera" widgetVar="modalCabecera" showEffect="fade" minHeight="300" width="1200" >
+		 
 			<h:panelGrid columns="2" styleClass="panel">
-				<h:outputLabel value="Evento: " styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />	
-				<h:inputText styleClass="input"  id="inpt_codigo" value="#{iafasCuadroNecesidadesController.codigoEventoSecundario}"  disabled="true"/>
-				<h:outputLabel value="Nombre:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
-				<p:inputText styleClass="input"  placeholder="NOMBRE EVENTO" style="text-transform:uppercase" id="inpt_evento" 
-				value="#{iafasCuadroNecesidadesController.nombreEventoSecundario}" />
-				
+				<h:outputLabel value="Item: " styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />	
+				<p:autoComplete  id="acItem" value="#{iafasCuadroNecesidadesController.descripcionItem}" 
+		          completeMethod="#{iafasCuadroNecesidadesController.completeText}" scrollHeight="250">
+		          <p:ajax event="itemSelect" listener="#{iafasCuadroNecesidadesController.onItemSelect}" update="lblDescripcionUnidadMedida"/>
+	            </p:autoComplete>
+				<h:outputLabel value="Cadena Gasto:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
+				<h:selectOneMenu id="cboCadena" styleClass="select" value="#{iafasCuadroNecesidadesController.codCla}">
+					<f:selectItem itemValue="0" itemLabel="Seleccione" />
+					<f:selectItems var="optionCadena" value="#{iafasCuadroNecesidadesController.cadenas}" />
+				</h:selectOneMenu>
+				<h:outputLabel value="Unidad Medida:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
+				<h:outputLabel  id="lblDescripcionUnidadMedida" value="#{iafasCuadroNecesidadesController.lblDescripcionUnidadMedida}" 
+				styleClass="outLabel"  style="font-size:12px;font-weight:bold; " />
+				<h:outputLabel value="Cantidad:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
+				<p:inputText styleClass="input" id="inptCantidad" value="#{iafasCuadroNecesidadesController.cantidad}" modifyValueOnWheel="false" />
+				<h:outputLabel value="Val. Ref. S/.:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
+				<p:inputText styleClass="input" id="inptValRef" value="#{iafasCuadroNecesidadesController.valorReferencial}" modifyValueOnWheel="false" />
+				<h:outputLabel value="Total:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
+				<p:inputText styleClass="input" id="inptTotal" value="#{iafasCuadroNecesidadesController.total}" modifyValueOnWheel="false" />
 			</h:panelGrid>
 			
 				<f:facet name="footer">
 					<p:commandButton value="Cerrar" styleClass="ui-button-outlined ui-button-danger" oncomplete="PF('modalCabecera').hide()" />
 					<p:commandButton  value="Grabar" styleClass="ui-button-outlined ui-button-success" 
 						update="frm_MantCNV:dTableCNV" oncomplete="PF('modalCabecera').hide()"
-					  action="#{iafasCuadroNecesidadesController.insRegEventoSecundario()}" />
+					  action="#{iafasCuadroNecesidadesController.mantRegistroCNV()}" />
 				</f:facet>	 
+				 
 		</p:dialog>	
-		 -->
+		 
 	</h:form>
 	<script type="text/javascript"
 		src="material_able-main/assets/js/jquery/jquery.min.js "></script>

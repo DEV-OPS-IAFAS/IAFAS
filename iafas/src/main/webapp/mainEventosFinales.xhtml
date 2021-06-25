@@ -71,7 +71,8 @@ button.ui-button {
 						 <p:dataTable id="dTableEventoFinal" var="tbleEventoFinal"
 							value="#{iafasCuadroNecesidadesController.listaCabeceraEvtFinal}"
 							selection="#{iafasCuadroNecesidadesController.beanEveFinal}"
-							rowKey="#{tbleEventoFinal.cperiodoCodigo}#{tbleEventoFinal.ntareaPresupuestalCodigo}#{tbleEventoFinal.nfuenteFinanciamientoCodigo}#{tbleEventoFinal.neventoFinalCodigo}"
+							rowKey="#{tbleEventoFinal.cperiodoCodigo}#{tbleEventoFinal.ntareaPresupuestalCodigo}#{tbleEventoFinal.nfuenteFinanciamientoCodigo}
+							#{tbleEventoFinal.neventoFinalCodigo}"
 							selectionMode="single" style="font-size:11px;"
 							emptyMessage="No se encontro Datos registrados">
 
@@ -110,8 +111,9 @@ button.ui-button {
 						</p:dataTable> 
 						
         		<p:contextMenu for="dTableEventoFinal" style="width:200px;">
-            		<p:menuitem value="Editar"  />
-            		<p:menuitem value="Eliminar" />
+            		<p:menuitem value="Editar"  update="frm_EventoFinal:modalCabecera"  
+            			oncomplete="PF('modalCabecera').show()" action="#{iafasCuadroNecesidadesController.editEventoFinal()}" />
+            		<p:menuitem value="Eliminar" update="frm_EventoFinal:dTableEventoFinal" action="#{iafasCuadroNecesidadesController.anularEventoFinal()}"  />
             		<p:menuitem value="Cerrar" />
             		<p:menuitem value="Duplicar Evento" />
             		<p:menuitem value="Regresar" />
@@ -133,7 +135,7 @@ button.ui-button {
 				<h:outputLabel value="Orden:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
 				<p:spinner id="nroOrden" value="#{iafasCuadroNecesidadesController.numeroOrden}"/>
 				<h:outputText value="Cantidad:" styleClass="etiqueta" />
-        		<p:inputText  id="inpt_Canidad"  value="#{iafasCuadroNecesidadesController.cantidadeventoFinal}" modifyValueOnWheel="false" >
+        		<p:inputText  id="inpt_Canidad" style="text-align: right"  value="#{iafasCuadroNecesidadesController.cantidadeventoFinal}" modifyValueOnWheel="false" >
 	        		<f:convertNumber maxFractionDigits="0" minFractionDigits="0" type="number" locale="en" />
 				</p:inputText>
         		
@@ -142,7 +144,7 @@ button.ui-button {
 				<f:facet name="footer">
 					<p:commandButton value="Cerrar" styleClass="ui-button-outlined ui-button-danger" oncomplete="PF('modalCabecera').hide()" />
 					<p:commandButton  value="Grabar" update="frm_EventoFinal:dTableEventoFinal" styleClass="ui-button-outlined ui-button-success" oncomplete="PF('modalCabecera').hide()"
-					  action="#{iafasCuadroNecesidadesController.insRegEventoFinal()}" />
+					  action="#{iafasCuadroNecesidadesController.mantRegEventoFinal()}" />
 				</f:facet>	
 		</p:dialog>	
 		

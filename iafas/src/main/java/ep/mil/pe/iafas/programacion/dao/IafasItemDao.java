@@ -26,4 +26,14 @@ public class IafasItemDao {
 		return list;
 	}
 
+	public List<IafasItem> obtenerItemSeleccionado(String  nombreItem) {
+		List<IafasItem> list = null;
+		SqlSession session = this.sqlSessionFactory.openSession();
+		try {
+			list = session.selectList("IafasItem.obtenerItemSeleccionado", nombreItem);
+		} finally {
+			session.close();
+		}
+		return list;
+	}
 }

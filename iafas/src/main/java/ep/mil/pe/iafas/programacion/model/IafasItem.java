@@ -17,5 +17,5 @@ public class IafasItem {
 	private String cItemClaseCodigo;
 	private String cItemFamiliaCodigo;
 	private String cEstadoCodigo;
-	private String descripcionMoneda;
+	private String descripcionUnidadMedida;
 }

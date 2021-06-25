@@ -67,7 +67,6 @@ button.ui-button {
    			</p:panelGrid>
 
 			<p:panel>
-				<p:panel header="Datos Encontrados">
 					<p:panelGrid columns="6" styleClass="panel">
 						
 						<f:facet name="header">
@@ -111,15 +110,14 @@ button.ui-button {
 						</p:dataTable>
 
 				<p:contextMenu for="dTableEventoPrincipal" style="width:200px;">
-            		<p:menuitem value="Editar"  />
-            		<p:menuitem value="Eliminar" />
+            		<p:menuitem value="Editar" update="frm_EventoPrincipal:modalCabecera"  
+            			oncomplete="PF('modalCabecera').show()"  action="#{iafasCuadroNecesidadesController.editEventoPrincipal()}" />
+            		<p:menuitem value="Eliminar" update="frm_EventoPrincipal:dTableEventoPrincipal" action="#{iafasCuadroNecesidadesController.anularEventoPrincipal()}"/>
             		<p:menuitem value="Cantidades Fisicas" />
             		<p:menuitem value="Ver Evento" action="#{iafasCuadroNecesidadesController.verEvento()}" />            		
         		</p:contextMenu>
         	
-        	
 					</p:panelGrid>
-				</p:panel>
 			</p:panel>
 		</p:panel>
 		
@@ -150,7 +148,7 @@ button.ui-button {
 					<p:commandButton value="Cerrar" styleClass="ui-button-outlined ui-button-danger" oncomplete="PF('modalCabecera').hide()" />
 					<p:commandButton  value="Grabar" styleClass="ui-button-outlined ui-button-success"
 						update="frm_EventoPrincipal:dTableEventoPrincipal"  oncomplete="PF('modalCabecera').hide()"
-					  	action="#{iafasCuadroNecesidadesController.insRegEventoPrincipal()}" />
+					  	action="#{iafasCuadroNecesidadesController.mantRegEventoPrincipal()}" />
 				</f:facet>	
 		</p:dialog>	
 		

@@ -32,4 +32,5 @@ public class IafasCuadroNecesidadesValorizadas {
 	private String descripcionItem;
 	private String descripcionCadenaGasto;
 	private String cadenaGasto;
+	private String mode;
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -13,16 +14,15 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.primefaces.event.SelectEvent;
 
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
 import ep.mil.pe.iafas.configuracion.util.Constantes;
 import ep.mil.pe.iafas.configuracion.util.Response;
-import ep.mil.pe.iafas.programacion.dao.IafasClasificadoresDao;
 import ep.mil.pe.iafas.programacion.dao.IafasCuadroNecesidadesValorizadasDao;
 import ep.mil.pe.iafas.programacion.dao.IafasEventoFinalDao;
 import ep.mil.pe.iafas.programacion.dao.IafasEventoPrincipalDao;
 import ep.mil.pe.iafas.programacion.dao.IafasItemDao;
-import ep.mil.pe.iafas.programacion.model.IafasClasificadores;
 import ep.mil.pe.iafas.programacion.model.IafasCuadroNecesidadesValorizadas;
 import ep.mil.pe.iafas.programacion.model.IafasEventoFinal;
 import ep.mil.pe.iafas.programacion.model.IafasEventoPrincipal;
@@ -71,13 +71,22 @@ public class IafasCuadroNecesidadesController implements Serializable {
 	private String codigoEventoFinal;
 	private String nombreEventoFinal;
 	private int numeroOrden;
-	private BigDecimal cantidadeventoFinal;
-	private IafasEventoFinal beanEveFinal;//se cambio  IafasEventoPrincipal por IafasEventoFinal
+	private int cantidadeventoFinal;
+	private IafasEventoFinal beanEveFinal;
 	private int neventoFinalCodigo = Constantes.CERO_INT;
 	private List<IafasCuadroNecesidadesValorizadas> listaMantCNV = new ArrayList<IafasCuadroNecesidadesValorizadas>();
 	private int codigoTarea=Constantes.CERO_INT;
 	private List<SelectItem> cadenas;
 	private List<SelectItem> items;
+	private int codigoItem;
+	private String lblDescripcionUnidadMedida;
+	private String codigoUnidadMedida;	
+	private String codCla;
+	private String descripcionItem;
+	private BigDecimal cantidad;
+	private BigDecimal valorReferencial;
+	private BigDecimal total;
+	private String modo = Constantes.MODE_REGISTRO;
 	
 	public List<IafasCuadroNecesidadesValorizadas> buscarCabeceraCNV() {
 		logger.info("[INICIO:] Metodo : buscarCabeceraCNV");
@@ -143,6 +152,7 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		logger.info("[INICIO:] Metodo : nuevo");
 		int codTarea= bean.getNtareaPresupuestalCodigo();
 		String numeroCorrelativo= generarCorrelativo(codTarea);
+		setModo(Constantes.MODE_REGISTRO);
 		codigoEventoPrincipal = Constantes.TEXTO_CNV
 								.concat(String.valueOf(codTarea))
 								.concat(Constantes.GUION)
@@ -169,7 +179,7 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		return numero;
 	}
 	
-	public void insRegEventoPrincipal() {
+	public void mantRegEventoPrincipal() {
 		logger.info("[INICIO:] Metodo : insRegEventoPrincipal:::");
 		
 		IafasEventoPrincipalDao objDao =  new IafasEventoPrincipalDao(MySQLSessionFactory.getSqlSessionFactory());
@@ -195,7 +205,7 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		}
 		objBn.setCeventoPrincipalFinal(varEventoPrincipalFinal);
 		objBn.setVusuarioCodigo(codUsu);
-		objBn.setMode(Constantes.MODE_REGISTRO);
+		objBn.setMode(modo);
 		try {
 			response = objDao.mantenimientoEventoPrincipal(objBn);
 			buscarCabeceraEP();
@@ -298,7 +308,6 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		objBn.setNtareaPresupuestalCodigo(bean.getNtareaPresupuestalCodigo());
 		objBn.setNeventoPrincipalNivel(varInicioNivelSecundario);
 		objBn.setVeventoPrincipalAnexo(varEventoAnteriorSecundario);
-		logger.info("parametros en buscar::::"+varInicioNivelSecundario+ " * "+varEventoAnteriorSecundario);
 		List<IafasEventoPrincipal> lstCab = objDao.verEventoSecundario(objBn);
 		if (lstCab.size() > 0) {
 			for (IafasEventoPrincipal objBeanLista : lstCab) {
@@ -506,37 +515,35 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		return listaCabeceraEvtSecundario;
 	}
 	
-	public void insRegEventoFinal() {
-		logger.info("[INICIO:] Metodo : insRegEventoFinal:::");
+	public void mantRegEventoFinal() {
+		logger.info("[INICIO:] Metodo : mantRegEventoFinal:::");
 		
-		IafasEventoPrincipalDao objDao =  new IafasEventoPrincipalDao(MySQLSessionFactory.getSqlSessionFactory());
-		IafasEventoPrincipal objBn = new IafasEventoPrincipal();
+		IafasEventoFinalDao objDao =  new IafasEventoFinalDao(MySQLSessionFactory.getSqlSessionFactory());
+		IafasEventoFinal objBn = new IafasEventoFinal();
 		HttpSession session = null;
 		session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
 		IafasUsuariosController usuarioSession = new IafasUsuariosController();
 		usuarioSession = (IafasUsuariosController) session.getAttribute("iafasUsuariosController");
 		String codUsu = usuarioSession.getIdUsuario();
-		logger.info("datos de isercion: "+codigoEventoSecundario +" - "+varEventoAnteriorSecundario);
 		Response response = new Response();
 		objBn.setCperiodoCodigo(cperiodo);
 		objBn.setNfuenteFinanciamientoCodigo(Integer.parseInt(fteFinanc));
 		objBn.setNtareaPresupuestalCodigo(bean.getNtareaPresupuestalCodigo());
-		objBn.setVeventoPrincipalCodigo(codigoEventoSecundario);
-		objBn.setVeventoPrincipalAnexo(varEventoAnteriorSecundario);
-		objBn.setVeventoPrincipalNombre(nombreEventoFinal);
-		objBn.setNeventoPrincipalNivel(varInicioNivelSecundario);
-		objBn.setNeventoPrincipalNiveles(varFinNivelSecundario);
-		objBn.setCeventoPrincipalFinal(Constantes.UNO_STRING);
+		objBn.setVeventoPrincipalCodigo(varEventoAnteriorSecundario);
+		objBn.setNeventoFinalCodigo(neventoFinalCodigo);
+		objBn.setVeventoFinalNombre(nombreEventoFinal);
+		objBn.setNeventoFinalPrioridad(numeroOrden);
+		objBn.setNeventoFinalMetaFisica(cantidadeventoFinal);
 		objBn.setVusuarioCodigo(codUsu);
-		objBn.setMode(Constantes.MODE_REGISTRO);
+		objBn.setMode(modo);
 		try {
-			response = objDao.mantenimientoEventoPrincipal(objBn);
-			buscarCabeceraEvtSecundario();
+			response = objDao.mantenimientoEventoFinal(objBn);
+			buscarCabeceraEvtFinal();
 		} catch (Exception e) {
 			logger.error("error : " + e.getMessage().toString());
 		} finally {
 
-			logger.info("[FIN:] Metodo : insRegEventoFinal:::");
+			logger.info("[FIN:] Metodo : mantRegEventoFinal:::");
 		}
 	}
 	
@@ -583,46 +590,204 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		logger.info("[INICIO:] Metodo : getCadenas");
 		
 		this.cadenas = new ArrayList<>();
-		IafasClasificadoresDao cadenasDao = new IafasClasificadoresDao(MySQLSessionFactory.getSqlSessionFactory());
-		List<IafasClasificadores> lstCadenas = cadenasDao.obtenerClasificadores();
-		for (IafasClasificadores p : lstCadenas) {
-			this.cadenas.add(new SelectItem(p.getCodCla(),
-					p.getCadena() +" - " +p.getNombreCla()));
+		IafasCuadroNecesidadesValorizadasDao cadenasDao = new IafasCuadroNecesidadesValorizadasDao(MySQLSessionFactory.getSqlSessionFactory());
+		IafasCuadroNecesidadesValorizadas objBn= new IafasCuadroNecesidadesValorizadas();
+		
+		objBn.setCperiodoCodigo(cperiodo);
+		objBn.setNfuenteFinanciamientoCodigo(Integer.parseInt(fteFinanc));
+		objBn.setNtareaPresupuestalCodigo(bean.getNtareaPresupuestalCodigo());
+		
+		List<IafasCuadroNecesidadesValorizadas> lstCadenas = cadenasDao.obtenerCadenasGastoCNV(objBn);
+		for (IafasCuadroNecesidadesValorizadas p : lstCadenas) {
+			this.cadenas.add(new SelectItem(p.getNclasificadorPresupuestalCodigo(),
+					p.getCadenaGasto() +" : " +p.getDescripcionCadenaGasto()));
 		}
 		logger.info("[FIN:] Metodo : getCadenas");
 		return this.cadenas;
 	}
 	
-	public List<SelectItem> getItems() {
-		logger.info("[INICIO:] Metodo : getItems");
-		
-		this.items = new ArrayList<>();
-		IafasItemDao itemDao = new IafasItemDao(MySQLSessionFactory.getSqlSessionFactory());
-		List<IafasItem> lstItems = itemDao.obtenerItems();
-		for (IafasItem p : lstItems) {
-			this.items.add(new SelectItem(p.getNItemCodigo(),
-					p.getNItemCodigo() +" - " +p.getVItemDescripcion()));
-		}
-		logger.info("[FIN:] Metodo : getItems");
-		return this.items;
-
-	}
-	
-	
 	public void nuevoCNV() {
 		logger.info("[INICIO:] Metodo : nuevoCNV");
-		int codTarea= bean.getNtareaPresupuestalCodigo();
-		String numeroCorrelativoSecundario= generarCorrelativoSecundario(codTarea,varEventoAnteriorSecundario);
-		String numeroAnterior = varEventoAnteriorSecundario.substring(4, varEventoAnteriorSecundario.length());
-		codigoEventoPrincipal = Constantes.TEXTO_HTS
-								.concat(numeroAnterior)
-								.concat(Constantes.GUION)
-								.concat(numeroCorrelativoSecundario);
-		setCodigoEventoSecundario(codigoEventoPrincipal);
 		logger.info("[FIN:] Metodo : nuevoCNV");
 	}
 	
+	public List<String> completeText(String query) {
+
+		logger.info("[INICIO:] Metodo : completeText");
+		String queryLowerCase = query.toLowerCase();
+		List<String> itemList = new ArrayList<>();
+		IafasItemDao itemDao = new IafasItemDao(MySQLSessionFactory.getSqlSessionFactory());
+		
+		List<IafasItem> lsts = itemDao.obtenerItems();
+		for (IafasItem obj : lsts) {
+			descripcionItem = obj.getVItemDescripcion();
+			codigoItem = obj.getNItemCodigo();
+			itemList.add(descripcionItem);
+		}
+		logger.info("[FIN:] Metodo : completeText");
+		return itemList
+				.stream()
+				.filter(t -> t.toLowerCase().startsWith(queryLowerCase))
+				.collect(Collectors.toList());
+	}
 	
+	public void onItemSelect(SelectEvent<String> event) {
+		logger.info("[INICIO:] Metodo : onItemSelect");
+		IafasItemDao itemDao = new IafasItemDao(MySQLSessionFactory.getSqlSessionFactory());
+
+		logger.info("evento selecccionado:"+event.getObject());
+		
+		List<IafasItem> lsts = itemDao.obtenerItemSeleccionado(event.getObject());
+		for (IafasItem obj : lsts) {
+			lblDescripcionUnidadMedida = obj.getDescripcionUnidadMedida();
+			codigoUnidadMedida = obj.getCUnidadMedidaCodigo();
+			codigoItem = obj.getNItemCodigo();
+		}
+		
+		logger.info("[FIN:] Metodo : onItemSelect");
+	}
+
+	public void mantRegistroCNV() {
+		logger.info("[INICIO:] Metodo : mantRegistroCNV:::");
+
+		logger.info("datos a insertar::::>"+codigoUnidadMedida + " *  "+codCla+" *  "+cantidad +" *  "+valorReferencial + " *  "+cperiodo+" * "+
+		fteFinanc +" * "+varEventoFinal +" * "+neventoFinalCodigo);
+		
+		IafasCuadroNecesidadesValorizadasDao objDao =  new IafasCuadroNecesidadesValorizadasDao(MySQLSessionFactory.getSqlSessionFactory());
+		IafasCuadroNecesidadesValorizadas objBn = new IafasCuadroNecesidadesValorizadas();
+		HttpSession session = null;
+		session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		IafasUsuariosController usuarioSession = new IafasUsuariosController();
+		usuarioSession = (IafasUsuariosController) session.getAttribute("iafasUsuariosController");
+		String codUsu = usuarioSession.getIdUsuario();
+		Response response = new Response();
+		objBn.setCperiodoCodigo(cperiodo);
+		objBn.setNfuenteFinanciamientoCodigo(Integer.parseInt(fteFinanc));
+		objBn.setNtareaPresupuestalCodigo(bean.getNtareaPresupuestalCodigo());
+		objBn.setVeventoPrincipalCodigo(varEventoFinal);
+		objBn.setNeventoFinalCodigo(neventoFinalCodigo);
+		objBn.setNclasificadorPresupuestalCodigo(Integer.parseInt(codCla));
+		objBn.setNitemCodigo(codigoItem);
+		objBn.setCunidadMedidaCodigo(codigoUnidadMedida);
+		objBn.setNcnvCantidad(cantidad);
+		objBn.setNcnvPrecio(valorReferencial);
+		objBn.setVusuarioCodigo(codUsu);
+		objBn.setMode(modo);
+		
+		try {
+			response = objDao.mantenimientoCNV(objBn);
+			buscarCNVMantenimiento();
+		} catch (Exception e) {
+			logger.error("error : " + e.getMessage().toString());
+		} finally {
+
+			logger.info("[FIN:] Metodo : mantRegistroCNV:::");
+		}		
+	}
+	
+	/*MODIFICACION DE LOS REGISTROS*/
+	public void editEventoPrincipal() {
+		logger.info("[INICIO:] Metodo : editEventoPrincipal");
+		IafasEventoPrincipalDao objDao = new IafasEventoPrincipalDao(MySQLSessionFactory.getSqlSessionFactory());
+		IafasEventoPrincipal objBn  = new IafasEventoPrincipal();
+		String evtPrincipalCodigoEdit = beanEvp.getVeventoPrincipalCodigo();
+		int ntareaPtalEdit = beanEvp.getNtareaPresupuestalCodigo();
+		
+		objBn.setCperiodoCodigo(cperiodo);
+		objBn.setNfuenteFinanciamientoCodigo(Integer.parseInt(fteFinanc));
+		objBn.setNtareaPresupuestalCodigo(ntareaPtalEdit);
+		objBn.setVeventoPrincipalCodigo(evtPrincipalCodigoEdit);
+		
+		List<IafasEventoPrincipal> lst = objDao.editEventoPrincipal(objBn);
+		
+		for(IafasEventoPrincipal obj : lst) {
+			setCodigoEventoPrincipal(obj.getVeventoPrincipalCodigo());
+			setNombreEvento(obj.getVeventoPrincipalNombre());
+			setComentario(obj.getVeventoPrincipalComentario());
+			setNiveles(String.valueOf(obj.getNeventoPrincipalNiveles()));
+			setModo(Constantes.MODE_ACTUALIZACION);
+			String checkeo  = obj.getCeventoPrincipalFinal();
+			if(Constantes.UNO_STRING.equals(checkeo)) {
+				setBoolCheckEventoAnexo(Constantes.TRUE);
+				actualizarBoolean();
+			}else {
+				setBoolCheckEventoAnexo(Constantes.FALSE);
+				actualizarBoolean();
+			}
+		}
+		
+		logger.info("[FIN:] Metodo : editEventoPrincipal");
+	}
+	
+	
+	public void editEventoFinal() {
+		logger.info("[INICIO:] Metodo : editEventoFinal");
+		IafasEventoFinalDao objDao = new IafasEventoFinalDao(MySQLSessionFactory.getSqlSessionFactory());
+		IafasEventoFinal objBn  = new IafasEventoFinal();
+		String evtPrincipalCodigoEdit = beanEveFinal.getVeventoPrincipalCodigo();
+		int ntareaPtalEdit = beanEveFinal.getNtareaPresupuestalCodigo();
+		int evtFinalCodigoEdit = beanEveFinal.getNeventoFinalCodigo();
+		
+		objBn.setCperiodoCodigo(cperiodo);
+		objBn.setNfuenteFinanciamientoCodigo(Integer.parseInt(fteFinanc));
+		objBn.setNtareaPresupuestalCodigo(ntareaPtalEdit);
+		objBn.setVeventoPrincipalCodigo(evtPrincipalCodigoEdit);
+		objBn.setNeventoFinalCodigo(evtFinalCodigoEdit);
+		
+		List<IafasEventoFinal> lst = objDao.editEventoFinal(objBn);
+		
+		for(IafasEventoFinal obj : lst) {
+			setNombreEventoFinal(obj.getVeventoFinalNombre());
+			setNumeroOrden(obj.getNeventoFinalPrioridad());
+			setCantidadeventoFinal(obj.getNeventoFinalMetaFisica());
+			setModo(Constantes.MODE_ACTUALIZACION);
+			setNeventoFinalCodigo(obj.getNeventoFinalCodigo());
+		}
+		
+		logger.info("[FIN:] Metodo : editEventoFinal");
+	}
+	
+	/*ANULAR REGISTROS*/
+	public void anularEventoPrincipal() {
+		logger.info("[INICIO:] Metodo : anularEventoPrincipal");
+		IafasEventoPrincipalDao objDao = new IafasEventoPrincipalDao(MySQLSessionFactory.getSqlSessionFactory());
+		IafasEventoPrincipal objBn  = new IafasEventoPrincipal();
+		Response response = new Response();
+		objBn.setCperiodoCodigo(cperiodo);
+		objBn.setNfuenteFinanciamientoCodigo(Integer.parseInt(fteFinanc));
+		objBn.setNtareaPresupuestalCodigo(beanEvp.getNtareaPresupuestalCodigo());
+		objBn.setVeventoPrincipalCodigo(beanEvp.getVeventoPrincipalCodigo());
+		objBn.setMode(Constantes.MODE_ELIMINACION_LOGICA);
+		try {
+			response = objDao.mantenimientoEventoPrincipal(objBn);
+			buscarCabeceraEP();
+		} catch (Exception e) {
+			logger.error("error : " + e.getMessage().toString());
+		} finally {
+			logger.info("[FIN:] Metodo : anularEventoPrincipal");
+		}	
+	}
+	
+	public void anularEventoFinal() {
+		logger.info("[INICIO:] Metodo : anularEventoFinal");
+		IafasEventoFinalDao objDao = new IafasEventoFinalDao(MySQLSessionFactory.getSqlSessionFactory());
+		IafasEventoFinal objBn  = new IafasEventoFinal();
+		Response response = new Response();
+		objBn.setCperiodoCodigo(cperiodo);
+		objBn.setNfuenteFinanciamientoCodigo(Integer.parseInt(fteFinanc));
+		objBn.setNtareaPresupuestalCodigo(beanEveFinal.getNtareaPresupuestalCodigo());
+		objBn.setVeventoPrincipalCodigo(beanEveFinal.getVeventoPrincipalCodigo());
+		objBn.setNeventoFinalCodigo(beanEveFinal.getNeventoFinalCodigo());
+		objBn.setMode(Constantes.MODE_ELIMINACION_LOGICA);
+		try {
+			response = objDao.mantenimientoEventoFinal(objBn);
+			buscarCabeceraEvtFinal();
+		} catch (Exception e) {
+			logger.error("error : " + e.getMessage().toString());
+		} finally {
+			logger.info("[FIN:] Metodo : anularEventoFinal");
+		}	
+	}
 	
 	private ExternalContext extContext() {
 		FacesContext c = FacesContext.getCurrentInstance();

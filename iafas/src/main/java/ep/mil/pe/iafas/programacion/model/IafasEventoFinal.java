@@ -22,4 +22,7 @@ public class IafasEventoFinal {
 	private String vusuarioCodigo;
 	private Date dusuarioFecha;
 	private String descEstado;
+	private String mode;
+	private String codigoRespuesta;
+	private String mensajeRespuesta;
 }
