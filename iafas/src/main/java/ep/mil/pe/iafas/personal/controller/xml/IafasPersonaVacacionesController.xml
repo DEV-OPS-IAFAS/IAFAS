@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="IafasPersonaVacaciones">
+	<resultMap id="iafasPersonaVacaciones" type="IafasPersonaVacaciones" />
+
+	<select id="listadoPersonalVacaciones"
+		resultType="ep.mil.pe.iafas.personal.model.IafasPersonaVacaciones"
+		parameterType="ep.mil.pe.iafas.personal.model.IafasPersonaVacaciones">
+					SELECT cperiodo_codigo cperiodoCodigo,
+					npersona_codigo npersonaCodigo,
+					(select concat(VPERSONA_PATERNO,' ',VPERSONA_MATERNO,' ' ,VPERSONA_NOMBRES) from iafas_persona where NPERSONA_CODIGO=IAFAS_PERSONAL_VACACIONES.npersona_codigo) nombreCodigo,
+					npersonal_vacaciones_codigo npersonalVacacionesCodigo,
+					dpersonal_vacaciones_fecha dpersonalVacacionesFecha,
+					dpersonal_vacaciones_inicio dpersonalVacacionesInicio,
+					dpersonal_vacaciones_din dpersonalVacacionesDin,
+					cubigeo_origen cubigeoOrigen,
+					(select  VUBIGEO_NOMBRE from iafas_ubigeo where CUBIGEO_CODIGO=IAFAS_PERSONAL_VACACIONES.cubigeo_origen) origenUbi,
+					cubigeo_destino cubigeoDestino,
+					(select  VUBIGEO_NOMBRE from iafas_ubigeo where CUBIGEO_CODIGO=IAFAS_PERSONAL_VACACIONES.cubigeo_destino) destinoUbi,
+					cestado_codigo cestadoCodigo,
+					vusuario_aprueba vusuarioAprueba ,
+					(select concat( VUSUARIO_PATERNO,' ',VUSUARIO_MATERNO,' ',VUSUARIO_NOMBRES) from  iafas_usuarios where VUSUARIO_CODIGO=IAFAS_PERSONAL_VACACIONES.vusuario_aprueba) usuarioApro,
+					dusuario_aprueba dusuarioAprueba,
+					npersonal_tipo_planilla_codigo npersonalTipoPlanillaCodigo,
+                    (select vpersonal_tipo_planilla_abreviatura from IAFAS_PERSONAL_TIPO_PLANILLA where npersonal_tipo_planilla_codigo=IAFAS_PERSONAL_VACACIONES.npersonal_tipo_planilla_codigo) destipoPlanilla,
+                    NPERSONAL_CANTIDAD_DIAS npersonalCantidadDias,
+                    NPERSONAL_CANTIDAD_HORAS npersonalCantidadHoras
+					 FROM IAFAS_PERSONAL_VACACIONES  where npersona_codigo=#{npersona_codigo}  order by npersonal_vacaciones_codigo desc
+
+	</select>
+	
+	<select id="listadoDocumento"
+		resultType="ep.mil.pe.iafas.personal.model.IafasPersonaVacaciones"
+		parameterType="ep.mil.pe.iafas.personal.model.IafasPersonaVacaciones">
+				   
+				    select 
+				    per.npersona_codigo ncodigo,
+					per.vpersona_numero_documento vpersonaNumeroDocumento,
+					per.vpersona_paterno vpersonaPaterno,
+					per.vpersona_materno vpersonaMaterno,
+					per.vpersona_nombres vpersonaNombre,
+                     (SELECT VESTADO_CIVIL_ABREVIATURA FROM iafas_estado_civil WHERE NESTADO_CIVIL_CODIGO=per.NESTADO_CIVIL_CODIGO) AS estadoCivil  ,
+                     (select  VAREA_LABORAL_ABREVIATURA  from iafas_area_laboral where CAREA_LABORAL_CODIGO=perl.CAREA_LABORAL_CODIGO) as desArea,
+                     (select  VGRADO_ABREVIATURA  from iafas_grados where NGRADO_CODIGO=perl.NGRADO_CODIGO AND CGRADO_TIPO = perl.CGRADO_TIPO) as desGrado,
+					 perl.VPERSONAL_CARGO vpersonalCargo,
+                      per.BPERSONA_FOTO   bpersonaFoto
+					 FROM     iafas_persona per
+               inner join iafas_personal perl on (
+                per.NPERSONA_CODIGO=perl.NPERSONA_CODIGO
+               ) where per.VPERSONA_NUMERO_DOCUMENTO =#{vpersonaNumeroDocumento} 
+
+	</select>
+	
+	<select id="grabarPersonalVacacion"
+		parameterType="ep.mil.pe.iafas.personal.model.IafasPersonaVacaciones"
+		statementType="CALLABLE">
+		
+		{ CALL SP_GRABAR_PERSONAL_VACACION (
+		#{cperiodoCodigo mode=IN, jdbcType=VARCHAR},
+		#{npersonaCodigo, mode=IN, jdbcType=INTEGER},
+		#{npersonalVacacionesCodigo, mode=IN, jdbcType=INTEGER},
+		#{dpersonalVacacionesFecha, mode=IN,jdbcType=DATE},
+		#{dpersonalVacacionesInicio, mode=IN,jdbcType=DATE},
+		#{dpersonalVacacionesDin, mode=IN,jdbcType=DATE},
+		#{cubigeoOrigen, mode=IN,jdbcType=VARCHAR},
+		#{cubigeoDestino, mode=IN,jdbcType=VARCHAR},
+		#{cestadoCodigo, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCreador, mode=IN,jdbcType=VARCHAR},
+		#{dusuarioCreador, mode=IN,jdbcType=DATE},		
+		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioAprueba, mode=IN,jdbcType=VARCHAR},
+		#{dusuarioAprueba, mode=IN,jdbcType=DATE},
+		#{dusuarioFecha, mode=IN,jdbcType=DATE},
+		#{npersonalTipoPlanillaCodigo, mode=IN, jdbcType=INTEGER},
+		#{npersonalCantidadDias, mode=IN, jdbcType=INTEGER},
+		#{npersonalCantidadHoras, mode=IN, jdbcType=INTEGER})}
+
+	</select>
+	
+	
+	<select id="listadoEstado"
+		resultType="ep.mil.pe.iafas.personal.model.IafasPersonaVacaciones"
+		parameterType="ep.mil.pe.iafas.personal.model.IafasPersonaVacaciones">
+				    select 
+				    NPERSONA_CODIGO codigoinicio,
+					NPERSONAL_VACACIONES_CODIGO codigovacacion,
+					DPERSONAL_VACACIONES_INICIO fecinicio,
+					DPERSONAL_VACACIONES_DIN fecfin
+					 from iafas_personal_vacaciones where NPERSONA_CODIGO=#{codigoinicio} 
+                     AND NPERSONAL_VACACIONES_CODIGO=#{codigovacacion} 
+	</select>
+	
+	<select id="actualizarPersonalVacacion"
+		parameterType="ep.mil.pe.iafas.personal.model.IafasPersonaVacaciones"
+		statementType="CALLABLE">
+		
+		{ CALL SP_UPDATE_VACACIONES (
+		#{npersonaCodigo, mode=IN, jdbcType=INTEGER},
+		#{npersonalVacacionesCodigo, mode=IN, jdbcType=INTEGER},
+		#{cestadoCodigo, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCreador, mode=IN,jdbcType=VARCHAR})}
+
+	</select>
+	
+	<select id="listadoPersonalAprobacion"
+		resultType="ep.mil.pe.iafas.personal.model.IafasPersonaVacaciones"
+		parameterType="ep.mil.pe.iafas.personal.model.IafasPersonaVacaciones">
+		
+		SELECT cperiodo_codigo cperiodoCodigo,
+					npersona_codigo npersonaCodigo,
+					(SELECT VPERSONA_NUMERO_DOCUMENTO FROM IAFAS_PERSONA WHERE NPERSONA_CODIGO =IAFAS_PERSONAL_VACACIONES.npersona_codigo) nrodocumetoPer,
+					(select concat(VPERSONA_PATERNO,' ',VPERSONA_MATERNO,' ' ,VPERSONA_NOMBRES) from iafas_persona where NPERSONA_CODIGO=IAFAS_PERSONAL_VACACIONES.npersona_codigo) nombreCodigo,
+					npersonal_vacaciones_codigo npersonalVacacionesCodigo,
+					dpersonal_vacaciones_fecha dpersonalVacacionesFecha,
+					dpersonal_vacaciones_inicio dpersonalVacacionesInicio,
+					dpersonal_vacaciones_din dpersonalVacacionesDin,
+					cubigeo_origen cubigeoOrigen,
+					(select  VUBIGEO_NOMBRE from iafas_ubigeo where CUBIGEO_CODIGO=IAFAS_PERSONAL_VACACIONES.cubigeo_origen) origenUbi,
+					cubigeo_destino cubigeoDestino,
+					(select  VUBIGEO_NOMBRE from iafas_ubigeo where CUBIGEO_CODIGO=IAFAS_PERSONAL_VACACIONES.cubigeo_destino) destinoUbi,
+					cestado_codigo cestadoCodigo,
+					vusuario_aprueba vusuarioAprueba ,
+					(select concat( VUSUARIO_PATERNO,' ',VUSUARIO_MATERNO,' ',VUSUARIO_NOMBRES) from  iafas_usuarios where VUSUARIO_CODIGO=IAFAS_PERSONAL_VACACIONES.vusuario_aprueba) usuarioApro,
+					dusuario_aprueba dusuarioAprueba,
+					npersonal_tipo_planilla_codigo npersonalTipoPlanillaCodigo,
+                    (select vpersonal_tipo_planilla_abreviatura from IAFAS_PERSONAL_TIPO_PLANILLA where npersonal_tipo_planilla_codigo=IAFAS_PERSONAL_VACACIONES.npersonal_tipo_planilla_codigo) destipoPlanilla,
+                    NPERSONAL_CANTIDAD_DIAS npersonalCantidadDias,
+                    NPERSONAL_CANTIDAD_HORAS npersonalCantidadHoras
+					 FROM IAFAS_PERSONAL_VACACIONES  where  cestado_codigo in ('PE','AP','RZ') order by npersonal_vacaciones_codigo desc
+		
+
+	</select>
+	
+</mapper>

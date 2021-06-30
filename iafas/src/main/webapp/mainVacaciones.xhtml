@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>IAFAS- REGISTRO DE PAPELETAS</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+		<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
+    </h:head>
+    <body class="formulario">
+    <script>
+    PrimeFaces.locales['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Sólo hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Fecha actual',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText: 'Todo el día',
+                today: 'Hoy',
+                clear: 'Claro'
+            };
+         function upperCase(obj) {
+        	  var x = document.getElementById(obj);
+        	  x.value = x.value.toUpperCase();
+        	}
+        	
+        	function validarSiNumero(object)
+				{
+				numero = object.value;
+				if (!/^([0-9])*$/.test(numero))
+				object.value = numero.substring(0,numero.length-1);
+				}
+    </script>
+        <h:form id="frmVacaciones" enctype="multipart/form-data">
+              <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
+            <p:panel > 
+             <p:panelGrid columns="8"  >
+                    <i class="pi pi-calendar-minus"></i>
+                    <p:outputLabel value="Registro de Vacaciones " style="color: green; font-weight: bold; font-size: 12px;"/>
+                    <h:outputText value="N° DNI : "></h:outputText>
+					<h:inputText  id="txt_nroDoc" value="#{mbVacaciones.vpersonaNumeroDocumento}"   
+							 styleClass="input" onblur="completaCeros(this.name, 8);" onkeyup="validarSiNumero(this);" ></h:inputText>
+                    <p:commandButton  value="Buscar" action="#{mbVacaciones.verPersonal()}" 
+                    icon="pi pi-search" style="height:35px;" ajax="false" />
+                   
+                </p:panelGrid>                         
+                <br/>
+                <p:fieldset legend="Datos del Personal" id="DatosPE"> 
+                <h:panelGrid columns="2" width="100%">
+                 <h:panelGrid columns="2" >
+                  <p:outputLabel value="NOMBRES Y APELLIDOS: "/>
+                 <h:outputText styleClass="outLabel"  value="#{mbVacaciones.vpersonaPaterno} #{mbVacaciones.vpersonaMaterno} #{mbVacaciones.vpersonaNombre}"/>
+                <p:outputLabel value="GRADO: "/>
+                <h:outputText styleClass="outLabel"  value="#{mbVacaciones.desGrado} "/>
+                <p:outputLabel value="AREA: "/>
+                <h:outputText styleClass="outLabel"  value="#{mbVacaciones.desArea} "/>
+                <p:outputLabel value="CARGO: "/>
+                <h:outputText styleClass="outLabel"  value="#{mbVacaciones.vpersonalCargo} "/>
+               <p:outputLabel value="ESTADO CICVIL: "/>
+                <h:outputText styleClass="outLabel"  value="#{mbVacaciones.estadoCivil} "/>
+                
+                </h:panelGrid >
+                <h:panelGrid border="2">
+                   <p:graphicImage id="graphImgPersonal" value="#{mbVacaciones.img}" style="width:100px;height:100px;" cache="false"></p:graphicImage>
+                </h:panelGrid> 
+                </h:panelGrid>
+
+                </p:fieldset>
+                <br/>
+                <p:fieldset legend="Datos de la Papeleta" id="DatosVA">
+                
+                 <h:panelGrid columns="2" style="width: 966px; ">
+                       <h:outputLabel value="Tipo de Papeleta: "/>
+						<p:selectOneMenu id="estad" value="#{mbVacaciones.npersonalTipoPlanillaCodigo}" style="width: 100px;"  >
+                            <f:selectItem itemValue="00" itemLabel="--Seleccione--"/>
+                            <f:selectItems var="plani" value="#{mbCombos.planilla}"/>
+                        </p:selectOneMenu> 
+                         <h:outputLabel value="Departamento Origen:  "/>
+                        <p:selectOneMenu id="art"  value="#{mbVacaciones.codDepartamento}"
+                        style="width:200px;" >
+                         <f:selectItem itemValue="00" itemLabel="--Seleccione--"/>
+                         <f:selectItems var="depart" value="#{mbCombos.departamento}"/>
+                          <f:ajax render="dep" listener="#{mbVacaciones.cargarProvincia()}" />
+                        </p:selectOneMenu> 
+                        <h:outputLabel value="Provincia Origen: "/>
+                        <p:selectOneMenu id="dep"  value="#{mbVacaciones.codProvincia}"
+                        style="width:200px;" >
+                         <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
+                         <f:selectItems var="documentos" value="#{mbVacaciones.provincia}"/>
+                          <f:ajax render="ubig" listener="#{mbVacaciones.cargarUbigeo()}" />                    
+                        </p:selectOneMenu>  
+                         
+                        <h:outputLabel value="Distrito Origen: "/>
+						<p:selectOneMenu id="ubig" value="#{mbVacaciones.cubigeoOrigen}" style="width: 100px;"  >
+                            <f:selectItem itemValue="00" itemLabel="--Seleccione--"/>
+                            <f:selectItems var="origen" value="#{mbVacaciones.ubigeoDeta}"/>
+                        </p:selectOneMenu> 
+                        <h:outputLabel value="Departamento Destino:  "/>
+                        <p:selectOneMenu id="artDest"  value="#{mbVacaciones.codDepartamentoDest}"
+                        style="width:200px;" >
+                         <f:selectItem itemValue="00" itemLabel="--Seleccione--"/>
+                         <f:selectItems var="depart" value="#{mbCombos.departamento}"/>
+                          <f:ajax render="depDest" listener="#{mbVacaciones.cargarProvinciaDest()}" />
+                        </p:selectOneMenu> 
+                        <h:outputLabel value="Provincia Destino: "/>
+                        <p:selectOneMenu id="depDest"  value="#{mbVacaciones.codProvinciaDest}"
+                        style="width:200px;" >
+                         <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
+                         <f:selectItems var="documentosDest" value="#{mbVacaciones.provinciaDestino}"/>
+                          <f:ajax render="ubigDest" listener="#{mbVacaciones.cargarUbigeoDest()}" />                    
+                        </p:selectOneMenu>  
+                        
+                        <h:outputLabel value="Distrito Destino: "/>
+                        <p:selectOneMenu id="ubigDest" value="#{mbVacaciones.cubigeoDestino}" style="width: 100px;"  >
+                            <f:selectItem itemValue="00" itemLabel="--Seleccione--"/>
+                             <f:selectItems var="destino" value="#{mbVacaciones.ubigeoDestino}"/>
+                        </p:selectOneMenu> 
+                        
+						    <h:outputText value="Fecha Inicio:"></h:outputText>							
+							<p:datePicker id="txt_fecIni" value="#{mbVacaciones.dpersonalVacacionesInicio}" 
+							 locale="es" monthNavigator="true" yearNavigator="true" pattern="dd/MM/yyyy" >
+							   
+							 </p:datePicker>
+							 <h:outputText value="# Dias:"></h:outputText>
+							 <h:panelGrid columns="2">
+							 <h:inputText id="dia" 
+                            styleClass="input" style="text-align: left;" size="13"
+                            maxlength="9" value="#{mbVacaciones.dias}">
+                            </h:inputText> 
+                            <p:commandLink value="Ver" actionListener="#{mbVacaciones.mostrarDias}" 
+                            update="txt_fecfin" style="font-weight:bold;color:green;"></p:commandLink>
+							 </h:panelGrid>
+																		
+							<h:outputText value="Fecha Fin:"></h:outputText>
+							<h:outputLabel id="txt_fecfin" value="#{mbVacaciones.dpersonalVacacionesDin}" styleClass="outLabel">
+							<f:converter converterId="javax.faces.DateTime" />
+                                			<f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
+							</h:outputLabel>
+							<!--  <p:datePicker id="txt_fecfin" value="#{mbVacaciones.dpersonalVacacionesDin}" disabled="true"
+							 locale="es" monthNavigator="true" yearNavigator="true" pattern="dd/MM/yyyy" 
+							 style="font-weight:bold;color:black;"/>	-->
+		     </h:panelGrid> 
+			     <br/>
+                 <h:panelGrid columns="8">
+                  <p:commandButton  value="Grabar" action="#{mbVacaciones.grabarVacaciones()}" 
+                    icon="pi pi-save" style="height:35px;" ajax="false" update="tabViewDetalle" />
+                      <p:commandButton value="Historial"  action="#{mbVacaciones.verHistorial()}" 
+                    icon="pi pi-folder-open" style="height:35px;" update="tabViewDetalle">
+                    <f:param id="pcodigoPer" name="pcodigoPer" value="#{mbVacaciones.ncodigo}" ></f:param> 
+                    </p:commandButton>
+                    <p:commandButton value="Cancelar"  
+                    icon="pi pi-arrow-left" style="height:35px;"/>
+                 </h:panelGrid>                          
+                </p:fieldset>
+                <br/> 
+                 <p:tabView id="tabViewDetalle" dynamic="true" cache="false">
+                <p:tab title="DETALLE DE PAPELETAS ">
+                <p:dataTable id="dTableVacacion" var="va" value="#{mbVacaciones.listaDetalle}" rows="5" scrollable="true" scrollHeight="175px;"
+                                             style="width: 100%;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
+                                             paginatorPosition="bottom" paginator="true" stripedRows="true"> 
+                                                                          
+                                    <p:column headerText="N° VACACIONES" style="width: 5px;" >                                        
+                                            <p:outputLabel value="#{va.npersonalVacacionesCodigo}"/>                                           
+                                    </p:column> 
+                                     <p:column headerText="TIPO PAPELETA" style="width: 5px;" >                                        
+                                            <p:outputLabel value="#{va.destipoPlanilla}"/>                                           
+                                    </p:column> 
+                                     <p:column headerText="ORIGEN" style="width: 15px; text-align:center; "  >                                        
+                                            <p:outputLabel value="#{va.origenUbi}"/>                                           
+                                    </p:column>   
+                                      <p:column headerText="DESTINO" style="width: 15px; text-align:center; " >                                        
+                                            <p:outputLabel value="#{va.destinoUbi}"/>                                           
+                                    </p:column>   
+                                    <p:column headerText="FECHA INICIO" style="width: 10px; text-align:center; ">
+                                        <p:outputLabel value="#{va.dpersonalVacacionesInicio}">
+                                           <f:converter converterId="javax.faces.DateTime" />
+                                			<f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />	
+                                        </p:outputLabel>
+                                    </p:column>   
+                                    <p:column headerText="FECHA FIN" style="width: 10px; text-align:center; ">
+                                        <p:outputLabel value="#{va.dpersonalVacacionesDin}">
+                                           <f:converter converterId="javax.faces.DateTime" />
+                                			<f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />	
+                                        </p:outputLabel>
+                                    </p:column>                                      
+                                     <p:column headerText="# DIAS" style="width: 5px;" >                                        
+                                            <p:outputLabel value="#{va.npersonalCantidadDias}"/>                                           
+                                    </p:column> 
+                                    <p:column headerText="# HORAS" style="width: 5px;" >                                        
+                                            <p:outputLabel value="#{va.npersonalCantidadHoras}"/>                                           
+                                    </p:column>                                                                
+									   <p:column headerText="ESTADO" style="width: 15px;" >                                        
+                                            <p:outputLabel value="#{va.cestadoCodigo}"/>                                           
+                                    </p:column> 
+                                    <p:column headerText="Estado" style="width: 10px; text-align:center; ">
+                                        <p:commandButton id="btn_estad" icon="pi pi-calendar-plus" 
+                                        oncomplete="PF('pRestado').show();" actionListener="#{mbVacaciones.verPersonalVacacion()}"
+                                        update="frmVacaciones:EstadoVacaciones" >
+                                          <f:param id="pdetalleCod" name="pdetalleCod" value="#{va.npersonaCodigo}"></f:param>  
+                                          <f:param id="pdetalleCodVac" name="pdetalleCodVac" value="#{va.npersonalVacacionesCodigo}"></f:param>                                   
+										</p:commandButton> 
+                                    </p:column> 
+                                </p:dataTable>
+                </p:tab>
+                </p:tabView> 
+                <p:dialog id="EstadoVacaciones" widgetVar="pRestado" modal="true" 
+                          showEffect="fade" hideEffect="explode" resizable="false">
+                    <p:panel >
+                    <br/>
+                <p:fieldset legend="Estado Vacaciones" id="DatosVAC">    
+                 <h:panelGrid columns="4" >
+                  <p:outputLabel value="FECHA INICIO: "/>
+                  <p:outputLabel value="#{mbVacaciones.fecinicio}" styleClass="outLabel">
+                                           <f:converter converterId="javax.faces.DateTime" />
+                                			<f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />	
+                   </p:outputLabel>
+                    <p:outputLabel value="FECHA FIN: "/>
+                  <p:outputLabel value="#{mbVacaciones.fecfin}" styleClass="outLabel">
+                                           <f:converter converterId="javax.faces.DateTime" />
+                                			<f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />	
+                   </p:outputLabel>
+                </h:panelGrid>    
+                <br/>            
+                        <h:panelGrid columns="2" style="width: 100%">            
+                         <h:outputLabel value="Estado: "/>
+						<h:selectOneMenu id="estadUpd" value="#{mbVacaciones.cestadoCodigo}" style="width: 100px;" styleClass="select" >
+                            <f:selectItem itemValue="00" itemLabel="--Seleccione--"/>
+                            <f:selectItem itemValue="CE" itemLabel="Cerrado"/>
+                            <f:selectItem itemValue="AN" itemLabel="Anulado"/>
+                        </h:selectOneMenu> 
+                        </h:panelGrid>                    
+                </p:fieldset>
+                <br/>
+                <p:panelGrid columns="4" >
+                    <p:commandButton  value="Grabar"  action="#{mbVacaciones.ActualizarEstado()}"  
+                    icon="pi pi-save" style="height:35px; " ajax="false"  update="tabViewDetalle" />
+                    <p:commandButton value="Cancelar"  oncomplete="PF('pRestado').hide();"
+                    icon="pi pi-arrow-left" style="height:35px; "/>
+                </p:panelGrid>   
+                               
+                    </p:panel>
+                </p:dialog>          
+            </p:panel>
+        </h:form>
+    </body>
+</html>

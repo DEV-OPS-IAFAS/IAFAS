@@ -138,4 +138,51 @@ parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
 		FUN_DESC_TIPO_PROCEDIMIENTO(ctipo_procedimiento_codigo) descripcion
 		FROM iafas_proceso_documento_tipo_procedimiento WHERE nproceso_documento_codigo = #{filtro1}
 </select>
+
+<select id="ubigeo"
+	resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
+	parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+	
+		select CUBIGEO_CODIGO AS codigo,
+		VUBIGEO_NOMBRE AS descripcion
+		from  iafas_ubigeo where  
+		CDEPARTAMENTO_CODIGO='15' and CPROVINCIA_CODIGO='01' and CESTADO_CODIGO='AC'  
+</select>
+
+<select id="tipoprovincia" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+   select CPROVINCIA_CODIGO codigo,
+			 VPROVINCIA_NOMBRE descripcion
+			  from iafas_provincia where CESTADO_CODIGO='AC' AND CDEPARTAMENTO_CODIGO=#{filtro1} 
+			   order by CDEPARTAMENTO_CODIGO asc
+</select>
+
+<select id="departamento"
+	resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
+	parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+	
+		select CDEPARTAMENTO_CODIGO codigo,
+			 VDEPARTAMENTO_NOMBRE descripcion
+			  from iafas_departamento where CESTADO_CODIGO='AC' 
+			   order by CDEPARTAMENTO_CODIGO asc
+</select>
+<select id="ubigeoDet"
+	resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
+	parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+	
+		select CUBIGEO_CODIGO AS codigo,
+		VUBIGEO_NOMBRE AS descripcion
+		from  iafas_ubigeo where  
+		concat(	CDEPARTAMENTO_CODIGO,CPROVINCIA_CODIGO)=#{filtro1}  and CESTADO_CODIGO='AC'  
+</select>
+
+<select id="tipoPlanilla"
+	resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
+	parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+	
+		select npersonal_tipo_planilla_codigo codigo,
+			 vpersonal_tipo_planilla_abreviatura descripcion
+			  from IAFAS_PERSONAL_TIPO_PLANILLA where cestado_codigo='AC' 
+			   order by npersonal_tipo_planilla_codigo asc
+</select>
 </mapper>

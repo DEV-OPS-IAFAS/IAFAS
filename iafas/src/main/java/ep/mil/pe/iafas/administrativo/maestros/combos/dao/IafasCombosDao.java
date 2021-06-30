@@ -246,4 +246,70 @@ public class IafasCombosDao {
           }
           return lista;
       }
+     
+     public List<IafasCombos> getUbigeo() {
+         List<IafasCombos> lista = null;
+         SqlSession session = sqlSessionFactory.openSession();
+         try{
+               lista = session.selectList("Combos.ubigeo");
+         }
+         finally{
+              session.close();
+         }
+         return lista;
+     }
+     
+     @SuppressWarnings("unchecked")
+  	public List<IafasCombos> getProvincia(String filtro) {
+          List<IafasCombos> lista = null;
+          SqlSession session = sqlSessionFactory.openSession();
+          try{
+                lista = session.selectList("Combos.tipoprovincia",filtro);
+          }
+          finally{
+               session.close();
+          }
+          return lista;
+      }
+     
+     
+     @SuppressWarnings("unchecked")
+ 	public List<IafasCombos> gettipoDepartamento() {
+         List<IafasCombos> lista = null;
+         SqlSession session = sqlSessionFactory.openSession();
+         try{
+               lista = session.selectList("Combos.departamento");
+         }
+         finally{
+              session.close();
+         }
+         return lista;
+     }
+     
+     
+     @SuppressWarnings("unchecked")
+   	public List<IafasCombos> getUbigeoDet(String filtro) {
+           List<IafasCombos> lista = null;
+           SqlSession session = sqlSessionFactory.openSession();
+           try{
+                 lista = session.selectList("Combos.ubigeoDet",filtro);
+           }
+           finally{
+                session.close();
+           }
+           return lista;
+       }
+      
+     @SuppressWarnings("unchecked")
+ 	public List<IafasCombos> gettipoPlanilla() {
+         List<IafasCombos> lista = null;
+         SqlSession session = sqlSessionFactory.openSession();
+         try{
+               lista = session.selectList("Combos.tipoPlanilla");
+         }
+         finally{
+              session.close();
+         }
+         return lista;
+     }
 }

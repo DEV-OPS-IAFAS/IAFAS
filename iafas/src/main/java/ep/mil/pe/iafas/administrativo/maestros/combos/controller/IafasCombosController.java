@@ -42,6 +42,11 @@ public class IafasCombosController implements Serializable {
 	public List<SelectItem> item;
 	public List<SelectItem> unidadMedida;
 	
+	public List<SelectItem> destino;
+	public List<SelectItem> provincia;
+	public List<SelectItem> departamento;
+	public List<SelectItem> planilla;	
+	
 	
 	/*Cambios agregados por Elvis Severino*/
 	private static final Logger logger = Logger.getLogger(IafasCombosController.class.getName());
@@ -226,5 +231,38 @@ public class IafasCombosController implements Serializable {
 		}
 		
 		return unidadMedida;
+	}
+	
+	public List<SelectItem> getDestino() {
+
+		destino = new ArrayList<>();
+		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasCombos> ls = cb.getUbigeo();
+		for (IafasCombos p : ls) {
+			destino.add(new SelectItem(p.getCodigo(), p.getDescripcion()));
+		}		
+		return destino;
+	}
+	
+	public List<SelectItem> getDepartamento() {
+
+		departamento = new ArrayList<>();
+		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasCombos> ls = cb.gettipoDepartamento();
+		for (IafasCombos p : ls) {
+			departamento.add(new SelectItem(p.getCodigo(), p.getDescripcion()));
+		}		
+		return departamento;
+	}
+	
+	public List<SelectItem> getPlanilla() {
+
+		planilla = new ArrayList<>();
+		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasCombos> ls = cb.gettipoPlanilla();
+		for (IafasCombos p : ls) {
+			planilla.add(new SelectItem(p.getCodigo(), p.getDescripcion()));
+		}		
+		return planilla;
 	}
 }
