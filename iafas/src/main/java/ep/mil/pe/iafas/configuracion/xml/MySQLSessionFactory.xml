@@ -53,6 +53,8 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
 	<!-- cambios agregados por Elvis Severino -->
 	 <typeAlias alias="IafasEventoFinal" 		type="ep.mil.pe.iafas.programacion.model.IafasEventoFinal"/>
       <typeAlias alias="IafasItem" 		type="ep.mil.pe.iafas.programacion.model.IafasItem"/>
+      
+      <typeAlias alias="IafasPersonaVacaciones" 		type="ep.mil.pe.iafas.personal.model.IafasPersonaVacaciones"/>
         
     </typeAliases>
 
@@ -104,6 +106,7 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
 		<!-- cambios agregados por Elvis Severino -->
 		<mapper resource="ep/mil/pe/iafas/programacion/xml/IafasEventoFinal.xml" />
 		<mapper resource="ep/mil/pe/iafas/programacion/xml/IafasItem.xml" />
+		<mapper resource="ep/mil/pe/iafas/personal/controller/xml/IafasPersonaVacacionesController.xml" />
     </mappers>
 
 </configuration>
