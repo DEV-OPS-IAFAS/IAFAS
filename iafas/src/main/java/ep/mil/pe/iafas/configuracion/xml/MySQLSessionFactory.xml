@@ -55,6 +55,12 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
       <typeAlias alias="IafasItem" 		type="ep.mil.pe.iafas.programacion.model.IafasItem"/>
       
       <typeAlias alias="IafasPersonaVacaciones" 		type="ep.mil.pe.iafas.personal.model.IafasPersonaVacaciones"/>
+      
+      <!-- cambios agregados por Elvis Severino - Modulo Logistica -->
+      <typeAlias alias="IafasAlmacenSalida" type="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalida" />
+      <typeAlias alias="IafasAlmacenSalidaDetalle" type="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaDetalle" />
+      <!-- Fin Cambios de  Elvis Severino -->
+      
         
     </typeAliases>
 
@@ -68,21 +74,9 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
                 <property name="password" value="iafasEP$2021"/>
             </dataSource>
        </environment>
-    </environments>  
+    </environments>    
     
     
-<!--     <environments default="development"> -->
-<!-- 		<environment id="development"> -->
-<!-- 			<transactionManager type="JDBC" /> -->
-<!-- 			<dataSource type="POOLED"> -->
-<!-- 				<property name="driver" value="com.mysql.jdbc.Driver" /> -->
-<!-- 				<property name="url" -->
-<!-- 					value="jdbc:mysql://localhost:3306/iafas" /> -->
-<!-- 				<property name="username" value="root" /> -->
-<!-- 				<property name="password" value="esc240789" /> -->
-<!-- 			</dataSource> -->
-<!-- 		</environment> -->
-<!-- 	</environments>  -->
      
     <mappers> 
         <!-- SE TIENE QUE MAPEAR CADA ARCHIVO XML, Q HACE REFERENCIA A CADA BEAN -->
@@ -121,6 +115,11 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
 		<mapper resource="ep/mil/pe/iafas/programacion/xml/IafasEventoFinal.xml" />
 		<mapper resource="ep/mil/pe/iafas/programacion/xml/IafasItem.xml" />
 		<mapper resource="ep/mil/pe/iafas/personal/controller/xml/IafasPersonaVacacionesController.xml" />
+		
+		<!-- cambios agregados por Elvis Severino - Modulo Logistica -->
+		<mapper resource="ep/mil/pe/iafas/logistica/controller/xml/IafasAlmacenSalida.xml" />
+		<mapper resource="ep/mil/pe/iafas/logistica/controller/xml/IafasAlmacenSalidaDetalle.xml" />
+		<!-- Fin Cambios de  Elvis Severino -->
     </mappers>
 
 </configuration>
