@@ -60,7 +60,7 @@ button.ui-button {
 				  update="frm_CuadroNecesidades:dTableCnv" />
    			</p:panelGrid>
 			
-			<p:panel header="Datos Encontrados" >
+			<p:panel>
 				<p:panelGrid columns="6" styleClass="panel">
 			
 				<p:dataTable id="dTableCnv" var="tblCnv"
@@ -68,27 +68,27 @@ button.ui-button {
 				 rowKey="#{tblCnv.cperiodoCodigo}#{tblCnv.ntareaPresupuestalCodigo}#{tblCnv.nfuenteFinanciamientoCodigo}" selectionMode="single"
 				style="font-size:11px;" emptyMessage="No se encontro Datos registrados">
 
-				<p:column style="width:100px;" headerText="TAREA">
+				<p:column style="width:80px;" headerText="TAREA">
 					<p:outputLabel value="#{tblCnv.ntareaPresupuestalCodigo}-#{tblCnv.descripcionTarea}" />
 				</p:column>
 				
-				<p:column style="width:2px; text-align: right" headerText="META FISICA">
+				<p:column style="width:20px; text-align: right" headerText="META FISICA">
 					<p:outputLabel value="#{tblCnv.totalMetaFisica}" >
 						<f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
 					</p:outputLabel>
 				</p:column>
 				
-				<p:column style="width:2px; text-align: right" headerText="UU/MM">
+				<p:column style="width:20px; text-align: right" headerText="UU/MM">
 					<p:outputLabel value="#{tblCnv.descripcionUnidadMedida}" />
 				</p:column>
 				
-				<p:column style="width:2px; text-align: right" headerText="TOTAL">
+				<p:column style="width:20px; text-align: right" headerText="TOTAL">
 					<p:outputLabel value="#{tblCnv.total}" >
 						<f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
 					</p:outputLabel>
 				</p:column>
 			
-				<p:column style="width:2px; text-align: right" headerText="PROGRAMADO">
+				<p:column style="width:20px; text-align: right" headerText="PROGRAMADO">
 					<p:outputLabel value="#{tblCnv.totalProgramado}" >
 						<f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
 					</p:outputLabel>
@@ -96,7 +96,7 @@ button.ui-button {
 					
 			</p:dataTable>
 			
-			<p:contextMenu for="dTableCnv" style="width:200px;">
+			<p:contextMenu for="dTableCnv" style="width:100px;">
             	<p:menuitem value="Crear Eventos"  action="#{iafasCuadroNecesidadesController.crearEventoPrincipal()}"  />
         	</p:contextMenu>
         	

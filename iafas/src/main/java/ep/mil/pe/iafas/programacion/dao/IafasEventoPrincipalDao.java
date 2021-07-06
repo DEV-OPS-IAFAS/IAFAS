@@ -149,4 +149,15 @@ public class IafasEventoPrincipalDao {
 		}
 		return list;
 	}
+	
+	public List<IafasEventoPrincipal> editEventoSecundario(IafasEventoPrincipal objBn) {
+		List<IafasEventoPrincipal> list = null;
+		SqlSession session = this.sqlSessionFactory.openSession();
+		try {
+			list = session.selectList("IafasEventoPrincipal.editEventoSecundario",objBn);
+		} finally {
+			session.close();
+		}
+		return list;
+	}
 }

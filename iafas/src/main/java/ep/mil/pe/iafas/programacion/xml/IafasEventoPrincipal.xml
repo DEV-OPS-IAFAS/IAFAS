@@ -87,7 +87,8 @@
 		NFUENTE_FINANCIAMIENTO_CODIGO=#{nfuenteFinanciamientoCodigo} 
 		AND NTAREA_PRESUPUESTAL_CODIGO = #{ntareaPresupuestalCodigo}
 		AND VEVENTO_PRINCIPAL_ANEXO=#{veventoPrincipalAnexo}	
-		AND NEVENTO_PRINCIPAL_NIVEL = #{neventoPrincipalNivel}	
+		AND NEVENTO_PRINCIPAL_NIVEL = #{neventoPrincipalNivel}
+		AND CESTADO_CODIGO='AC'
 	</select>
 	
 	<select id="obtenerNivelActual"
@@ -131,6 +132,21 @@
 	
 	<!-- METODOS PARA MODIFICACION -->
 	<select id="editEventoPrincipal"
+		parameterType="ep.mil.pe.iafas.programacion.model.IafasEventoPrincipal"
+		resultType="ep.mil.pe.iafas.programacion.model.IafasEventoPrincipal">
+		SELECT  CPERIODO_CODIGO AS cperiodoCodigo, NFUENTE_FINANCIAMIENTO_CODIGO AS nfuenteFinanciamientoCodigo, NTAREA_PRESUPUESTAL_CODIGO AS ntareaPresupuestalCodigo,
+		CANIO_REGISTRO AS canioRegistro, VEVENTO_PRINCIPAL_CODIGO AS veventoPrincipalCodigo,VEVENTO_PRINCIPAL_NOMBRE AS veventoPrincipalNombre,
+		VEVENTO_PRINCIPAL_COMENTARIO AS veventoPrincipalComentario, VEVENTO_PRINCIPAL_ANEXO AS veventoPrincipalAnexo,NEVENTO_PRINCIPAL_NIVEL AS neventoPrincipalNivel, 
+		NEVENTO_PRINCIPAL_NIVELES AS neventoPrincipalNiveles, CEVENTO_PRINCIPAL_FINAL AS ceventoPrincipalFinal ,CESTADO_CODIGO AS cestadoCodigo
+		FROM IAFAS_EVENTO_PRINCIPAL
+		WHERE 
+		CPERIODO_CODIGO=#{cperiodoCodigo} AND 
+		NFUENTE_FINANCIAMIENTO_CODIGO=#{nfuenteFinanciamientoCodigo} AND
+		NTAREA_PRESUPUESTAL_CODIGO=#{ntareaPresupuestalCodigo} AND 
+		VEVENTO_PRINCIPAL_CODIGO=#{veventoPrincipalCodigo}
+	</select>
+	
+	<select id="editEventoSecundario"
 		parameterType="ep.mil.pe.iafas.programacion.model.IafasEventoPrincipal"
 		resultType="ep.mil.pe.iafas.programacion.model.IafasEventoPrincipal">
 		SELECT  CPERIODO_CODIGO AS cperiodoCodigo, NFUENTE_FINANCIAMIENTO_CODIGO AS nfuenteFinanciamientoCodigo, NTAREA_PRESUPUESTAL_CODIGO AS ntareaPresupuestalCodigo,

@@ -33,14 +33,52 @@ button.ui-button {
 <body class="formulario">
 
 	<script>
-		
+		function verMensajes() {
+			var option = document.getElementById('frm_EventoSecundarios:hdd_option').value;
+			var message = document.getElementById('frm_EventoSecundarios:hdd_message').value;
+
+			if (option == -1) {
+				swal("ALERTA", message, "error").then(function() {
+					window.location = "mainEventosSecundarios.xhtml";
+				});
+			}
+
+			if (option == 0) {
+				swal("AVISO", message, "success").then(function() {
+					window.location = "mainEventosSecundarios.xhtml";
+				});
+			}
+
+			if (option == 1) {
+				swal("ALERTA", message, "warning").then(function() {
+					window.location = "mainEventosSecundarios.xhtml";
+				});
+			}
+
+			if (option == 2) {
+				swal("ALERTA", message, "error").then(function() {
+					window.location = "mainEventosSecundarios.xhtml";
+				});
+			}
+
+			if (option == 3) {
+				swal("ALERTA", message, "error").then(function() {
+					window.location = "mainEventosSecundarios.xhtml";
+				});
+			}
+		}
 	</script>
 
 	<h:form id="frm_EventoSecundarios">
 	<center class="label label-inverse-success">
 	 <label >LISTADO DE EVENTOS SECUNDARIOS</label>
 	 </center>
-
+	
+	<p:panel id="pnl_messages">
+		<h:inputHidden	value="#{iafasCuadroNecesidadesController.typeMessages}" id="hdd_option" />
+		<h:inputHidden  value="#{iafasCuadroNecesidadesController.messages}" 	 id="hdd_message" />
+	</p:panel>
+	
 	 <p:panel header="Datos de Busqueda" >
 			<p:panelGrid columns="6" styleClass="panel">
 				<h:outputLabel value="A.F" styleClass="etiqueta" style="font-size:11px;font-weight:bold;" />
@@ -64,7 +102,7 @@ button.ui-button {
    			</p:panelGrid>
 
 			<p:panel>
-				<p:panel header="Datos Encontrados" >
+				<p:panel>
 					<p:panelGrid columns="1" styleClass="panel">
 						<f:facet name="header">
 						  <div class="p-d-flex p-jc-between p-ai-center">
@@ -103,8 +141,9 @@ button.ui-button {
 						</p:dataTable> 
         	
         		<p:contextMenu for="dTableEventoSecundario" style="width:200px;">
-            		<p:menuitem value="Editar"  />
-            		<p:menuitem value="Eliminar" />
+            		<p:menuitem value="Editar"  update="frm_EventoSecundarios:modalCabecera"  
+            			oncomplete="PF('modalCabecera').show()"  action="#{iafasCuadroNecesidadesController.editEventoSecundario()}" />
+            		<p:menuitem value="Eliminar"  update="frm_EventoSecundarios:dTableEventoSecundario" action="#{iafasCuadroNecesidadesController.anularEventoSecundario()}" />
             		<p:menuitem value="Anterior"   update="frm_EventoSecundarios" action="#{iafasCuadroNecesidadesController.verEventoAnterior()}"  />
             		<p:menuitem value="Siguiente " update="frm_EventoSecundarios" action="#{iafasCuadroNecesidadesController.verEventoSiguiente()}" />            		
         		</p:contextMenu>
@@ -126,7 +165,8 @@ button.ui-button {
 			</h:panelGrid>
 			
 				<f:facet name="footer">
-					<p:commandButton value="Cerrar" styleClass="ui-button-outlined ui-button-danger" oncomplete="PF('modalCabecera').hide()" />
+					<p:commandButton value="Cerrar" styleClass="ui-button-outlined ui-button-danger" oncomplete="PF('modalCabecera').hide()" 
+					action="#{iafasCuadroNecesidadesController.cleanCamposEvtSecundario()}"/>
 					<p:commandButton  value="Grabar" styleClass="ui-button-outlined ui-button-success" 
 						update="frm_EventoSecundarios:dTableEventoSecundario" oncomplete="PF('modalCabecera').hide()"
 					  action="#{iafasCuadroNecesidadesController.insRegEventoSecundario()}" />

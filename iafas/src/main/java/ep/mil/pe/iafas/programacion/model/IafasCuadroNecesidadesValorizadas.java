@@ -33,4 +33,5 @@ public class IafasCuadroNecesidadesValorizadas {
 	private String descripcionCadenaGasto;
 	private String cadenaGasto;
 	private String mode;
+	private BigDecimal totalCadenaGasto;
 }

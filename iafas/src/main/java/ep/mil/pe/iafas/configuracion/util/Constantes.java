@@ -71,4 +71,7 @@ public class Constantes {
 	public static final boolean FALSE = false;
 	public static final boolean TRUE = true;
 	public static final String TEXTO_HTS = "HTS-";
+	public static final String METODO_JS_CNV="verMensajes()";
+	public static final String MESSAGE_VALIDACION_CAMPOS_NULOS = "Debe ingresar los datos requeridos.";
+	public static final String MESSAGE_VALIDACION_TOTAL_EXCEDE_AL_SALDO = "El total excede al saldo.";
 }

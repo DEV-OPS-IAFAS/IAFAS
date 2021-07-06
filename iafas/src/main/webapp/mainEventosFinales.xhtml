@@ -33,14 +33,50 @@ button.ui-button {
 <body class="formulario">
 
 	<script>
-		
+		function verMensajes() {
+			var option = document.getElementById('frm_EventoFinal:hdd_option').value;
+			var message = document.getElementById('frm_EventoFinal:hdd_message').value;
+
+			if (option == -1) {
+				swal("ALERTA", message, "error").then(function() {
+					window.location = "mainEventosFinales.xhtml";
+				});
+			}
+
+			if (option == 0) {
+				swal("AVISO", message, "success").then(function() {
+					window.location = "mainEventosFinales.xhtml";
+				});
+			}
+
+			if (option == 1) {
+				swal("ALERTA", message, "error").then(function() {
+					window.location = "mainEventosFinales.xhtml";
+				});
+			}
+
+			if (option == 2) {
+				swal("ALERTA", message, "error").then(function() {
+					window.location = "mainEventosFinales.xhtml";
+				});
+			}
+
+			if (option == 3) {
+				swal("ALERTA", message, "error").then(function() {
+					window.location = "mainEventosFinales.xhtml";
+				});
+			}
+		}
 	</script>
 
 	<h:form id="frm_EventoFinal">
 	<center class="label label-inverse-success">
 	 <label >LISTADO DE EVENTOS FINALES</label>
 	 </center>
-
+	<p:panel id="pnl_messages">
+		<h:inputHidden	value="#{iafasCuadroNecesidadesController.typeMessages}" id="hdd_option" />
+		<h:inputHidden  value="#{iafasCuadroNecesidadesController.messages}" 	 id="hdd_message" />
+	</p:panel>
 	 <p:panel header="Datos de Busqueda" >
 			<p:panelGrid columns="6" styleClass="panel">
 				<h:outputLabel value="A.F" styleClass="etiqueta" style="font-size:11px;font-weight:bold;" />
@@ -58,14 +94,14 @@ button.ui-button {
 				</h:selectOneMenu>
 
 				<p:commandButton oncomplete="PF('modalCabecera').show()" 
-				 	title="Click aqui para Nuevo Registro" value="Nuevo" action="#{iafasCuadroNecesidadesController.nuevo()}" update="frm_EventoFinal:modalCabecera" >
+				 	title="Click aqui para Nuevo Registro" value="Nuevo" action="#{iafasCuadroNecesidadesController.nuevoEventoFinal()}" update="frm_EventoFinal:modalCabecera" >
 				 </p:commandButton>	
 				 
 				 <p:commandButton title="Click aqui para Nuevo Registro" value="Retornar" action="#{iafasCuadroNecesidadesController.retornarEventoPrincipal()}"  />
    			</p:panelGrid>
 
 			<p:panel>
-				<p:panel header="Datos Encontrados">
+				<p:panel>
 					<p:panelGrid columns="6" styleClass="panel">
 
 						 <p:dataTable id="dTableEventoFinal" var="tbleEventoFinal"

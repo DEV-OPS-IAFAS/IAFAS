@@ -78,5 +78,20 @@
         #{vusuarioCodigo, mode=IN}, #{mode, mode=IN},#{codigoRespuesta,mode=OUT,jdbcType=VARCHAR}, #{mensajeRespuesta,mode=OUT,jdbcType=VARCHAR})
          ]]>
     </select>
+    
+    <select id="obtenerMontoCadenasGasto"
+		parameterType="ep.mil.pe.iafas.programacion.model.IafasCuadroNecesidadesValorizadas"
+		resultType="ep.mil.pe.iafas.programacion.model.IafasCuadroNecesidadesValorizadas">
+		
+		SELECT DISTINCT 
+		sum(NPROGRAMACION_MULTIANUAL_GASTO_IMPORTE) AS totalCadenaGasto
+		FROM IAFAS_PROGRAMACION_MULTIANUAL_GASTO_DETALLE
+		WHERE
+		CPERIODO_CODIGO=#{cperiodoCodigo} AND
+		NFUENTE_FINANCIAMIENTO_CODIGO=#{nfuenteFinanciamientoCodigo} AND 
+		NTAREA_PRESUPUESTAL_CODIGO=#{ntareaPresupuestalCodigo} AND 
+		NCLASIFICADOR_PRESUPUESTAL_CODIGO = #{nclasificadorPresupuestalCodigo}
+		group by NCLASIFICADOR_PRESUPUESTAL_CODIGO
+	</select>
 
 </mapper>	

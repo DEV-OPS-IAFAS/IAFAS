@@ -33,13 +33,50 @@ button.ui-button {
 <body class="formulario">
 
 	<script>
-		
+		function verMensajes() {
+			var option = document.getElementById('frm_EventoPrincipal:hdd_option').value;
+			var message = document.getElementById('frm_EventoPrincipal:hdd_message').value;
+
+			if (option == -1) {
+				swal("ALERTA", message, "error").then(function() {
+					window.location = "mainEventosPrincipales.xhtml";
+				});
+			}
+
+			if (option == 0) {
+				swal("AVISO", message, "success").then(function() {
+					window.location = "mainEventosPrincipales.xhtml";
+				});
+			}
+
+			if (option == 1) {
+				swal("ALERTA", message, "warning").then(function() {
+					window.location = "mainEventosPrincipales.xhtml";
+				});
+			}
+
+			if (option == 2) {
+				swal("ALERTA", message, "error").then(function() {
+					window.location = "mainEventosPrincipales.xhtml";
+				});
+			}
+
+			if (option == 3) {
+				swal("ALERTA", message, "error").then(function() {
+					window.location = "mainEventosPrincipales.xhtml";
+				});
+			}
+		}
 	</script>
 
 	<h:form id="frm_EventoPrincipal">
 	<center class="label label-inverse-success">
 	 <label> LISTADO EVENTOS PRINCIPALES</label>
 	 </center>
+	 <p:panel id="pnl_messages">
+			<h:inputHidden	value="#{iafasCuadroNecesidadesController.typeMessages}" id="hdd_option" />
+			<h:inputHidden  value="#{iafasCuadroNecesidadesController.messages}" 	 id="hdd_message" />
+		</p:panel>
 
 	 <p:panel header="Datos de Busqueda" >
 			<p:panelGrid columns="6" styleClass="panel">
@@ -101,10 +138,6 @@ button.ui-button {
 							
 							<p:column style="width:30px; text-align: right" headerText="MONTO">
 							<p:outputLabel value="0.00" />
-								<!-- <p:outputLabel value="#{tbleEventoPrincipal.monto}">
-									<f:convertNumber maxFractionDigits="2" minFractionDigits="2"
-										type="number" locale="en" />
-								</p:outputLabel>  -->
 								
 							</p:column>		
 						</p:dataTable>
@@ -148,7 +181,9 @@ button.ui-button {
 					<p:commandButton value="Cerrar" styleClass="ui-button-outlined ui-button-danger" oncomplete="PF('modalCabecera').hide()" />
 					<p:commandButton  value="Grabar" styleClass="ui-button-outlined ui-button-success"
 						update="frm_EventoPrincipal:dTableEventoPrincipal"  oncomplete="PF('modalCabecera').hide()"
-					  	action="#{iafasCuadroNecesidadesController.mantRegEventoPrincipal()}" />
+					  	action="#{iafasCuadroNecesidadesController.mantRegEventoPrincipal()}" >
+					  	<f:ajax render="frm_EventoPrincipal:pnl_messages" listener="#{iafasCuadroNecesidadesController.refreshMessage()}" />
+						</p:commandButton>
 				</f:facet>	
 		</p:dialog>	
 		

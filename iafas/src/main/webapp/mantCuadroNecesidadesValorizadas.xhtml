@@ -34,13 +34,67 @@ button.ui-button {
 
 	<script>
 		
+		function roundNumber(num, dec) {
+			var result = Math.round(num * Math.pow(10, dec))
+					/ Math.pow(10, dec);
+			return result;
+		}
+
+		function calcularMonto() {
+			var cantidad = document.getElementById('frm_MantCNV:inptCantidad').value;
+			var valorReferencial = document.getElementById('frm_MantCNV:inptValRef').value;
+
+			var total = roundNumber((cantidad * valorReferencial), 2);
+
+			document.getElementById('frm_MantCNV:inptTotal').value = total;
+		}
+	</script>
+
+	<script>
+		function verMensajes() {
+			var option = document.getElementById('frm_MantCNV:hdd_option').value;
+			var message = document.getElementById('frm_MantCNV:hdd_message').value;
+
+			if (option == -1) {
+				swal("ALERTA", message, "error").then(function() {
+					window.location = "mantCuadroNecesidadesValorizadas.xhtml";
+				});
+			}
+
+			if (option == 0) {
+				swal("AVISO", message, "success").then(function() {
+					window.location = "mantCuadroNecesidadesValorizadas.xhtml";
+				});
+			}
+
+			if (option == 1) {
+				swal("ALERTA", message, "warning").then(function() {
+					window.location = "mantCuadroNecesidadesValorizadas.xhtml";
+				});
+			}
+
+			if (option == 2) {
+				swal("ALERTA", message, "error").then(function() {
+					window.location = "mantCuadroNecesidadesValorizadas.xhtml";
+				});
+			}
+
+			if (option == 3) {
+				swal("ALERTA", message, "error").then(function() {
+					window.location = "mantCuadroNecesidadesValorizadas.xhtml";
+				});
+			}
+		}
 	</script>
 
 	<h:form id="frm_MantCNV">
 	<center class="label label-inverse-success">
 	 <label >CUADRO DE NECESIDADES VALORIZADAS</label>
 	 </center>
-
+		<p:panel id="pnl_messages">
+			<h:inputHidden	value="#{iafasCuadroNecesidadesController.typeMessages}" id="hdd_option" />
+			<h:inputHidden  value="#{iafasCuadroNecesidadesController.messages}" 	 id="hdd_message" />
+		</p:panel>
 	 <p:panel header="Datos de Busqueda" >
 			<p:panelGrid columns="6" styleClass="panel">
 				<h:outputLabel value="A.F" styleClass="etiqueta" style="font-size:11px;font-weight:bold;" />
@@ -64,7 +118,7 @@ button.ui-button {
    			</p:panelGrid>
 
 			<p:panel>
-				<p:panel header="Datos Encontrados" >
+				<p:panel>
 					<p:panelGrid columns="1" styleClass="panel">
 						<f:facet name="header">
 						  <div class="p-d-flex p-jc-between p-ai-center">
@@ -121,7 +175,7 @@ button.ui-button {
 		 
 			<h:panelGrid columns="2" styleClass="panel">
 				<h:outputLabel value="Item: " styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />	
-				<p:autoComplete  id="acItem" value="#{iafasCuadroNecesidadesController.descripcionItem}" 
+				<p:autoComplete  id="acItem" size="80" value="#{iafasCuadroNecesidadesController.descripcionItem}" 
 		          completeMethod="#{iafasCuadroNecesidadesController.completeText}" scrollHeight="250">
 		          <p:ajax event="itemSelect" listener="#{iafasCuadroNecesidadesController.onItemSelect}" update="lblDescripcionUnidadMedida"/>
 	            </p:autoComplete>
@@ -129,16 +183,26 @@ button.ui-button {
 				<h:selectOneMenu id="cboCadena" styleClass="select" value="#{iafasCuadroNecesidadesController.codCla}">
 					<f:selectItem itemValue="0" itemLabel="Seleccione" />
 					<f:selectItems var="optionCadena" value="#{iafasCuadroNecesidadesController.cadenas}" />
+					<f:ajax render="inptSaldo" listener="#{iafasCuadroNecesidadesController.obtenerMontoCadenaGasto()}" />
 				</h:selectOneMenu>
 				<h:outputLabel value="Unidad Medida:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
 				<h:outputLabel  id="lblDescripcionUnidadMedida" value="#{iafasCuadroNecesidadesController.lblDescripcionUnidadMedida}" 
 				styleClass="outLabel"  style="font-size:12px;font-weight:bold; " />
 				<h:outputLabel value="Cantidad:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
-				<p:inputText styleClass="input" id="inptCantidad" value="#{iafasCuadroNecesidadesController.cantidad}" modifyValueOnWheel="false" />
+				<p:inputText styleClass="input" id="inptCantidad" style="text-align: right" value="#{iafasCuadroNecesidadesController.cantidad}"  >
+					<f:ajax render="inptTotal" listener="#{iafasCuadroNecesidadesController.calcularTotal()}" />
+				</p:inputText>
 				<h:outputLabel value="Val. Ref. S/.:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
-				<p:inputText styleClass="input" id="inptValRef" value="#{iafasCuadroNecesidadesController.valorReferencial}" modifyValueOnWheel="false" />
+				<p:inputText styleClass="input" id="inptValRef" style="text-align: right" value="#{iafasCuadroNecesidadesController.valorReferencial}" >
+					<f:ajax render="inptTotal" listener="#{iafasCuadroNecesidadesController.calcularTotal()}" />
+				</p:inputText>
 				<h:outputLabel value="Total:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
-				<p:inputText styleClass="input" id="inptTotal" value="#{iafasCuadroNecesidadesController.total}" modifyValueOnWheel="false" />
+				<h:panelGrid columns="3" styleClass="panel" columnClasses="6">
+					<h:inputText styleClass="outLabelMonto" id="inptTotal" disabled="true" value="#{iafasCuadroNecesidadesController.total}" />
+					<h:outputLabel value="Saldo:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
+					<h:inputText styleClass="outLabelMonto" id="inptSaldo" disabled="true"  value="#{iafasCuadroNecesidadesController.montoCadenaGasto}" /> 
+				</h:panelGrid>
+				
 			</h:panelGrid>
 			
 				<f:facet name="footer">

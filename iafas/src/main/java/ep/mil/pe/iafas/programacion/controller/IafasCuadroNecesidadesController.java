@@ -14,10 +14,12 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
 import ep.mil.pe.iafas.configuracion.util.Constantes;
+import ep.mil.pe.iafas.configuracion.util.Mensajeria;
 import ep.mil.pe.iafas.configuracion.util.Response;
 import ep.mil.pe.iafas.programacion.dao.IafasCuadroNecesidadesValorizadasDao;
 import ep.mil.pe.iafas.programacion.dao.IafasEventoFinalDao;
@@ -83,10 +85,14 @@ public class IafasCuadroNecesidadesController implements Serializable {
 	private String codigoUnidadMedida;	
 	private String codCla;
 	private String descripcionItem;
-	private BigDecimal cantidad;
-	private BigDecimal valorReferencial;
-	private BigDecimal total;
+	private BigDecimal cantidad = Constantes.ZERO_BIG_DECIMAL;
+	private BigDecimal valorReferencial= Constantes.ZERO_BIG_DECIMAL;
+	private BigDecimal total = Constantes.ZERO_BIG_DECIMAL;
 	private String modo = Constantes.MODE_REGISTRO;
+	private BigDecimal montoCadenaGasto = Constantes.ZERO_BIG_DECIMAL;
+	
+	private int typeMessages = Constantes.UNO_NEGATIVO;
+	private String messages = Constantes.MESSAGE_VALIDACION_PARAMETROS;
 	
 	public List<IafasCuadroNecesidadesValorizadas> buscarCabeceraCNV() {
 		logger.info("[INICIO:] Metodo : buscarCabeceraCNV");
@@ -161,6 +167,14 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		logger.info("[FIN:] Metodo : nuevo");
 	}
 	
+	public void nuevoEventoFinal() {
+		logger.info("[INICIO:] Metodo : nuevoEventoFinal");
+		
+		setModo(Constantes.MODE_REGISTRO);
+		cleanCamposEventoFinal();
+		logger.info("[FIN:] Metodo : nuevoEventoFinal");
+	}
+	
 	private String generarCorrelativo(int codigoTarea) {
 		logger.info("[INICIO:] Metodo : generarCorrelativo");
 		String numero = Constantes.VACIO;
@@ -180,7 +194,7 @@ public class IafasCuadroNecesidadesController implements Serializable {
 	}
 	
 	public void mantRegEventoPrincipal() {
-		logger.info("[INICIO:] Metodo : insRegEventoPrincipal:::");
+		logger.info("[INICIO:] Metodo : mantRegEventoPrincipal:::");
 		
 		IafasEventoPrincipalDao objDao =  new IafasEventoPrincipalDao(MySQLSessionFactory.getSqlSessionFactory());
 		IafasEventoPrincipal objBn = new IafasEventoPrincipal();
@@ -198,7 +212,6 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		objBn.setVeventoPrincipalNombre(nombreEvento);
 		objBn.setVeventoPrincipalComentario(comentario);
 		
-		logger.info("tamaño de niveles: "+niveles.length());
 		if(niveles.length()>0) {
 			objBn.setNeventoPrincipalNivel(Constantes.CERO_INT);
 			objBn.setNeventoPrincipalNiveles(Integer.parseInt(niveles));
@@ -207,13 +220,23 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		objBn.setVusuarioCodigo(codUsu);
 		objBn.setMode(modo);
 		try {
-			response = objDao.mantenimientoEventoPrincipal(objBn);
-			buscarCabeceraEP();
+			if (!validacionesEventoPrincipal()) {
+				response = objDao.mantenimientoEventoPrincipal(objBn);
+				if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
+					this.typeMessages = Constantes.CERO_INT;
+					this.messages = response.getMensajeRespuesta();
+					buscarCabeceraEP();
+					PrimeFaces.current().ajax().update("frm_EventoPrincipal:pnl_messages");
+					refreshMessage();
+					Mensajeria.showMessages(Integer.parseInt(response.getCodigoRespuesta()),
+							response.getMensajeRespuesta(), typeMessages, messages, Constantes.METODO_JS_CNV);
+				}
+			}
 		} catch (Exception e) {
 			logger.error("error : " + e.getMessage().toString());
 		} finally {
 
-			logger.info("[FIN:] Metodo : insRegEventoPrincipal:::");
+			logger.info("[FIN:] Metodo : mantRegEventoPrincipal:::");
 		}		
 	}
 	
@@ -235,16 +258,6 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		logger.info("[FIN:] Metodo : actualizarBoolean");
 	}
 	
-	public void cleanCampos() {
-		logger.info("[INICIO:] Metodo : cleanCampos");
-		setNombreEvento(Constantes.VACIO);
-		setComentario(Constantes.VACIO);
-		setBoolCheckEventoAnexo(Constantes.FALSE);
-		setNiveles(Constantes.VACIO);
-		setDesactivarObjetos(Constantes.FALSE);
-		logger.info("[FIN:] Metodo : cleanCampos");
-	}
-	
 	public String verEvento() {
 		logger.info("[INICIO:] Metodo : verEvento");
 		String page = Constantes.VACIO;
@@ -261,7 +274,6 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		}
 		else {
 			varInicioNivelSecundario  =  Integer.parseInt(obtenerNivelSecundarioActual(codigoTarea, varEventoAnteriorSecundario));
-			//varInicioNivelSecundario = varInicioNivelSecundario+1;
 			buscarCabeceraEvtSecundario();
 			page = "mainEventosSecundarios.xhtml";
 		}
@@ -354,7 +366,6 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		objBn.setNtareaPresupuestalCodigo(codigoTarea);
 		objBn.setCanioRegistro(String.valueOf(cperiodo));
 		objBn.setVeventoPrincipalAnexo(codigoEventoAnterior);
-		logger.info("codigoEventoAnterior::::>>"+codigoEventoAnterior);
 		numeroNivelSecundarioActual = String
 				.valueOf(objDao.obtenerNivelActual(objBn).get(0).getNeventoPrincipalNivel());
 		logger.info("[FIN:] Metodo : obtenerNivelSecundarioActual");
@@ -372,7 +383,8 @@ public class IafasCuadroNecesidadesController implements Serializable {
 								.concat(Constantes.GUION)
 								.concat(numeroCorrelativoSecundario);
 		setCodigoEventoSecundario(codigoEventoPrincipal);
-		//cleanCampos();
+		setModo(Constantes.MODE_REGISTRO);
+		cleanCamposEvtSecundario();
 		logger.info("[FIN:] Metodo : nuevoEventoSecundario");
 	}
 
@@ -399,10 +411,22 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		objBn.setNeventoPrincipalNiveles(varFinNivelSecundario);
 		objBn.setCeventoPrincipalFinal(varEventoPrincipalFinal);
 		objBn.setVusuarioCodigo(codUsu);
-		objBn.setMode(Constantes.MODE_REGISTRO);
+		objBn.setMode(modo);
 		try {
-			response = objDao.mantenimientoEventoPrincipal(objBn);
-			buscarCabeceraEvtSecundario();
+
+			if (!validacionesEventoSecundario()) {
+
+				response = objDao.mantenimientoEventoPrincipal(objBn);
+				if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
+					this.typeMessages = Constantes.CERO_INT;
+					this.messages = response.getMensajeRespuesta();
+					buscarCabeceraEvtSecundario();
+					PrimeFaces.current().ajax().update("frm_EventoSecundarios:pnl_messages");
+					refreshMessage();
+					Mensajeria.showMessages(Integer.parseInt(response.getCodigoRespuesta()),
+							response.getMensajeRespuesta(), typeMessages, messages, Constantes.METODO_JS_CNV);
+				}
+			}
 		} catch (Exception e) {
 			logger.error("error : " + e.getMessage().toString());
 		} finally {
@@ -437,20 +461,37 @@ public class IafasCuadroNecesidadesController implements Serializable {
 	public String verEventoAnterior() {
 		logger.info("[INICIO:] Metodo : verEventoAnterior");
 		String page = Constantes.VACIO;
-		varNivelSecundarioAnterior = beanEveSec.getNeventoPrincipalNivel();
-		varInicioNivelSecundario = varNivelSecundarioAnterior - 1;
-		if(Constantes.UNO_INT == beanEveSec.getNeventoPrincipalNivel()) {
-			buscarCabeceraEP();
-			page="mainEventosPrincipales.xhtml";
-		}
+		
+		if (beanEveSec != null) {
+			varNivelSecundarioAnterior = beanEveSec.getNeventoPrincipalNivel();
+			varInicioNivelSecundario = varNivelSecundarioAnterior - 1;
+
+			if (Constantes.UNO_INT == beanEveSec.getNeventoPrincipalNivel()) {
+				buscarCabeceraEP();
+				page = "mainEventosPrincipales.xhtml";
+			} else {
+				buscarCabeceraEvtSecundarioAnterior();
+				page = "mainEventosSecundarios.xhtml";
+			}
+		}	
 		else {
-			buscarCabeceraEvtSecundarioAnterior();
-			page = "mainEventosSecundarios.xhtml";
-	
+			buscarCabeceraEP();
+			page = "mainEventosPrincipales.xhtml";
 		}
 		
 		logger.info("[FIN:] Metodo : verEventoAnterior");
 		return page;
+	}
+	
+	/*LIMPIANDO CAMPOS*/
+	public void cleanCampos() {
+		logger.info("[INICIO:] Metodo : cleanCampos");
+		setNombreEvento(Constantes.VACIO);
+		setComentario(Constantes.VACIO);
+		setBoolCheckEventoAnexo(Constantes.FALSE);
+		setNiveles(Constantes.VACIO);
+		setDesactivarObjetos(Constantes.FALSE);
+		logger.info("[FIN:] Metodo : cleanCampos");
 	}
 	
 	public void cleanCamposRetornar() {
@@ -465,6 +506,20 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		setVarInicioNivelSecundario(Constantes.CERO_INT);
 		setVarNivelSecundarioAnterior(Constantes.CERO_INT);
 		logger.info("[FIN:] Metodo : cleanCamposRetornar");
+	}
+	
+	public void cleanCamposEvtSecundario() {
+		logger.info("[INICIO:] Metodo : cleanCamposEvtSecundario");
+		setNombreEventoSecundario(Constantes.VACIO);
+		logger.info("[FIN:] Metodo : cleanCamposEvtSecundario");
+	}
+	
+	public void cleanCamposEventoFinal() {
+		logger.info("[INICIO:] Metodo : cleanCamposEventoFinal");
+		setNombreEventoFinal(Constantes.VACIO);
+		setNumeroOrden(Constantes.CERO_INT);
+		setCantidadeventoFinal(Constantes.CERO_INT);
+		logger.info("[FIN:] Metodo : cleanCamposEventoFinal");
 	}
 	
 	public String retornarEventoPrincipal() {
@@ -484,27 +539,25 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		this.listaCabeceraEvtSecundario = new ArrayList<>();
 		if (this.listaCabeceraEvtSecundario != null)
 			this.listaCabeceraEvtSecundario.clear();
-		
-		IafasEventoPrincipalDao objDao =  new IafasEventoPrincipalDao(MySQLSessionFactory.getSqlSessionFactory());
+
+		IafasEventoPrincipalDao objDao = new IafasEventoPrincipalDao(MySQLSessionFactory.getSqlSessionFactory());
 		IafasEventoPrincipal objBn = new IafasEventoPrincipal();
-		 List<IafasEventoPrincipal>  lt = objDao.obtenerEventoPrincipalDelAnexo(varEventoAnteriorSecundario);
-		 String eventoPrincipal = lt.get(0).getVeventoPrincipalAnexo();
-		logger.info("eventoPrincipal::::"+eventoPrincipal);
+		List<IafasEventoPrincipal> lt = objDao.obtenerEventoPrincipalDelAnexo(varEventoAnteriorSecundario);
+		String eventoPrincipal = lt.get(0).getVeventoPrincipalAnexo();
+
 		objBn.setCperiodoCodigo(cperiodo);
 		objBn.setNfuenteFinanciamientoCodigo(Integer.parseInt(fteFinanc));
 		objBn.setNtareaPresupuestalCodigo(bean.getNtareaPresupuestalCodigo());
-		//objBn.setVeventoPrincipalCodigo(varEventoAnteriorSecundario);
-		objBn.setVeventoPrincipalAnexo(eventoPrincipal);//varEventoAnteriorSecundario);
+		objBn.setVeventoPrincipalAnexo(eventoPrincipal);// varEventoAnteriorSecundario);
 		objBn.setNeventoPrincipalNivel(varInicioNivelSecundario);
-		logger.info("parametros en buscarAnterior::::"+varInicioNivelSecundario+ " * "+varEventoAnteriorSecundario);
+
 		List<IafasEventoPrincipal> lstCab = objDao.verEventoSecundarioAnterior(objBn);
 		if (lstCab.size() > 0) {
 			for (IafasEventoPrincipal objBeanLista : lstCab) {
 				setVarEventoAnteriorSecundario(objBeanLista.getVeventoPrincipalAnexo());
 				this.listaCabeceraEvtSecundario.add(objBeanLista);
 			}
-		}
-		else {
+		} else {
 			setVarEventoAnteriorSecundario(varEventoAnteriorSecundario);
 			setVarInicioNivelSecundario(varInicioNivelSecundario);
 			this.listaCabeceraEvtSecundario = new ArrayList<>();
@@ -517,8 +570,8 @@ public class IafasCuadroNecesidadesController implements Serializable {
 	
 	public void mantRegEventoFinal() {
 		logger.info("[INICIO:] Metodo : mantRegEventoFinal:::");
-		
-		IafasEventoFinalDao objDao =  new IafasEventoFinalDao(MySQLSessionFactory.getSqlSessionFactory());
+
+		IafasEventoFinalDao objDao = new IafasEventoFinalDao(MySQLSessionFactory.getSqlSessionFactory());
 		IafasEventoFinal objBn = new IafasEventoFinal();
 		HttpSession session = null;
 		session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
@@ -536,9 +589,20 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		objBn.setNeventoFinalMetaFisica(cantidadeventoFinal);
 		objBn.setVusuarioCodigo(codUsu);
 		objBn.setMode(modo);
+		
 		try {
+			if (!validacionesEventoFinal()) {
 			response = objDao.mantenimientoEventoFinal(objBn);
-			buscarCabeceraEvtFinal();
+			if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
+				this.typeMessages = Constantes.CERO_INT;
+				this.messages = response.getMensajeRespuesta();
+				buscarCabeceraEvtFinal();
+				PrimeFaces.current().ajax().update("frm_EventoFinal:pnl_messages");
+				refreshMessage();
+				Mensajeria.showMessages(Integer.parseInt(response.getCodigoRespuesta()), response.getMensajeRespuesta(),
+				typeMessages, messages, Constantes.METODO_JS_CNV);
+		 	}
+		 }
 		} catch (Exception e) {
 			logger.error("error : " + e.getMessage().toString());
 		} finally {
@@ -551,10 +615,9 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		logger.info("[INICIO:] Metodo : registrarInsumos");
 		String page = Constantes.VACIO;
 		neventoFinalCodigo = beanEveFinal.getNeventoFinalCodigo();
-		logger.info("registrando insumos........."+varEventoFinal +" * "+neventoFinalCodigo );
 		buscarCNVMantenimiento();
-		page="mantCuadroNecesidadesValorizadas.xhtml";
-		
+		page = "mantCuadroNecesidadesValorizadas.xhtml";
+
 		logger.info("[FIN:] Metodo : registrarInsumos");
 		return page;
 	}
@@ -606,6 +669,23 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		return this.cadenas;
 	}
 	
+	public void obtenerMontoCadenaGasto() {
+		logger.info("[INICIO:] Metodo : obtenerMontoCadenaGasto");
+		IafasCuadroNecesidadesValorizadasDao cadenasDao = new IafasCuadroNecesidadesValorizadasDao(MySQLSessionFactory.getSqlSessionFactory());
+		IafasCuadroNecesidadesValorizadas objBn= new IafasCuadroNecesidadesValorizadas();
+		
+		objBn.setCperiodoCodigo(cperiodo);
+		objBn.setNfuenteFinanciamientoCodigo(Integer.parseInt(fteFinanc));
+		objBn.setNtareaPresupuestalCodigo(bean.getNtareaPresupuestalCodigo());
+		objBn.setNclasificadorPresupuestalCodigo(Integer.parseInt(codCla));
+		List<IafasCuadroNecesidadesValorizadas> lstCadenas = cadenasDao.obtenerMontoCadenasGasto(objBn);
+		
+		for (IafasCuadroNecesidadesValorizadas p : lstCadenas) {
+			setMontoCadenaGasto(p.getTotalCadenaGasto());
+		}
+		logger.info("[FIN:] Metodo : obtenerMontoCadenaGasto");
+	}
+	
 	public void nuevoCNV() {
 		logger.info("[INICIO:] Metodo : nuevoCNV");
 		logger.info("[FIN:] Metodo : nuevoCNV");
@@ -649,10 +729,7 @@ public class IafasCuadroNecesidadesController implements Serializable {
 
 	public void mantRegistroCNV() {
 		logger.info("[INICIO:] Metodo : mantRegistroCNV:::");
-
-		logger.info("datos a insertar::::>"+codigoUnidadMedida + " *  "+codCla+" *  "+cantidad +" *  "+valorReferencial + " *  "+cperiodo+" * "+
-		fteFinanc +" * "+varEventoFinal +" * "+neventoFinalCodigo);
-		
+	
 		IafasCuadroNecesidadesValorizadasDao objDao =  new IafasCuadroNecesidadesValorizadasDao(MySQLSessionFactory.getSqlSessionFactory());
 		IafasCuadroNecesidadesValorizadas objBn = new IafasCuadroNecesidadesValorizadas();
 		HttpSession session = null;
@@ -675,8 +752,18 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		objBn.setMode(modo);
 		
 		try {
+			if (!validacionesCNV()) {
 			response = objDao.mantenimientoCNV(objBn);
-			buscarCNVMantenimiento();
+			if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
+				this.typeMessages = Constantes.CERO_INT;
+				this.messages = response.getMensajeRespuesta();
+				buscarCNVMantenimiento();
+				PrimeFaces.current().ajax().update("frm_MantCNV:pnl_messages");
+				refreshMessage();
+				Mensajeria.showMessages(Integer.parseInt(response.getCodigoRespuesta()),
+						response.getMensajeRespuesta(), typeMessages, messages, Constantes.METODO_JS_CNV);
+			}
+		}	
 		} catch (Exception e) {
 			logger.error("error : " + e.getMessage().toString());
 		} finally {
@@ -719,6 +806,28 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		logger.info("[FIN:] Metodo : editEventoPrincipal");
 	}
 	
+	public void editEventoSecundario() {
+		logger.info("[INICIO:] Metodo : editEventoSecundario");
+		IafasEventoPrincipalDao objDao = new IafasEventoPrincipalDao(MySQLSessionFactory.getSqlSessionFactory());
+		IafasEventoPrincipal objBn  = new IafasEventoPrincipal();
+		String evtSecundarioCodigoEdit = beanEveSec.getVeventoPrincipalCodigo();
+		int ntareaPtalEdit = beanEvp.getNtareaPresupuestalCodigo();
+		
+		objBn.setCperiodoCodigo(cperiodo);
+		objBn.setNfuenteFinanciamientoCodigo(Integer.parseInt(fteFinanc));
+		objBn.setNtareaPresupuestalCodigo(ntareaPtalEdit);
+		objBn.setVeventoPrincipalCodigo(evtSecundarioCodigoEdit);
+		
+		List<IafasEventoPrincipal> lst = objDao.editEventoSecundario(objBn);
+		
+		for(IafasEventoPrincipal obj : lst) {
+			setCodigoEventoSecundario(obj.getVeventoPrincipalCodigo());
+			setNombreEventoSecundario(obj.getVeventoPrincipalNombre());
+			setModo(Constantes.MODE_ACTUALIZACION);
+		}
+		
+		logger.info("[FIN:] Metodo : editEventoSecundario");
+	}
 	
 	public void editEventoFinal() {
 		logger.info("[INICIO:] Metodo : editEventoFinal");
@@ -760,11 +869,47 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		objBn.setMode(Constantes.MODE_ELIMINACION_LOGICA);
 		try {
 			response = objDao.mantenimientoEventoPrincipal(objBn);
-			buscarCabeceraEP();
+			if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
+				this.typeMessages = Constantes.CERO_INT;
+				this.messages = response.getMensajeRespuesta();
+				buscarCabeceraEP();
+				PrimeFaces.current().ajax().update("frm_EventoPrincipal:pnl_messages");
+				refreshMessage();
+				Mensajeria.showMessages(Integer.parseInt(response.getCodigoRespuesta()), response.getMensajeRespuesta(),
+				typeMessages, messages, Constantes.METODO_JS_CNV);
+			}
 		} catch (Exception e) {
 			logger.error("error : " + e.getMessage().toString());
 		} finally {
 			logger.info("[FIN:] Metodo : anularEventoPrincipal");
+		}	
+	}
+	
+	public void anularEventoSecundario() {
+		logger.info("[INICIO:] Metodo : anularEventoSecundario");
+		IafasEventoPrincipalDao objDao = new IafasEventoPrincipalDao(MySQLSessionFactory.getSqlSessionFactory());
+		IafasEventoPrincipal objBn  = new IafasEventoPrincipal();
+		Response response = new Response();
+		objBn.setCperiodoCodigo(cperiodo);
+		objBn.setNfuenteFinanciamientoCodigo(Integer.parseInt(fteFinanc));
+		objBn.setNtareaPresupuestalCodigo(beanEveSec.getNtareaPresupuestalCodigo());
+		objBn.setVeventoPrincipalCodigo(beanEveSec.getVeventoPrincipalCodigo());
+		objBn.setMode(Constantes.MODE_ELIMINACION_LOGICA);
+		try {
+			response = objDao.mantenimientoEventoPrincipal(objBn);
+			if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
+				this.typeMessages = Constantes.CERO_INT;
+				this.messages = response.getMensajeRespuesta();
+				buscarCabeceraEvtSecundario();
+				PrimeFaces.current().ajax().update("frm_EventoSecundarios:pnl_messages");
+				refreshMessage();
+				Mensajeria.showMessages(Integer.parseInt(response.getCodigoRespuesta()), response.getMensajeRespuesta(),
+				typeMessages, messages, Constantes.METODO_JS_CNV);
+			}
+		} catch (Exception e) {
+			logger.error("error : " + e.getMessage().toString());
+		} finally {
+			logger.info("[FIN:] Metodo : anularEventoSecundario");
 		}	
 	}
 	
@@ -781,12 +926,100 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		objBn.setMode(Constantes.MODE_ELIMINACION_LOGICA);
 		try {
 			response = objDao.mantenimientoEventoFinal(objBn);
-			buscarCabeceraEvtFinal();
+			if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
+				this.typeMessages = Constantes.CERO_INT;
+				this.messages = response.getMensajeRespuesta();
+				buscarCabeceraEvtFinal();
+				PrimeFaces.current().ajax().update("frm_EventoFinal:pnl_messages");
+				refreshMessage();
+				Mensajeria.showMessages(Integer.parseInt(response.getCodigoRespuesta()), response.getMensajeRespuesta(),
+						typeMessages, messages, Constantes.METODO_JS_CNV);
+			}
 		} catch (Exception e) {
 			logger.error("error : " + e.getMessage().toString());
 		} finally {
 			logger.info("[FIN:] Metodo : anularEventoFinal");
 		}	
+	}
+	
+	/*MENSAJES HACIA EL FRONT-END*/
+	
+	public void refreshMessage() {
+		setTypeMessages(typeMessages);
+		setMessages(messages);
+	}
+
+	public boolean validacionesEventoPrincipal() {
+		boolean pasoValidacion = false;
+		if (nombreEvento.equals(Constantes.VACIO)) {
+			typeMessages = Constantes.DOS_INT;
+			messages = Constantes.MESSAGE_VALIDACION_CAMPOS_NULOS;
+			PrimeFaces.current().ajax().update("frm_EventoPrincipal:pnl_messages");
+			refreshMessage();
+			Mensajeria.showMessages(typeMessages,
+					messages, typeMessages, messages, Constantes.METODO_JS_CNV);
+			pasoValidacion = true;
+		} 
+		
+		return pasoValidacion;
+	}
+	
+	public boolean validacionesEventoSecundario() {
+		boolean pasoValidacion = false;
+		if (nombreEventoSecundario.equals(Constantes.VACIO)) {
+			typeMessages = Constantes.DOS_INT;
+			messages = Constantes.MESSAGE_VALIDACION_CAMPOS_NULOS;
+			PrimeFaces.current().ajax().update("frm_EventoSecundarios:pnl_messages");
+			refreshMessage();
+			Mensajeria.showMessages(typeMessages,
+					messages, typeMessages, messages, Constantes.METODO_JS_CNV);
+			pasoValidacion = true;
+		} 
+		
+		return pasoValidacion;
+	}
+	
+	public boolean validacionesEventoFinal() {
+		boolean pasoValidacion = false;
+		if (Constantes.VACIO.equals(nombreEventoFinal)) {
+			typeMessages = Constantes.DOS_INT;
+			messages = Constantes.MESSAGE_VALIDACION_CAMPOS_NULOS;
+			PrimeFaces.current().ajax().update("frm_EventoFinal:pnl_messages");
+			refreshMessage();
+			Mensajeria.showMessages(typeMessages, messages, typeMessages, messages, Constantes.METODO_JS_CNV);
+			pasoValidacion = true;
+		}
+
+		return pasoValidacion;
+	}
+	
+	
+	public boolean validacionesCNV() {
+		boolean pasoValidacion = false;
+		if (descripcionItem.equals(Constantes.VACIO) || Constantes.CERO_STRING.equals(codCla)
+				|| lblDescripcionUnidadMedida == null || lblDescripcionUnidadMedida.length() == 0) {
+			typeMessages = Constantes.DOS_INT;
+			messages = Constantes.MESSAGE_VALIDACION_CAMPOS_NULOS;
+			PrimeFaces.current().ajax().update("frm_MantCNV:pnl_messages");
+			refreshMessage();
+			Mensajeria.showMessages(typeMessages, messages, typeMessages, messages, Constantes.METODO_JS_CNV);
+			pasoValidacion = true;
+		}
+		
+		if (total.compareTo(montoCadenaGasto)==Constantes.UNO_INT) {
+			typeMessages = Constantes.DOS_INT;
+			messages = Constantes.MESSAGE_VALIDACION_TOTAL_EXCEDE_AL_SALDO;
+			PrimeFaces.current().ajax().update("frm_MantCNV:pnl_messages");
+			refreshMessage();
+			Mensajeria.showMessages(typeMessages, messages, typeMessages, messages, Constantes.METODO_JS_CNV);
+			pasoValidacion = true;
+		}
+		
+		return pasoValidacion;
+	}
+	
+	public void calcularTotal() {
+		setTotal((this.cantidad ).multiply(this.valorReferencial));
 	}
 	
 	private ExternalContext extContext() {
