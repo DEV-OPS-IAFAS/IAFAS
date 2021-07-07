@@ -1,1 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="IafasAlmacenSalida">
+	<resultMap id="resultado" type="IafasAlmacenSalida" />
+
+	<select id="getAll"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalida"
+		resultType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalida">
+		SELECT CPERIODO_CODIGO, NALMACEN_SALIDA_CODIGO,
+		NALMACEN_CODIGO, CMES_CODIGO, VALMACEN_SALIDA_MOTIVO,
+		CAREA_LABORAL_CODIGO
+		FROM IAFAS_ALMACEN_SALIDA
+	</select>
+
+</mapper>
