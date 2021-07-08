@@ -593,15 +593,15 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		try {
 			if (!validacionesEventoFinal()) {
 			response = objDao.mantenimientoEventoFinal(objBn);
-			if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
-				this.typeMessages = Constantes.CERO_INT;
+			//if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
+				this.typeMessages =Integer.parseInt(response.getCodigoRespuesta());// Constantes.CERO_INT;
 				this.messages = response.getMensajeRespuesta();
 				buscarCabeceraEvtFinal();
 				PrimeFaces.current().ajax().update("frm_EventoFinal:pnl_messages");
 				refreshMessage();
 				Mensajeria.showMessages(Integer.parseInt(response.getCodigoRespuesta()), response.getMensajeRespuesta(),
 				typeMessages, messages, Constantes.METODO_JS_CNV);
-		 	}
+		 	//}
 		 }
 		} catch (Exception e) {
 			logger.error("error : " + e.getMessage().toString());
@@ -1020,6 +1020,48 @@ public class IafasCuadroNecesidadesController implements Serializable {
 	
 	public void calcularTotal() {
 		setTotal((this.cantidad ).multiply(this.valorReferencial));
+	}
+	
+	/*CERRAR EVENTOS*/
+	public void cambiarEstadosEventoFinal(String opcion) {
+		logger.info("[INICIO:] Metodo : cambiarEstadosEventoFinal");
+		
+		IafasEventoFinalDao objDao = new IafasEventoFinalDao(MySQLSessionFactory.getSqlSessionFactory());
+		IafasEventoFinal objBn  = new IafasEventoFinal();
+		Response response = new Response();
+		HttpSession session = null;
+		session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		IafasUsuariosController usuarioSession = new IafasUsuariosController();
+		usuarioSession = (IafasUsuariosController) session.getAttribute("iafasUsuariosController");
+		String codUsu = usuarioSession.getIdUsuario();
+		objBn.setCperiodoCodigo(cperiodo);
+		objBn.setNfuenteFinanciamientoCodigo(Integer.parseInt(fteFinanc));
+		objBn.setNtareaPresupuestalCodigo(beanEveFinal.getNtareaPresupuestalCodigo());
+		objBn.setVeventoPrincipalCodigo(beanEveFinal.getVeventoPrincipalCodigo());
+		objBn.setNeventoFinalCodigo(beanEveFinal.getNeventoFinalCodigo());
+		if (Constantes.MODE_CERRAR_TECHO.equals(opcion)) {
+			objBn.setMode(Constantes.CODIGO_CIERRE);
+		} else {
+			objBn.setMode(Constantes.MODE_ABRIR_TECHO);
+		}
+		objBn.setVusuarioCodigo(codUsu);
+		try {
+			response = objDao.mantenimientoEventoFinal(objBn);
+			if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
+				this.typeMessages = Constantes.CERO_INT;
+				this.messages = response.getMensajeRespuesta();
+				buscarCabeceraEvtFinal();
+				PrimeFaces.current().ajax().update("frm_EventoFinal:pnl_messages");
+				refreshMessage();
+				Mensajeria.showMessages(Integer.parseInt(response.getCodigoRespuesta()), response.getMensajeRespuesta(),
+						typeMessages, messages, Constantes.METODO_JS_CNV);
+			}
+		} catch (Exception e) {
+			logger.error("error : " + e.getMessage().toString());
+		} finally {
+			logger.info("[FIN:] Metodo : cambiarEstadosEventoFinal");
+		}	
+		
 	}
 	
 	private ExternalContext extContext() {

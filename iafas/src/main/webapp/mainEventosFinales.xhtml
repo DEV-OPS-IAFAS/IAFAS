@@ -150,9 +150,9 @@ button.ui-button {
             		<p:menuitem value="Editar"  update="frm_EventoFinal:modalCabecera"  
             			oncomplete="PF('modalCabecera').show()" action="#{iafasCuadroNecesidadesController.editEventoFinal()}" />
             		<p:menuitem value="Eliminar" update="frm_EventoFinal:dTableEventoFinal" action="#{iafasCuadroNecesidadesController.anularEventoFinal()}"  />
-            		<p:menuitem value="Cerrar" />
+            		<p:menuitem value="Cerrar" action="#{iafasCuadroNecesidadesController.cambiarEstadosEventoFinal('F')}" />
             		<p:menuitem value="Duplicar Evento" />
-            		<p:menuitem value="Regresar" />
+            		<p:menuitem value="Regresar"  action="#{iafasCuadroNecesidadesController.retornarEventoPrincipal()}"  />
             		<p:menuitem value="Registrar Insumos" action="#{iafasCuadroNecesidadesController.registrarInsumos()}"  />
             		<p:menuitem value="Activar" />            		
         		</p:contextMenu>
