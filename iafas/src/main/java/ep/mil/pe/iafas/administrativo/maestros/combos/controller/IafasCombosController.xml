@@ -102,25 +102,24 @@ parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
 	CESTADO_CODIGO = 'AC'
 </select>
 
-<select id="procesoContratacion" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+<select id="sistemaContratacion" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
 		parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
-		SELECT ntipo_proceso_contratacion_codigo codigo,
-		vtipo_proceso_contratacion_abreviatura descripcion
-		FROM iafas_tipo_proceso_contratacion WHERE cestado_codigo = 'AC'
+		SELECT nsistema_contratacion_codigo codigo,
+		vsistema_contratacion_descripcion descripcion
+		FROM iafas_sistema_contratacion WHERE cestado_codigo = 'AC'
 </select>
 
-<select id="tipoEtapa" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+<select id="modalidadContratacion" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
 		parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
-    	SELECT nproceso_etapa_codigo codigo,
-		vproceso_etapa_abreviatura descripcion
- 		FROM iafas_proceso_etapa WHERE cestado_codigo='AC' AND
- 		ntipo_proceso_contratacion_codigo = #{filtro1}
+     SELECT nmodalidad_contratacion_codigo codigo,
+     vmodalidad_contratacion_abreviatura descripcion
+      FROM iafas_modalidad_contratacion WHERE cestado_codigo='AC'
 </select>
-<select id="procesoDocumento" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+<select id="itemTipo" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
 		parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"> 
-     SELECT nproceso_documento_codigo codigo,
-     VPROCESO_DOCUMENTO_ABREVIATURA descripcion
-     FROM iafas_proceso_documento WHERE CESTADO_CODIGO = 'AC'
+      SELECT CITEM_TIPO_CODIGO codigo,
+     NITEM_TIPO_DESCRIPCION descripcion
+     FROM iafas_item_tipo WHERE CESTADO_CODIGO = 'AC'
 </select>
 
 <select id="item" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
@@ -184,5 +183,12 @@ parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
 			 vpersonal_tipo_planilla_abreviatura descripcion
 			  from IAFAS_PERSONAL_TIPO_PLANILLA where cestado_codigo='AC' 
 			   order by npersonal_tipo_planilla_codigo asc
+</select>
+<select id="tipoetapa"
+	resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
+	parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+   		SELECT nprocedimiento_etapa_codigo codigo,
+		vprocedimiento_etapa_descripcion descripcion
+		FROM iafas_procedimientos_etapas WHERE cestado_codigo='AC'
 </select>
 </mapper>

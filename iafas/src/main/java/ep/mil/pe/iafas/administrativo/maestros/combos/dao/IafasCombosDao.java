@@ -170,11 +170,11 @@ public class IafasCombosDao {
          return lista;
      }
      
-     public List<IafasCombos> getProcesoContratacion() {
+     public List<IafasCombos> getSistemaContratacion() {
          List<IafasCombos> lista = null;
          SqlSession session = sqlSessionFactory.openSession();
          try{
-               lista = session.selectList("Combos.procesoContratacion");
+               lista = session.selectList("Combos.sistemaContratacion");
          }
          finally{
               session.close();
@@ -183,11 +183,11 @@ public class IafasCombosDao {
      }
      
      @SuppressWarnings("unchecked")
-  	public List<IafasCombos> getTipoEtapa(String filtro) {
+  	public List<IafasCombos> getModalidadContratacion() {
           List<IafasCombos> lista = null;
           SqlSession session = sqlSessionFactory.openSession();
           try{
-                lista = session.selectList("Combos.tipoEtapa",filtro);
+                lista = session.selectList("Combos.modalidadContratacion");
           }
           finally{
                session.close();
@@ -196,11 +196,11 @@ public class IafasCombosDao {
       }
      
      @SuppressWarnings("unchecked")
-   	public List<IafasCombos> getProcesoDocumento() {
+   	public List<IafasCombos> getItemTipo() {
            List<IafasCombos> lista = null;
            SqlSession session = sqlSessionFactory.openSession();
            try{
-                 lista = session.selectList("Combos.procesoDocumento");
+                 lista = session.selectList("Combos.itemTipo");
            }
            finally{
                 session.close();
@@ -312,4 +312,17 @@ public class IafasCombosDao {
          }
          return lista;
      }
+     
+     @SuppressWarnings("unchecked")
+  	public List<IafasCombos> getTipoEtapa() {
+          List<IafasCombos> lista = null;
+          SqlSession session = sqlSessionFactory.openSession();
+          try{
+                lista = session.selectList("Combos.tipoetapa");
+          }
+          finally{
+               session.close();
+          }
+          return lista;
+      }
 }

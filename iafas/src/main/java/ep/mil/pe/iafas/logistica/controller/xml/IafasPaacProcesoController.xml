@@ -7,59 +7,48 @@
 	<resultMap id="iafasPaacProceso" type="IafasPaacProceso" />
 	<select id="showPaacProceso" resultType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesos"
 		parameterType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesos">
-		SELECT cperiodo_codigo periodo, nfuente_financiamiento_codigo nfuenteFinanciamiento,
-		npac_procesos_codigo npacProcesoCodigo, 
-		vpac_procesos_numero_paac vpacProcesosNumeroPaac,
-		nproceso_etapa_codigo nprocesoEtapaCodigo, 
-		vpac_procesos_numero_proceso vpacProcesoNumero,
-		npac_procesos_monto_proceso npacProcesoMonto, VPAC_PROCESOS_DESCRIPCION vpacProcesoDescripcion
-		FROM iafas_pac_procesos WHERE cperiodo_codigo = #{periodo}
+	    SELECT cperiodo_codigo periodo, npac_procedimiento_codigo npacProcedimientoCodigo, 
+		npac_procedimiento_convocatoria nprocedimientoConvocatoria,
+		vpac_procedimiento_nomenclatura vpacProcedimientoNomenclatura,
+		vpac_procedimiento_descripcion vpacProcedimientoDescripcion,  
+		pk_simbolo_moneda(nmoneda_codigo) desMoneda,
+		npac_procedimiento_importe npacProcesoMonto
+		FROM iafas_pac_procedimientos WHERE cperiodo_codigo = #{periodo}
 	</select>
 	
    <select id="saveProcess" parameterType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesos" statementType="CALLABLE">
-       { CALL SP_PAAC_PROCESOS(
+       { CALL SP_PAAC_PROCEDIMIENTOS (
         #{periodo mode=IN, jdbcType=VARCHAR},
-		#{nfuenteFinanciamiento, mode=IN, jdbcType=INTEGER},
-		#{npacProcesoCodigo, mode=IN, jdbcType=INTEGER},
-		#{vpacProcesosNumeroPaac, mode=IN,jdbcType=VARCHAR},
-		#{nprocesoEtapaCodigo, mode=IN,jdbcType=INTEGER},
-		#{nprocesoDocumentoCodigo, mode=IN,jdbcType=INTEGER},
+		#{npacProcedimientoCodigo, mode=IN, jdbcType=INTEGER},
+		#{vpacProcedimientoNomenclatura, mode=IN, jdbcType=VARCHAR},
+		#{vpacProcedimientoDescripcion, mode=IN,jdbcType=VARCHAR},
+		#{nprocedimientoConvocatoria, mode=IN,jdbcType=INTEGER},
 		#{ctipoProcedimientoCodigo, mode=IN,jdbcType=VARCHAR},
-		#{ntipoProcesoContratacion, mode=IN,jdbcType=INTEGER},
-		#{vpacProcesoNumero, mode=IN,jdbcType=VARCHAR},
-	    #{vpacProcesoDescripcion, mode=IN,jdbcType=VARCHAR},
-		#{cpacProcesoCompras, mode=IN,jdbcType=VARCHAR},
-		#{npacProcesoCertificado, mode=IN,jdbcType=INTEGER},
-		#{dpacProcesoConvocatoria, mode=IN,jdbcType=DATE},
-		#{dpacProcesoParticipantes, mode=IN,jdbcType=DATE},
-		#{dpacProcesoObservaciones, mode=IN,jdbcType=DATE},
-		#{dpacProcesoAbsolucion, mode=IN,jdbcType=DATE},
-		#{dpacProcesoIntegracion, mode=IN,jdbcType=DATE},
-		#{dpacProcesoOfertas, mode=IN,jdbcType=DATE},
-		#{dpacProcesoEvaluacion, mode=IN,jdbcType=DATE},
-		#{dpacProcesoBuenaPro, mode=IN,jdbcType=DATE},
-		#{dpacProcesoConsentimiento, mode=IN,jdbcType=DATE},
-		#{dprocesoContrato, mode=IN,jdbcType=DATE},
-		#{npacProcesoMonto, mode=IN,jdbcType=DECIMAL},
+		#{ctipoCodigoItem, mode=IN,jdbcType=VARCHAR},
+		#{nisistemaContratacion, mode=IN,jdbcType=INTEGER},
+		#{nmodalidadContratacion, mode=IN,jdbcType=INTEGER},
+	    #{nmonedaCodigo, mode=IN,jdbcType=INTEGER},
+		#{ntipoCambio, mode=IN,jdbcType=DECIMAL},
+		#{npacProcedimientoExtranjera, mode=IN,jdbcType=DECIMAL},
+		#{dfechaProcedimiento, mode=IN,jdbcType=DATE},
+		#{nombreArchivo, mode=IN,jdbcType=VARCHAR},
 		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR},
-		#{tipo, mode=IN,jdbcType=VARCHAR})}
-		
+		#{npacProcesoMonto, mode=IN,jdbcType=DECIMAL},
+		#{tipo, mode=IN,jdbcType=VARCHAR})}	
 		
    </select>
 
-	<select id="saveProcessDetails" parameterType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesoDetalle" 
+	<select id="saveProcessEtapa" parameterType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesoDetalle" 
 	  statementType="CALLABLE">
-       { CALL SP_PAAC_PROCESO_DETALLE(
+       { CALL SP_PAC_PROCEDIMIENTOS_ETAPA(
         #{periodo mode=IN, jdbcType=VARCHAR},
-        #{nfuenteFinanciamiento mode=IN, jdbcType=INTEGER},
-		#{npacProcesoCodigo, mode=IN, jdbcType=INTEGER},
-		#{nitemCodigo, mode=IN, jdbcType=INTEGER},
-		#{nprocesoDetCantidad, mode=IN,jdbcType=DECIMAL},
-		#{nprocesoDetPrecio, mode=IN,jdbcType=DECIMAL},
-		#{cunidadMedidaCodigo, mode=IN,jdbcType=VARCHAR},
-		#{vpacProcesoObs, mode=IN,jdbcType=VARCHAR},
-		#{npacProcesoDetalleItem, mode=IN,jdbcType=INTEGER},
+        #{npacProcedimientoCodigo mode=IN, jdbcType=INTEGER},
+		#{nprocedimientoEtapaCodigo, mode=IN, jdbcType=INTEGER},
+		#{dpacProcedimientoInicio, mode=IN, jdbcType=DATE},
+		#{dpacProcedimientoFin, mode=IN,jdbcType=DATE},
+		#{estadoEtpa, mode=IN,jdbcType=VARCHAR},
 		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR})}
+
 		
    </select>
    <select id="showDetailContract"  resultType="ep.mil.pe.iafas.logistica.model.IafasPacContratos"
@@ -76,14 +65,26 @@
    
    <select id="showProcessHead" resultType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesos"
 		parameterType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesos">
-		SELECT cperiodo_codigo periodo, 
-		vpac_procesos_numero_paac vpacProcesosNumeroPaac,
-		vpac_procesos_numero_proceso vpacProcesoNumero, 
-		vpac_procesos_descripcion vpacProcesoDescripcion,
-		npac_procesos_monto_proceso npacProcesoMonto
-		FROM iafas_pac_procesos 
-		WHERE cperiodo_codigo = #{periodo} AND npac_procesos_codigo = #{npacProcesoCodigo}
+		SELECT cperiodo_codigo periodo,
+		npac_procedimiento_codigo npacProcedimientoCodigo, 
+		vpac_procedimiento_nomenclatura vpacProcedimientoNomenclatura,
+		npac_procedimiento_convocatoria nprocedimientoConvocatoria, 
+		vpac_procedimiento_descripcion vpacProcedimientoDescripcion,
+		npac_procedimiento_importe npacProcesoMonto
+		FROM iafas_pac_procedimientos 
+		WHERE cperiodo_codigo = #{periodo} AND npac_procedimiento_codigo = #{npacProcedimientoCodigo}
    </select>
+   
+   <select id="showProcessEtapa" resultType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesos"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesos">
+   		SELECT cperiodo_codigo periodo, npac_procedimiento_codigo npacProcedimientoCodigo,
+		PK_NOM_ETAPA(nprocedimiento_etapa_codigo) descripcionEtapa,
+		dpac_procedimiento_etapa_inicio dpacProcedimientoInicio, 
+		dpac_procedimiento_etapa_fin dpacProcedimientoFin
+		FROM iafas_pac_procedimientos_etapas WHERE cperiodo_codigo = #{periodo} AND 
+		npac_procedimiento_codigo = #{npacProcedimientoCodigo} 
+   </select>
+   
 </mapper>
 
 

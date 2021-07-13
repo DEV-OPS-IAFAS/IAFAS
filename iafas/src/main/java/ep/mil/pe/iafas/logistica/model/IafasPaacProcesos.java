@@ -13,30 +13,33 @@ public class IafasPaacProcesos {
 	}
 	
 	private String periodo;
-	private int nfuenteFinanciamiento;
-	private int npacProcesoCodigo;
-	private String vpacProcesosNumeroPaac;
-	private int nprocesoEtapaCodigo;
+	private int npacProcedimientoCodigo;
+	private String vpacProcedimientoNomenclatura;
+	private int nprocedimientoConvocatoria;
 	private int nprocesoDocumentoCodigo;
 	private String ctipoProcedimientoCodigo;
-	private int ntipoProcesoContratacion;
-	private String vpacProcesoNumero;
-	private String vpacProcesoDescripcion;
-	private String cpacProcesoCompras;
-	private int npacProcesoCertificado;
-	private Date dpacProcesoConvocatoria;
-	private Date dpacProcesoParticipantes;
-	private Date dpacProcesoObservaciones;
-	private Date dpacProcesoAbsolucion;
-	private Date dpacProcesoIntegracion;
-	private Date dpacProcesoOfertas;
-	private Date dpacProcesoEvaluacion;
-	private Date dpacProcesoBuenaPro;
-	private Date dpacProcesoConsentimiento;
-	private Date dprocesoContrato;
+	private String ctipoCodigoItem;
+	private int nisistemaContratacion;
+	private int nmodalidadContratacion;
+	private String vpacProcedimientoDescripcion;
+	private int nmonedaCodigo;
+	private double ntipoCambio;
 	private BigDecimal npacProcesoMonto;
+	private BigDecimal npacProcedimientoExtranjera;
+	private Date dfechaProcedimiento;
+	private String nombreArchivo;
 	private String cestadoCodigo;
 	private String vusuarioCodigo;
 	private String tipo;
+	
+	private String desMoneda;
+	
+	// Etapas
+	private int nprocedimientoEtapaCodigo;
+	private Date dpacProcedimientoInicio;
+	private Date dpacProcedimientoFin;
+	private String estadoEtpa;
+	private String descripcionEtapa;
+
 
 }

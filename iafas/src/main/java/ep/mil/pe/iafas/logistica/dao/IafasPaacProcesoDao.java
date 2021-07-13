@@ -55,11 +55,11 @@ public class IafasPaacProcesoDao {
 		return i;
 	}
 	
-	public int saveProcessDetailsPAAC(IafasPaacProcesoDetalle paac) {
+	public int saveProcessEtapaPAAC(IafasPaacProcesos paac) {
 		int i = 0;
 		SqlSession session = sqlSessionFactory.openSession();
 		try {
-			i = session.insert("IafasPaacProceso.saveProcessDetails", paac);
+			i = session.insert("IafasPaacProceso.saveProcessEtapa", paac);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -84,6 +84,23 @@ public class IafasPaacProcesoDao {
       }
 		return lista;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IafasPaacProcesos> showProcessEtapa(IafasPaacProcesos proceso){
+		List<IafasPaacProcesos> lista = null;
+		SqlSession session = sqlSessionFactory.openSession();
+		try{
+            lista = session.selectList("IafasPaacProceso.showProcessEtapa",proceso);
+      }
+      catch(Exception e) {
+      	e.printStackTrace();
+      }
+      finally{
+           session.close();
+      }
+		return lista;
+	}
+	
 
 	public String getMensajeBD() {
 		return mensajeBD;

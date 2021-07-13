@@ -37,8 +37,9 @@ public class IafasCombosController implements Serializable {
 	public List<SelectItem> bancos;
 	public List<SelectItem> documento;
 	public List<SelectItem> impuesto;
-	public List<SelectItem> tipoContratacion;
-	public List<SelectItem> procesoDocumento;
+	public List<SelectItem> sistemaContratacion;
+	public List<SelectItem> modalidadContratacion;
+	public List<SelectItem> itemTipo;
 	public List<SelectItem> item;
 	public List<SelectItem> unidadMedida;
 	
@@ -47,6 +48,8 @@ public class IafasCombosController implements Serializable {
 	public List<SelectItem> departamento;
 	public List<SelectItem> planilla;	
 	
+	public List<SelectItem> etapas;
+
 	
 	/*Cambios agregados por Elvis Severino*/
 	private static final Logger logger = Logger.getLogger(IafasCombosController.class.getName());
@@ -189,26 +192,38 @@ public class IafasCombosController implements Serializable {
 		return this.entidades;
 	}
 
-	public List<SelectItem> getTipoContratacion() {
-		tipoContratacion = new ArrayList<SelectItem>();
+	public List<SelectItem> getSistemaContratacion() {
+		sistemaContratacion = new ArrayList<SelectItem>();
 		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
-		List<IafasCombos> lstContratacion = cb.getProcesoContratacion();
+		List<IafasCombos> lstContratacion = cb.getSistemaContratacion();
 		for(IafasCombos tc : lstContratacion) {
-			tipoContratacion.add(new SelectItem(tc.getCodigo(), tc.getDescripcion()));
+			sistemaContratacion.add(new SelectItem(tc.getCodigo(), tc.getDescripcion()));
 		}
 		
-		return tipoContratacion;
+		return sistemaContratacion;
 	}	
 	
-	public List<SelectItem> getProcesoDocumento() {
-		procesoDocumento = new ArrayList<SelectItem>();
+	public List<SelectItem> getModalidadContratacion() {
+		modalidadContratacion = new ArrayList<SelectItem>();
 		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
-		List<IafasCombos> lstProcesoDocumento = cb.getProcesoDocumento();
+		List<IafasCombos> lstProcesoDocumento = cb.getModalidadContratacion();
 		for(IafasCombos tc : lstProcesoDocumento) {
-			procesoDocumento.add(new SelectItem(tc.getCodigo(), tc.getDescripcion()));
+			modalidadContratacion.add(new SelectItem(tc.getCodigo(), tc.getDescripcion()));
 		}
 		
-		return procesoDocumento;
+		return modalidadContratacion;
+	}
+	
+	
+	
+	public List<SelectItem> getItemTipo() {
+		itemTipo = new ArrayList<SelectItem>();
+		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasCombos> lstProcesoDocumento = cb.getItemTipo();
+		for(IafasCombos tc : lstProcesoDocumento) {
+			itemTipo.add(new SelectItem(tc.getCodigo(), tc.getDescripcion()));
+		}
+		return itemTipo;
 	}
 	
 	public List<SelectItem> getItem(){
@@ -264,5 +279,15 @@ public class IafasCombosController implements Serializable {
 			planilla.add(new SelectItem(p.getCodigo(), p.getDescripcion()));
 		}		
 		return planilla;
+	}
+	
+	public List<SelectItem> getEtapas() {
+		etapas = new ArrayList<SelectItem>();
+		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasCombos> ls = cb.getTipoEtapa();
+		for (IafasCombos p : ls) {
+			etapas.add(new SelectItem(p.getCodigo(), p.getDescripcion()));
+		}		
+		return etapas;
 	}
 }

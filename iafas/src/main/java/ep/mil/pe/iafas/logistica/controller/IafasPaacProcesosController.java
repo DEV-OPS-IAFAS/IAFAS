@@ -45,17 +45,6 @@ public class IafasPaacProcesosController implements Serializable{
 	private int tipoProcesoContratacion;
 	private String numProceso;
 	private String descrProceso;
-	private boolean procesosCompras;
-	private Date fechaConvocatoria;
-	private Date fechaParticipantes;
-	private Date fechaObservaciones;
-	private Date fechaAbsolucion;
-	private Date fechaIntegracion;
-	private Date fechOfertas;
-	private Date fechaEvaluacion;
-	private Date fechaBuenaPro;
-	private Date fechaConsentimiento;
-	private Date fechaContrato;
 	private BigDecimal montoProceso;
 	private int nroCertificado;
 	
@@ -82,10 +71,25 @@ public class IafasPaacProcesosController implements Serializable{
 	private String usuario;
 	private String messagesBD;
 	
-	private List<SelectItem> tipoEtapa;
-	private List<SelectItem> procedimientoSel;
+	private String nomenclatura;
+	private int numConvocatoria;
+	private String tipoItem;
+	private int sistemaContratacion;
+	private int modalidadContratacion;
+	private int moneda;
+	private double tipCambio;
+	private BigDecimal montoProcesoExt;
+	private Date fechaProceso;
+	
+	// etapas
+	private int codigoEtapaProcedimiento;
+	private int codigoEtapaProcDocumento;
+	private Date fechaInicio;
+	private Date fechaFin;
+	private String descEtapaDocumento;
 	
 	List<ViewPaacProcesoDetalle> listaDetalle;
+	List<IafasPaacProcesos> listadoEtapas;
 
 	private static final long serialVersionUID = 1L;
 	IafasPaacProcesoDao procesoDao = new IafasPaacProcesoDao(MySQLSessionFactory.getSqlSessionFactory());
@@ -103,7 +107,7 @@ public class IafasPaacProcesosController implements Serializable{
 	}
 	
 	public String nuevoRegistro() {
-		return "insRegProcesos.xhtml";
+		return "insRegProcedimientos.xhtml";
 	}
 
 	public List<IafasPaacProcesos> showPaacProcesos(){
@@ -128,23 +132,15 @@ public class IafasPaacProcesosController implements Serializable{
 		tam = listaDet.size();
 	}
 	// Combo dependiente
-	public List<SelectItem> getTipoEtapa() {
+	/*public List<SelectItem> getTipoEtapa() {
 		tipoEtapa = new ArrayList<SelectItem>();
 		List<IafasCombos> cb = combosDAO.getTipoEtapa(String.valueOf(tipoProcesoContratacion));
 		for(IafasCombos e : cb) {
 			tipoEtapa.add(new SelectItem(e.getCodigo(), e.getDescripcion()));
 		}
 		return tipoEtapa;
-	}
-	
-	public List<SelectItem> getProcedimientoSel() {
-		procedimientoSel = new ArrayList<SelectItem>();
-		List<IafasCombos> cb = combosDAO.getTipoProcedimiento(String.valueOf(nprocesoDocumento));
-		for(IafasCombos e : cb) {
-			procedimientoSel.add(new SelectItem(e.getCodigo(), e.getDescripcion()));
-		}
-		return procedimientoSel;
-	}
+	//}*/
+
 	
 	public void limpiarCampos() {
 		fuenteFinan =0;
@@ -155,17 +151,6 @@ public class IafasPaacProcesosController implements Serializable{
 		tipoProcesoContratacion=0;
 		numProceso="";
 		descrProceso="";
-		procesosCompras=false;
-		fechaConvocatoria = null;
-		 fechaParticipantes= null;
-		fechaObservaciones= null;
-		fechaAbsolucion = null;
-		 fechaIntegracion= null;
-		fechOfertas = null;
-		fechaEvaluacion = null;
-		fechaBuenaPro = null;
-		fechaConsentimiento = null;
-		fechaContrato = null;
 		montoProceso = new BigDecimal(0);
 		nroCertificado =0;
 	}
@@ -177,37 +162,25 @@ public class IafasPaacProcesosController implements Serializable{
 	
 	public String insertaProceso() throws SQLException {
 		int reg =0;
-		String checkCompras = "";
 	   try {
 		IafasPaacProcesos p = new IafasPaacProcesos();
-		p.setPeriodo(periodo);
-		p.setNfuenteFinanciamiento(fuenteFinan);
-		p.setNpacProcesoCodigo(0);
-		p.setVpacProcesosNumeroPaac(numeroPaac);
-		p.setNprocesoEtapaCodigo(nprocesoEtapa);
-		p.setNprocesoDocumentoCodigo(nprocesoDocumento);
+
+		p.setPeriodo("2021");		
+		p.setNpacProcedimientoCodigo(0);
+		p.setVpacProcedimientoNomenclatura(nomenclatura);
+		p.setVpacProcedimientoDescripcion(descrProceso);
+		p.setNprocedimientoConvocatoria(numConvocatoria);
 		p.setCtipoProcedimientoCodigo(ctipoProcedimiento);
-		p.setNtipoProcesoContratacion(tipoProcesoContratacion);
-		p.setVpacProcesoNumero(numProceso);
-		p.setVpacProcesoDescripcion(descrProceso);
-		if(procesosCompras == true) {
-			checkCompras = "*";
-			p.setCpacProcesoCompras(checkCompras);
-		}else {p.setCpacProcesoCompras(checkCompras);}
-		
-		p.setNpacProcesoCertificado(nroCertificado);
-        p.setDpacProcesoConvocatoria(fechaConvocatoria);
-        p.setDpacProcesoParticipantes(fechaParticipantes);
-        p.setDpacProcesoObservaciones(fechaObservaciones);
-        p.setDpacProcesoAbsolucion(fechaAbsolucion);
-        p.setDpacProcesoIntegracion(fechaIntegracion);
-        p.setDpacProcesoOfertas(fechOfertas);
-        p.setDpacProcesoEvaluacion(fechaEvaluacion);
-        p.setDpacProcesoBuenaPro(fechaBuenaPro);
-        p.setDpacProcesoConsentimiento(fechaConsentimiento);
-	    p.setDprocesoContrato(fechaContrato);
+		p.setCtipoCodigoItem(tipoItem);
+		p.setNisistemaContratacion(sistemaContratacion);
+		p.setNmodalidadContratacion(modalidadContratacion);
+		p.setNmonedaCodigo(moneda);
+		p.setNtipoCambio(tipCambio);
+		p.setNpacProcedimientoExtranjera(montoProcesoExt);
+		p.setDfechaProcedimiento(fechaProceso);
+		p.setNombreArchivo("");
+		p.setVusuarioCodigo(usuario);
 	    p.setNpacProcesoMonto(montoProceso);
-	    p.setVusuarioCodigo(usuario);
 	    p.setTipo("I");
 		reg = procesoDao.saveProcessPAAC(p);
 		logger.info("Se Registro Procesos {} "+numProceso+" "+reg);
@@ -235,26 +208,47 @@ public class IafasPaacProcesosController implements Serializable{
 		return "";
 	}
 	
+	public String insertarEtapas() {
+		IafasPaacProcesos p = new IafasPaacProcesos();
+		try {
+			p.setPeriodo(periodo);
+			p.setNpacProcedimientoCodigo(pCodigo);
+			p.setNprocedimientoEtapaCodigo(codigoEtapaProcedimiento);
+			p.setDpacProcedimientoInicio(fechaInicio);
+			p.setDpacProcedimientoFin(fechaFin);
+			p.setCestadoCodigo("AC");
+			p.setVusuarioCodigo(usuario);
+			logger.info("Parametros :"+codigoEtapaProcedimiento);
+	        procesoDao.saveProcessEtapaPAAC(p);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return "";
+	}
+	
 	public void obtenerParametros() {
-	     String financiamiento = (String) extContext().getRequestParameterMap().get("pFinan");
 	     String codigoProceso = (String) extContext().getRequestParameterMap().get("pCodigo");
-	     
-	     pFinan = Integer.valueOf(financiamiento);
+
 	     pCodigo = Integer.valueOf(codigoProceso);
 	     mostrarProcesoCab();
-	     showDetailsProcess();
+	     showEtapaDetalle();
 	}
 	
 	public void mostrarProcesoCab() {
 		IafasPaacProcesos procesos = new IafasPaacProcesos();
 		procesos.setPeriodo(periodo);
-		procesos.setNpacProcesoCodigo(pCodigo);
+		procesos.setNpacProcedimientoCodigo(pCodigo);
+		logger.info("Parametros Busqueda:"+pCodigo+" "+periodo);
 		List<IafasPaacProcesos> reg = procesoDao.showProcessHead(procesos);
 		for(IafasPaacProcesos r: reg) {
-			setLabelDescProceso(r.getVpacProcesoDescripcion());
-			setLabelMontoProceso(r.getNpacProcesoMonto().doubleValue());
-			setLabelNumeroPaac(r.getVpacProcesosNumeroPaac());
-			setLabelNumProceso(r.getVpacProcesoNumero());
+			setLabelDescProceso(reg.get(0).getVpacProcedimientoDescripcion());
+			setLabelMontoProceso(reg.get(0).getNpacProcesoMonto().doubleValue());
+			setLabelNumeroPaac(String.valueOf(reg.get(0).getNprocedimientoConvocatoria()));
+			setLabelNumProceso(reg.get(0).getVpacProcedimientoNomenclatura());
+			
+			logger.info("Parametros :"+reg.get(0).getVpacProcedimientoDescripcion()+" "+reg.get(0).getNpacProcesoMonto().doubleValue()+
+					" "+String.valueOf(reg.get(0).getNprocedimientoConvocatoria()));
 		}
 	}
 	
@@ -296,7 +290,7 @@ public class IafasPaacProcesosController implements Serializable{
 			       det.setVpacProcesoObs(observacionItem);
 			       det.setNpacProcesoDetalleItem(itemCodDet);
 			       det.setVusuarioCodigo(usuario);
-			        procesoDao.saveProcessDetailsPAAC(det);
+			      //  procesoDao.saveProcessDetailsPAAC(det);
 			        logger.info("Registro el Detalle del Proceso {} "+pCodigo);
 			        showDetailsProcess(); 
 			        limpiarCamposDet();
@@ -317,6 +311,16 @@ public class IafasPaacProcesosController implements Serializable{
 		List<ViewPaacProcesoDetalle> items = viewDao.showDetailsPaacProcess(v);
 		items.forEach((det) ->listaDetalle.add(det));
 		 return listaDetalle;
+	}
+	
+	public List<IafasPaacProcesos> showEtapaDetalle(){
+		listadoEtapas = new ArrayList<IafasPaacProcesos>();
+		IafasPaacProcesos v = new IafasPaacProcesos();
+		v.setPeriodo(periodo);
+		v.setNpacProcedimientoCodigo(pCodigo);
+		List<IafasPaacProcesos> etapasProceso = procesoDao.showProcessEtapa(v);
+		etapasProceso.forEach((e) -> listadoEtapas.add(e));
+		return listadoEtapas;
 	}
 	
 	public void limpiarCamposDet() {
