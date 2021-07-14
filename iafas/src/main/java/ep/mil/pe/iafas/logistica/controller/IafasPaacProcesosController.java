@@ -1,5 +1,8 @@
 package ep.mil.pe.iafas.logistica.controller;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -15,12 +18,17 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.file.UploadedFile;
 
 import ep.mil.pe.iafas.administrativo.maestros.combos.dao.IafasCombosDao;
 import ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos;
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
+import ep.mil.pe.iafas.configuracion.util.Constantes;
+import ep.mil.pe.iafas.configuracion.util.Utilitarios;
 import ep.mil.pe.iafas.logistica.dao.IafasPaacProcesoDao;
 import ep.mil.pe.iafas.logistica.dao.ViewPaacProcesoDetalleDao;
 import ep.mil.pe.iafas.logistica.model.IafasPaacProcesoDetalle;
@@ -87,6 +95,12 @@ public class IafasPaacProcesosController implements Serializable{
 	private Date fechaInicio;
 	private Date fechaFin;
 	private String descEtapaDocumento;
+	private String archivoEtapaDoc;
+	
+	private String filename;
+	private String extension;
+	
+	private String directorioInput;
 	
 	List<ViewPaacProcesoDetalle> listaDetalle;
 	List<IafasPaacProcesos> listadoEtapas;
@@ -165,7 +179,7 @@ public class IafasPaacProcesosController implements Serializable{
 	   try {
 		IafasPaacProcesos p = new IafasPaacProcesos();
 
-		p.setPeriodo("2021");		
+		p.setPeriodo(periodo);		
 		p.setNpacProcedimientoCodigo(0);
 		p.setVpacProcedimientoNomenclatura(nomenclatura);
 		p.setVpacProcedimientoDescripcion(descrProceso);
@@ -332,6 +346,58 @@ public class IafasPaacProcesosController implements Serializable{
 		itemCodDet=0;
 		itemCodigo=0;
 	}
+	
+	public void cargarArchivoEtapa(FileUploadEvent event) {
+		 UploadedFile file = event.getFile();
+	        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+	        filename = file.getFileName(); 
+	        String filenameChange = periodo+pCodigo+"-"+labelNumProceso;
+	        extension = FilenameUtils.getExtension(file.getFileName());
+	        String path = Constantes.ROOT_PRODUCCION;
+	        String filePath = path+filenameChange;
+	        directorioInput = filePath+"."+extension;
+	        logger.info("Directorio:"+directorioInput);
+	        try {
+	            FileOutputStream fos = new FileOutputStream(directorioInput);
+	            fos.write(file.getContent());
+	            fos.flush();
+	            fos.close();
+			} catch (FileNotFoundException e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
+	
+	public String saveFileEtapa() {
+		IafasPaacProcesos p = new IafasPaacProcesos();
+		try {
+
+			String filenameChange = Constantes.ROOT_PRODUCCION+"ProcedimientosEtapas/"+periodo+pCodigo+"-"+labelNumProceso+"."+extension;
+			String nomArchivo = periodo+pCodigo+"-"+labelNumProceso+"."+extension;
+			p.setPeriodo(periodo);
+			p.setNpacProcedimientoCodigo(pCodigo);
+			p.setNprocedimientoEtapaDocCodigo(0);
+			p.setNprocedimientoEtapaCodigo(codigoEtapaProcDocumento);
+			p.setDescArchEtapa(descEtapaDocumento);
+			p.setArchivoEtapa(nomArchivo);
+			p.setEstadoDocEtapa("AC");
+			p.setVusuarioCodigo(usuario);
+			logger.info("Renombrando el Archivo {} "+filenameChange);
+			Utilitarios.changeFileName(directorioInput, filenameChange);
+			procesoDao.saveProcessEtapaDocPAAC(p);
+			logger.info("Se registro el Etapa Documento {} "+p.toString());
+		} catch (Exception e) {
+			// TODO: handle exception
+			logger.error(e.getMessage());
+		}
+		return "";
+	}
+	
+	
+	
 	private String showMessages(int opcion) {
 		String messages = "";
 		switch (opcion) {

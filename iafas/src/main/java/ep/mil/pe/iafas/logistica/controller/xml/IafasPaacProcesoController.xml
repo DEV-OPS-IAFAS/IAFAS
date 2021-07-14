@@ -47,10 +47,22 @@
 		#{dpacProcedimientoInicio, mode=IN, jdbcType=DATE},
 		#{dpacProcedimientoFin, mode=IN,jdbcType=DATE},
 		#{estadoEtpa, mode=IN,jdbcType=VARCHAR},
-		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR})}
-
-		
+		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR})}	
    </select>
+   
+   	<select id="saveProcessEtapaDoc" parameterType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesoDetalle" 
+	  statementType="CALLABLE">
+       { CALL SP_PAC_PROCEDIMIENTOS_ETAPA_DOC(
+        #{periodo mode=IN, jdbcType=VARCHAR},
+        #{npacProcedimientoCodigo mode=IN, jdbcType=INTEGER},
+        #{nprocedimientoEtapaDocCodigo mode=IN, jdbcType=INTEGER},
+		#{nprocedimientoEtapaCodigo, mode=IN, jdbcType=INTEGER},
+		#{descArchEtapa, mode=IN, jdbcType=VARCHAR},
+		#{archivoEtapa, mode=IN,jdbcType=VARCHAR},
+		#{estadoDocEtapa, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR})}	
+   </select>
+   
    <select id="showDetailContract"  resultType="ep.mil.pe.iafas.logistica.model.IafasPacContratos"
 		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacContratos">
      SELECT ncontrato_codigo ncontratoCodigo, 

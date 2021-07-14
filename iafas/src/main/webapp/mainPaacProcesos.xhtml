@@ -17,7 +17,7 @@
       	  x.value = x.value.toUpperCase();
       	}
         </script>
-        <h:form id="frmProcesos" style="border-radius: 5px 5px 5px 5px;border: 1px ; width:100%;">
+        <h:form id="frmProcesos" style="border-radius: 5px 5px 5px 5px;border: 1px ; width:100%;" enctype="multipart/form-data">
             <p:panel >
                 <p:panelGrid columns="8" styleClass="panel">
                    <i class="pi pi-calendar-plus" style="height:20px;height:20px;" ></i>
@@ -157,11 +157,19 @@
                         </h:selectOneMenu>
                   		<h:outputLabel value="Descripción:"></h:outputLabel>
                   		<h:inputTextarea value="#{mbProcesos.descEtapaDocumento}" style="width:450px;"
-                        readonly="true" styleClass="outLabel" rows="3" cols="2"></h:inputTextarea>
+                         styleClass="outLabel" rows="3" cols="2"></h:inputTextarea>
                         <h:outputLabel value="Archivo:"></h:outputLabel>
-                        <p:fileUpload id="fileDocument"  mode="advanced"  listener="#{mbContACF.subirAdemda}" allowTypes="/(\.|\/)(gif|jpe?g|png|pdf)$/"
+                        <p:fileUpload id="fileDocument"  mode="advanced"  listener="#{mbProcesos.cargarArchivoEtapa}" allowTypes="/(\.|\/)(gif|jpe?g|png|pdf)$/"
 						accept=".pdf,.gif,.jpeg,.png" uploadButtonTitle="Cargar"></p:fileUpload>
                     </h:panelGrid>
+                    <h:panelGrid columns="2">
+                           <p:commandButton id="btnAceptarDOC" value="Registrar" 
+                           action="#{mbProcesos.saveFileEtapa}" ajax="false"
+                          icon="pi pi-check" style="height:30px;"></p:commandButton>
+                            <p:commandButton id="btnCancelarDOC" value="Cerrar" type="button" action="#{mbProcesos.limpiarCamposDet()}"
+                             onclick="PF('pDoc').hide();" 
+                            icon="pi pi-times" style="height:30px;" ></p:commandButton>
+                        </h:panelGrid>
                   </p:panel>
                 </p:dialog>
             </p:panel>

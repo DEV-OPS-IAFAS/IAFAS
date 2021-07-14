@@ -7,6 +7,10 @@ public class Constantes {
 	private Constantes() {		
 	}
 	
+	//Rutas para Almacenar Archivos
+	public static final String ROOT_LOCAL="D:\\OPRE\\Proyectos\\IafasV2.0\\IAFAS\\iafas\\src\\main\\webapp\\Archivos\\";
+	public static final String ROOT_PRODUCCION="/opt/tomcat/webapps/iafas/Archivos/";
+	
 	public static final String VACIO = "";
 	public static final String DD_MM_YYYY = "dd/MM/yyyy";
 	public static final String DD_MM_YYYY_HH_MM_SS = "dd/MM/yyyy HH:mm:ss";

@@ -101,6 +101,19 @@ public class IafasPaacProcesoDao {
 		return lista;
 	}
 	
+	public int saveProcessEtapaDocPAAC(IafasPaacProcesos paac) {
+		int i = 0;
+		SqlSession session = sqlSessionFactory.openSession();
+		try {
+			i = session.insert("IafasPaacProceso.saveProcessEtapaDoc", paac);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		finally {
+			session.close();
+		}
+		return i;
+	}
 
 	public String getMensajeBD() {
 		return mensajeBD;

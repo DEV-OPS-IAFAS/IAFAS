@@ -40,6 +40,11 @@ public class IafasPaacProcesos {
 	private Date dpacProcedimientoFin;
 	private String estadoEtpa;
 	private String descripcionEtapa;
+	
+	private int nprocedimientoEtapaDocCodigo;
+	private String descArchEtapa;
+	private String archivoEtapa;
+	private String estadoDocEtapa;
 
 
 }
