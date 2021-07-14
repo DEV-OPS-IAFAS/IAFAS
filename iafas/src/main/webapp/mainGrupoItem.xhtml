@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>IAFAS</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
+    </h:head>
+    <body class="formulario">
+        <script>
+               function upperCase(obj) {
+        	  var x = document.getElementById(obj);
+        	  x.value = x.value.toUpperCase();
+        	}
+        	
+        	  PrimeFaces.locales['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Sólo hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Fecha actual',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText: 'Todo el día',
+                today: 'Hoy',
+                clear: 'Claro'
+            };
+	
+        </script>
+        <h:form id="frmGrupoItem" style="border-radius: 5px 5px 5px 5px;border: 1px ; width:100%;">
+            <p:panel > 
+              <p:panelGrid columns="3" styleClass="panel">
+                   <i class="pi pi-calendar-plus" style="height:20px;height:20px;" ></i>
+                    <p:outputLabel value="REGISTRO DE ITEM" styleClass="etiqueta"></p:outputLabel>
+                    <p:panelGrid columns="5" >                  
+                    <p:commandButton  value="Nuevo"  styleClass="button" action="#{mbGrupoItem.nuevoRegistro()}" 
+                    style="height:30px;" title="Click aqui para Ingresar un Nuevo Item"/>
+                </p:panelGrid>
+                </p:panelGrid>  
+          
+                <p:dataTable id="dTableVacacion" var="va" value="#{mbGrupoItem.lista}" rows="5" scrollable="true" scrollHeight="175px;"
+                                             style="width: 100%;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
+                                             paginatorPosition="bottom" paginator="true" stripedRows="true"> 
+                                   
+                                    <p:column headerText="PROCESO DE SELECCION" style="width: 80px;" >                                        
+                                            <p:outputLabel value="#{va.descriProceso}"/>                                           
+                                    </p:column>                                        
+                                     <p:column headerText="TIPO ITEM" style="width: 20px;" >                                        
+                                            <p:outputLabel value="#{va.descripItem}"/>                                           
+                                    </p:column>                                                                       
+                                     <p:column headerText="MONTO INICIAL" style="width: 15px;" >                                        
+                                            <p:outputLabel value="#{va.ntipoProcedimientoInicial}"/>                                           
+                                    </p:column> 
+                                     <p:column headerText="MONTO MAXIMO" style="width: 30px; text-align:center; "  >                                        
+                                            <p:outputLabel value="#{va.ntipoProcedimientoMaximo}"/>                                           
+                                    </p:column>   
+                                    
+                             </p:dataTable>          
+              
+                </p:panel>
+        </h:form>
+    </body>
+</html>

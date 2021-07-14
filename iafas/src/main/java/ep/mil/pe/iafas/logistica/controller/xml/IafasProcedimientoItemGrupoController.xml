@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="IafasProcedimientoItemGrupo">
+	<resultMap id="iafasProcedimientoItemGrupo" type="IafasProcedimientoItemGrupo" />
+
+	
+	<select id="verGrupoItem" 
+	    resultType="ep.mil.pe.iafas.logistica.model.IafasProcedimientoItemGrupo"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasProcedimientoItemGrupo">
+		
+			select CTIPO_PROCEDIMIENTO_CODIGO ctipoProcedimientoCodigo, CITEM_TIPO_CODIGO citemTipoCodigo,
+			(select VTIPO_PROCEDIMIENTO_ABREVIATURA from iafas_tipo_procedimiento_seleccion where CTIPO_PROCEDIMIENTO_CODIGO=iafas_tipo_procedimiento_item_grupo.CTIPO_PROCEDIMIENTO_CODIGO) descriProceso,
+            CITEM_TIPO_CODIGO citemTipoCodigo,
+             (select NITEM_TIPO_DESCRIPCION from iafas_item_tipo where CITEM_TIPO_CODIGO=iafas_tipo_procedimiento_item_grupo.CITEM_TIPO_CODIGO) descripItem,
+				NTIPO_PROCEDIMIENTO_INICIAL ntipoProcedimientoInicial,NTIPO_PROCEDIMIENTO_MAXIMO ntipoProcedimientoMaximo
+				 from iafas_tipo_procedimiento_item_grupo WHERE CESTADO_CODIGO='AC'
+				
+	</select>
+		<select id="grabarGrupoItem"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasProcedimientoItemGrupo"
+		statementType="CALLABLE">
+		
+		{ CALL SP_GRABAR_GRUPO_ITEM (
+		#{cperiodoCodigo mode=IN, jdbcType=VARCHAR},
+		#{ctipoProcedimientoCodigo, mode=IN, jdbcType=VARCHAR},
+		#{citemTipoCodigo, mode=IN, jdbcType=VARCHAR},
+		#{vusuarioCreador, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR},
+		#{ntipoProcedimientoInicial, mode=IN,jdbcType=DECIMAL},
+		#{ntipoProcedimientoMaximo, mode=IN,jdbcType=DECIMAL})}
+
+	</select>
+
+	
+</mapper>

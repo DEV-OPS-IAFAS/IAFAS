@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="IafasProveedores">
+	<resultMap id="iafasProveedores" type="IafasProveedores" />
+	
+	<select id="proveedorConsulta" 
+	    resultType="ep.mil.pe.iafas.logistica.model.IafasProveedores"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasProveedores">
+		
+		select CPROVEEDOR_RUC cproveedorRuc, VPROVEEDOR_RAZON_SOCIAL vproveedorRazonSocial,
+		VPROVEEDOR_REPRESENTANTE vproveedorRepresentante,
+		VPROVEEDOR_DIRECCION vproveedorDireccion,
+		CPROVEEDOR_TIPO cproveedorTipo,
+		VPROVEEDOR_TELEFONO vproveedorTelefono
+		from iafas_proveedores where CESTADO_CODIGO='AC'
+		
+	</select>
+	<select id="grabarProveedores"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasProveedores"
+		statementType="CALLABLE">
+		
+		{ CALL SP_GRABAR_PROVEEDORES (
+		#{cproveedorRuc mode=IN, jdbcType=VARCHAR},
+		#{vproveedorRazonSocial, mode=IN, jdbcType=VARCHAR},
+		#{vproveedorRepresentante, mode=IN, jdbcType=VARCHAR},
+		#{vproveedorDireccion, mode=IN,jdbcType=VARCHAR},
+		#{cproveedorTipo, mode=IN,jdbcType=VARCHAR},
+		#{vproveedorTelefono, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCreador, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR})}
+
+	</select>
+	
+	<select id="verproveedores" 
+	    resultType="ep.mil.pe.iafas.logistica.model.IafasProveedores"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasProveedores">
+		
+			select CPROVEEDOR_RUC cproveedorRuc, VPROVEEDOR_RAZON_SOCIAL vproveedorRazonSocial
+		    from iafas_proveedores where CESTADO_CODIGO='AC' and CPROVEEDOR_RUC=#{cproveedorRuc}
+				
+	</select>
+		<select id="grabarBanco"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasProveedores"
+		statementType="CALLABLE">
+		
+		{ CALL SP_GRABAR_PROVEEDORES_BANCOS (
+		#{cproveedorRuc mode=IN, jdbcType=VARCHAR},
+		#{vproveedorBancoCci, mode=IN, jdbcType=VARCHAR},
+		#{vproveedorBancoCuenta, mode=IN, jdbcType=VARCHAR},
+		#{cbancoCodigo, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCreador, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR})}
+
+	</select>
+		<select id="grabarRnp"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasProveedores"
+		statementType="CALLABLE">
+		
+		{ CALL SP_GRABAR_PROVEEDORES_RNP (
+		#{cproveedorRuc mode=IN, jdbcType=VARCHAR},
+		#{vproveedorRnpCodigo, mode=IN, jdbcType=VARCHAR},
+		#{dproveedorRnpInicio, mode=IN, jdbcType=VARCHAR},
+		#{dproveedorRnpVigencia, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCreador, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR})}
+
+	</select>
+	
+</mapper>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>IAFAS- REGISTRO DE PROVEEDORES</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+		<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
+    </h:head>
+    <body class="formulario">
+    <script>
+       function upperCase(obj) {
+        	  var x = document.getElementById(obj);
+        	  x.value = x.value.toUpperCase();
+        	}
+        	
+        	function validarSiNumero(object)
+				{
+				numero = object.value;
+				if (!/^([0-9])*$/.test(numero))
+				object.value = numero.substring(0,numero.length-1);
+				}
+    </script>
+        <h:form id="frmInsRegProveedores" enctype="multipart/form-data">
+              <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
+            <p:panel > 
+             <p:panelGrid columns="6"  >
+                    <i class="pi pi-calendar-minus"></i>
+                    <p:outputLabel value="Registro de Proveedores " style="color: green; font-weight: bold; font-size: 12px;"/>
+                    <p:commandButton  value="Grabar"  action="#{mbGrupoItem.grabarGrupoItem()}" 
+                    icon="pi pi-save" style="height:35px;" ajax="false" />
+                    <p:commandButton value="Cancelar"  action="#{mbGrupoItem.retornar()}"
+                    icon="pi pi-arrow-left" style="height:35px;"/>
+                </p:panelGrid>                         
+                <br/>
+                <p:fieldset legend="Datos del Personal" id="DatosCA">
+                        <h:panelGrid columns="2" style="width: 100%">  
+                         <p:outputLabel value="Tipo Proceso Seleccion:  "/>
+                        <p:selectOneMenu id="tipProcel" value="#{mbGrupoItem.ctipoProcedimientoCodigo}" style="width: 200px;"  >
+                            <f:selectItem itemValue="00" itemLabel="--Seleccione--"/>
+                            <f:selectItems var="documentos" value="#{mbCombos.procesoSel}"/>
+                        </p:selectOneMenu> 
+                        
+                        <p:outputLabel value="Tipo Item: "/>
+                        <p:selectOneMenu id="tipProv" value="#{mbGrupoItem.citemTipoCodigo}" style="width: 200px;"  >
+                            <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
+                            <f:selectItem itemValue="B" itemLabel="BIENES"/>
+                            <f:selectItem itemValue="O" itemLabel="OBRAS"/>
+                            <f:selectItem itemValue="S" itemLabel="SERVICIOS"/>
+                        </p:selectOneMenu>        
+                        
+                                                            
+                            <p:outputLabel value="Monto Inicial: "/>
+                             <h:inputText id="montoInical" styleClass="input" value="#{mbGrupoItem.ntipoProcedimientoInicial}" size="11" 
+                    			 style="text-align:right">
+		                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+		                    </h:inputText>
+                            
+                             <p:outputLabel value="Monto maximo: "/>
+                             <h:inputText id="montoMaximo" styleClass="input" value="#{mbGrupoItem.ntipoProcedimientoMaximo}" size="11" 
+                    			 style="text-align:right">
+		                    <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+		                    </h:inputText>
+                            
+                                                                     
+                        </h:panelGrid>                    
+                </p:fieldset>
+                <br/>               
+            </p:panel>
+        </h:form>
+    </body>
+</html>

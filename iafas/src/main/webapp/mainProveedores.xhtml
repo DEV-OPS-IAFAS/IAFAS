@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>IAFAS</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
+    </h:head>
+    <body class="formulario">
+        <script>
+               function upperCase(obj) {
+        	  var x = document.getElementById(obj);
+        	  x.value = x.value.toUpperCase();
+        	}
+        	
+        	  PrimeFaces.locales['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Sólo hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Fecha actual',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText: 'Todo el día',
+                today: 'Hoy',
+                clear: 'Claro'
+            };
+	
+        </script>
+        <h:form id="frmProveedores" style="border-radius: 5px 5px 5px 5px;border: 1px ; width:100%;">
+            <p:panel > 
+              <p:panelGrid columns="3" styleClass="panel">
+                   <i class="pi pi-calendar-plus" style="height:20px;height:20px;" ></i>
+                    <p:outputLabel value="REGISTRO DE PROVEEDORES" styleClass="etiqueta"></p:outputLabel>
+                    <p:panelGrid columns="5" >                  
+                    <p:commandButton  value="Nuevo"  styleClass="button" action="#{mbProveedores.nuevoRegistro()}" 
+                    style="height:30px;" title="Click aqui para Ingresar un Nuevo Personal"/>
+                </p:panelGrid>
+                </p:panelGrid>  
+          
+                <p:dataTable id="dTableVacacion" var="va" value="#{mbProveedores.lista}" rows="5" scrollable="true" scrollHeight="175px;"
+                                             style="width: 100%;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
+                                             paginatorPosition="bottom" paginator="true" stripedRows="true"> 
+                                   
+                                    <p:column headerText="N° PROVEDORES" style="width: 20px;" filterBy="#{va.cproveedorRuc}" >                                        
+                                            <p:outputLabel value="#{va.cproveedorRuc}"/>                                           
+                                    </p:column>                                        
+                                     <p:column headerText="RAZON SOCIAL" style="width: 100px;" >                                        
+                                            <p:outputLabel value="#{va.vproveedorRazonSocial}"/>                                           
+                                    </p:column>                                                                       
+                                     <p:column headerText="REPRESENTANTE" style="width: 15px;" >                                        
+                                            <p:outputLabel value="#{va.vproveedorRepresentante}"/>                                           
+                                    </p:column> 
+                                     <p:column headerText="DIRECCION" style="width: 30px; text-align:center; "  >                                        
+                                            <p:outputLabel value="#{va.vproveedorDireccion}"/>                                           
+                                    </p:column>   
+                                      <p:column headerText="TIPO PROVEEDORES" style="width: 30px; text-align:center; " >                                        
+                                            <p:outputLabel value="#{va.cproveedorTipo}"/>                                           
+                                    </p:column>                                                                                        
+									   <p:column headerText="TELEFONO" style="width: 15px;" >                                        
+                                            <p:outputLabel value="#{va.vproveedorTelefono}"/>                                           
+                                    </p:column> 
+                                      <p:column headerText="BANCO" style="width: 10px; text-align:center; ">
+                                        <p:commandButton id="btn_banco" icon="pi pi-credit-card" 
+                                        oncomplete="PF('pBanco').show();" action="#{mbProveedores.VerProveedor()}" 
+                                        update="frmProveedores:EstadoBanco" >
+                                          <f:param id="pdetalleCod" name="pdetalleCod" value="#{va.cproveedorRuc}"></f:param>                                      
+										</p:commandButton> 
+                                    </p:column> 
+                                    <p:column headerText="RNP" style="width: 10px; text-align:center; ">
+                                        <p:commandButton id="btn_rnp" icon="pi pi-credit-card" 
+                                        oncomplete="PF('pRnp').show();" action="#{mbProveedores.VerProveedorRnp()}" 
+                                        update="frmProveedores:EstadoRnp" >
+                                          <f:param id="pdetalleCodRnp" name="pdetalleCodRnp" value="#{va.cproveedorRuc}"></f:param>                                      
+										</p:commandButton> 
+                                    </p:column> 
+                                </p:dataTable>
+             
+                <p:dialog id="EstadoBanco" widgetVar="pBanco" modal="true" 
+                          showEffect="fade" hideEffect="explode" resizable="false">
+                    <p:panel >
+                    <br/>
+                    
+                <p:fieldset legend="REGISTRO DE BANCO" id="DatosBanco">    
+                 <h:panelGrid columns="4" >
+                  <p:outputLabel value="N RUC: "/>
+                  <h:outputText styleClass="outLabel"  value="#{mbProveedores.cproveedorRuc} "/>
+                  <p:outputLabel value="RAZON SOCIAL: "/>
+                  <h:outputText styleClass="outLabel"  value="#{mbProveedores.vproveedorRazonSocial} "/>
+                 
+                </h:panelGrid>    
+                <br/>            
+                        <h:panelGrid columns="2" style="width: 100%">         
+                         <p:outputLabel value="BANCO: "/>
+                            <p:selectOneMenu id="tipProv" value="#{mbProveedores.cbancoCodigo}" style="width: 100px;"  >
+                            <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
+                            <f:selectItem itemValue="001" itemLabel="BANCO NACION"/>
+                        </p:selectOneMenu>       
+                          <p:outputLabel value="Nº CCI: "/>
+                            <h:inputText id="nrocci"   value="#{mbProveedores.vproveedorBancoCci}"
+                            styleClass="input" style="text-align: left;" size="50" 
+                            maxlength="20" /> 
+                             <p:outputLabel value="Nº CUENTA: "/>
+                            <h:inputText id="nrocuenta"   value="#{mbProveedores.vproveedorBancoCuenta}"
+                            styleClass="input" style="text-align: left;" size="50" 
+                            maxlength="20" />
+                          
+                            
+						
+                        </h:panelGrid>                    
+                </p:fieldset>
+                <br/>
+                <p:panelGrid columns="4" >
+                    <p:commandButton  value="Grabar" action="#{mbProveedores.grabarBanco()}" 
+                    icon="pi pi-save" style="height:35px; " ajax="false"   />
+                    <p:commandButton value="Cancelar"  oncomplete="PF('pBanco').hide();"
+                    icon="pi pi-arrow-left" style="height:35px; "/>
+                </p:panelGrid>   
+                               
+                    </p:panel>
+                </p:dialog>  
+                
+                <br/>
+                
+                <p:dialog id="EstadoRnp" widgetVar="pRnp" modal="true" 
+                          showEffect="fade" hideEffect="explode" resizable="false">
+                    <p:panel >
+                    <br/>
+                    
+                <p:fieldset legend="REGISTRO RNP" id="DatosRnp">    
+                 <h:panelGrid columns="4" >
+                   <p:outputLabel value="N RUC: "/>
+                  <h:outputText styleClass="outLabel"  value="#{mbProveedores.cproveedorRuc} "/>
+                  <p:outputLabel value="RAZON SOCIAL: "/>
+                  <h:outputText styleClass="outLabel"  value="#{mbProveedores.vproveedorRazonSocial} "/>
+                </h:panelGrid>    
+                <br/>            
+                        <h:panelGrid columns="2" style="width: 100%">                                       
+                          <p:outputLabel value="Nº RNP: "/>
+                            <h:inputText id="nrornp"   value="#{mbProveedores.vproveedorRnpCodigo}"
+                            styleClass="input" style="text-align: left;" size="50" 
+                            maxlength="10" /> 
+                           <h:outputText value="Fecha Inicio:"></h:outputText>							
+							<p:datePicker id="txt_fecIni" value="#{mbProveedores.dproveedorRnpInicio}" 
+							 locale="es" monthNavigator="true" yearNavigator="true" pattern="dd/MM/yyyy" >		   
+							 </p:datePicker>
+							 <h:outputText value="Fecha Vigente:"></h:outputText>							
+							<p:datePicker id="txt_vigente"  value="#{mbProveedores.dproveedorRnpVigencia}" 
+							 locale="es" monthNavigator="true" yearNavigator="true" pattern="dd/MM/yyyy" >						   
+							 </p:datePicker>
+                          
+                            
+						
+                        </h:panelGrid>                    
+                </p:fieldset>
+                <br/>
+                <p:panelGrid columns="4" >
+                    <p:commandButton  value="Grabar"  action="#{mbProveedores.grabarRnp()}" 
+                    icon="pi pi-save" style="height:35px; " ajax="false"   />
+                    <p:commandButton value="Cancelar"  oncomplete="PF('pRnp').hide();"
+                    icon="pi pi-arrow-left" style="height:35px; "/>
+                </p:panelGrid>   
+                               
+                    </p:panel>
+                </p:dialog>  
+                
+                </p:panel>
+        </h:form>
+    </body>
+</html>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>IAFAS- REGISTRO DE PROVEEDORES</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+		<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
+    </h:head>
+    <body class="formulario">
+    <script>
+       function upperCase(obj) {
+        	  var x = document.getElementById(obj);
+        	  x.value = x.value.toUpperCase();
+        	}
+        	
+        	function validarSiNumero(object)
+				{
+				numero = object.value;
+				if (!/^([0-9])*$/.test(numero))
+				object.value = numero.substring(0,numero.length-1);
+				}
+    </script>
+        <h:form id="frmInsRegProveedores" enctype="multipart/form-data">
+              <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
+            <p:panel > 
+             <p:panelGrid columns="6"  >
+                    <i class="pi pi-calendar-minus"></i>
+                    <p:outputLabel value="Registro de Proveedores " style="color: green; font-weight: bold; font-size: 12px;"/>
+                    <p:commandButton  value="Grabar"  action="#{mbProveedores.grabarProveedores()}" 
+                    icon="pi pi-save" style="height:35px;" ajax="false" />
+                    <p:commandButton value="Cancelar"  action="#{mbProveedores.retornar()}"
+                    icon="pi pi-arrow-left" style="height:35px;"/>
+                </p:panelGrid>                         
+                <br/>
+                <p:fieldset legend="Datos del Personal" id="DatosCA">
+                        <h:panelGrid columns="2" style="width: 100%">  
+                        <p:outputLabel value="TIPO DOCUMENTO: "/>
+                        <p:selectOneMenu id="tipProv" value="#{mbProveedores.cproveedorTipo}" style="width: 100px;"  >
+                            <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
+                            <f:selectItem itemValue="1" itemLabel="RUC NACIONAL"/>
+                            <f:selectItem itemValue="2" itemLabel="RUC EXTRANJERO"/>
+                        </p:selectOneMenu>                                            
+                            <p:outputLabel value="Nº RUC: "/>
+                            <h:inputText id="nrodocumento"   value="#{mbProveedores.cproveedorRuc}"
+                            styleClass="input" onkeyup="validarSiNumero(this);" style="text-align: left;" size="50" 
+                            maxlength="11" /> 
+                            <p:outputLabel value="RAZON SOCIAL: "/>
+                            <h:inputText id="apepar" value="#{mbProveedores.vproveedorRazonSocial}"
+                            styleClass="input" style="text-align: left;" size="50"
+                            maxlength="200" onkeyup="upperCase(this.name)"/> 
+                            <p:outputLabel value="REPRESENTANTE: "/>
+                            <h:inputText id="apemat" value="#{mbProveedores.vproveedorRepresentante}"
+                            styleClass="input" style="text-align: left;" size="50"
+                            maxlength="200" onkeyup="upperCase(this.name)"/> 
+                            <p:outputLabel value="DIRECCION: "/>
+                            <h:inputText id="dir"  value="#{mbProveedores.vproveedorDireccion}"
+                            styleClass="input" style="text-align: left;" size="50"
+                            maxlength="500" onkeyup="upperCase(this.name)"/> 
+                            <p:outputLabel value="TELEFONO: "/>
+                            <h:inputText id="tel"  value="#{mbProveedores.vproveedorTelefono}"
+                            styleClass="input" onkeyup="validarSiNumero(this);" style="text-align: left;" size="50"
+                            maxlength="10"/>                                                 
+                        </h:panelGrid>                    
+                </p:fieldset>
+                <br/>               
+            </p:panel>
+        </h:form>
+    </body>
+</html>
