@@ -6,13 +6,27 @@
 <mapper namespace="IafasAlmacenSalida">
 	<resultMap id="resultado" type="IafasAlmacenSalida" />
 
-	<select id="getAll"
+	<select id="mostrarConsultaPrincipal"
 		parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalida"
 		resultType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalida">
-		SELECT CPERIODO_CODIGO, NALMACEN_SALIDA_CODIGO,
-		NALMACEN_CODIGO, CMES_CODIGO, VALMACEN_SALIDA_MOTIVO,
-		CAREA_LABORAL_CODIGO
-		FROM IAFAS_ALMACEN_SALIDA
+		select CPERIODO_CODIGO AS cPeriodoCodigo,  NALMACEN_SALIDA_CODIGO AS nAlmacenSalidaCodigo, NALMACEN_CODIGO AS nAlmacenCodigo, 
+		(SELECT  VALMACEN_DESCRIPCION FROM IAFAS_ALMACEN E WHERE E.NALMACEN_CODIGO= CAB.NALMACEN_CODIGO) AS nombreAlmacen,
+		VALMACEN_SALIDA_MOTIVO AS vAlmacenSalidaMotivo, 
+		(SELECT  VAREA_LABORAL_DESCRIPCION FROM iafas_area_laboral E WHERE E.CAREA_LABORAL_CODIGO=CAB.CAREA_LABORAL_CODIGO) AS nombreAreaLaboral,
+		(SELECT  e.VESTADO_DESCRIPCION FROM iafas_estados e where CAB.CESTADO_CODIGO = e.cestado_codigo) as desEstado
+		FROM IAFAS_ALMACEN_SALIDA CAB
+		WHERE 
+		CPERIODO_CODIGO = #{cPeriodoCodigo} AND
+		CMES_CODIGO=#{cMesCodigo} AND
+		CAREA_LABORAL_CODIGO=#{cAreaLaboralCodigo}  
 	</select>
+
+
+	<select id="SP_IDU_PEDIDO_ALMACEN" statementType="CALLABLE" parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalida">
+        <![CDATA[call SP_IDU_PEDIDO_ALMACEN(#{cPeriodoCodigo, mode=IN}, #{nAlmacenCodigo, mode=IN},#{cMesCodigo, mode=IN}, #{vAlmacenSalidaMotivo, mode=IN}, 
+        #{cAreaLaboralCodigo, mode=IN}, #{vUsuarioCodigo, mode=IN}, #{mode, mode=IN},
+        #{codigoRespuesta,mode=OUT,jdbcType=VARCHAR}, #{mensajeRespuesta,mode=OUT,jdbcType=VARCHAR}, #{numeroAlmacen, mode=OUT, jdbcType=VARCHAR})
+         ]]>
+    </select>
 
 </mapper>

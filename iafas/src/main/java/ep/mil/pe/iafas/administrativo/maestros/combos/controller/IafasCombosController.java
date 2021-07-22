@@ -56,6 +56,11 @@ public class IafasCombosController implements Serializable {
 	private List<SelectItem> periodos;
 	private List<SelectItem> entidades;
 	
+	/*Cambios agregados por Elvis Severino*/
+	private List<SelectItem> almacenes;
+	
+	/**************************************/
+	
     public List<SelectItem> getProcesoSel() {
         procesoSel = new ArrayList<>();
         IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());    
@@ -290,4 +295,16 @@ public class IafasCombosController implements Serializable {
 		}		
 		return etapas;
 	}
+	
+	/*Cambios agregados por Elvis Severino*/
+	public List<SelectItem> getAlmacenes() {
+		almacenes = new ArrayList<SelectItem>();
+		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasCombos> ls = cb.getAlmacenes();
+		for (IafasCombos p : ls) {
+			almacenes.add(new SelectItem(p.getCodigo(), p.getDescripcion()));
+		}		
+		return almacenes;
+	}
+	/******************************************/
 }

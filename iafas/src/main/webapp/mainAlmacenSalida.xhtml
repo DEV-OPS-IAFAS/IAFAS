@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<h:head>
+	<title>IAFAS</title>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+	<link href="css/estilos.css" rel="stylesheet" type="text/css" />
+	<link href="css/Botones.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/css/bootstrap/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/css/style.css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/icon/themify-icons/themify-icons.css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/icon/icofont/css/icofont.css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/icon/font-awesome/css/font-awesome.min.css" />
+
+	<style type="text/css">
+button.ui-button {
+	margin-right: .5rem;
+}
+</style>
+
+</h:head>
+
+<body class="formulario">
+
+<script>
+		function verMensajes() {
+			var option = document.getElementById('frm_PedidoAlmacen:hdd_option').value;
+			var message = document.getElementById('frm_PedidoAlmacen:hdd_message').value;
+
+			if (option == -1) {
+				swal("ALERTA", message, "error").then(function() {
+					window.location = "mainAlmacenSalida.xhtml";
+				});
+			}
+
+			if (option == 0) {
+				swal("AVISO", message, "success").then(function() {
+					window.location = "mainAlmacenSalida.xhtml";
+				});
+			}
+
+			if (option == 1) {
+				swal("ALERTA", message, "warning").then(function() {
+					window.location = "mainAlmacenSalida.xhtml";
+				});
+			}
+
+		}
+	</script>
+
+
+<h:form id="frm_PedidoAlmacen">
+		<center class="label label-inverse-success">
+			<label>PEDIDO DE ALMACEN</label>
+		</center>
+		<p:panel id="pnl_messages">
+			<h:inputHidden value="#{iafasAlmacenSalidaController.typeMessages}" id="hdd_option" />
+			<h:inputHidden value="#{iafasAlmacenSalidaController.messages}"	id="hdd_message" />
+		</p:panel>
+
+	<p:panel header="Datos de Busqueda">
+	
+	<p:panelGrid columns="6" styleClass="panel">
+				<h:outputLabel value="A.F" styleClass="etiqueta"
+					style="font-size:11px;font-weight:bold;" />
+				<h:selectOneMenu id="cboPeriodo" styleClass="select" value="#{iafasAlmacenSalidaController.CPeriodo}">
+					<f:ajax render="frm_PedidoAlmacen:dTablePedidoAlmacen" listener="#{iafasAlmacenSalidaController.mostrarConsultaPrincipal()}" />
+					<f:selectItem itemValue="0000" itemLabel="Seleccione" />
+					<f:selectItem itemValue="2021" itemLabel="2021" />
+				</h:selectOneMenu>
+
+				<h:outputLabel value="Mes:" styleClass="etiqueta"
+					style="font-size:11px;font-weight:bold;" />
+				<h:selectOneMenu id="cboMes" styleClass="select" value="#{iafasAlmacenSalidaController.codigoMes}">
+					<f:ajax render="frm_PedidoAlmacen:dTablePedidoAlmacen" listener="#{iafasAlmacenSalidaController.mostrarConsultaPrincipal()}" />
+					<f:selectItem itemValue="00" itemLabel="Seleccione" />
+					<f:selectItem itemValue="01" itemLabel="Enero" />
+					<f:selectItem itemValue="02" itemLabel="Febrero" />
+					<f:selectItem itemValue="03" itemLabel="Marzo" />
+					<f:selectItem itemValue="04" itemLabel="Abril" />
+					<f:selectItem itemValue="05" itemLabel="Mayo" />
+					<f:selectItem itemValue="06" itemLabel="Junio" />
+					<f:selectItem itemValue="07" itemLabel="Julio" />
+					<f:selectItem itemValue="08" itemLabel="Agosto" />
+					<f:selectItem itemValue="09" itemLabel="Setiembre" />
+					<f:selectItem itemValue="10" itemLabel="Octubre" />
+					<f:selectItem itemValue="11" itemLabel="Noviembre" />
+					<f:selectItem itemValue="12" itemLabel="Diciembre" />					
+				</h:selectOneMenu>
+
+				<p:commandButton   title="Click aqui para Nuevo Registro" value="Nuevo" oncomplete="PF('modalCabecera').show()"
+				update="frm_PedidoAlmacen:modalCabecera" action="#{iafasAlmacenSalidaController.nuevo()}"  >
+				</p:commandButton>
+
+				<p:commandButton title="Click aqui para Actualizar la consulta" value="Actualizar"
+					action="#{iafasAlmacenSalidaController.mostrarConsultaPrincipal()}" update="frm_PedidoAlmacen:dTablePedidoAlmacen" />
+			</p:panelGrid>
+			
+			<p:panel header="Datos Encontrados">
+			
+				<p:panelGrid columns="6" styleClass="panel">
+				
+					<p:dataTable id="dTablePedidoAlmacen" var="tblPedidoAlmacen" 
+						value="#{iafasAlmacenSalidaController.listaConsultaPrincipal}" 
+						style="font-size:11px;" emptyMessage="No se encontro Datos registrados">
+						
+						<p:column style="width:2px;text-align: left" headerText="ALMACEN">
+							<p:outputLabel value="#{tblPedidoAlmacen.nombreAlmacen}" />
+						</p:column>
+
+						<p:column style="width:70px;text-align: center" headerText="MOTIVO">
+							<p:outputLabel value="#{tblPedidoAlmacen.VAlmacenSalidaMotivo}" />
+						</p:column>
+						
+						<p:column style="width:20px;text-align: left" headerText="AREA LABORAL">
+							<p:outputLabel value="#{tblPedidoAlmacen.nombreAreaLaboral}" />
+						</p:column>
+						
+						<p:column style="width:10px;text-align: right" headerText="ESTADO">
+							<p:outputLabel value="#{tblPedidoAlmacen.desEstado}" />
+						</p:column>
+						
+					</p:dataTable>
+					
+				</p:panelGrid>
+			</p:panel>	
+			
+	</p:panel>
+	
+	<p:dialog header="INGRESO PEDIDO DE ALMACEN" id="modalCabecera" widgetVar="modalCabecera" showEffect="fade" minHeight="600" width="720">
+			
+			<h:panelGrid columns="2" styleClass="panel" >
+				
+				<h:outputLabel value="Almacen: " styleClass="etiqueta"
+					style="font-size:12px;font-weight:bold;" />
+				<h:selectOneMenu id="cboAlmacen" styleClass="select" value="#{iafasAlmacenSalidaController.codigoAlmacen}">
+					<f:selectItem itemValue="0" itemLabel="Seleccione" />
+					<f:selectItems var="optionFuente" value="#{mbCombos.almacenes}" />
+				</h:selectOneMenu>
+	           	
+	           	<h:outputLabel value="Motivo: " styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />
+				<p:inputTextarea rows="3" cols="80" size="80" counter="display" maxlength="200" style="text-transform:uppercase"
+				 value="#{iafasAlmacenSalidaController.motivo}" counterTemplate="{0} Caracteres Faltantes." autoResize="false"/>
+				 <h:outputText value="" class="p-d-block" />
+        		 <h:outputText id="display" class="p-d-block" />
+        		
+			</h:panelGrid>
+
+			<p:toolbar>
+				<p:toolbarGroup>
+					<p:commandButton value="Ingresar Detalle" icon="pi pi-plus"
+						oncomplete="PF('modalDetalle').show()"
+						update="frm_PedidoAlmacen:modalDetalle"
+						styleClass="ui-button-success" style="margin-right: .5rem"
+						action="#{iafasAlmacenSalidaController.cleanCamposDetalle()}">
+					</p:commandButton>
+
+				</p:toolbarGroup>
+			</p:toolbar>
+			
+			<p:dataTable id="dTablePedidoDet" var="dTablePedidoDet"
+				value="#{iafasAlmacenSalidaController.listaDetalle}"
+				reflow="true" styleClass="products-table" style="font-size:11px;"
+				emptyMessage="No se encontro registros">
+				
+				<p:column style="width:2px;text-align: center" headerText="CODIGO ITEM">
+					<p:outputLabel value="#{dTablePedidoDet.codigoItem}" />
+				</p:column>
+			
+				<p:column style="width:20px;text-align: center" headerText="NOMBRE ITEM">
+					<p:outputLabel value="#{dTablePedidoDet.descripcionItem}" />
+				</p:column>
+				
+				<p:column style="width:20px;text-align: center" headerText="UNIDAD MEDIDA">
+					<p:outputLabel value="#{dTablePedidoDet.descripcionUnidadMedida}" />
+				</p:column>
+					
+			</p:dataTable>
+
+			<f:facet name="footer">
+				<p:commandButton value="Salir" styleClass="ui-button-outlined ui-button-danger"
+					oncomplete="PF('modalCabecera').hide()"
+					action="#{iafasAlmacenSalidaController.cleanCamposCabecera()}"
+					update="frm_PedidoAlmacen:dTablePedidoAlmacen" />
+
+				<p:commandButton value="Grabar" styleClass="ui-button-outlined ui-button-success"
+					oncomplete="PF('modalCabecera').hide()"
+					action="#{iafasAlmacenSalidaController.insPedidoAlmacen()}"
+					update="frm_PedidoAlmacen:dTablePedidoAlmacen" /> 
+			</f:facet>		
+
+		</p:dialog>
+		
+		<p:dialog header="INGRESO DETALLE DEL PEDIDO" id="modalDetalle" widgetVar="modalDetalle" showEffect="fade" minHeight="600" width="720">
+			<h:panelGrid columns="2" styleClass="panel" >
+				<h:outputLabel value="Item: " styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />	
+					<p:autoComplete  id="acItem" size="80" value="#{iafasAlmacenSalidaController.descripcionItem}" 
+			          	 completeMethod="#{iafasAlmacenSalidaController.completeText}" scrollHeight="250">
+			          	 <p:ajax event="itemSelect" listener="#{iafasAlmacenSalidaController.onItemSelect}" update="lblDescripcionUnidadMedida"/>
+		            </p:autoComplete>
+		            <h:outputLabel value="Unidad Medida:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
+					<h:outputLabel  id="lblDescripcionUnidadMedida" value="#{iafasAlmacenSalidaController.lblDescripcionUnidadMedida}" 
+					styleClass="outLabel"  style="font-size:12px;font-weight:bold; " />	
+			</h:panelGrid>
+			
+			<f:facet name="footer">
+				<p:commandButton value="Cerrar" styleClass="ui-button-outlined ui-button-danger"
+					oncomplete="PF('modalDetalle').hide()"
+					action="#{iafasAlmacenSalidaController.cleanCamposDetalle()}"
+					update="frm_PedidoAlmacen:dTablePedidoDet" />
+
+				<p:commandButton value="Agregar" styleClass="ui-button-outlined ui-button-success"
+					oncomplete="PF('modalDetalle').hide()"
+					action="#{iafasAlmacenSalidaController.cargarListaDetalleSession()}"
+					update="frm_PedidoAlmacen:dTablePedidoDet" /> 
+			</f:facet>					
+		</p:dialog>
+		
+
+</h:form>
+	
+	<script type="text/javascript"
+		src="material_able-main/assets/js/jquery/jquery.min.js "></script>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/jquery-ui/jquery-ui.min.js "></script>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/popper.js/popper.min.js"></script>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/bootstrap/js/bootstrap.min.js "></script>
+	<script src="material_able-main/assets/pages/waves/js/waves.min.js"></script>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/jquery-slimscroll/jquery.slimscroll.js"></script>
+
+	<script
+		src="material_able-main/assets/js/jquery.mCustomScrollbar.concat.min.js "></script>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/script.js "></script>
+</body>
+
+</html>		
+

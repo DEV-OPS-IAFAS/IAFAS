@@ -697,8 +697,9 @@ public class IafasCuadroNecesidadesController implements Serializable {
 		String queryLowerCase = query.toLowerCase();
 		List<String> itemList = new ArrayList<>();
 		IafasItemDao itemDao = new IafasItemDao(MySQLSessionFactory.getSqlSessionFactory());
-		
-		List<IafasItem> lsts = itemDao.obtenerItems();
+		logger.info("ITEM BUSCADO:::>"+queryLowerCase);
+		//List<IafasItem> lsts = itemDao.obtenerItems();
+		List<IafasItem> lsts = itemDao.obtenerItemSeleccionado(queryLowerCase);
 		for (IafasItem obj : lsts) {
 			descripcionItem = obj.getVItemDescripcion();
 			codigoItem = obj.getNItemCodigo();

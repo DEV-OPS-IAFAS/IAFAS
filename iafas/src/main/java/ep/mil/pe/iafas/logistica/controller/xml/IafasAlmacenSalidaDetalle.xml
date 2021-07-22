@@ -14,4 +14,10 @@
 		FROM IAFAS_ALMACEN_SALIDA_DETALLE
 	</select>
 
+	<select id="SP_IDU_PEDIDO_ALMACEN_DETALLE" statementType="CALLABLE" parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaDetalle">
+        <![CDATA[call SP_IDU_PEDIDO_ALMACEN_DETALLE(#{cPeriodoCodigo, mode=IN}, #{nAlmacenSalidaCodigo, mode=IN},#{codigoItem, mode=IN}, #{vUsuarioCodigo, mode=IN}, #{mode, mode=IN},
+        #{codigoRespuesta,mode=OUT,jdbcType=VARCHAR}, #{mensajeRespuesta,mode=OUT,jdbcType=VARCHAR})
+         ]]>
+    </select>
+    
 </mapper>

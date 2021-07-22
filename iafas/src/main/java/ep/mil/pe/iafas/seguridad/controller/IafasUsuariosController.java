@@ -94,6 +94,7 @@ public class IafasUsuariosController implements Serializable {
 				setAMaternoUsuario(usuario.getVusuarioMaterno());
 				setNombreUsuario(usuario.getVusuarioNombres());
 				setIdUsuario(usuario.getVusuarioCodigo());
+				setIdAreaLaboral(usuario.getAreaLaboralCodigo());
 			}
 			pasoLogin = true;
 			// valor = Constantes.MAIN_PRINCIPAL;

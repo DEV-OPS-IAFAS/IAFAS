@@ -16,7 +16,7 @@
 		FROM IAFAS_ITEM IT
 		WHERE
 		IT.CESTADO_CODIGO='AC'
-		LIMIT 20
+		LIMIT 10
 	</select>
 	
 	<select id="obtenerItemSeleccionado"
@@ -29,7 +29,8 @@
 		FROM IAFAS_ITEM IT
 		WHERE
 		IT.CESTADO_CODIGO='AC' AND
-		IT.VITEM_DESCRIPCION=#{vItemDescripcion}
+		IT.VITEM_DESCRIPCION LIKE CONCAT('%',#{vItemDescripcion},'%')
+		LIMIT 10
 	</select>
 
 </mapper>

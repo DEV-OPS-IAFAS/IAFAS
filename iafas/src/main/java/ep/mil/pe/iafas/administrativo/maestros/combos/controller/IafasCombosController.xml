@@ -191,4 +191,17 @@ parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
 		vprocedimiento_etapa_descripcion descripcion
 		FROM iafas_procedimientos_etapas WHERE cestado_codigo='AC'
 </select>
+
+
+<!-- Cambios Agrehado por Elvis Severino -->
+<select id="getAlmacenes"
+	resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
+	parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+	SELECT NALMACEN_CODIGO codigo, 
+	VALMACEN_DESCRIPCION descripcion
+	FROM IAFAS_ALMACEN WHERE CESTADO_CODIGO='AC'
+</select>
+<!-- ############ -->
+
+
 </mapper>

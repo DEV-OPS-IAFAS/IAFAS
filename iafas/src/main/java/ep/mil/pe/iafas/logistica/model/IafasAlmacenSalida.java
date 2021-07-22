@@ -25,5 +25,11 @@ public class IafasAlmacenSalida {
 	private Date dUsuarioCreador;
 	private String vUsuarioCodigo;
 	private Date Dusuariofecha;	
-	
+	private String mode;
+	private String codigoRespuesta;
+	private String mensajeRespuesta;
+	private String numeroAlmacen;
+	private String nombreAlmacen;
+	private String nombreAreaLaboral;
+	private String desEstado;
 }

@@ -325,4 +325,18 @@ public class IafasCombosDao {
           }
           return lista;
       }
+     
+ 	/*Cambios agregados por Elvis Severino*/
+     public List<IafasCombos> getAlmacenes() {
+         List<IafasCombos> lista = null;
+         SqlSession session = sqlSessionFactory.openSession();
+         try{
+               lista = session.selectList("Combos.getAlmacenes");
+         }
+         finally{
+              session.close();
+         }
+         return lista;
+     }
+     /**************************************/
 }

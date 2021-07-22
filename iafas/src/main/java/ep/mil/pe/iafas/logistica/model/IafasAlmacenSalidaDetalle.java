@@ -2,11 +2,13 @@ package ep.mil.pe.iafas.logistica.model;
 
 import java.util.Date;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class IafasAlmacenSalidaDetalle {
 	
 	private String cPeriodoCodigo;
@@ -20,6 +22,10 @@ public class IafasAlmacenSalidaDetalle {
 	private Date dUsuarioFecha;
 	private String vusuarioAtiende;
 	private Date dUsuarioAtiende;
-	
-	
+	private String descripcionItem;
+	private String descripcionUnidadMedida;
+	private String codigoItem;
+	private String mode;
+	private String codigoRespuesta;
+	private String mensajeRespuesta;
 }
