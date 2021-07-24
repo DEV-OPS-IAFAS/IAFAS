@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="IafasAlmacenIngreso">
+	<resultMap id="iafasAlmacenIngreso" type="IafasAlmacenIngreso" />
+	
+	<select id="listarNeas" resultType="ep.mil.pe.iafas.logistica.model.IafasAlmacenIngreso"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenIngreso">
+	   SELECT nalmacen_ingresos_codigo nalmacenIngresoCodigo, 
+	   log_nom_almacen(nalmacen_codigo) descAlmacen,
+	   cperiodo_orden cperiodoOrden, corden_codigo cordenCodigo, 
+	   dalmacen_ingresos_fecha dalmacenIngresosFecha,
+	   valmacen_ingresos_guia valmacenIngresosGuia 
+	   FROM iafas_almacen_ingresos WHERE cperiodo_codigo = #{periodo} AND cmes_codigo=#{cmesCodigo}
+	</select>
+
+    
+   <select id="insertAlmacenIngreso" parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenIngreso" statementType="CALLABLE">
+       { CALL SP_IDU_ALMACEN_INGRESOS (
+        #{periodo mode=IN, jdbcType=INTEGER},
+        #{nalmacenIngresoCodigo mode=IN, jdbcType=INTEGER},
+		#{nalmacenCodigo, mode=IN, jdbcType=INTEGER},
+		#{cmesCodigo, mode=IN, jdbcType=VARCHAR},
+		#{cperiodoOrden, mode=IN,jdbcType=VARCHAR},
+		#{cordenCodigo, mode=IN,jdbcType=VARCHAR},
+		#{dalmacenIngresosFecha, mode=IN,jdbcType=DATE},
+	    #{valmacenIngresosGuia, mode=IN,jdbcType=VARCHAR},
+		#{usuario, mode=IN,jdbcType=VARCHAR},
+		#{tipo, mode=IN,jdbcType=VARCHAR})}
+   </select>
+         
+      
+</mapper>

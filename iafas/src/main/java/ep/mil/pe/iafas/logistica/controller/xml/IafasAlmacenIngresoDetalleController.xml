@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="IafasAlmacenIngresoDetalle">
+	<resultMap id="iafasAlmacenIngresoDet" type="IafasAlmacenIngresoDetalle" />
+	
+	<select id="verItemsOrden" resultType="ep.mil.pe.iafas.logistica.model.IafasAlmacenIngresoDetalle"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenIngresoDetalle">
+	    SELECT periodo periodoOrden, nroOrden nroOrden, 
+	    fechaOrden fechaOrden, descripcionOrden descOrden, ruc ruc, 
+	    razonSocial razonSocial,
+		codigoItem codigoItem, nombreItem nombreItem, 
+		cantidad cantidad, precio precio
+		FROM v_orden_compra where periodo = #{periodoOrden} and nroOrden=#{nroOrden}
+	</select>
+	
+	 <select id="insertAlmacenIngresoDet" parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenIngresoDetalle"
+	         statementType="CALLABLE">
+       { CALL SP_IDU_ALMACEN_INGRESOS_DETALLE(
+        #{periodo mode=IN, jdbcType=VARCHAR},
+        #{nalmacenIngresosCodigo mode=IN, jdbcType=INTEGER},
+		#{nalmacenCodigo, mode=IN, jdbcType=INTEGER},
+		#{nitemCodigo, mode=IN, jdbcType=INTEGER},
+		#{nalmacenIngresoDetalleCantidad, mode=IN,jdbcType=DECIMAL},
+		#{nalmacenIngresoDetallePrecio, mode=IN,jdbcType=DECIMAL},
+		#{valmacenIngresoDetalleLote, mode=IN,jdbcType=DECIMAL},
+		#{dalmacenIngresoDetalleVencimiento, mode=IN,jdbcType=DATE},
+		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR},
+		#{tipo, mode=IN,jdbcType=VARCHAR})}
+   </select>
+
+</mapper>	
+
+
+
+
+
+
+
+     

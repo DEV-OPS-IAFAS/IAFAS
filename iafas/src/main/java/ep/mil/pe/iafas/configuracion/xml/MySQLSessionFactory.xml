@@ -63,7 +63,8 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
       <typeAlias alias="IafasProveedores" 		type="ep.mil.pe.iafas.logistica.model.IafasProveedores"/>
       <typeAlias alias="IafasProcedimientoItemGrupo" 		type="ep.mil.pe.iafas.logistica.model.IafasProcedimientoItemGrupo"/>
 
-        
+      <typeAlias alias="IafasAlmacenIngreso" type="ep.mil.pe.iafas.logistica.model.IafasAlmacenIngreso" />
+      <typeAlias alias="IafasAlmacenIngresoDetalle" type="ep.mil.pe.iafas.logistica.model.IafasAlmacenIngresoDetalle" />  
     </typeAliases>
 
       <environments default="development">
@@ -123,6 +124,9 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
 		<!-- Fin Cambios de  Elvis Severino -->
 		<mapper resource="ep/mil/pe/iafas/logistica/controller/xml/IafasProveedoresController.xml" />
 		<mapper resource="ep/mil/pe/iafas/logistica/controller/xml/IafasProcedimientoItemGrupoController.xml" />
+		
+		<mapper resource="ep/mil/pe/iafas/logistica/controller/xml/IafasAlmacenIngresoController.xml" />
+		<mapper resource="ep/mil/pe/iafas/logistica/controller/xml/IafasAlmacenIngresoDetalleController.xml" />
     </mappers>
 
 </configuration>

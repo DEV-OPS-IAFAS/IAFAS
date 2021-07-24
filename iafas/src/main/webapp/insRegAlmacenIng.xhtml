@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" 
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+        <title>IAFAS</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
+    </h:head>
+    <h:body class="formulario">
+        <script >  
+        
+        PrimeFaces.locales['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Sólo hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Fecha actual',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText: 'Todo el día',
+                today: 'Hoy',
+                clear: 'Claro'
+            };
+            
+     function verMensajes(){
+    	  var tipo = '#{mbAlmacenIng.typeMessages}';
+    	  var mensaje = document.getElementById('frmNea:inptxt_message').value;
+           if(tipo==0){
+             swal("ERROR", mensaje,"error");
+           }else
+           if(tipo==1) {
+           	 swal("Aviso", 'Se Registró Con Exito',"success").then(function() {
+    	     window.location = "mainAlmacenIngreso.xhtml"; });
+           }else
+        	if(tipo==2){
+        		   swal("ALERTA", 'No se permite Campos Vacios al Registrar',"info");        		   
+        	   }
+		  
+        }
+        
+        function completaCeros(obj, tam) {
+            var txt = document.getElementById(obj).value;
+            var tamTxt = txt.length;
+            var i;
+            for (i = tam; i > tamTxt; i--)
+                txt = '0' + txt;
+            document.getElementById(obj).value = txt;
+        }
+        
+        function upperCase(obj) {
+        	  var x = document.getElementById(obj);
+        	  x.value = x.value.toUpperCase();
+        	}
+        
+        </script>
+        <h:form id="frmNea" style="border-radius: 5px 5px 5px 5px;border: 1px; width:100%;height:100%">
+        <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
+        <h:inputHidden value="#{mbAlmacenIng.typeMessages}"></h:inputHidden>
+        
+            <p:panel >
+                <p:panelGrid columns="6" styleClass="panel">
+                    <h:outputLabel value="Registro de Ingreso a Almacen" styleClass="etiqueta"></h:outputLabel>
+                    <p:commandButton  value="Grabar" action="#{mbAlmacenIng.insertaIngreso()}" 
+                    icon="pi pi-save" style="height:30px;" ajax="false"/>
+                    <p:commandButton value="Cancelar" action="#{mbAlmacenIng.retornar()}"
+                    icon="pi pi-arrow-left" style="height:30px;"/>
+                </p:panelGrid> 
+  
+                <br/>
+                <p:fieldset legend="Datos de Orden" >
+                   <h:panelGrid columns="3" >
+                   <h:outputLabel value="N° Orden:"/>
+                   <h:panelGrid columns="2">
+                    <h:selectOneMenu id="cbo_periodoOrden" value="#{mbAlmacenIng.periodoOrden}" styleClass="select">
+                        <f:selectItem itemValue="" itemLabel="--Seleccione--"></f:selectItem>
+                        <f:selectItem itemValue="2021" itemLabel="2021"></f:selectItem>
+                        <f:selectItem itemValue="2022" itemLabel="2022"></f:selectItem>
+                    </h:selectOneMenu>
+                     <h:inputText id="inpNroProceso" styleClass="input" value="#{mbAlmacenIng.numOrden}" size="10" 
+                    maxlength="20" style="text-align:right;"/>
+                   </h:panelGrid>
+                   <p:commandButton id="cmdBtnBuscarOC" value="Buscar" action="#{mbAlmacenIng.buscarOC()}" ajax="false"
+                   update="dtOrdenDetalle"></p:commandButton>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4" style="width:70%">
+                        <h:outputLabel value="Proveedor:"></h:outputLabel>
+                        <h:outputLabel value="#{mbAlmacenIng.labelRuc} - #{mbAlmacenIng.labelRazonSocial}" styleClass="outLabel"></h:outputLabel>
+                        <h:outputLabel value="Fecha:"></h:outputLabel>
+                        <h:outputLabel value="#{mbAlmacenIng.labelfechaOrden}" styleClass="outLabel">
+                        <f:converter converterId="javax.faces.DateTime" />
+                                <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
+                        </h:outputLabel>
+                    </h:panelGrid>
+                    <br/>
+                    <h:panelGrid columns="2" style="width:100%">
+                   <h:outputLabel value="Descripcion:"></h:outputLabel>
+                    <h:inputTextarea id="inpTxtDesc" value="#{mbAlmacenIng.labeldescripOrden}" cols="1" rows="3"
+                    style="width:850px;" styleClass="input" onkeyup="upperCase(this.name)" readonly="true"></h:inputTextarea>         
+                   </h:panelGrid>                  
+                </p:fieldset>
+                <br/>
+                <p:fieldset>
+                <h:panelGrid columns="6" style="width:100%">
+                   <h:outputLabel value="Almacen:"></h:outputLabel>
+                    <h:selectOneMenu id="cbo_almacen" styleClass="select" value="#{mbAlmacenIng.almacen}" style="width:350px;">
+                    <f:selectItem itemValue="" itemLabel="--Seleccione--"></f:selectItem>
+                        <f:selectItem itemValue="1" itemLabel="Almacen I"></f:selectItem>
+                   </h:selectOneMenu>
+                   <h:outputLabel value="Nro Guia:"/>
+                     <h:inputText id="inpNroGuia" styleClass="input" value="#{mbAlmacenIng.guiaIngreso}" size="21" 
+                    maxlength="20" style="text-align:right;"/>
+                   <h:outputLabel value="Fecha Ingreso:"/>
+                     <p:datePicker id="fecConvoc" value="#{mbAlmacenIng.fechaIngreso}" locale="es" monthNavigator="true" yearNavigator="true"  pattern="dd/MM/yyyy"/>
+                   </h:panelGrid>
+                </p:fieldset>
+                <br/>
+                <p:dataTable id="dtOrdenDetalle" var="det" value="#{mbAlmacenIng.listaDetalle}" editable="true" editMode="cell">
+                   <p:column headerText="#" style="width:10px;">
+                     <h:outputText value="#{det.codigoItem}"></h:outputText>
+                   </p:column>
+                   <p:column headerText="Item" style="width:300px;">
+                     <h:outputText value="#{det.nombreItem}"></h:outputText>
+                   </p:column>
+                   <p:column headerText="Cantidad" style="text-align: right;width:100px;">
+                     <h:outputText value="#{det.cantidad}">
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                     </h:outputText>
+                   </p:column>
+                   <p:column headerText="Precio" style="text-align: right;width:100px;">
+                     <h:outputText value="#{det.precio}">
+                          <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                     </h:outputText>
+                   </p:column>
+                    <p:column headerText="Vencimiento" style="text-align: center;width:50px;">
+                      <p:cellEditor >
+                                <f:facet name="output">
+                                    <p:outputLabel value="#{det.dalmacenIngresoDetalleVencimiento}" style="text-align: center;" >
+                                     <f:converter converterId="javax.faces.DateTime" />
+                                <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
+                                   </p:outputLabel>
+                                </f:facet>
+                             <f:facet name="input" >
+                             <p:datePicker id="fecVencimiento" value="#{det.dalmacenIngresoDetalleVencimiento}" locale="es"
+                                  monthNavigator="true" yearNavigator="true"  pattern="dd/MM/yyyy"/>
+                                 
+                            </f:facet>                            
+                            </p:cellEditor>  
+                    </p:column>
+                     <p:column headerText="Lote" style="text-align: center;width:100px;">
+                           <p:cellEditor >
+                                <f:facet name="output">
+                                    <p:outputLabel value="#{det.valmacenIngresoDetalleLote}" style="text-align: center;" >
+                                     
+                                   </p:outputLabel>
+                                </f:facet>
+                             <f:facet name="input" >
+                             <p:inputText id="inputLote" value="#{det.valmacenIngresoDetalleLote}" />
+                                 
+                            </f:facet>                            
+                            </p:cellEditor>  
+                     </p:column>
+                </p:dataTable>
+            </p:panel>
+        </h:form>
+    </h:body>
+</html>
