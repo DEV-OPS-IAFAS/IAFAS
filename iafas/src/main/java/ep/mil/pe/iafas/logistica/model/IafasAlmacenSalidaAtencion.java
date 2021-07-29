@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class IafasAlmacenSalidaDetalle {
-	
+public class IafasAlmacenSalidaAtencion {
+
 	private String cPeriodoCodigo;
 	private int nAlmacenSalidaCodigo;
 	private int nItemCodigo;
-	private int nAlmacenSalidaSolicitado;
-	//private int nAlmacenSalidaAtendido;
+	private int nAlmacenCodigo;
+	private int nAlmacenSalidaAtendido;
 	private String vUsuarioCreador;
 	private Date dUsuarioCreador;
 	private String vUsuarioCodigo;

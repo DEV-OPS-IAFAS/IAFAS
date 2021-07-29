@@ -16,8 +16,6 @@ import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
-
 import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
 import ep.mil.pe.iafas.configuracion.util.Constantes;
 import ep.mil.pe.iafas.configuracion.util.Mensajeria;
@@ -44,6 +42,7 @@ public class IafasAlmacenSalidaController implements Serializable {
 	private String cPeriodo;
 	private String codigoMes;
 	private List<IafasAlmacenSalida> listaConsultaPrincipal =  new ArrayList<IafasAlmacenSalida>();
+	private List<IafasAlmacenSalida> listaConsultaPrincipalSalida =  new ArrayList<IafasAlmacenSalida>();
 	private int typeMessages = Constantes.UNO_NEGATIVO;
 	private String messages = Constantes.MESSAGE_VALIDACION_PARAMETROS;
 	private String descripcionItem;
@@ -56,6 +55,10 @@ public class IafasAlmacenSalidaController implements Serializable {
 	private IafasAlmacenSalidaDetalle detallesGrillaSession;
 	private Date hoy = new Date();
 	private String modo = Constantes.MODE_REGISTRO;
+	private int cantidadSolicitada = Constantes.CERO_INT;
+	private IafasAlmacenSalida bean;
+	private int cantidadStock = Constantes.CERO_INT;
+	private int cantidadAtendida = Constantes.CERO_INT;
 	
 	/*==========Consultas==========*/
 	public List<IafasAlmacenSalida> mostrarConsultaPrincipal() {
@@ -88,6 +91,37 @@ public class IafasAlmacenSalidaController implements Serializable {
 		logger.info("[FIN:] Metodo : mostrarConsultaPrincipal");
 		return listaConsultaPrincipal;
 	}
+	
+	public List<IafasAlmacenSalida> mostrarConsultaPrincipalSalida() {
+
+		logger.info("[INICIO:] Metodo : mostrarConsultaPrincipalSalida");
+
+		HttpSession session = null;
+		session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		IafasUsuariosController usuarioSession = new IafasUsuariosController();
+		usuarioSession = (IafasUsuariosController) session.getAttribute("iafasUsuariosController");
+		String cAreaLaboral = usuarioSession.getIdAreaLaboral();
+
+		this.listaConsultaPrincipalSalida = new ArrayList<>();
+		if (this.listaConsultaPrincipalSalida != null)
+			this.listaConsultaPrincipalSalida.clear();
+
+		IafasAlmacenSalidaDao objDao = new IafasAlmacenSalidaDao(MySQLSessionFactory.getSqlSessionFactory());
+		IafasAlmacenSalida objBn = new IafasAlmacenSalida();
+		objBn.setCPeriodoCodigo(cPeriodo);
+		objBn.setCMesCodigo(codigoMes);
+		objBn.setCAreaLaboralCodigo(cAreaLaboral);
+		
+		List<IafasAlmacenSalida> listaCab = objDao.mostrarConsultaPrincipalSalida(objBn);
+		if (listaCab.size() > 0) {
+			for (IafasAlmacenSalida objBeanLista : listaCab) {
+				this.listaConsultaPrincipalSalida.add(objBeanLista);
+			}
+		}
+
+		logger.info("[FIN:] Metodo : mostrarConsultaPrincipalSalida");
+		return listaConsultaPrincipalSalida;
+	}
 	/*==============================*/
 	
 	
@@ -95,7 +129,8 @@ public class IafasAlmacenSalidaController implements Serializable {
 	/**********Nuevo***********/
 	public void nuevo() {
 		logger.info("[INICIO:] Metodo : nuevo");
-		
+		validarFormulario();
+		cleanCamposCabecera();
 		logger.info("[FIN:] Metodo : nuevo");
 	}
 	/**===================*/
@@ -110,7 +145,6 @@ public class IafasAlmacenSalidaController implements Serializable {
 		List<String> itemList = new ArrayList<>();
 		IafasItemDao itemDao = new IafasItemDao(MySQLSessionFactory.getSqlSessionFactory());
 		
-		logger.info("ITEM BUSCADO:::>"+queryUpperCase);
 		List<IafasItem> lsts = itemDao.obtenerItemSeleccionado(queryUpperCase);
 		for (IafasItem obj : lsts) {
 			descripcionItem = obj.getVItemDescripcion();
@@ -146,14 +180,14 @@ public class IafasAlmacenSalidaController implements Serializable {
 		logger.info("[INICIO:] Metodo : cleanCamposDetalle");
 		setLblDescripcionUnidadMedida(Constantes.VACIO);
 		setDescripcionItem(Constantes.VACIO);
-		
+		setCantidadSolicitada(Constantes.CERO_INT);
 		logger.info("[FIN:] Metodo : cleanCamposDetalle");
 	}
 	
 	public void cleanCamposCabecera() {
 		logger.info("[INICIO:] Metodo : cleanCamposCabecera");
 		setMotivo(Constantes.VACIO);
-		setCodigoAlmacen(Constantes.CERO_STRING);
+		//setCodigoAlmacen(Constantes.CERO_STRING);
 		listaDetalle = new ArrayList<>();
 		
 		logger.info("[FIN:] Metodo : cleanCamposCabecera");
@@ -167,7 +201,7 @@ public class IafasAlmacenSalidaController implements Serializable {
 		logger.info("[INICIO:] Metodo : cargarListaDetalleSession");
 		
 		detallesGrillaSession = new IafasAlmacenSalidaDetalle(cPeriodo, Constantes.CERO_INT, codigoItem,
-				Constantes.CERO_INT, Constantes.CERO_INT, Constantes.VACIO, hoy, Constantes.VACIO, hoy,
+				cantidadSolicitada , Constantes.VACIO, hoy, Constantes.VACIO, hoy,
 				Constantes.VACIO, hoy, descripcionItem, lblDescripcionUnidadMedida, String.valueOf(codigoItem),
 				Constantes.VACIO,Constantes.VACIO,Constantes.VACIO);
 
@@ -197,8 +231,8 @@ public class IafasAlmacenSalidaController implements Serializable {
 		Response responseDet = new Response();
 		
 		objBn.setCPeriodoCodigo(cPeriodo);
-		objBn.setNAlmacenCodigo(Integer.parseInt(codigoAlmacen));
 		objBn.setCMesCodigo(codigoMes);
+		objBn.setNAlmacenSalidaCodigo(bean.getNAlmacenSalidaCodigo());
 		objBn.setVAlmacenSalidaMotivo(motivo);
 		objBn.setCAreaLaboralCodigo(cAreaLaboral);
 		objBn.setVUsuarioCreador(codUsu);
@@ -213,6 +247,7 @@ public class IafasAlmacenSalidaController implements Serializable {
 					objBnDet.setCPeriodoCodigo(cPeriodo);
 					objBnDet.setNAlmacenSalidaCodigo(Integer.parseInt(response.getIdTransaccion()));
 					objBnDet.setCodigoItem(listaDetalle.get(i).getCodigoItem());
+					objBnDet.setNAlmacenSalidaSolicitado(listaDetalle.get(i).getNAlmacenSalidaSolicitado());
 					objBnDet.setVUsuarioCreador(codUsu);
 					objBnDet.setMode(modo);
 					responseDet = objDaoDet.mantenimientoDetalle(objBnDet);
@@ -227,6 +262,7 @@ public class IafasAlmacenSalidaController implements Serializable {
 					}
 				}
 			}
+			mostrarConsultaPrincipal();
 		}
 		catch (Exception e) {
 			logger.error("error : " + e.getMessage().toString());
@@ -234,16 +270,157 @@ public class IafasAlmacenSalidaController implements Serializable {
 
 			logger.info("[FIN:] Metodo : insPedidoAlmacen");
 		}
-		
 	}
 	
+	/*===================*/
+	
+	
+	/***********OBTENER REGISTROS PARA EDICION***************/
+	public void obtenerRegistro() {
+		logger.info("[INICIO:] Metodo : obtenerRegistro");
+		
+		IafasAlmacenSalida objBn = new IafasAlmacenSalida();
+		IafasAlmacenSalidaDao objDao = new IafasAlmacenSalidaDao(MySQLSessionFactory.getSqlSessionFactory());
+		
+		objBn.setCPeriodoCodigo(cPeriodo);
+		objBn.setNAlmacenSalidaCodigo(bean.getNAlmacenSalidaCodigo());
+		if (!validarEstados(bean.getCEstadoCodigo())) {
+			List<IafasAlmacenSalida> listaCab = objDao.obtenerRegistro(objBn);
+			if (listaCab.size() > 0) {
+				for (IafasAlmacenSalida objBeanLista : listaCab) {
+					setMotivo(objBeanLista.getVAlmacenSalidaMotivo());
+					obtenerRegistroDetalle();
+				}
+			}
+		}
+		setModo(Constantes.MODE_ACTUALIZACION);
+		logger.info("[FIN:] Metodo : obtenerRegistro");
+	}
+	
+	
+	public void obtenerRegistroDetalle() {
+		logger.info("[INICIO:] Metodo : obtenerRegistroDetalle");
+		IafasAlmacenSalidaDetalle objBnDet = new IafasAlmacenSalidaDetalle();
+		IafasAlmacenSalidaDetalleDao objDetDao = new IafasAlmacenSalidaDetalleDao(MySQLSessionFactory.getSqlSessionFactory());
+		objBnDet.setCPeriodoCodigo(cPeriodo);
+		objBnDet.setNAlmacenSalidaCodigo(bean.getNAlmacenSalidaCodigo());
+		if (!validarEstados(bean.getCEstadoCodigo())) {
+			List<IafasAlmacenSalidaDetalle> lstdet = objDetDao.obtenerRegistroDetalle(objBnDet);
+			for (IafasAlmacenSalidaDetalle objDt : lstdet) {
+
+				detallesGrillaSession = new IafasAlmacenSalidaDetalle(objDt.getCPeriodoCodigo(), Constantes.CERO_INT,
+						objDt.getNItemCodigo(), objDt.getNAlmacenSalidaSolicitado(), Constantes.VACIO, hoy,
+						Constantes.VACIO, hoy, Constantes.VACIO, hoy, objDt.getDescripcionItem(),
+						objDt.getDescripcionUnidadMedida(), String.valueOf(objDt.getNItemCodigo()), Constantes.VACIO,
+						Constantes.VACIO, Constantes.VACIO);
+
+				this.listaDetalle.add(detallesGrillaSession);
+			}
+		}
+		logger.info("[FIN:] Metodo : obtenerRegistroDetalle");
+	}
+	/*===================*/
+	
+	
+	/*********ANULAR REGISTRIO DE DETALLE********/
+	public void anularRegistroDetalle() {
+		logger.info("[INICIO:] Metodo : anularRegistroDetalle");
+		
+		Response response = new Response();
+		String codigoItemDEL = (String) extContext().getRequestParameterMap().get("codigoItemDEL");
+		String codigoAlmacenDEL = (String) extContext().getRequestParameterMap().get("codigoAlmacenDEL");
+		String cperiodoDEL = (String) extContext().getRequestParameterMap().get("cperiodoDEL");
+		
+		logger.info("parametros DEL: "+codigoItemDEL +" - " +codigoAlmacenDEL +" - "+cperiodoDEL);
+		//this.listaDetalle.remove(0);
+	}
+	
+	/*===================*/
+	
+	
+	/*********CAMBIAR ESTADOS********/
+	public void cambiarEstados(String opcion) {
+		logger.info("[INICIO:] Metodo : cambiarEstados");
+		Response response = new Response();
+
+		IafasAlmacenSalida objBn = new IafasAlmacenSalida();
+		IafasAlmacenSalidaDao objDao = new IafasAlmacenSalidaDao(MySQLSessionFactory.getSqlSessionFactory());
+
+		objBn.setCPeriodoCodigo(cPeriodo);
+		objBn.setCMesCodigo(codigoMes);
+		objBn.setNAlmacenSalidaCodigo(bean.getNAlmacenSalidaCodigo());
+
+		if (Constantes.MODE_CERRAR_TECHO.equals(opcion)) {
+			objBn.setMode(Constantes.MODE_CERRAR_TECHO);
+		} else {
+			objBn.setMode(Constantes.MODE_ABRIR_TECHO);
+		}
+
+		try {
+			response = objDao.mantenimientoCabecera(objBn);
+			if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
+
+				this.typeMessages = Constantes.CERO_INT;
+				this.messages = response.getMensajeRespuesta();
+				PrimeFaces.current().ajax().update("frm_PedidoAlmacen:pnl_messages");
+				refreshMessage();
+				Mensajeria.showMessages(Integer.parseInt(response.getCodigoRespuesta()), response.getMensajeRespuesta(),
+						typeMessages, messages, Constantes.METODO_JS_CNV);
+			}
+			mostrarConsultaPrincipal();
+		} catch (Exception e) {
+			logger.error("error : " + e.getMessage().toString());
+		} finally {
+
+			logger.info("[FIN:] Metodo : cambiarEstados");
+		}
+	}
+	
+	/*===================*/
+	
+	/*********VALIDAR FORMULARIO********/
+	public boolean validarFormulario() {
+		boolean valiadacionFormulario = false;
+		
+		if (cPeriodo.equals(Constantes.CERO_STRING)) {
+			this.typeMessages = Constantes.UNO_INT;
+			this.messages = Constantes.VALIDACION_AF;
+			PrimeFaces.current().ajax().update("frm_PedidoAlmacen:pnl_messages");
+			refreshMessage();
+			Mensajeria.showMessages(typeMessages, messages, typeMessages, messages, Constantes.METODO_JS_CNV);
+			valiadacionFormulario = true;
+		}
+
+		if (codigoMes.equals(Constantes.CERO_CERO_STRING)) {
+			this.typeMessages = Constantes.UNO_INT;
+			this.messages = Constantes.VALIDACION_MES;
+			PrimeFaces.current().ajax().update("frm_PedidoAlmacen:pnl_messages");
+			refreshMessage();
+			Mensajeria.showMessages(typeMessages, messages, typeMessages, messages, Constantes.METODO_JS_CNV);
+			valiadacionFormulario = true;
+		}
+		return valiadacionFormulario;
+	}
+	
+	public boolean validarEstados(String estado) {
+		boolean valiadacionEstado = false;
+		if (estado.equals(Constantes.ESTADO_TECHO_CERRADO)) {
+			this.typeMessages = Constantes.UNO_INT;
+			this.messages = Constantes.MESSAGE_VALIDACION_TECHO_CERRADO;
+			PrimeFaces.current().ajax().update("frm_PedidoAlmacen:pnl_messages");
+			refreshMessage();
+			Mensajeria.showMessages(typeMessages, messages,typeMessages, messages, Constantes.METODO_JS_CNV);
+			valiadacionEstado = true;
+
+		}
+		return valiadacionEstado;
+	}
 	/*===================*/
 	
 	public void refreshMessage() {
 		setTypeMessages(typeMessages);
 		setMessages(messages);
 	}
-
 	
 	private ExternalContext extContext() {
 		FacesContext c = FacesContext.getCurrentInstance();

@@ -9,9 +9,11 @@
 	<select id="mostrarConsultaPrincipal"
 		parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalida"
 		resultType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalida">
-		select CPERIODO_CODIGO AS cPeriodoCodigo,  NALMACEN_SALIDA_CODIGO AS nAlmacenSalidaCodigo, NALMACEN_CODIGO AS nAlmacenCodigo, 
-		(SELECT  VALMACEN_DESCRIPCION FROM IAFAS_ALMACEN E WHERE E.NALMACEN_CODIGO= CAB.NALMACEN_CODIGO) AS nombreAlmacen,
+		SELECT  CPERIODO_CODIGO AS cPeriodoCodigo,  NALMACEN_SALIDA_CODIGO AS nAlmacenSalidaCodigo,
+		##NALMACEN_CODIGO AS nAlmacenCodigo, 
+		##(SELECT  VALMACEN_DESCRIPCION FROM IAFAS_ALMACEN E WHERE E.NALMACEN_CODIGO= CAB.NALMACEN_CODIGO) AS nombreAlmacen,
 		VALMACEN_SALIDA_MOTIVO AS vAlmacenSalidaMotivo, 
+		CAB.CESTADO_CODIGO AS cEstadoCodigo,
 		(SELECT  VAREA_LABORAL_DESCRIPCION FROM iafas_area_laboral E WHERE E.CAREA_LABORAL_CODIGO=CAB.CAREA_LABORAL_CODIGO) AS nombreAreaLaboral,
 		(SELECT  e.VESTADO_DESCRIPCION FROM iafas_estados e where CAB.CESTADO_CODIGO = e.cestado_codigo) as desEstado
 		FROM IAFAS_ALMACEN_SALIDA CAB
@@ -23,10 +25,40 @@
 
 
 	<select id="SP_IDU_PEDIDO_ALMACEN" statementType="CALLABLE" parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalida">
-        <![CDATA[call SP_IDU_PEDIDO_ALMACEN(#{cPeriodoCodigo, mode=IN}, #{nAlmacenCodigo, mode=IN},#{cMesCodigo, mode=IN}, #{vAlmacenSalidaMotivo, mode=IN}, 
-        #{cAreaLaboralCodigo, mode=IN}, #{vUsuarioCodigo, mode=IN}, #{mode, mode=IN},
+        <![CDATA[call SP_IDU_PEDIDO_ALMACEN(#{cPeriodoCodigo, mode=IN}, #{cMesCodigo, mode=IN},  #{nAlmacenSalidaCodigo, mode=IN}, 
+        #{vAlmacenSalidaMotivo, mode=IN}, #{cAreaLaboralCodigo, mode=IN}, #{vUsuarioCodigo, mode=IN}, #{mode, mode=IN},
         #{codigoRespuesta,mode=OUT,jdbcType=VARCHAR}, #{mensajeRespuesta,mode=OUT,jdbcType=VARCHAR}, #{numeroAlmacen, mode=OUT, jdbcType=VARCHAR})
          ]]>
     </select>
+    
+    <select id="obtenerRegistro"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalida"
+		resultType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalida">
+		SELECT CPERIODO_CODIGO AS cPeriodoCodigo, NALMACEN_SALIDA_CODIGO AS nAlmacenSalidaCodigo, CESTADO_CODIGO AS cEstadoCodigo,CMES_CODIGO AS cMesCodigo, 
+		VALMACEN_SALIDA_MOTIVO AS vAlmacenSalidaMotivo , CAREA_LABORAL_CODIGO AS cAreaLaboralCodigo
+		FROM IAFAS_ALMACEN_SALIDA 
+		WHERE 
+		CPERIODO_CODIGO= #{cPeriodoCodigo} AND
+		NALMACEN_SALIDA_CODIGO = #{nAlmacenSalidaCodigo}
+		
+	</select>
+	
+	<select id="mostrarConsultaPrincipalSalida"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalida"
+		resultType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalida">
+		SELECT  CPERIODO_CODIGO AS cPeriodoCodigo,  NALMACEN_SALIDA_CODIGO AS nAlmacenSalidaCodigo,
+		##NALMACEN_CODIGO AS nAlmacenCodigo, 
+		##(SELECT  VALMACEN_DESCRIPCION FROM IAFAS_ALMACEN E WHERE E.NALMACEN_CODIGO= CAB.NALMACEN_CODIGO) AS nombreAlmacen,
+		VALMACEN_SALIDA_MOTIVO AS vAlmacenSalidaMotivo, 
+		CAB.CESTADO_CODIGO AS cEstadoCodigo,
+		(SELECT  VAREA_LABORAL_DESCRIPCION FROM iafas_area_laboral E WHERE E.CAREA_LABORAL_CODIGO=CAB.CAREA_LABORAL_CODIGO) AS nombreAreaLaboral,
+		(SELECT  e.VESTADO_DESCRIPCION FROM iafas_estados e where CAB.CESTADO_CODIGO = e.cestado_codigo) as desEstado
+		FROM IAFAS_ALMACEN_SALIDA CAB
+		WHERE 
+		CPERIODO_CODIGO = #{cPeriodoCodigo} AND
+		CMES_CODIGO=#{cMesCodigo} AND
+		CAREA_LABORAL_CODIGO=#{cAreaLaboralCodigo}  AND 
+		CESTADO_CODIGO = 'CE'
+	</select>
 
 </mapper>

@@ -15,9 +15,23 @@
 	</select>
 
 	<select id="SP_IDU_PEDIDO_ALMACEN_DETALLE" statementType="CALLABLE" parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaDetalle">
-        <![CDATA[call SP_IDU_PEDIDO_ALMACEN_DETALLE(#{cPeriodoCodigo, mode=IN}, #{nAlmacenSalidaCodigo, mode=IN},#{codigoItem, mode=IN}, #{vUsuarioCodigo, mode=IN}, #{mode, mode=IN},
+        <![CDATA[call SP_IDU_PEDIDO_ALMACEN_DETALLE(#{cPeriodoCodigo, mode=IN}, #{nAlmacenSalidaCodigo, mode=IN},#{codigoItem, mode=IN},
+        #{nAlmacenSalidaSolicitado, mode=IN},  #{vUsuarioCodigo, mode=IN}, #{mode, mode=IN},
         #{codigoRespuesta,mode=OUT,jdbcType=VARCHAR}, #{mensajeRespuesta,mode=OUT,jdbcType=VARCHAR})
          ]]>
     </select>
+    
+    <select id="obtenerRegistroDetalle"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaDetalle"
+		resultType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaDetalle">
+		SELECT  CPERIODO_CODIGO AS cPeriodoCodigo, NALMACEN_SALIDA_CODIGO AS nAlmacenSalidaCodigo, NITEM_CODIGO AS nItemCodigo, NALMACEN_SALIDA_SOLICITADO AS nAlmacenSalidaSolicitado, 
+		(SELECT VITEM_DESCRIPCION FROM IAFAS_ITEM WHERE NITEM_CODIGO=DET.NITEM_CODIGO ) AS descripcionItem,
+		(SELECT VUNIDAD_MEDIDA_NOMBRE FROM IAFAS_UNIDAD_MEDIDA WHERE CESTADO_CODIGO='AC' AND CUNIDAD_MEDIDA_CODIGO = 
+ 		(SELECT CUNIDAD_MEDIDA_CODIGO FROM IAFAS_ITEM  WHERE NITEM_CODIGO= DET.NITEM_CODIGO )) AS descripcionUnidadMedida
+		FROM IAFAS_ALMACEN_SALIDA_DETALLE DET
+		WHERE 
+		CPERIODO_CODIGO= #{cPeriodoCodigo} AND
+		NALMACEN_SALIDA_CODIGO = #{nAlmacenSalidaCodigo}
+	</select>
     
 </mapper>

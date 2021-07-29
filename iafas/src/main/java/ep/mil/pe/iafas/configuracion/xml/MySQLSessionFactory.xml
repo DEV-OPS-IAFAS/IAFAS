@@ -65,8 +65,13 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
 
       <typeAlias alias="IafasAlmacenIngreso" type="ep.mil.pe.iafas.logistica.model.IafasAlmacenIngreso" />
       <typeAlias alias="IafasAlmacenIngresoDetalle" type="ep.mil.pe.iafas.logistica.model.IafasAlmacenIngresoDetalle" />  
+      
+      <!-- cambios agregados por Elvis Severino - Modulo Logistica -->
+      <typeAlias alias="IafasAlmacenSalida" type="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaAtencion" />
+       <!-- Fin Cambios de  Elvis Severino -->
     </typeAliases>
 
+      
       <environments default="development">
         <environment id="development">
           <transactionManager type="JDBC"/>
@@ -78,6 +83,7 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
             </dataSource>
        </environment>
     </environments>    
+     
     
      
     <mappers> 
@@ -127,6 +133,10 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
 		
 		<mapper resource="ep/mil/pe/iafas/logistica/controller/xml/IafasAlmacenIngresoController.xml" />
 		<mapper resource="ep/mil/pe/iafas/logistica/controller/xml/IafasAlmacenIngresoDetalleController.xml" />
+		
+		<!-- cambios agregados por Elvis Severino - Modulo Logistica -->
+		<mapper resource="ep/mil/pe/iafas/logistica/controller/xml/IafasAlmacenSalidaAtencion.xml" />
+		<!-- Fin Cambios de  Elvis Severino -->
     </mappers>
 
 </configuration>

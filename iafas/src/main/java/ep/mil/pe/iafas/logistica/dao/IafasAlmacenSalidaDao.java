@@ -23,37 +23,58 @@ public class IafasAlmacenSalidaDao {
 		List<IafasAlmacenSalida> list = null;
 		SqlSession session = this.sqlSessionFactory.openSession();
 		try {
-			list = session.selectList("IafasAlmacenSalida.mostrarConsultaPrincipal",objBn);
+			list = session.selectList("IafasAlmacenSalida.mostrarConsultaPrincipal", objBn);
+		} finally {
+			session.close();
+		}
+		return list;
+	}
+
+	public Response mantenimientoCabecera(IafasAlmacenSalida objBn) throws SQLException {
+
+		Response response = new Response();
+		SqlSession session = this.sqlSessionFactory.openSession();
+		Map<String, String> param = new HashMap<String, String>();
+		try {
+			param.put("cPeriodoCodigo", objBn.getCPeriodoCodigo());
+			param.put("cMesCodigo", objBn.getCMesCodigo());
+			param.put("nAlmacenSalidaCodigo", String.valueOf(objBn.getNAlmacenSalidaCodigo()));
+			param.put("vAlmacenSalidaMotivo", objBn.getVAlmacenSalidaMotivo());
+			param.put("cAreaLaboralCodigo", objBn.getCAreaLaboralCodigo());
+			param.put("vUsuarioCodigo", objBn.getVUsuarioCreador());
+			param.put("mode", objBn.getMode());
+
+			String respuesta = (String) session.selectOne("IafasAlmacenSalida.SP_IDU_PEDIDO_ALMACEN", param);
+
+			response.setCodigoRespuesta(param.get("codigoRespuesta"));
+			response.setMensajeRespuesta(param.get("mensajeRespuesta"));
+			response.setIdTransaccion(param.get("numeroAlmacen"));
+
+		} finally {
+			session.close();
+		}
+		return response;
+	}
+
+	public List<IafasAlmacenSalida> obtenerRegistro(IafasAlmacenSalida objBn) {
+		List<IafasAlmacenSalida> list = null;
+		SqlSession session = this.sqlSessionFactory.openSession();
+		try {
+			list = session.selectList("IafasAlmacenSalida.obtenerRegistro", objBn);
 		} finally {
 			session.close();
 		}
 		return list;
 	}
 	
-	
-public Response mantenimientoCabecera(IafasAlmacenSalida objBn) throws SQLException {
-		
-		Response response = new Response();
+	public List<IafasAlmacenSalida> mostrarConsultaPrincipalSalida(IafasAlmacenSalida objBn) {
+		List<IafasAlmacenSalida> list = null;
 		SqlSession session = this.sqlSessionFactory.openSession();
-		Map<String, String> param = new HashMap<String, String>();
 		try {
-			param.put("cPeriodoCodigo", objBn.getCPeriodoCodigo());
-            param.put("nAlmacenCodigo", String.valueOf(objBn.getNAlmacenCodigo()));
-            param.put("cMesCodigo", objBn.getCMesCodigo());
-            param.put("vAlmacenSalidaMotivo", objBn.getVAlmacenSalidaMotivo());
-            param.put("cAreaLaboralCodigo", objBn.getCAreaLaboralCodigo());
-            param.put("vUsuarioCodigo", objBn.getVUsuarioCreador());           
-            param.put("mode", objBn.getMode());	
-            
-			String respuesta  =(String) session.selectOne("IafasAlmacenSalida.SP_IDU_PEDIDO_ALMACEN", param);
-			 
-			response.setCodigoRespuesta(param.get("codigoRespuesta"));
-	        response.setMensajeRespuesta(param.get("mensajeRespuesta"));
-	        response.setIdTransaccion(param.get("numeroAlmacen"));
-	            
+			list = session.selectList("IafasAlmacenSalida.mostrarConsultaPrincipalSalida", objBn);
 		} finally {
 			session.close();
 		}
-		return response;
+		return list;
 	}
 }
