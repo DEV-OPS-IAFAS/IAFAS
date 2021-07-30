@@ -9,24 +9,16 @@
 	<select id="mostrarConsultaPrincipal"
 		parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaAtencion"
 		resultType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaAtencion">
-		SELECT  CPERIODO_CODIGO AS cPeriodoCodigo,  NALMACEN_SALIDA_CODIGO AS nAlmacenSalidaCodigo,
-		VALMACEN_SALIDA_MOTIVO AS vAlmacenSalidaMotivo, 
-		CAB.CESTADO_CODIGO AS cEstadoCodigo,
-		(SELECT  VAREA_LABORAL_DESCRIPCION FROM iafas_area_laboral E WHERE E.CAREA_LABORAL_CODIGO=CAB.CAREA_LABORAL_CODIGO) AS nombreAreaLaboral,
-		(SELECT  e.VESTADO_DESCRIPCION FROM iafas_estados e where CAB.CESTADO_CODIGO = e.cestado_codigo) as desEstado
-		FROM IAFAS_ALMACEN_SALIDA CAB
-		WHERE 
-		CPERIODO_CODIGO = #{cPeriodoCodigo} AND
-		CMES_CODIGO=#{cMesCodigo} AND
-		CAREA_LABORAL_CODIGO=#{cAreaLaboralCodigo}  
+		SELECT  CPERIODO_CODIGO AS cPeriodoCodigo 
+		FROM IAFAS_ALMACEN_SALIDA_ATENCION CAB 
 	</select>
 
 
-	<select id="SP_IDU_PEDIDO_ALMACEN" statementType="CALLABLE" parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaAtencion">
-        <![CDATA[call SP_IDU_PEDIDO_ALMACEN(#{cPeriodoCodigo, mode=IN}, #{cMesCodigo, mode=IN},  #{nAlmacenSalidaCodigo, mode=IN}, 
-        #{vAlmacenSalidaMotivo, mode=IN}, #{cAreaLaboralCodigo, mode=IN}, #{vUsuarioCodigo, mode=IN}, #{mode, mode=IN},
-        #{codigoRespuesta,mode=OUT,jdbcType=VARCHAR}, #{mensajeRespuesta,mode=OUT,jdbcType=VARCHAR}, #{numeroAlmacen, mode=OUT, jdbcType=VARCHAR})
-         ]]>
-    </select>
+<!-- 	<select id="SP_IDU_PEDIDO_ALMACEN" statementType="CALLABLE" parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaAtencion"> -->
+<!--         <![CDATA[call SP_IDU_PEDIDO_ALMACEN(#{cPeriodoCodigo, mode=IN}, #{cMesCodigo, mode=IN},  #{nAlmacenSalidaCodigo, mode=IN},  -->
+<!--         #{vAlmacenSalidaMotivo, mode=IN}, #{cAreaLaboralCodigo, mode=IN}, #{vUsuarioCodigo, mode=IN}, #{mode, mode=IN}, -->
+<!--         #{codigoRespuesta,mode=OUT,jdbcType=VARCHAR}, #{mensajeRespuesta,mode=OUT,jdbcType=VARCHAR}, #{numeroAlmacen, mode=OUT, jdbcType=VARCHAR}) -->
+<!--          ]]> -->
+<!--     </select> -->
     
 </mapper>

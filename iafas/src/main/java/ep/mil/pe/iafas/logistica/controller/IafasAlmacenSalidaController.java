@@ -23,6 +23,7 @@ import ep.mil.pe.iafas.configuracion.util.Response;
 import ep.mil.pe.iafas.logistica.dao.IafasAlmacenSalidaDao;
 import ep.mil.pe.iafas.logistica.dao.IafasAlmacenSalidaDetalleDao;
 import ep.mil.pe.iafas.logistica.model.IafasAlmacenSalida;
+import ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaAtencion;
 import ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaDetalle;
 import ep.mil.pe.iafas.programacion.dao.IafasItemDao;
 import ep.mil.pe.iafas.programacion.model.IafasItem;
@@ -41,6 +42,8 @@ public class IafasAlmacenSalidaController implements Serializable {
 	
 	private String cPeriodo;
 	private String codigoMes;
+	private String cPeriodoAtencion;
+	private String codigoMesAtencion;
 	private List<IafasAlmacenSalida> listaConsultaPrincipal =  new ArrayList<IafasAlmacenSalida>();
 	private List<IafasAlmacenSalida> listaConsultaPrincipalSalida =  new ArrayList<IafasAlmacenSalida>();
 	private int typeMessages = Constantes.UNO_NEGATIVO;
@@ -59,6 +62,9 @@ public class IafasAlmacenSalidaController implements Serializable {
 	private IafasAlmacenSalida bean;
 	private int cantidadStock = Constantes.CERO_INT;
 	private int cantidadAtendida = Constantes.CERO_INT;
+	
+	private List<IafasAlmacenSalidaAtencion> listaConsultaAtendido =  new ArrayList<IafasAlmacenSalidaAtencion>();
+	private String descripcionItemAtencion = Constantes.VACIO;
 	
 	/*==========Consultas==========*/
 	public List<IafasAlmacenSalida> mostrarConsultaPrincipal() {
@@ -108,8 +114,8 @@ public class IafasAlmacenSalidaController implements Serializable {
 
 		IafasAlmacenSalidaDao objDao = new IafasAlmacenSalidaDao(MySQLSessionFactory.getSqlSessionFactory());
 		IafasAlmacenSalida objBn = new IafasAlmacenSalida();
-		objBn.setCPeriodoCodigo(cPeriodo);
-		objBn.setCMesCodigo(codigoMes);
+		objBn.setCPeriodoCodigo(cPeriodoAtencion);
+		objBn.setCMesCodigo(codigoMesAtencion);
 		objBn.setCAreaLaboralCodigo(cAreaLaboral);
 		
 		List<IafasAlmacenSalida> listaCab = objDao.mostrarConsultaPrincipalSalida(objBn);
@@ -187,6 +193,7 @@ public class IafasAlmacenSalidaController implements Serializable {
 	public void cleanCamposCabecera() {
 		logger.info("[INICIO:] Metodo : cleanCamposCabecera");
 		setMotivo(Constantes.VACIO);
+		setModo(Constantes.MODE_REGISTRO);
 		//setCodigoAlmacen(Constantes.CERO_STRING);
 		listaDetalle = new ArrayList<>();
 		
@@ -232,12 +239,16 @@ public class IafasAlmacenSalidaController implements Serializable {
 		
 		objBn.setCPeriodoCodigo(cPeriodo);
 		objBn.setCMesCodigo(codigoMes);
-		objBn.setNAlmacenSalidaCodigo(bean.getNAlmacenSalidaCodigo());
+		if(modo.equals(Constantes.MODE_ACTUALIZACION)) {
+			objBn.setNAlmacenSalidaCodigo(bean.getNAlmacenSalidaCodigo());	
+		}
+		else {
+			objBn.setNAlmacenSalidaCodigo(Constantes.CERO_INT);
+		}
 		objBn.setVAlmacenSalidaMotivo(motivo);
 		objBn.setCAreaLaboralCodigo(cAreaLaboral);
 		objBn.setVUsuarioCreador(codUsu);
 		objBn.setMode(modo);
-		
 		
 		try {
 			response = objDao.mantenimientoCabecera(objBn);
@@ -263,6 +274,7 @@ public class IafasAlmacenSalidaController implements Serializable {
 				}
 			}
 			mostrarConsultaPrincipal();
+			cleanCamposDetalle();
 		}
 		catch (Exception e) {
 			logger.error("error : " + e.getMessage().toString());
@@ -319,6 +331,46 @@ public class IafasAlmacenSalidaController implements Serializable {
 		}
 		logger.info("[FIN:] Metodo : obtenerRegistroDetalle");
 	}
+	
+	public void obtenerRegistroDetalleParaSalida() {
+		logger.info("[INICIO:] Metodo : obtenerRegistroDetalleParaSalida");
+		IafasAlmacenSalidaDetalle objBnDet = new IafasAlmacenSalidaDetalle();
+		IafasAlmacenSalidaDetalleDao objDetDao = new IafasAlmacenSalidaDetalleDao(MySQLSessionFactory.getSqlSessionFactory());
+		objBnDet.setCPeriodoCodigo(cPeriodoAtencion);
+		objBnDet.setNAlmacenSalidaCodigo(bean.getNAlmacenSalidaCodigo());
+			List<IafasAlmacenSalidaDetalle> lstdet = objDetDao.obtenerRegistroDetalle(objBnDet);
+			for (IafasAlmacenSalidaDetalle objDt : lstdet) {
+
+				detallesGrillaSession = new IafasAlmacenSalidaDetalle(objDt.getCPeriodoCodigo(), Constantes.CERO_INT,
+						objDt.getNItemCodigo(), objDt.getNAlmacenSalidaSolicitado(), Constantes.VACIO, hoy,
+						Constantes.VACIO, hoy, Constantes.VACIO, hoy, objDt.getDescripcionItem(),
+						objDt.getDescripcionUnidadMedida(), String.valueOf(objDt.getNItemCodigo()), Constantes.VACIO,
+						Constantes.VACIO, Constantes.VACIO);
+
+				this.listaDetalle.add(detallesGrillaSession);
+			}
+		logger.info("[FIN:] Metodo : obtenerRegistroDetalleParaSalida");
+	}
+	
+	public void obtenerRegistroParaSalida() {
+		logger.info("[INICIO:] Metodo : obtenerRegistroParaSalida");
+		
+		IafasAlmacenSalida objBn = new IafasAlmacenSalida();
+		IafasAlmacenSalidaDao objDao = new IafasAlmacenSalidaDao(MySQLSessionFactory.getSqlSessionFactory());
+		
+		objBn.setCPeriodoCodigo(cPeriodoAtencion);
+		objBn.setNAlmacenSalidaCodigo(bean.getNAlmacenSalidaCodigo());
+			List<IafasAlmacenSalida> listaCab = objDao.obtenerRegistro(objBn);
+			if (listaCab.size() > 0) {
+				for (IafasAlmacenSalida objBeanLista : listaCab) {
+					setMotivo(objBeanLista.getVAlmacenSalidaMotivo());
+					obtenerRegistroDetalleParaSalida();
+				}
+			}
+		setModo(Constantes.MODE_ACTUALIZACION);
+		logger.info("[FIN:] Metodo : obtenerRegistroParaSalida");
+	}
+	
 	/*===================*/
 	
 	
@@ -416,6 +468,23 @@ public class IafasAlmacenSalidaController implements Serializable {
 		return valiadacionEstado;
 	}
 	/*===================*/
+	
+	public void obtenerItemAtender() {
+		
+		logger.info("[INICIO:] Metodo : obtenerItemAtender");
+		String codItemAtencion = (String) extContext().getRequestParameterMap().get("codItemAtencion");
+		IafasAlmacenSalidaDetalle objBnDet = new IafasAlmacenSalidaDetalle();
+		IafasAlmacenSalidaDetalleDao objDaoDet = new IafasAlmacenSalidaDetalleDao(MySQLSessionFactory.getSqlSessionFactory());
+		objBnDet.setCPeriodoCodigo(cPeriodoAtencion);
+		objBnDet.setNAlmacenSalidaCodigo(bean.getNAlmacenSalidaCodigo());
+		objBnDet.setNItemCodigo(Integer.parseInt(codItemAtencion));
+		
+			List<IafasAlmacenSalidaDetalle> lstdet = objDaoDet.obtenerDescripcionItem(objBnDet);
+			for (IafasAlmacenSalidaDetalle objDt : lstdet) {
+				setDescripcionItemAtencion(objDt.getDescripcionItem());
+		}
+		logger.info("[FIN:] Metodo : obtenerItemAtender");
+	}
 	
 	public void refreshMessage() {
 		setTypeMessages(typeMessages);

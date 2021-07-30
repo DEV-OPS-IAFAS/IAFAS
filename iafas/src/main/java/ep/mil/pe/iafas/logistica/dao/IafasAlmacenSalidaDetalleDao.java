@@ -54,4 +54,15 @@ public class IafasAlmacenSalidaDetalleDao {
 		}
 		return list;
 	}
+	
+	public List<IafasAlmacenSalidaDetalle>  obtenerDescripcionItem(IafasAlmacenSalidaDetalle objBn) {
+		List<IafasAlmacenSalidaDetalle> list = null;
+		SqlSession session = this.sqlSessionFactory.openSession();
+		try {
+			list = session.selectList("IafasAlmacenSalidaDetalle.obtenerDescripcionItem", objBn);
+		} finally {
+			session.close();
+		}
+		return list;
+	}
 }

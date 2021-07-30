@@ -47,8 +47,6 @@
 		parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalida"
 		resultType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalida">
 		SELECT  CPERIODO_CODIGO AS cPeriodoCodigo,  NALMACEN_SALIDA_CODIGO AS nAlmacenSalidaCodigo,
-		##NALMACEN_CODIGO AS nAlmacenCodigo, 
-		##(SELECT  VALMACEN_DESCRIPCION FROM IAFAS_ALMACEN E WHERE E.NALMACEN_CODIGO= CAB.NALMACEN_CODIGO) AS nombreAlmacen,
 		VALMACEN_SALIDA_MOTIVO AS vAlmacenSalidaMotivo, 
 		CAB.CESTADO_CODIGO AS cEstadoCodigo,
 		(SELECT  VAREA_LABORAL_DESCRIPCION FROM iafas_area_laboral E WHERE E.CAREA_LABORAL_CODIGO=CAB.CAREA_LABORAL_CODIGO) AS nombreAreaLaboral,

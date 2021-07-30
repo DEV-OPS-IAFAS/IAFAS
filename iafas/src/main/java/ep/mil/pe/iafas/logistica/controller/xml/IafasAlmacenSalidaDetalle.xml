@@ -34,4 +34,15 @@
 		NALMACEN_SALIDA_CODIGO = #{nAlmacenSalidaCodigo}
 	</select>
     
+    <select id="obtenerDescripcionItem"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaDetalle"
+		resultType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaDetalle">
+		SELECT  
+		(SELECT VITEM_DESCRIPCION FROM IAFAS_ITEM WHERE NITEM_CODIGO=DET.NITEM_CODIGO ) AS descripcionItem
+		FROM IAFAS_ALMACEN_SALIDA_DETALLE DET
+		WHERE 
+		CPERIODO_CODIGO= #{cPeriodoCodigo} AND
+		NALMACEN_SALIDA_CODIGO = #{nAlmacenSalidaCodigo} AND 
+		NITEM_CODIGO =  #{nItemCodigo}
+	</select>
 </mapper>
