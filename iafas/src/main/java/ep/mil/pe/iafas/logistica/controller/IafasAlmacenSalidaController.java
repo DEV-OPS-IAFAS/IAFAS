@@ -20,6 +20,7 @@ import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
 import ep.mil.pe.iafas.configuracion.util.Constantes;
 import ep.mil.pe.iafas.configuracion.util.Mensajeria;
 import ep.mil.pe.iafas.configuracion.util.Response;
+import ep.mil.pe.iafas.logistica.dao.IafasAlmacenSalidaAtencionDao;
 import ep.mil.pe.iafas.logistica.dao.IafasAlmacenSalidaDao;
 import ep.mil.pe.iafas.logistica.dao.IafasAlmacenSalidaDetalleDao;
 import ep.mil.pe.iafas.logistica.model.IafasAlmacenSalida;
@@ -65,6 +66,10 @@ public class IafasAlmacenSalidaController implements Serializable {
 	
 	private List<IafasAlmacenSalidaAtencion> listaConsultaAtendido =  new ArrayList<IafasAlmacenSalidaAtencion>();
 	private String descripcionItemAtencion = Constantes.VACIO;
+	private String lblStockItemAlmacen = Constantes.CERO_STRING;
+	private String lblCantidadSolicitadaItem = Constantes.VACIO;
+	private String codigoItemAtencion= Constantes.VACIO;
+	private String codigoSalidaAlmacenAtencion= Constantes.VACIO;
 	
 	/*==========Consultas==========*/
 	public List<IafasAlmacenSalida> mostrarConsultaPrincipal() {
@@ -194,9 +199,7 @@ public class IafasAlmacenSalidaController implements Serializable {
 		logger.info("[INICIO:] Metodo : cleanCamposCabecera");
 		setMotivo(Constantes.VACIO);
 		setModo(Constantes.MODE_REGISTRO);
-		//setCodigoAlmacen(Constantes.CERO_STRING);
 		listaDetalle = new ArrayList<>();
-		
 		logger.info("[FIN:] Metodo : cleanCamposCabecera");
 	}
 	/*===================*/
@@ -367,7 +370,7 @@ public class IafasAlmacenSalidaController implements Serializable {
 					obtenerRegistroDetalleParaSalida();
 				}
 			}
-		setModo(Constantes.MODE_ACTUALIZACION);
+		setModo(Constantes.MODE_REGISTRO);
 		logger.info("[FIN:] Metodo : obtenerRegistroParaSalida");
 	}
 	
@@ -482,8 +485,89 @@ public class IafasAlmacenSalidaController implements Serializable {
 			List<IafasAlmacenSalidaDetalle> lstdet = objDaoDet.obtenerDescripcionItem(objBnDet);
 			for (IafasAlmacenSalidaDetalle objDt : lstdet) {
 				setDescripcionItemAtencion(objDt.getDescripcionItem());
+				setLblCantidadSolicitadaItem(String.valueOf(objDt.getNAlmacenSalidaSolicitado()));
+				setCodigoItemAtencion(String.valueOf(objDt.getNItemCodigo()));
+				setCodigoSalidaAlmacenAtencion(String.valueOf(objDt.getNAlmacenSalidaCodigo()));
 		}
+			obtenerDetalleAtencion();
 		logger.info("[FIN:] Metodo : obtenerItemAtender");
+	}
+	
+	public List<IafasAlmacenSalidaAtencion> obtenerDetalleAtencion(){
+		
+		logger.info("[INICIO:] Metodo : obtenerDetalleAtencion");
+
+		this.listaConsultaAtendido = new ArrayList<>();
+		if (this.listaConsultaAtendido != null)
+			this.listaConsultaAtendido.clear();
+		String codItemAtencion = (String) extContext().getRequestParameterMap().get("codItemAtencion");
+		
+		IafasAlmacenSalidaAtencionDao objDao = new IafasAlmacenSalidaAtencionDao(MySQLSessionFactory.getSqlSessionFactory());
+		IafasAlmacenSalidaAtencion objBn = new IafasAlmacenSalidaAtencion();
+		objBn.setCPeriodoCodigo(cPeriodoAtencion);
+		objBn.setNAlmacenSalidaCodigo(bean.getNAlmacenSalidaCodigo());
+		objBn.setNItemCodigo(Integer.parseInt(codItemAtencion));
+		
+		List<IafasAlmacenSalidaAtencion> listaCab = objDao.mostrarAtencion(objBn);
+		if (listaCab.size() > 0) {
+			for (IafasAlmacenSalidaAtencion objBeanLista : listaCab) {
+				this.listaConsultaAtendido.add(objBeanLista);
+			}
+		}
+
+		logger.info("[FIN:] Metodo : obtenerDetalleAtencion");
+		return listaConsultaAtendido;
+	}
+	
+	public void insPedidoAlmacenAtencion() {
+		logger.info("[INICIO:] Metodo : insPedidoAlmacenAtencion");
+		
+		HttpSession session = null;
+		session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		IafasUsuariosController usuarioSession = new IafasUsuariosController();
+		usuarioSession = (IafasUsuariosController) session.getAttribute("iafasUsuariosController");
+		String codUsu = usuarioSession.getIdUsuario();
+		IafasAlmacenSalidaAtencion objBn = new IafasAlmacenSalidaAtencion();
+		IafasAlmacenSalidaAtencionDao objDao = new IafasAlmacenSalidaAtencionDao(MySQLSessionFactory.getSqlSessionFactory());
+		
+		Response response = new Response();
+		
+		objBn.setCPeriodoCodigo(cPeriodoAtencion);
+		/*if(modo.equals(Constantes.MODE_ACTUALIZACION)) {
+			objBn.setNAlmacenSalidaCodigo(bean.getNAlmacenSalidaCodigo());	
+		}
+		else {
+			objBn.setNAlmacenSalidaCodigo(Constantes.CERO_INT);
+		}*/
+		objBn.setNAlmacenSalidaCodigo(Integer.parseInt(codigoSalidaAlmacenAtencion));
+		objBn.setNItemCodigo(Integer.parseInt(codigoItemAtencion));
+		objBn.setNAlmacenCodigo(Integer.parseInt(codigoAlmacen));
+		objBn.setNAlmacenSalidaAtendido(cantidadAtendida);
+		objBn.setVUsuarioCreador(codUsu);
+		objBn.setMode(modo);
+		
+		try {
+			response = objDao.mantenimientoCabecera(objBn);
+
+			if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
+
+				this.typeMessages = Constantes.CERO_INT;
+				this.messages = response.getMensajeRespuesta();
+				PrimeFaces.current().ajax().update("frm_SalidaAlmacen:pnl_messages");
+				refreshMessage();
+				Mensajeria.showMessages(Integer.parseInt(response.getCodigoRespuesta()),
+						response.getMensajeRespuesta(), typeMessages, messages, Constantes.METODO_JS_CNV);
+			}
+		
+			obtenerDetalleAtencion();
+		}
+		catch (Exception e) {
+			logger.error("error : " + e.getMessage().toString());
+		} finally {
+
+			logger.info("[FIN:] Metodo : insPedidoAlmacenAtencion");
+		}
+		
 	}
 	
 	public void refreshMessage() {

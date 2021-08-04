@@ -37,8 +37,9 @@
     <select id="obtenerDescripcionItem"
 		parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaDetalle"
 		resultType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaDetalle">
-		SELECT  
-		(SELECT VITEM_DESCRIPCION FROM IAFAS_ITEM WHERE NITEM_CODIGO=DET.NITEM_CODIGO ) AS descripcionItem
+		SELECT  NALMACEN_SALIDA_CODIGO AS nAlmacenSalidaCodigo, NITEM_CODIGO AS nItemCodigo, 
+		(SELECT VITEM_DESCRIPCION FROM IAFAS_ITEM WHERE NITEM_CODIGO=DET.NITEM_CODIGO ) AS descripcionItem, 
+		NALMACEN_SALIDA_SOLICITADO AS nAlmacenSalidaSolicitado
 		FROM IAFAS_ALMACEN_SALIDA_DETALLE DET
 		WHERE 
 		CPERIODO_CODIGO= #{cPeriodoCodigo} AND

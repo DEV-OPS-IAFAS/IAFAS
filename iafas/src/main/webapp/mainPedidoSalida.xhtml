@@ -165,8 +165,9 @@ button.ui-button {
 				</p:column>	
 				<p:column width="45px" headerText="Acciones" >
 					<p:commandButton  value="Atender" icon="pi pi-plus" actionListener="#{iafasAlmacenSalidaController.obtenerItemAtender()}"
-						oncomplete="PF('modalDetalle').show()" update="frm_SalidaAlmacen:lblDescripcionItem" >
+						oncomplete="PF('modalDetalle').show()" update="frm_SalidaAlmacen:modalDetalle" >
 						<f:param id="codItemAtencion" name="codItemAtencion" value="#{dTablePedidoDet.NItemCodigo}"  />
+						<f:param id="codAlmacenSalidaCodigo" name="codAlmacenSalidaCodigo" value="#{dTablePedidoDet.NAlmacenSalidaCodigo}"  />
 					</p:commandButton>
 				</p:column>									
 			</p:dataTable>
@@ -185,7 +186,9 @@ button.ui-button {
 				
 				<h:outputLabel value="Item: " styleClass="etiqueta" style="font-size:12px;font-weight:bold;" />
 				<h:outputLabel id="lblDescripcionItem" value="#{iafasAlmacenSalidaController.descripcionItemAtencion}"
-				 styleClass="etiqueta" style="font-size:15px;font-weight:bold;" />
+				styleClass="etiqueta" style="font-size:15px;font-weight:bold;" />
+				<h:outputLabel value="Cantidad Solicitada: " styleClass="etiqueta" style="font-size:12px;font-weight:bold;" />
+				<h:outputLabel value="#{iafasAlmacenSalidaController.lblCantidadSolicitadaItem}" styleClass="etiqueta" style="font-size:15px;font-weight:bold;" />
 				
 				<h:outputLabel value="Almacen: " styleClass="etiqueta" style="font-size:12px;font-weight:bold;" />
 				<h:selectOneMenu id="cboAlmacen" styleClass="select" value="#{iafasAlmacenSalidaController.codigoAlmacen}">
@@ -194,22 +197,21 @@ button.ui-button {
 				</h:selectOneMenu>
 				
 		            <h:outputLabel value="Stock en Almacen:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
-					<h:outputLabel  id="lblDescripcionUnidadMedida" value="#{iafasAlmacenSalidaController.lblDescripcionUnidadMedida}" 
+					<h:outputLabel  id="lblStockItemAlmacen" value="#{iafasAlmacenSalidaController.lblStockItemAlmacen}" 
 					styleClass="outLabel"  style="font-size:12px;font-weight:bold; " />	
 					<h:outputLabel value="Cantidad Atendida:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
-					<p:inputText id="inptxtCantidad"  styleClass="input"  value="#{iafasAlmacenSalidaController.cantidadSolicitada}" />
+					<p:inputText id="inptxtCantidad"  styleClass="input"  value="#{iafasAlmacenSalidaController.cantidadAtendida}" />
 			</h:panelGrid>
 			
 			<f:facet name="footer">
 				<p:commandButton value="Cerrar" styleClass="ui-button-outlined ui-button-danger"
 					oncomplete="PF('modalDetalle').hide()"
 					action="#{iafasAlmacenSalidaController.cleanCamposDetalle()}"
-					update="frm_SalidaAlmacen:dTablePedidoDet" />
+					update="frm_SalidaAlmacen:dTablePedidoAtendido" />
 
 				<p:commandButton value="Agregar" styleClass="ui-button-outlined ui-button-success"
-					oncomplete="PF('modalDetalle').hide()"
-					action="#{iafasAlmacenSalidaController.cargarListaDetalleSession()}"
-					update="frm_SalidaAlmacen:dTablePedidoDet" /> 
+					action="#{iafasAlmacenSalidaController.insPedidoAlmacenAtencion()}"
+					update="frm_SalidaAlmacen:dTablePedidoAtendido" /> 
 			</f:facet>		
 			
 			
@@ -219,15 +221,15 @@ button.ui-button {
 				emptyMessage="No se encontro registros">
 			
 				<p:column style="width:50px;text-align: center" headerText="ALMACEN">
-					<p:outputLabel value="#{dTablePedidoDet.descripcionItem}" />
+					<p:outputLabel value="#{dTablePedidoAtendido.descripcionAlmacen}" />
 				</p:column>
 				
 				<p:column style="width:50px;text-align: center" headerText="ITEM">
-					<p:outputLabel value="#{dTablePedidoDet.descripcionItem}" />
+					<p:outputLabel value="#{dTablePedidoAtendido.descripcionItem}" />
 				</p:column>
 				
 				<p:column style="width:50px;text-align: center" headerText="CANTIDAD ATENDIDA ">
-					<p:outputLabel value="#{dTablePedidoDet.descripcionItem}" />
+					<p:outputLabel value="#{dTablePedidoAtendido.NAlmacenSalidaAtendido}" />
 				</p:column>
 				
 			</p:dataTable>

@@ -6,19 +6,54 @@
 <mapper namespace="IafasAlmacenSalidaAtencion">
 	<resultMap id="resultado" type="IafasAlmacenSalidaAtencion" />
 
+	<select id="mostrarConsultaAtendido"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaAtencion"
+		resultType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaAtencion">
+		SELECT CPERIODO_CODIGO AS cPeriodoCodigo,
+		NALMACEN_SALIDA_CODIGO AS nAlmacenSalidaCodigo, NITEM_CODIGO AS
+		nItemCodigo,
+		NALMACEN_SALIDA_ATENDIDO AS nAlmacenSalidaSolicitado,
+		(SELECT VITEM_DESCRIPCION FROM IAFAS_ITEM WHERE NITEM_CODIGO=DET.NITEM_CODIGO) AS descripcionItem,
+		(SELECT VUNIDAD_MEDIDA_NOMBRE FROM IAFAS_UNIDAD_MEDIDA WHERE CESTADO_CODIGO='AC' AND
+		CUNIDAD_MEDIDA_CODIGO =	(SELECT CUNIDAD_MEDIDA_CODIGO FROM IAFAS_ITEM WHERE NITEM_CODIGO=DET.NITEM_CODIGO )) AS descripcionUnidadMedida
+		FROM
+		IAFAS_ALMACEN_SALIDA_ATENCION DET
+		WHERE 
+		CPERIODO_CODIGO= #{cPeriodoCodigo} AND
+		NALMACEN_SALIDA_CODIGO = #{nAlmacenSalidaCodigo}
+	</select>
+
 	<select id="mostrarConsultaPrincipal"
 		parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaAtencion"
 		resultType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaAtencion">
-		SELECT  CPERIODO_CODIGO AS cPeriodoCodigo 
-		FROM IAFAS_ALMACEN_SALIDA_ATENCION CAB 
+		SELECT CPERIODO_CODIGO AS cPeriodoCodigo
+		FROM
+		IAFAS_ALMACEN_SALIDA_ATENCION CAB
 	</select>
 
 
-<!-- 	<select id="SP_IDU_PEDIDO_ALMACEN" statementType="CALLABLE" parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaAtencion"> -->
-<!--         <![CDATA[call SP_IDU_PEDIDO_ALMACEN(#{cPeriodoCodigo, mode=IN}, #{cMesCodigo, mode=IN},  #{nAlmacenSalidaCodigo, mode=IN},  -->
-<!--         #{vAlmacenSalidaMotivo, mode=IN}, #{cAreaLaboralCodigo, mode=IN}, #{vUsuarioCodigo, mode=IN}, #{mode, mode=IN}, -->
-<!--         #{codigoRespuesta,mode=OUT,jdbcType=VARCHAR}, #{mensajeRespuesta,mode=OUT,jdbcType=VARCHAR}, #{numeroAlmacen, mode=OUT, jdbcType=VARCHAR}) -->
-<!--          ]]> -->
-<!--     </select> -->
-    
+	<select id="SP_IDU_PEDIDO_ALMACEN_ATENCION"
+		statementType="CALLABLE"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaAtencion"> 
+         <![CDATA[call SP_IDU_PEDIDO_ALMACEN_ATENCION(#{cPeriodoCodigo, mode=IN},   #{nAlmacenSalidaCodigo, mode=IN},  
+         #{nItemCodigo, mode=IN}, #{nAlmacenCodigo, mode=IN},#{nAlmacenSalidaAtendido, mode=IN},  #{vUsuarioCodigo, mode=IN}, #{mode, mode=IN}, 
+         #{codigoRespuesta,mode=OUT,jdbcType=VARCHAR}, #{mensajeRespuesta,mode=OUT,jdbcType=VARCHAR}) 
+          ]]>
+	</select>
+	
+	<select id="mostrarAtencion"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaAtencion"
+		resultType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaAtencion">
+		SELECT NITEM_CODIGO AS nItemCodigo ,
+		(SELECT VITEM_DESCRIPCION FROM IAFAS_ITEM WHERE NITEM_CODIGO=CAB.NITEM_CODIGO) AS descripcionItem,
+		NALMACEN_SALIDA_ATENDIDO AS nAlmacenSalidaAtendido, 
+		(SELECT  VALMACEN_DESCRIPCION FROM IAFAS_ALMACEN E WHERE E.NALMACEN_CODIGO= CAB.NALMACEN_CODIGO) AS descripcionAlmacen
+		FROM
+		IAFAS_ALMACEN_SALIDA_ATENCION CAB
+		WHERE 
+		CPERIODO_CODIGO= #{cPeriodoCodigo} AND
+		NALMACEN_SALIDA_CODIGO = #{nAlmacenSalidaCodigo} AND
+		NITEM_CODIGO = #{nItemCodigo}
+	</select>
+
 </mapper>
