@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" 
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+        <title>IAFAS</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
+    </h:head>
+    <h:body class="formulario">
+        <script >  
+        
+        PrimeFaces.locales['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Sólo hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Fecha actual',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText: 'Todo el día',
+                today: 'Hoy',
+                clear: 'Claro'
+            };
+            
+     function verMensajes(){
+    	  var tipo = '#{mbProcesos.typeMessages}';
+    	  var mensaje = document.getElementById('frmEtapasPAAC:inptxt_message').value;
+           if(tipo==0){
+             swal("ERROR", mensaje,"error");
+           }else
+           if(tipo==1) {
+           	 swal("Aviso", 'Se Registró Con Exito',"success").then(function() {
+    	     window.location = "mainPaacProcesos.xhtml"; });
+           }else
+        	if(tipo==2){
+        		   swal("ALERTA", 'No se permite Campos Vacios al Registrar',"info");        		   
+        	   }
+		  
+        }
+        
+        function completaCeros(obj, tam) {
+            var txt = document.getElementById(obj).value;
+            var tamTxt = txt.length;
+            var i;
+            for (i = tam; i > tamTxt; i--)
+                txt = '0' + txt;
+            document.getElementById(obj).value = txt;
+        }
+        
+        function upperCase(obj) {
+        	  var x = document.getElementById(obj);
+        	  x.value = x.value.toUpperCase();
+        	}
+        
+        </script>
+        <h:form id="frmEtapasPAAC" style="border-radius: 5px 5px 5px 5px;border: 1px; width:100%;height:100%"
+        enctype="multipart/form-data">
+        <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
+        <h:inputHidden value="#{mbProcesos.typeMessages}"></h:inputHidden>
+            <p:panel >
+                <p:panelGrid columns="6" styleClass="panel">
+                    <h:outputLabel value="Registro de Procesos PAAC" styleClass="etiqueta"></h:outputLabel>
+                    <p:commandButton  value="Grabar" action="#{mbProcesos.insertarEtapas()}"
+                    icon="pi pi-save" style="height:30px;" ajax="false" update="detalleEtapa"/>
+                    <p:commandButton value="Cancelar" action="#{mbProcesos.retornar()}"
+                    icon="pi pi-arrow-left" style="height:30px;"/>
+                </p:panelGrid> 
+  
+                <br/>
+                <p:fieldset legend="Datos de Etapa Procesos">
+                   <h:panelGrid id="panelProcesos" columns="4" style="width:100%">
+                       <h:outputLabel value="N° Convocatoria:"></h:outputLabel>
+                       <h:outputLabel value="#{mbProcesos.labelNumeroPaac}" styleClass="outLabel"></h:outputLabel>
+                       <h:outputLabel value="Nomenclatura:"></h:outputLabel>
+                       <h:outputLabel value="#{mbProcesos.labelNumProceso}" styleClass="outLabel"></h:outputLabel>
+                       <h:outputLabel value="Descripcion:"></h:outputLabel>
+                       <h:inputTextarea value="#{mbProcesos.labelDescProceso}" style="width:450px;"
+                        readonly="true" styleClass="outLabel" rows="3" cols="2"></h:inputTextarea>
+                       <h:outputLabel value="Monto:"></h:outputLabel>
+                       <h:inputText id="inptxtMontoProceso" value="#{mbProcesos.labelMontoProceso}" 
+                       readonly="true" styleClass="input" style="text-align:right" size="17">
+                         <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/> 
+                       </h:inputText>
+                    </h:panelGrid>
+                        <h:panelGrid columns="6" style="width:100%">
+                        <h:outputLabel value="Etapa:"></h:outputLabel>
+                        <h:selectOneMenu id="cbo_etapa" styleClass="select" value="#{mbProcesos.codigoEtapaProcedimiento}" >
+                          <f:selectItem itemValue="0" itemLabel="--Seleccione--"></f:selectItem>
+                          <f:selectItems value="#{mbCombos.etapas}"></f:selectItems>
+                        </h:selectOneMenu>
+
+                        <h:outputLabel value="Fecha Inicio:"></h:outputLabel>
+                        <p:datePicker id="fecInicio" value="#{mbProcesos.fechaInicio}" locale="es" monthNavigator="true" yearNavigator="true"  pattern="dd/MM/yyyy"/>
+                      <h:outputLabel value="Fecha Fin:"></h:outputLabel>
+                        <p:datePicker id="fecFin" value="#{mbProcesos.fechaFin}" locale="es" monthNavigator="true" yearNavigator="true"  pattern="dd/MM/yyyy"/>
+                      <!--   <p:spinner id="prefix"  prefix="Item N° " min="0" max="50" value="#{mbProcesos.itemCodDet}"/>--> 
+                        </h:panelGrid>
+                </p:fieldset>
+             <p:dataTable id="detalleEtapa" var="det" paginator="true" paginatorPosition="bottom"
+                  value="#{mbProcesos.listadoEtapas}" rows="10">
+                   <p:column headerText="Etapa" style="width:300px;">
+                      <h:outputText value="#{det.descripcionEtapa}"/>
+                   </p:column>
+                   <p:column headerText="Inicio" style="width:40px;">
+                      <h:outputText value="#{det.dpacProcedimientoInicio}">
+                              <f:converter converterId="javax.faces.DateTime" />
+                              <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
+                      </h:outputText>
+	
+                   </p:column>
+                   <p:column headerText="Fin" style="width:40px;text-align:right;">
+                      <h:outputText value="#{det.dpacProcedimientoFin}">
+                       <f:converter converterId="javax.faces.DateTime" />
+                                <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />	
+                      </h:outputText>
+                   </p:column>  
+                  <p:column headerText="Documentos" style="width:25px;">
+                      <p:commandButton onclick="PF('pDoc').show()" icon="pi pi-book" 
+                          actionListener="#{mbProcesos.obtenerParametros()}" update="frmEtapasPAAC:cbo_etapa2, frmEtapasPAAC:dataTableDoc">
+                          <f:param id="pCodigo1" name="pCodigo" value="#{det.npacProcedimientoCodigo}"></f:param> 
+                          <f:param id="pCodigoEtapaProcedimiento" name="pCodigoEtapaProcedimiento" value="#{det.nprocedimientoEtapaCodigo}"></f:param>                                            
+                      </p:commandButton>
+                  </p:column>
+                </p:dataTable>
+                
+                <!-- Dialog Procedimientos Documentos -->
+                
+              <p:dialog id="dialogProcesoDoc" widgetVar="pDoc" header="Registro de Documentos" modal="true"
+                		  showEffect="fade" hideEffect="" resizable="false" position="top"
+                		  width="880">
+                  <p:panel>
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Etapa:"></h:outputLabel>
+                        <h:selectOneMenu id="cbo_etapa2" value="#{mbProcesos.codigoEtapaProcDocumento}" styleClass="select" 
+                        disabled="true">
+                          <f:selectItem itemValue="" itemLabel="--Seleccione--"></f:selectItem>
+                          <f:selectItems value="#{mbCombos.etapas}"></f:selectItems>
+                        </h:selectOneMenu>
+                  		<h:outputLabel value="Descripción:"></h:outputLabel>
+                  		<h:inputTextarea value="#{mbProcesos.descEtapaDocumento}" style="width:450px;"
+                          rows="3" cols="2" onkeyup="upperCase(this.name)"></h:inputTextarea>
+                        <h:outputLabel value="Archivo:"></h:outputLabel>
+                        <p:fileUpload id="fileDocument"  mode="advanced"  listener="#{mbProcesos.cargarArchivoEtapa}" allowTypes="/(\.|\/)(gif|jpe?g|png|pdf)$/"
+						accept=".pdf,.gif,.jpeg,.png" uploadButtonTitle="Cargar" uploadLabel="Cargar" cancelLabel="Cancelar" ></p:fileUpload>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                           <p:commandButton id="btnAceptarDOC" value="Registrar" 
+                           action="#{mbProcesos.saveFileEtapa}" ajax="false"
+                          icon="pi pi-check" style="height:30px;"></p:commandButton>
+                            <p:commandButton id="btnCancelarDOC" value="Cerrar" type="button" action="#{mbProcesos.limpiarCamposDet()}"
+                             onclick="PF('pDoc').hide();" 
+                            icon="pi pi-times" style="height:30px;" ></p:commandButton>
+                        </h:panelGrid>
+                     <p:dataTable id="dataTableDoc" var="doc" paginator="true" paginatorPosition="bottom"
+                  		value="#{mbProcesos.listaEtapasDoc}" rows="10">
+                       <p:column headerText="Etapa" style="text-align:left; width:130px;">
+                          <h:outputText value="#{doc.descripcionEtapa}"></h:outputText>
+                       </p:column>
+                       <p:column headerText="Descripcion" style="text-align:left; width:220px;">
+                       <h:outputText value="#{doc.descArchEtapa}"></h:outputText></p:column>
+                       <p:column headerText="Archivo" style="text-align:center; width:150px;">
+                       <h:outputText value="#{doc.archivoEtapa}"></h:outputText></p:column>
+                       <p:column headerText="Proveedores" style="text-align:center; width:60px;">
+                         <p:commandButton icon="pi pi-users" action="#{mbProcesos.irProveedoresEtapa()}" >
+                         <f:param id="pCodigoProc" name="pCodigoProc" value="#{doc.npacProcedimientoCodigo}"></f:param>
+                         <f:param id="pCodigoDocumetoEtapa" name="pCodigoDocumetoEtapa" value="#{doc.nprocedimientoEtapaDocCodigo}"></f:param>
+                         </p:commandButton>
+                       </p:column>
+                     </p:dataTable>   
+                  </p:panel>
+                </p:dialog>
+                
+            </p:panel>
+        </h:form>
+    </h:body>
+</html>

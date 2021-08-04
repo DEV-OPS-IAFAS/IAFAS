@@ -7,8 +7,7 @@ public class IafasPaacProcesoDetalle {
 
 	
 	private String periodo;
-	private int nfuenteFinanciamiento;
-	private int npacProcesoCodigo;
+	private int npacProcedimientoCodigo;
 	private int nitemCodigo;
 	private double nprocesoDetPrecio;
 	private double nprocesoDetCantidad;
@@ -16,6 +15,12 @@ public class IafasPaacProcesoDetalle {
 	private String vpacProcesoObs;
 	private int npacProcesoDetalleItem;
 	private String vusuarioCodigo;
+	private String tipo;
+	// 
+	private int nprocedimientoEtapaDocCodigo;
+	private String rucProveedor;
+	private String rucRNP;
+
 	
 
 	public IafasPaacProcesoDetalle() {

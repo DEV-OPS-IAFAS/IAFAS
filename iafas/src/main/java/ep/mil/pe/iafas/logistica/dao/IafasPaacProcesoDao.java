@@ -114,7 +114,83 @@ public class IafasPaacProcesoDao {
 		}
 		return i;
 	}
-
+	
+	public int saveProcessItems(IafasPaacProcesoDetalle paac) {
+		int i = 0;
+		SqlSession session = sqlSessionFactory.openSession();
+		try {
+			i = session.insert("IafasPaacProceso.saveProcessDetails", paac);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		finally {
+			session.close();
+		}
+		return i;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IafasPaacProcesos> showProcessEtapaDoc(IafasPaacProcesos proceso){
+		List<IafasPaacProcesos> lista = null;
+		SqlSession session = sqlSessionFactory.openSession();
+		try{
+            lista = session.selectList("IafasPaacProceso.showEtapaDoc",proceso);
+      }
+      catch(Exception e) {
+      	e.printStackTrace();
+      }
+      finally{
+           session.close();
+      }
+		return lista;
+	}
+// Proveedores RNP Detalle
+	
+	public int saveProveedoresProcedimiento(IafasPaacProcesos paac) {
+		int i = 0;
+		SqlSession session = sqlSessionFactory.openSession();
+		try {
+			i = session.insert("IafasPaacProceso.insertarProveedorRNP", paac);
+			i=1;
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		finally {
+			session.close();
+		}
+		return i;
+	}
+	
+	public int saveProveedoresProcedimientoDetalle(IafasPaacProcesoDetalle paac) {
+		int i = 0;
+		SqlSession session = sqlSessionFactory.openSession();
+		try {
+			i = session.insert("IafasPaacProceso.insertarProveedorDetalle", paac);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		finally {
+			session.close();
+		}
+		return i;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IafasPaacProcesos> listaProveedoresEtapa(IafasPaacProcesos proceso){
+		List<IafasPaacProcesos> lista = null;
+		SqlSession session = sqlSessionFactory.openSession();
+		try{
+            lista = session.selectList("IafasPaacProceso.showProveedoresEtapa",proceso);
+      }
+      catch(Exception e) {
+      	e.printStackTrace();
+      }
+      finally{
+           session.close();
+      }
+		return lista;
+	}
+	
 	public String getMensajeBD() {
 		return mensajeBD;
 	}

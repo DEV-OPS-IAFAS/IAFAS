@@ -31,4 +31,20 @@ public class ViewPaacProcesoDetalleDao {
       }
 		return lista;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<ViewPaacProcesoDetalle> showRNP(String  viewDetails){
+		List<ViewPaacProcesoDetalle> lista = null;
+		SqlSession session = sqlSessionFactory.openSession();
+		try{
+            lista = session.selectList("ViewPaacProcesoDetalle.findProvRNP",viewDetails);
+      }
+      catch(Exception e) {
+      	e.printStackTrace();
+      }
+      finally{
+           session.close();
+      }
+		return lista;
+	}
 }

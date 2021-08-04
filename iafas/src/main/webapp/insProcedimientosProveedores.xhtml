@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>IAFAS</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
+    </h:head>
+    <h:body class="formulario">
+        <script>    
+        function upperCase(obj) {
+      	  var x = document.getElementById(obj);
+      	  x.value = x.value.toUpperCase();
+      	}
+        </script>
+        <h:form id="frmProcesos" style="border-radius: 5px 5px 5px 5px;border: 1px ; width:100%;" >
+            <p:panel >
+                <p:panelGrid columns="8" styleClass="panel">
+                   <i class="pi pi-calendar-plus" style="height:20px;height:20px;" ></i>
+                    <p:outputLabel value="Proveedores - Procedimientos" styleClass="etiqueta"></p:outputLabel>
+                    <p:commandButton value="Nuevo" onclick="PF('provDoc').show();" 
+                    actionListener="#{mbProcesos.verItemsProceso}" update="detalleProcesos"
+                      style="height:30px;" title="Click aqui para Ingresar un Nuevo Proveedor"></p:commandButton>
+                     <p:commandButton value="Cancelar" action="insProcedimientosEtapas"
+                      style="height:30px;" title="Click aqui para Regresar Etapas del Procedimiento"></p:commandButton>
+                </p:panelGrid>
+                <br/>
+                <p:fieldset legend="Datos del Procedimiento">
+                <h:panelGrid columns="4" style="width:80%">
+                   <h:outputLabel value="Proceso:"></h:outputLabel>
+                   <h:outputText id="inpNomenClatura" value="#{mbProcesos.labelNomenclatura}" styleClass="outLabel"></h:outputText>
+                   <h:outputLabel value="Etapa:"></h:outputLabel>
+                   <h:outputText id="inpEtapa" value="#{mbProcesos.labelEtapa}" styleClass="outLabel"></h:outputText>
+                </h:panelGrid> 
+                <br/>
+                <h:panelGrid columns="2" style="width:80%">
+                    <h:outputLabel value="Descripcion:"></h:outputLabel>
+                    <h:outputText id="inpDescripcion" value="#{mbProcesos.labelDescripcionProceso}" styleClass="outLabel"></h:outputText>
+                </h:panelGrid>
+                </p:fieldset>
+                 <br/>
+                <table>
+                    <tr>
+                        <td valign="top">
+                            <div>
+                                <p:dataTable id="dTableProvedores" var="prov" value="#{mbProcesos.listaProveedores}" rows="15" 
+                                             style="width: 100%;font-size:11px;" emptyMessage="No se encontro datos registrados" 
+                                             styleClass="grid" 
+                                             paginatorPosition="bottom" paginator="true" stripedRows="true">
+                                             
+                                    <p:column headerText="R.N.P" style="width: 15px;font-size:11px;" >
+                                        <p:outputLabel value="#{prov.rucRNP}"/>
+                                    </p:column>        
+                                    <p:column headerText="Proveedor" style="width: 50px;text-align:center;font-size:11px;" >
+                                    <h:outputText value="#{prov.rucProveedor}" >
+                                    </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Razon Social" style="width: 230px;text-align:center;font-size:11px;" >
+                                    <h:outputText value="#{prov.razonSocial}" ></h:outputText>
+                                    </p:column>
+                                   
+                                </p:dataTable>
+                            </div>
+                        </td>  
+                    </tr>
+                </table>
+              
+                <!-- dialogos -->
+               <p:dialog id="dialogProveedorDoc" widgetVar="provDoc" header="Registro de Proveedores" modal="true"
+                		  showEffect="fade" hideEffect="explode" resizable="false" position="top" closeOnEscape="true"
+                		  width="920">
+                  <p:panel>
+                  <div align="right" >
+                      <h:panelGrid columns="2">
+                        <p:commandButton value="Grabar" action="#{mbProcesos.insertarProveedores}" 
+                        icon="pi pi-save" style="height:25px;" onclick="PF('provDoc').hide();"></p:commandButton>
+                        <p:commandButton value="Cancelar" onclick="PF('provDoc').hide();" style="height:25px;"></p:commandButton>
+                     </h:panelGrid>
+                  </div>
+
+                     <h:panelGrid columns="4">
+                      <h:outputLabel value="Ruc:"/>
+                      <h:inputText id="inpTXTRuc" styleClass="input" value="#{mbProcesos.rucProveedor}"></h:inputText>
+                      <p:commandButton value="Buscar" actionListener="#{mbProcesos.buscarProvRNP}" 
+                      update="panelInfo"></p:commandButton>
+                     </h:panelGrid>
+                     <br/>
+                     <h:panelGrid columns="4" id="panelInfo">
+                       <h:outputLabel value="Proveedor" />
+                       <h:outputLabel value="#{mbProcesos.labelRazonSocial}" styleClass="outLabel"/>
+                       <h:outputLabel value="R.N.P." />
+                       <h:outputLabel value="#{mbProcesos.labelRNP}" styleClass="outLabel"/>
+                     </h:panelGrid>
+                     <p:dataTable id="detalleProcesos" var="det" paginator="true" paginatorPosition="bottom"
+                  value="#{mbProcesos.listaDetProveedor}" rows="5">
+                   <p:column headerText="Item" style="width:300px;">
+                      <h:outputText value="#{det.descItem}"/>
+                   </p:column>
+                   <p:column headerText="U.M" style="width:40px;">
+                      <h:outputText value="#{det.unidadMedDesc}"/>
+                   </p:column>
+                       <p:column headerText="P.U" style="width:60px;text-align:right;">
+                      <h:outputText value="#{det.precioItem}">
+                      <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/> 
+                      </h:outputText>
+                   </p:column>  
+                   <p:column headerText="Cantidad" style="width:60px;text-align:right;">
+                      <h:outputText value="#{det.cantidadItem}">
+                      <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/> 
+                      </h:outputText>
+                   </p:column> 
+				   <p:column headerText="Precio Ofertado">
+				      <h:inputText id="inpTxtPU" styleClass="input" size="10"
+				      value="#{det.precioOfertado}"  style="text-align:right">
+				      <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+				      </h:inputText>
+				   </p:column>
+ 					<p:column headerText="Cantidad Ofertada">
+				      <h:inputText id="inpTxtCantidad" styleClass="input" size="12"
+				      value="#{det.cantidadOfertada}" style="text-align:right">
+				      <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+				      </h:inputText>
+				   </p:column>
+                </p:dataTable>
+                     
+                  </p:panel>
+                </p:dialog>
+                
+               
+            
+            </p:panel>
+        </h:form>
+    </h:body>
+</html>

@@ -10,7 +10,7 @@
         <link href="css/estilos.css" rel="stylesheet" type="text/css" />
         <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
     </h:head>
-    <body class="formulario">
+    <h:body class="formulario">
         <script>    
         function upperCase(obj) {
       	  var x = document.getElementById(obj);
@@ -60,119 +60,110 @@
                                             <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
                                         </p:outputLabel>
                                     </p:column>
+                                    <p:column headerText="Items" style="width:5px;">
+                                       <p:commandButton onclick="PF('dgProcesoDet').show()" icon="pi pi-book" 
+                                      actionListener="#{mbProcesos.obtenerParametros()}" update="frmProcesos:detalleProcesos,frmProcesos:panelProcesosH">
+                                           <f:param id="pCodigoItem" name="pCodigo" value="#{con.npacProcedimientoCodigo}"></f:param>                                           
+                                      </p:commandButton>
+                                    </p:column>
                                    <p:column headerText="Etapa" style="width:5px;">
-                                      <p:commandButton onclick="PF('dgProcesoDet').show()" icon="pi pi-list" 
-                                      actionListener="#{mbProcesos.obtenerParametros()}" update="frmProcesos:detalleContrato,frmProcesos:panelProcesos">
+                                      <p:commandButton icon="pi pi-list" 
+                                      action="#{mbProcesos.verEtapas()}" >
                                            <f:param id="pCodigo" name="pCodigo" value="#{con.npacProcedimientoCodigo}"></f:param>                                           
                                       </p:commandButton>
                                     </p:column>
-                                  <p:column headerText="Documentos" style="width:5px;">
+                                <!--    <p:column headerText="Documentos" style="width:5px;">
                                       <p:commandButton onclick="PF('pDoc').show()" icon="pi pi-book" 
                                       actionListener="#{mbProcesos.obtenerParametros()}" update="frmProcesos:detalleContrato,frmProcesos:panelProcesos">
                                            <f:param id="pCodigo1" name="pCodigo" value="#{con.npacProcedimientoCodigo}"></f:param>                                           
                                       </p:commandButton>
-                                    </p:column>
+                                    </p:column> -->
                                 </p:dataTable>
                             </div>
                         </td>  
                     </tr>
                 </table>
               
-                <!-- dialogos -->
-               <p:dialog id="dgItems" widgetVar="dgProcesoDet" modal="true" header="Registro Etapa del Proceso"
+               
+            <p:dialog id="dgItems" widgetVar="dgProcesoDet" modal="true" header="Registro Item del Proceso"
                 showEffect="fade" hideEffect="explode" resizable="false" position="top"
                 width="860">
                     <p:panel >
-                    <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
-                    <h:panelGrid id="panelProcesos" columns="4">
+                    <p:messages id="mensajeItem" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
+                    <h:panelGrid id="panelProcesosH" columns="4" style="width:820px;">
                        <h:outputLabel value="N° Convocatoria:"></h:outputLabel>
                        <h:outputLabel value="#{mbProcesos.labelNumeroPaac}" styleClass="outLabel"></h:outputLabel>
-                       <h:outputLabel value="Nomenclatura:"></h:outputLabel>
+                       <h:outputLabel value="N° Proceso:"></h:outputLabel>
                        <h:outputLabel value="#{mbProcesos.labelNumProceso}" styleClass="outLabel"></h:outputLabel>
                        <h:outputLabel value="Descripcion:"></h:outputLabel>
-                       <h:inputTextarea value="#{mbProcesos.labelDescProceso}" style="width:450px;"
+                       <h:inputTextarea value="#{mbProcesos.labelDescProceso}" style="width:480px;"
                         readonly="true" styleClass="outLabel" rows="3" cols="2"></h:inputTextarea>
                        <h:outputLabel value="Monto:"></h:outputLabel>
                        <h:inputText id="inptxtMonto" value="#{mbProcesos.labelMontoProceso}" 
-                       readonly="true" styleClass="input" style="text-align:right" size="17">
+                       readonly="true" styleClass="input" style="text-align:right" size="15">
                          <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/> 
                        </h:inputText>
                     </h:panelGrid>
-                        <h:panelGrid columns="2" >
-                        <h:outputLabel value="Etapa:"></h:outputLabel>
-                        <h:selectOneMenu id="cbo_etapa" styleClass="select" value="#{mbProcesos.codigoEtapaProcedimiento}" >
-                          <f:selectItem itemValue="0" itemLabel="--Seleccione--"></f:selectItem>
-                          <f:selectItem itemValue="9" itemLabel="Prueba"></f:selectItem>
-                          <f:selectItems value="#{mbCombos.etapas}"></f:selectItems>
-                        </h:selectOneMenu>
+                        <h:panelGrid columns="2" id="panelItemProceso">
+                        <h:outputLabel value="Proceso Item:"></h:outputLabel>
+                        <p:spinner id="prefix"  prefix="Item N° " min="0" max="50" value="#{mbProcesos.itemCodDet}"/>
+                        <h:outputLabel value="Item:"/>
+						<p:autoComplete  id="acItem" size="80" value="#{mbProcesos.descripcionItem}" 
+			          	 completeMethod="#{mbProcesos.completeText}" scrollHeight="250">
+			          	 <p:ajax event="itemSelect" listener="#{mbProcesos.onItemSelect}" update="lblDescripcionUnidadMedida"/>
+		            </p:autoComplete>
+		            <h:outputLabel value="Unidad Medida:" />
+					<h:inputText  id="lblDescripcionUnidadMedida" value="#{mbProcesos.lblDescripcionUnidadMedida}" 
+					styleClass="input" readonly="true"/>	
 
-                        <h:outputLabel value="Fecha Inicio:"></h:outputLabel>
-                        <p:datePicker id="fecInicio" value="#{mbProcesos.fechaInicio}" locale="es" monthNavigator="true" yearNavigator="true"  pattern="dd/MM/yyyy"/>
-                      <h:outputLabel value="Fecha Fin:"></h:outputLabel>
-                        <p:datePicker id="fecFin" value="#{mbProcesos.fechaFin}" locale="es" monthNavigator="true" yearNavigator="true"  pattern="dd/MM/yyyy"/>
-                      <!--   <p:spinner id="prefix"  prefix="Item N° " min="0" max="50" value="#{mbProcesos.itemCodDet}"/>--> 
+                   		<h:outputLabel value="Cantidad:"/>
+                        <h:inputText id="inpTxtCantidad"  styleClass="input" 
+                        size="18" value="#{mbProcesos.cantidadItem}" style="text-align:right;">
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                        </h:inputText>
+                        <h:outputLabel value="Precio Unitario:"/>
+                        <h:inputText id="inpTxtPU"  styleClass="input" value="#{mbProcesos.precioItem}"
+                        size="18" style="text-align:right;">
+                        <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                        </h:inputText>
+                    	<h:outputLabel value="Observación:"></h:outputLabel>
+                    	<h:inputTextarea id="inpTxtObs" rows="2" style="width:450px;" cols="2" 
+                    	value="#{mbProcesos.observacionItem}" onkeyup="upperCase(this.name)"></h:inputTextarea>
                         </h:panelGrid>
                         <br/>
                         <h:panelGrid columns="2">
-                           <p:commandButton id="btnAceptarAD" value="Registrar" 
-                           action="#{mbProcesos.insertarEtapas()}" ajax="false"
+                           <p:commandButton id="btnAceptarDet" value="Registrar" ajax="true"
+                           action="#{mbProcesos.insertaProcesoDetalle()}" update="detalleProcesos"
                           icon="pi pi-check" style="height:30px;"></p:commandButton>
-                            <p:commandButton id="btnCancelarAD" value="Cerrar" type="button" action="#{mbProcesos.limpiarCamposDet()}"
+                            <p:commandButton id="btnCancelarDet" value="Cerrar" type="button" action="#{mbProcesos.limpiarCamposDet()}"
                              onclick="PF('dgProcesoDet').hide();" update="panelItemProceso"
                             icon="pi pi-times" style="height:30px;" ></p:commandButton>
                         </h:panelGrid>
                         <br/> 
-                <p:dataTable id="detalleContrato" var="det" paginator="true" paginatorPosition="bottom"
-                  value="#{mbProcesos.listadoEtapas}" rows="10">
-                   <p:column headerText="Etapa" style="width:300px;">
-                      <h:outputText value="#{det.descripcionEtapa}"/>
+                <p:dataTable id="detalleProcesos" var="det" paginator="true" paginatorPosition="bottom"
+                  value="#{mbProcesos.listaDetalle}" rows="5">
+                   <p:column headerText="Item" style="width:300px;">
+                      <h:outputText value="#{det.descItem}"/>
                    </p:column>
-                   <p:column headerText="Inicio" style="width:40px;">
-                      <h:outputText value="#{det.dpacProcedimientoInicio}">
-                              <f:converter converterId="javax.faces.DateTime" />
-                              <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />
-                      </h:outputText>
-	
+                   <p:column headerText="U.M" style="width:40px;">
+                      <h:outputText value="#{det.unidadMedDesc}"/>
                    </p:column>
-                   <p:column headerText="Fin" style="width:60px;text-align:right;">
-                      <h:outputText value="#{det.dpacProcedimientoFin}">
-                       <f:converter converterId="javax.faces.DateTime" />
-                                <f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />	
+                   <p:column headerText="P.U" style="width:60px;text-align:right;">
+                      <h:outputText value="#{det.precioItem}">
+                      <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/> 
                       </h:outputText>
                    </p:column>  
+                   <p:column headerText="Cantidad" style="width:60px;text-align:right;">
+                      <h:outputText value="#{det.cantidadItem}">
+                      <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/> 
+                      </h:outputText>
+                   </p:column> 
 
                 </p:dataTable>
-              
+
                     </p:panel>
-                </p:dialog>
-                <p:dialog id="dialogProcesoDoc" widgetVar="pDoc" header="Registro de Documentos" modal="true"
-                		  showEffect="fade" hideEffect="explode" resizable="false" position="top"
-                		  width="860">
-                  <p:panel>
-                    <h:panelGrid columns="2">
-                        <h:outputLabel value="Etapa:"></h:outputLabel>
-                        <h:selectOneMenu id="cbo_etapa2" value="#{mbProcesos.codigoEtapaProcDocumento}" styleClass="select">
-                          <f:selectItem itemValue="" itemLabel="--Seleccione--"></f:selectItem>
-                          <f:selectItems value="#{mbCombos.etapas}"></f:selectItems>
-                        </h:selectOneMenu>
-                  		<h:outputLabel value="Descripción:"></h:outputLabel>
-                  		<h:inputTextarea value="#{mbProcesos.descEtapaDocumento}" style="width:450px;"
-                         styleClass="outLabel" rows="3" cols="2"></h:inputTextarea>
-                        <h:outputLabel value="Archivo:"></h:outputLabel>
-                        <p:fileUpload id="fileDocument"  mode="advanced"  listener="#{mbProcesos.cargarArchivoEtapa}" allowTypes="/(\.|\/)(gif|jpe?g|png|pdf)$/"
-						accept=".pdf,.gif,.jpeg,.png" uploadButtonTitle="Cargar"></p:fileUpload>
-                    </h:panelGrid>
-                    <h:panelGrid columns="2">
-                           <p:commandButton id="btnAceptarDOC" value="Registrar" 
-                           action="#{mbProcesos.saveFileEtapa}" ajax="false"
-                          icon="pi pi-check" style="height:30px;"></p:commandButton>
-                            <p:commandButton id="btnCancelarDOC" value="Cerrar" type="button" action="#{mbProcesos.limpiarCamposDet()}"
-                             onclick="PF('pDoc').hide();" 
-                            icon="pi pi-times" style="height:30px;" ></p:commandButton>
-                        </h:panelGrid>
-                  </p:panel>
                 </p:dialog>
             </p:panel>
         </h:form>
-    </body>
+    </h:body>
 </html>

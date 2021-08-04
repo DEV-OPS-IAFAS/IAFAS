@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -19,9 +20,11 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.file.UploadedFile;
 
 import ep.mil.pe.iafas.administrativo.maestros.combos.dao.IafasCombosDao;
@@ -34,6 +37,8 @@ import ep.mil.pe.iafas.logistica.dao.ViewPaacProcesoDetalleDao;
 import ep.mil.pe.iafas.logistica.model.IafasPaacProcesoDetalle;
 import ep.mil.pe.iafas.logistica.model.IafasPaacProcesos;
 import ep.mil.pe.iafas.logistica.model.ViewPaacProcesoDetalle;
+import ep.mil.pe.iafas.programacion.dao.IafasItemDao;
+import ep.mil.pe.iafas.programacion.model.IafasItem;
 import ep.mil.pe.iafas.seguridad.controller.IafasUsuariosController;
 import lombok.Data;
 
@@ -66,6 +71,7 @@ public class IafasPaacProcesosController implements Serializable{
 	//Parametros
 	private int pFinan;
 	private int pCodigo;
+	private int pCodEtapaDoc;
 	
 	//labels
 	private String labelDescProceso;
@@ -104,6 +110,23 @@ public class IafasPaacProcesosController implements Serializable{
 	
 	List<ViewPaacProcesoDetalle> listaDetalle;
 	List<IafasPaacProcesos> listadoEtapas;
+	List<IafasPaacProcesos> listaEtapasDoc;
+	private List<ViewPaacProcesoDetalle> listaDetProveedor;
+	private List<IafasPaacProcesos> listaProveedores;
+	
+	private String descripcionItem;
+	private String lblDescripcionUnidadMedida;
+	
+	private int pCodigoEtapa =0;
+	
+	private String rucProveedor;
+	private String labelRNP;
+	private String labelRazonSocial;
+	
+	private String labelNomenclatura;
+	private String labelDescripcionProceso;
+	private String labelEtapa;
+
 
 	private static final long serialVersionUID = 1L;
 	IafasPaacProcesoDao procesoDao = new IafasPaacProcesoDao(MySQLSessionFactory.getSqlSessionFactory());
@@ -234,6 +257,7 @@ public class IafasPaacProcesosController implements Serializable{
 			p.setVusuarioCodigo(usuario);
 			logger.info("Parametros :"+codigoEtapaProcedimiento);
 	        procesoDao.saveProcessEtapaPAAC(p);
+	        showEtapaDetalle();
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -243,11 +267,41 @@ public class IafasPaacProcesosController implements Serializable{
 	
 	public void obtenerParametros() {
 	     String codigoProceso = (String) extContext().getRequestParameterMap().get("pCodigo");
-
+	     String codigoEtapa = (String) extContext().getRequestParameterMap().get("pCodigoEtapaProcedimiento");
+	     logger.info("Codigo Etapa en Metodo :"+codigoEtapa);
 	     pCodigo = Integer.valueOf(codigoProceso);
-	     mostrarProcesoCab();
-	     showEtapaDetalle();
+	     showDetailsProcess();
+	     if(codigoEtapa==null) {pCodigoEtapa=0;}
+	     else {	     
+	    	 pCodigoEtapa = Integer.valueOf(codigoEtapa);
+	     setCodigoEtapaProcDocumento(pCodigoEtapa);
+	     logger.info("Obteniendo codigo de Etapa en Documentos {} "+codigoEtapaProcDocumento);
+	     }
+
+	     //verEtapas();
+	     //mostrarProcesoCab();
+	     //showEtapaDetalle();
+	     verDocumentosEtapa();
+	     
 	}
+	
+	public void obtenerParamDocs() {
+
+		String codigoProceso = (String) extContext().getRequestParameterMap().get("pCodigoProc");
+	     String codigoEtapaDoc = (String) extContext().getRequestParameterMap().get("pCodigoDocumetoEtapa");
+	     logger.info("Parametros : String :"+codigoEtapaDoc +" "+codigoProceso);
+	      //pCodEtapaDoc = Integer.valueOf(codigoEtapaDoc);
+	      setPCodEtapaDoc(Integer.valueOf(codigoEtapaDoc));
+	  //  irProveedoresEtapa();
+	}
+	
+	public String irProveedoresEtapa() {
+		String pagina = "insProcedimientosProveedores.xhtml";
+		obtenerParamDocs();
+		listarProveedoresEtapas();
+		return pagina;
+	}
+	
 	
 	public void mostrarProcesoCab() {
 		IafasPaacProcesos procesos = new IafasPaacProcesos();
@@ -286,7 +340,7 @@ public class IafasPaacProcesosController implements Serializable{
 	
 	public String insertaProcesoDetalle() {
 		try {
-			
+			/*
 		     if(validaMontoItems()==true) {
 		    	 logger.info("Entro a la validacion de Montos");
 		    	 return "";
@@ -295,8 +349,7 @@ public class IafasPaacProcesosController implements Serializable{
 		    	 logger.info("Entror");
 			     IafasPaacProcesoDetalle det = new IafasPaacProcesoDetalle();
 			       det.setPeriodo(periodo);
-			       det.setNfuenteFinanciamiento(pFinan);
-			       det.setNpacProcesoCodigo(pCodigo);
+			       det.setNpacProcedimientoCodigo(pCodigo);
 			       det.setNitemCodigo(itemCodigo);
 			       det.setNprocesoDetCantidad(cantidadItem);
 			       det.setNprocesoDetPrecio(precioItem);
@@ -304,18 +357,35 @@ public class IafasPaacProcesosController implements Serializable{
 			       det.setVpacProcesoObs(observacionItem);
 			       det.setNpacProcesoDetalleItem(itemCodDet);
 			       det.setVusuarioCodigo(usuario);
-			      //  procesoDao.saveProcessDetailsPAAC(det);
+			        procesoDao.saveProcessItems(det);
 			        logger.info("Registro el Detalle del Proceso {} "+pCodigo);
 			        showDetailsProcess(); 
 			        limpiarCamposDet();
-		     }
+		     }*/
+		     IafasPaacProcesoDetalle det = new IafasPaacProcesoDetalle();
+		       det.setPeriodo(periodo);
+		       det.setNpacProcedimientoCodigo(pCodigo);
+		       det.setNitemCodigo(itemCodigo);
+		       det.setNprocesoDetCantidad(cantidadItem);
+		       det.setNprocesoDetPrecio(precioItem);
+		       det.setCunidadMedidaCodigo(unidadMedida);
+		       det.setVpacProcesoObs(observacionItem);
+		       det.setNpacProcesoDetalleItem(itemCodDet);
+		       det.setVusuarioCodigo(usuario);
+		       det.setTipo("I");
+		        procesoDao.saveProcessItems(det);
+		        logger.info("Registro el Detalle del Proceso {} "+pCodigo);
+		        showDetailsProcess(); 
+		        limpiarCamposDet();
 
 		} catch (Exception e) {
 			// TODO: handle exception
-			logger.error("Error al Registrar Item Proceso:"+e);
+			logger.error("Error al Registrar Item Proceso:"+e.getCause());
 		}
 		return "";
 	}
+	
+	
 	
 	public List<ViewPaacProcesoDetalle> showDetailsProcess(){
 		listaDetalle = new ArrayList<ViewPaacProcesoDetalle>();
@@ -326,6 +396,19 @@ public class IafasPaacProcesosController implements Serializable{
 		items.forEach((det) ->listaDetalle.add(det));
 		 return listaDetalle;
 	}
+	public void verItemsProceso() {
+		showDetailsProcessProveedor();
+	}
+	
+	public List<ViewPaacProcesoDetalle> showDetailsProcessProveedor(){
+		listaDetProveedor = new ArrayList<ViewPaacProcesoDetalle>();
+		ViewPaacProcesoDetalle v = new ViewPaacProcesoDetalle();
+		v.setPeriodo(periodo);
+		v.setCodProceso(pCodigo);
+		List<ViewPaacProcesoDetalle> items = viewDao.showDetailsPaacProcess(v);
+		items.forEach((det) ->listaDetProveedor.add(det));
+		 return listaDetProveedor;
+	}
 	
 	public List<IafasPaacProcesos> showEtapaDetalle(){
 		listadoEtapas = new ArrayList<IafasPaacProcesos>();
@@ -335,6 +418,14 @@ public class IafasPaacProcesosController implements Serializable{
 		List<IafasPaacProcesos> etapasProceso = procesoDao.showProcessEtapa(v);
 		etapasProceso.forEach((e) -> listadoEtapas.add(e));
 		return listadoEtapas;
+	}
+	
+	public String verEtapas() {
+		logger.info("Ingreso a Ver Etapas");
+		 obtenerParametros();
+	     mostrarProcesoCab();
+	     showEtapaDetalle();
+		return "insProcedimientosEtapas.xhtml";
 	}
 	
 	public void limpiarCamposDet() {
@@ -389,6 +480,7 @@ public class IafasPaacProcesosController implements Serializable{
 			Utilitarios.changeFileName(directorioInput, filenameChange);
 			procesoDao.saveProcessEtapaDocPAAC(p);
 			logger.info("Se registro el Etapa Documento {} "+p.toString());
+			verDocumentosEtapa();
 		} catch (Exception e) {
 			// TODO: handle exception
 			logger.error(e.getMessage());
@@ -396,7 +488,100 @@ public class IafasPaacProcesosController implements Serializable{
 		return "";
 	}
 	
+	private List<IafasPaacProcesos> verDocumentosEtapa(){
+		listaEtapasDoc = new ArrayList<IafasPaacProcesos>();
+		IafasPaacProcesos v = new IafasPaacProcesos();
+		v.setPeriodo(periodo);
+		v.setNpacProcedimientoCodigo(pCodigo);
+		v.setNprocedimientoEtapaCodigo(pCodigoEtapa);
+		logger.info("[verDocumentosEtapa] : "+periodo + " "+pCodigo+" "+pCodigoEtapa);
+		List<IafasPaacProcesos> etapasProceso = procesoDao.showProcessEtapaDoc(v);
+		etapasProceso.forEach((e) -> listaEtapasDoc.add(e));
+		return listaEtapasDoc;
+		
+	}
 	
+	public void buscarProvRNP() {
+		List<ViewPaacProcesoDetalle> p = viewDao.showRNP(rucProveedor);
+		for(ViewPaacProcesoDetalle e : p) {
+			setLabelRNP(e.getRnpProveedores());
+			setLabelRazonSocial(e.getRazonSocial());
+		}
+	}
+	
+
+	public String insertarProveedores() {
+		
+		IafasPaacProcesos cab = new IafasPaacProcesos();
+		int c = 0;
+		try {
+			logger.info("[INICIO] Registro de Proveedores Procedimientos");
+			cab.setPeriodo(periodo);
+			cab.setNpacProcedimientoCodigo(pCodigo);
+			cab.setNprocedimientoEtapaDocCodigo(pCodEtapaDoc);
+			cab.setRucProveedor(rucProveedor);
+			cab.setRucRNP(labelRNP);
+			cab.setCestadoProv("AC");
+			cab.setVusuarioCodigo(usuario);
+			cab.setTipo("I");
+			c=procesoDao.saveProveedoresProcedimiento(cab);
+			
+			if(c==1) {
+				logger.info("[FIN] Registro de Proveedores Procedimientos");
+				insertaItemProveedores();
+			}
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			logger.error("Error Registro de Insertar Proveedores", e.getCause());
+		}
+		return "insProcedimientosProveedores.xhtml";
+	}
+	
+	public void insertaItemProveedores() {
+		IafasPaacProcesoDetalle det = new IafasPaacProcesoDetalle();
+		try {
+			logger.info("[INICIO] Registro de Items Provedores Procedimientos ");
+			for(int i=0; i<listaDetProveedor.size();i++) {
+				det.setPeriodo(periodo);
+				det.setNpacProcedimientoCodigo(pCodigo);
+				det.setNprocedimientoEtapaDocCodigo(pCodEtapaDoc);
+				det.setRucProveedor(rucProveedor);
+				det.setRucRNP(labelRNP);
+				det.setNitemCodigo(listaDetProveedor.get(i).getCodItem());
+				det.setNpacProcesoDetalleItem(listaDetProveedor.get(i).getCodDetalleItem());
+				det.setNprocesoDetPrecio(listaDetProveedor.get(i).getPrecioOfertado());
+				det.setNprocesoDetCantidad(listaDetProveedor.get(i).getCantidadOfertada());
+				det.setCunidadMedidaCodigo(listaDetProveedor.get(i).getUnidadMedidaCod());
+				det.setVpacProcesoObs("Sin Observacion");
+				det.setVusuarioCodigo(usuario);
+				det.setTipo("I");
+				
+				procesoDao.saveProveedoresProcedimientoDetalle(det);
+			}
+			logger.info("[FIN] Registro de Items Provedores Procedimientos ");
+		} catch (Exception e) {
+			// TODO: handle exception
+			logger.error("Error Registro de Insertar Items Proveedores", e.getCause());
+		}
+	}
+	
+	public String listarProveedoresEtapas() {
+		listaProveedores = new ArrayList<IafasPaacProcesos>();
+		IafasPaacProcesos pro = new IafasPaacProcesos();
+		pro.setPeriodo(periodo);
+		pro.setNpacProcedimientoCodigo(pCodigo);
+		pro.setNprocedimientoEtapaDocCodigo(pCodEtapaDoc);
+		List<IafasPaacProcesos> proveedores = procesoDao.listaProveedoresEtapa(pro);
+		for(IafasPaacProcesos p : proveedores) {
+			setLabelNomenclatura(p.getVpacProcedimientoNomenclatura());
+			setLabelDescripcionProceso(p.getVpacProcedimientoDescripcion());
+			setLabelEtapa(p.getDescripcionEtapa());
+			listaProveedores.add(p);
+		}
+		return "insProcedimientosProveedores.xhtml";
+	}
 	
 	private String showMessages(int opcion) {
 		String messages = "";
@@ -407,6 +592,42 @@ public class IafasPaacProcesosController implements Serializable{
 		default : messages="";break;
 		}
 		return messages;
+	}
+	
+	public List<String> completeText(String query) {
+
+		logger.info("[INICIO:] Metodo : completeText");
+		String queryLowerCase = query.toLowerCase();
+		List<String> itemList = new ArrayList<>();
+		IafasItemDao itemDao = new IafasItemDao(MySQLSessionFactory.getSqlSessionFactory());
+		//List<IafasItem> lsts = itemDao.obtenerItems();
+		List<IafasItem> lsts = itemDao.obtenerItemSeleccionado(queryLowerCase);
+		for (IafasItem obj : lsts) {
+			descripcionItem = obj.getVItemDescripcion();
+			itemCodigo = obj.getNItemCodigo();
+			itemList.add(descripcionItem);
+		}
+		logger.info("[FIN:] Metodo : completeText");
+		return itemList
+				.stream()
+				.filter(t -> t.toLowerCase().startsWith(queryLowerCase))
+				.collect(Collectors.toList());
+	}
+	
+	public void onItemSelect(SelectEvent<String> event) {
+		logger.info("[INICIO:] Metodo : onItemSelect");
+		IafasItemDao itemDao = new IafasItemDao(MySQLSessionFactory.getSqlSessionFactory());
+
+		logger.info("evento selecccionado:"+event.getObject());
+		
+		List<IafasItem> lsts = itemDao.obtenerItemSeleccionado(event.getObject());
+		for (IafasItem obj : lsts) {
+			lblDescripcionUnidadMedida = obj.getDescripcionUnidadMedida();
+			unidadMedida = obj.getCUnidadMedidaCodigo();
+			itemCodigo = obj.getNItemCodigo();
+		}
+		
+		logger.info("[FIN:] Metodo : onItemSelect {} "+itemCodigo+" UM: "+unidadMedida);
 	}
 	   private ExternalContext extContext() {
 	        FacesContext c = FacesContext.getCurrentInstance();

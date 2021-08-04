@@ -8,27 +8,21 @@
 	
 	<select id="findProcessPaacDetail" resultType="ep.mil.pe.iafas.logistica.model.ViewPaacProcesoDetalle"
 		parameterType="ep.mil.pe.iafas.logistica.model.ViewPaacProcesoDetalle">
-		select periodo periodo, presupuesto presupuesto, 
+		select periodo periodo,
 		codProceso codProceso, codItem codItem,
 		descItem descItem, precioItem precioItem, 
 		cantidadItem cantidadItem, 
+		codDetalleItem codDetalleItem,
 		unidadMedidaCod unidadMedidaCod, unidadMedDesc unidadMedDesc
 		from v_proceso_paac_detalle where periodo = #{periodo} and codProceso = #{codProceso}
 	</select>
-         
-      <select id="saveDetailPAAC" parameterType="ep.mil.pe.iafas.logistica.model.IafasPacAdemdaCF" 
-        statementType="CALLABLE">
-       { CALL SP_IDU_PAAC_CONTRATOS_FIANZA(
-        #{ncontratoCodigo mode=IN, jdbcType=INTEGER},
-        #{cperiodoCodigo mode=IN, jdbcType=VARCHAR},
-		#{npacContratoAdemdaCodigo, mode=IN, jdbcType=INTEGER},
-		#{dpacContratoAdemdaFecha, mode=IN, jdbcType=DATE},
-		#{vpacContratoAdemdaDocumento, mode=IN,jdbcType=VARCHAR},
-		#{vpacContratoAdemdaMotivo, mode=IN,jdbcType=VARCHAR},
-		#{vpacContratoAdemdaArchivo, mode=IN,jdbcType=VARCHAR},
-		#{cestadoCodigo, mode=IN,jdbcType=VARCHAR},
-		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR},
-		#{tipo, mode=IN,jdbcType=VARCHAR})}
-   </select>
-      
+ 
+  <select id="findProvRNP" resultType="ep.mil.pe.iafas.logistica.model.ViewPaacProcesoDetalle"
+		parameterType="ep.mil.pe.iafas.logistica.model.ViewPaacProcesoDetalle">
+     	SELECT VPROVEEDOR_RUC ruc, VPROVEEDOR_RNP_CODIGO rnpProveedores, 
+     	PK_UTIL_RAZON_SOCIAL(VPROVEEDOR_RUC) razonSocial
+		FROM IAFAS_PROVEEDORES_RNP
+		WHERE VPROVEEDOR_RUC = #{ruc} AND CESTADO_CODIGO='AC'
+  </select>
+
 </mapper>

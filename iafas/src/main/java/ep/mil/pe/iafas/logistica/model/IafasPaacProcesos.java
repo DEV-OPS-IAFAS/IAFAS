@@ -45,6 +45,12 @@ public class IafasPaacProcesos {
 	private String descArchEtapa;
 	private String archivoEtapa;
 	private String estadoDocEtapa;
+	
+	// RNP - Proveedores
+	private String rucRNP;
+	private String rucProveedor;
+	private String cestadoProv;
+	private String razonSocial;
 
 
 }

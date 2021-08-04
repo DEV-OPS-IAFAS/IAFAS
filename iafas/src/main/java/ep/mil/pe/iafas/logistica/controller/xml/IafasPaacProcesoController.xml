@@ -16,7 +16,8 @@
 		FROM iafas_pac_procedimientos WHERE cperiodo_codigo = #{periodo}
 	</select>
 	
-   <select id="saveProcess" parameterType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesos" statementType="CALLABLE">
+   <select id="saveProcess" parameterType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesos" 
+   statementType="CALLABLE">
        { CALL SP_PAAC_PROCEDIMIENTOS (
         #{periodo mode=IN, jdbcType=VARCHAR},
 		#{npacProcedimientoCodigo, mode=IN, jdbcType=INTEGER},
@@ -38,7 +39,7 @@
 		
    </select>
 
-	<select id="saveProcessEtapa" parameterType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesoDetalle" 
+	<select id="saveProcessEtapa" parameterType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesos" 
 	  statementType="CALLABLE">
        { CALL SP_PAC_PROCEDIMIENTOS_ETAPA(
         #{periodo mode=IN, jdbcType=VARCHAR},
@@ -50,7 +51,7 @@
 		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR})}	
    </select>
    
-   	<select id="saveProcessEtapaDoc" parameterType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesoDetalle" 
+   	<select id="saveProcessEtapaDoc" parameterType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesos" 
 	  statementType="CALLABLE">
        { CALL SP_PAC_PROCEDIMIENTOS_ETAPA_DOC(
         #{periodo mode=IN, jdbcType=VARCHAR},
@@ -90,6 +91,7 @@
    <select id="showProcessEtapa" resultType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesos"
 		parameterType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesos">
    		SELECT cperiodo_codigo periodo, npac_procedimiento_codigo npacProcedimientoCodigo,
+   		nprocedimiento_etapa_codigo nprocedimientoEtapaCodigo,
 		PK_NOM_ETAPA(nprocedimiento_etapa_codigo) descripcionEtapa,
 		dpac_procedimiento_etapa_inicio dpacProcedimientoInicio, 
 		dpac_procedimiento_etapa_fin dpacProcedimientoFin
@@ -97,6 +99,89 @@
 		npac_procedimiento_codigo = #{npacProcedimientoCodigo} 
    </select>
    
+   	<select id="saveProcessDetails" parameterType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesoDetalle" 
+	  statementType="CALLABLE">
+       { CALL SP_IDU_PAC_PROCEDIMIENTOS_DETALLE(
+        #{periodo mode=IN, jdbcType=VARCHAR},
+		#{npacProcedimientoCodigo, mode=IN, jdbcType=INTEGER},
+		#{nitemCodigo, mode=IN, jdbcType=INTEGER},
+		#{nprocesoDetCantidad, mode=IN,jdbcType=DECIMAL},
+		#{nprocesoDetPrecio, mode=IN,jdbcType=DECIMAL},
+		#{cunidadMedidaCodigo, mode=IN,jdbcType=VARCHAR},
+		#{vpacProcesoObs, mode=IN,jdbcType=VARCHAR},
+		#{npacProcesoDetalleItem, mode=IN,jdbcType=INTEGER},
+		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR},
+		#{tipo, mode=IN,jdbcType=VARCHAR})}
+
+   </select>
+   
+   <select id="showEtapaDoc" resultType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesos"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesos">
+   SELECT cperiodo_codigo periodo, 
+   npac_procedimiento_codigo npacProcedimientoCodigo, 
+   npac_procedimientos_etapas_doc_codigo nprocedimientoEtapaDocCodigo,
+   nprocedimiento_etapa_codigo nprocedimientoEtapaCodigo, 
+   npac_procedimientos_etapas_doc_archivo archivoEtapa,
+   PK_NOM_ETAPA(nprocedimiento_etapa_codigo) descripcionEtapa,
+   npac_procedimientos_etapas_doc_descripcion descArchEtapa
+   FROM iafas_pac_procedimientos_etapas_documentos WHERE 
+   cperiodo_codigo = #{periodo} AND npac_procedimiento_codigo = #{npacProcedimientoCodigo}
+   and nprocedimiento_etapa_codigo = #{nprocedimientoEtapaCodigo}
+   AND cestado_codigo = 'AC'
+   </select>
+   <!-- Etapa Proveedores -->
+   <select id="insertarProveedorRNP" parameterType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesoDetalle" 
+	  statementType="CALLABLE">
+       { CALL SP_PROCEDIMIENTOS_ETAPAS_PROVEEDORES(
+        #{periodo mode=IN, jdbcType=VARCHAR},
+		#{npacProcedimientoCodigo, mode=IN, jdbcType=INTEGER},
+		#{nprocedimientoEtapaDocCodigo, mode=IN, jdbcType=INTEGER},
+		#{rucProveedor, mode=IN,jdbcType=VARCHAR},
+		#{rucRNP, mode=IN,jdbcType=VARCHAR},
+		#{cestadoProv, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR},
+		#{tipo, mode=IN,jdbcType=VARCHAR})}
+
+  </select>
+    <select id="insertarProveedorDetalle" parameterType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesoDetalle" 
+	  statementType="CALLABLE">
+       { CALL SP_PROCEDIMIENTO_PROVEEDOR_DETALLE(
+        #{periodo mode=IN, jdbcType=VARCHAR},
+		#{npacProcedimientoCodigo, mode=IN, jdbcType=INTEGER},
+		#{nprocedimientoEtapaDocCodigo, mode=IN, jdbcType=INTEGER},
+		#{rucProveedor, mode=IN,jdbcType=VARCHAR},
+		#{rucRNP, mode=IN,jdbcType=VARCHAR},
+		#{nitemCodigo, mode=IN, jdbcType=INTEGER},
+		#{npacProcesoDetalleItem, mode=IN,jdbcType=INTEGER},
+		#{nprocesoDetPrecio, mode=IN,jdbcType=DECIMAL},
+		#{nprocesoDetCantidad, mode=IN,jdbcType=DECIMAL},		
+		#{cunidadMedidaCodigo, mode=IN,jdbcType=VARCHAR},
+		#{vpacProcesoObs, mode=IN,jdbcType=VARCHAR},		
+		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR},
+		#{tipo, mode=IN,jdbcType=VARCHAR})}
+    </select>
+    
+    <select id="showProveedoresEtapa" resultType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesos"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasPaacProcesos">
+        SELECT p.cperiodo_codigo periodo, p.npac_procedimiento_codigo npacProcedimientoCodigo, 
+        e.npac_procedimientos_etapas_doc_codigo nprocedimientoEtapaDocCodigo,
+		pr.vpac_procedimiento_descripcion vpacProcedimientoDescripcion, 
+		pr.vpac_procedimiento_nomenclatura vpacProcedimientoNomenclatura,
+		p.vproveedor_ruc rucProveedor, 
+		pk_util_razon_social(p.vproveedor_ruc) razonSocial, 
+		p.vproveedor_RNP_CODIGO rucRNP,
+		pk_nom_etapa(e.nprocedimiento_etapa_codigo) descripcionEtapa
+		FROM iafas_pac_procedimientos_etapas_proveedores p INNER JOIN iafas_pac_procedimientos pr ON (
+		p.cperiodo_codigo = pr.cperiodo_codigo AND
+		p.npac_procedimiento_codigo = pr.npac_procedimiento_codigo)
+		INNER JOIN iafas_pac_procedimientos_etapas_documentos e ON (p.cperiodo_codigo = e.cperiodo_codigo AND
+		p.npac_procedimiento_codigo = e.npac_procedimiento_codigo AND
+		p.npac_procedimientos_etapas_doc_codigo = e.npac_procedimientos_etapas_doc_codigo)
+		WHERE p.cperiodo_codigo = #{periodo} AND 
+		p.npac_procedimiento_codigo = #{npacProcedimientoCodigo} AND
+		e.npac_procedimientos_etapas_doc_codigo = #{nprocedimientoEtapaDocCodigo}
+    </select>
+
 </mapper>
 
 

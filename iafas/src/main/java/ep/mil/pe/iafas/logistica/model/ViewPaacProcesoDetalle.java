@@ -20,8 +20,19 @@ public class ViewPaacProcesoDetalle {
     private BigDecimal cantidadItem;
     private String unidadMedidaCod;
     private String unidadMedDesc;
+    private int codDetalleItem;
     
     private BigDecimal cantidadIng = new BigDecimal(0);
+    private BigDecimal precioIng = new BigDecimal(0);
+    
+    private double cantidadOfertada=0;
+    private double precioOfertado=0;
+    
+    
+    //Util
+    private String rnpProveedores;
+    private String ruc;
+    private String razonSocial;
           
           
 
