@@ -43,6 +43,7 @@ public class IafasAlmacenIngresoController implements Serializable {
 	private String labeldescripOrden;
 	private String labelRuc;
 	private String labelRazonSocial;
+	// prueba
 	
 	private List<IafasAlmacenIngreso> lista;
 	private List<IafasAlmacenIngresoDetalle> listaDetalle;
