@@ -37,6 +37,10 @@ public class IafasPacContratos {
 	private String vpacProcesosDescripcion;
 	private BigDecimal montoProceso;
 	
+	// Procedimientos
+	private String vnomenclaturaProceso;
+	private String vpacNumeroConvocatoria;
+	
 	// Detalle DE Contrato
 	private int codItem;
 	private BigDecimal cantidad;

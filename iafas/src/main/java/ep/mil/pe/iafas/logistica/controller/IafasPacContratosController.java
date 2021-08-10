@@ -62,6 +62,11 @@ public class IafasPacContratosController implements Serializable{
 	private List<IafasPacAdemdaCF> listaAdemda; 
 	private List<IafasPacContratos> listaContDetalle;
 	
+	private String labelNomenclatura;
+	private String labelConvocatoria;
+	private String labelDescripcionProceso;
+	private BigDecimal labelMontoProceso;
+	
 	
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(IafasPacContratosController.class);
@@ -91,7 +96,11 @@ public class IafasPacContratosController implements Serializable{
 			cont.setNpacProcesosCodigo(selectedPaac.getNpacProcesosCodigo());
 			List<IafasPacContratos> reg = contratosDao.showPaacProcessFilter(cont);
 			for(IafasPacContratos c : reg) {
-				setTipoFunFin(c.getNfuenteFinanciamiento());
+				setLabelConvocatoria(c.getVpacNumeroConvocatoria());
+				setLabelNomenclatura(c.getVnomenclaturaProceso());
+				setLabelDescripcionProceso(c.getVpacProcesosDescripcion());
+				setLabelMontoProceso(c.getMontoProceso());
+				
 				setCodProcPaac(c.getNpacProcesosCodigo());
 				setPeriodoProceso(c.getCprocesoPeriodo());
 			}

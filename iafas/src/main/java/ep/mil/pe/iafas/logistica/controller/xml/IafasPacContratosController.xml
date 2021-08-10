@@ -5,7 +5,7 @@
 
 <mapper namespace="IafasPacContratos">
 	<resultMap id="iafasPacContrato" type="IafasPacContratos" />
-	<select id="findProcessPaac" resultType="ep.mil.pe.iafas.logistica.model.IafasPacContratos"
+	<select id="findProcessPaacOLD" resultType="ep.mil.pe.iafas.logistica.model.IafasPacContratos"
 		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacContratos">
 		SELECT cperiodo_codigo cprocesoPeriodo,
 		nfuente_financiamiento_codigo nfuenteFinanciamiento,
@@ -16,17 +16,27 @@
 		NPAC_PROCESOS_MONTO_PROCESO montoProceso
 		FROM iafas_pac_procesos WHERE cperiodo_codigo = #{cprocesoPeriodo}
 	</select>
+	
+	<select id="findProcessPaac" resultType="ep.mil.pe.iafas.logistica.model.IafasPacContratos"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacContratos">
+		select cperiodo_codigo cprocesoPeriodo,
+		npac_procedimiento_codigo npacProcesosCodigo, 
+		VPAC_PROCEDIMIENTO_NOMENCLATURA vnomenclaturaProceso,
+		npac_procedimiento_convocatoria vpacNumeroConvocatoria, 
+		npac_procedimiento_importe montoProceso,
+		vpac_procedimiento_descripcion vpacProcesosDescripcion
+ 		from iafas_pac_procedimientos where cperiodo_codigo = #{cprocesoPeriodo}
+	</select>
 	<select id="findProcessPaacFilter" resultType="ep.mil.pe.iafas.logistica.model.IafasPacContratos"
 		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacContratos">
-		SELECT cperiodo_codigo cprocesoPeriodo,
-		nfuente_financiamiento_codigo nfuenteFinanciamiento,
-		PK_UTIL_PRESUPUESTO(nfuente_financiamiento_codigo) descFuenteFinan,
-		npac_procesos_codigo npacProcesosCodigo,
-		vpac_procesos_numero_paac vpacNumeroPaac, 
-		vpac_procesos_descripcion vpacProcesosDescripcion,
-		NPAC_PROCESOS_MONTO_PROCESO montoProceso
-		FROM iafas_pac_procesos WHERE cperiodo_codigo = #{cprocesoPeriodo} 
-		and npac_procesos_codigo = #{npacProcesosCodigo}
+		select cperiodo_codigo cprocesoPeriodo,
+		npac_procedimiento_codigo npacProcesosCodigo, 
+		VPAC_PROCEDIMIENTO_NOMENCLATURA vnomenclaturaProceso,
+		npac_procedimiento_convocatoria vpacNumeroConvocatoria, 
+		npac_procedimiento_importe montoProceso,
+		vpac_procedimiento_descripcion vpacProcesosDescripcion
+ 		from iafas_pac_procedimientos  WHERE cperiodo_codigo = #{cprocesoPeriodo} 
+		and npac_procedimiento_codigo = #{npacProcesosCodigo}
 	</select>
     <select id="showContracts" resultType="ep.mil.pe.iafas.logistica.model.IafasPacContratos"
 		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacContratos">

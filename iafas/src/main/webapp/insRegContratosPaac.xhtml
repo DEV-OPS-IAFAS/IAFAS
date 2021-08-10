@@ -57,20 +57,15 @@
                      style="height:30px;" 
                      oncomplete="PF('procesos').show();"
                       icon="pi pi-plus"
-                     title="Click aqui para buscar Procesos PAAC"/>
+                     title="Click aqui para buscar Procesos"/>
                     <p:commandButton  value="Grabar" action="#{mbContratosPaac.registroContratos()}" 
                     icon="pi pi-save" style="height:30px;" ajax="false"/>
                     <p:commandButton value="Cancelar" action="#{mbContratosPaac.retornar()}"
                     icon="pi pi-arrow-left" style="height:30px;"/>
                 </p:panelGrid> 
                 <br/>
-                <p:fieldset id="panelProcesos" legend="Datos de Procesos PAAC">
-                 <h:panelGrid columns="4" style="width:100%">
-                 <h:outputLabel value="Fuente Financiamiento"/>
-                         <h:selectOneMenu value="#{mbContratosPaac.tipoFunFin}" disabled="true" styleClass="select"> 
-                         <f:selectItem itemValue="0" itemLabel=""></f:selectItem>
-                         <f:selectItems var="fuenteFin" value="#{mbCombos.fuenteFinanciamiento}"></f:selectItems>
-                        </h:selectOneMenu>
+                <p:fieldset id="panelProcesos" legend="Datos del Proceso">
+                 <h:panelGrid columns="6" style="width:80%">
                         <p:outputLabel value="Proceso:"/>
                         <h:panelGrid columns="3">
                         <h:inputText id="txt_periodoProceso" value="#{mbContratosPaac.periodoProceso}" size="4" styleClass="input" readonly="true"></h:inputText>
@@ -78,9 +73,17 @@
                         <h:inputText id="txt_idProceso" value="#{mbContratosPaac.codProcPaac}" size="10"
 						styleClass="input" readonly="true"></h:inputText>
                         </h:panelGrid>
-
+ 					<p:outputLabel value="N° Convocatoria:"/>
+ 					<h:outputLabel value="#{mbContratosPaac.labelConvocatoria}" styleClass="outLabel"></h:outputLabel>
+ 					<p:outputLabel value="Nomenclatura:"/>
+ 					<h:outputLabel value="#{mbContratosPaac.labelNomenclatura}" styleClass="outLabel"></h:outputLabel>
                  </h:panelGrid>
-
+				<h:panelGrid columns="4" style="width:100%">
+				  <h:outputLabel value="Descripción:"/>
+				  <h:outputLabel value="#{mbContratosPaac.labelDescripcionProceso}" styleClass="outLabel"></h:outputLabel>
+				  <h:outputLabel value="Monto:"></h:outputLabel>
+				  <h:outputLabel value="#{mbContratosPaac.labelMontoProceso}" styleClass="outLabel"></h:outputLabel>
+				</h:panelGrid>
                 </p:fieldset>
                 <br/>
                 <p:fieldset legend="Datos del Contrato">
@@ -188,6 +191,7 @@
                    <p:selectOneMenu id="selMenuAF" value="#{mbContratosPaac.periodoProceso}" >
                        <f:selectItem itemValue="" itemLabel="-Seleccione--"></f:selectItem>
                        <f:selectItem itemValue="2021" itemLabel="2021"></f:selectItem>
+                       <f:selectItem itemValue="2020" itemLabel="2020"></f:selectItem>
                    <f:ajax render="dProcesos" listener="#{mbContratosPaac.verProcesos()}" />
                    </p:selectOneMenu>
                   </p:panelGrid>
@@ -196,14 +200,14 @@
                   selection="#{mbContratosPaac.selectedPaac}">
 					<p:column selectionMode="single" style="width:16px;text-align:center" >
 					</p:column>
-                   <p:column headerText="Nro PAAC" style="width:30px;text-align:center">
-                      <h:outputText value="#{paac.vpacNumeroPaac}" />
+                   <p:column headerText="Nro Convoc." style="width:30px;text-align:center">
+                      <h:outputText value="#{paac.vpacNumeroConvocatoria}" />
+                   </p:column>
+                   <p:column headerText="Nomenclatura" style="width:150px;">
+                      <h:outputText value="#{paac.vnomenclaturaProceso}" />
                    </p:column>
                    <p:column headerText="Descripcion" style="width:150px">
                       <h:outputText value="#{paac.vpacProcesosDescripcion}" style="text-align:left"/>
-                   </p:column>
-                   <p:column headerText="Fuente Finan." style="width:150px;">
-                      <h:outputText value="#{paac.descFuenteFinan}" />
                    </p:column>
                    <p:column headerText="Monto" style="width:75px;text-align:right">
                       <h:outputText value="#{paac.montoProceso}" >
