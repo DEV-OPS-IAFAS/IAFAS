@@ -81,7 +81,6 @@ parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
 		 select VCOD_IMP codigo ,VSIGLAS descripcion FROM iafas_impuesto  WHERE VESTADO_CODIGO='AC' order by VCOD_IMP asc
 </select>
 
-<!-- Cambios Agrehado por Elvis Severino -->
 <select id="periodos"
 	resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
 	parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
@@ -193,7 +192,6 @@ parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
 </select>
 
 
-<!-- Cambios Agrehado por Elvis Severino -->
 <select id="getAlmacenes"
 	resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
 	parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
@@ -201,7 +199,23 @@ parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
 	VALMACEN_DESCRIPCION descripcion
 	FROM IAFAS_ALMACEN WHERE CESTADO_CODIGO='AC'
 </select>
-<!-- ############ -->
 
+<select id="tipoplazo"
+	resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
+	parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+
+		SELECT NPLAZO_ENTREGA_CODIGO codigo,
+		VPLAZO_ENTREGA_ABREVIATURA descripcion
+		FROM iafas_plazo_entrega WHERE cestado_codigo='AC' order by NPLAZO_ENTREGA_CODIGO asc;
+		
+</select>
+<select id="tipocondicion"
+	resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
+	parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+
+		 SELECT NCONDICION_PAGO_CODIGO codigo,
+		VCONDICION_PAGO_ABREVIATURA descripcion
+		FROM iafas_condiciones_pago WHERE cestado_codigo='AC' order by NCONDICION_PAGO_CODIGO asc;
+</select>
 
 </mapper>

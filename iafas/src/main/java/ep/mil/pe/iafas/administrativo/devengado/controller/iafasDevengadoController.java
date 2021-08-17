@@ -298,8 +298,8 @@ public class iafasDevengadoController implements Serializable{
 			
 			
 			
-			LimpiarCampos();
-			listarCompMensuales();
+			//LimpiarCampos();
+			//listarCompMensuales();
 			// retornar();
 			 showMessages(1);
 		}
@@ -311,8 +311,8 @@ public class iafasDevengadoController implements Serializable{
 		}
 	}
 		
-		return "mainDevengado.xhtml";
-		//return "";
+		//return "mainDevengado.xhtml";
+		return "";
 	}
 	
 	public void verDevengado(){

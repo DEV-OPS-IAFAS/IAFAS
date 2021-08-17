@@ -69,6 +69,8 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
       <!-- cambios agregados por Elvis Severino - Modulo Logistica -->
       <typeAlias alias="IafasAlmacenSalidaAtencion" type="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaAtencion" />
        <!-- Fin Cambios de  Elvis Severino -->
+       <typeAlias alias="IafasPacOrden"     type="ep.mil.pe.iafas.logistica.model.IafasPacOrden"/>
+       
     </typeAliases>
 
      
@@ -135,7 +137,8 @@ EN ESTA CLASE SE CONFIGURARAN  LOS PARAMETROS DE CONECCION DE LA BASE DE DATOS
 		
 		<!-- cambios agregados por Elvis Severino - Modulo Logistica -->
 		<mapper resource="ep/mil/pe/iafas/logistica/controller/xml/IafasAlmacenSalidaAtencion.xml" />
-		<!-- Fin Cambios de  Elvis Severino -->
+		<!-- Fin Cambios de  Elvis Severino --><mapper resource="ep/mil/pe/iafas/logistica/controller/xml/IafasPacOrdenController.xml" />
+		
     </mappers>
 
 </configuration>

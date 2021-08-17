@@ -51,13 +51,15 @@ public class IafasCombosController implements Serializable {
 	public List<SelectItem> etapas;
 
 	
-	/*Cambios agregados por Elvis Severino*/
+
 	private static final Logger logger = Logger.getLogger(IafasCombosController.class.getName());
 	private List<SelectItem> periodos;
 	private List<SelectItem> entidades;
 	
-	/*Cambios agregados por Elvis Severino*/
 	private List<SelectItem> almacenes;
+	
+	public List<SelectItem> plazo;
+	public List<SelectItem> condicion;
 	
 	/**************************************/
 	
@@ -296,7 +298,7 @@ public class IafasCombosController implements Serializable {
 		return etapas;
 	}
 	
-	/*Cambios agregados por Elvis Severino*/
+
 	public List<SelectItem> getAlmacenes() {
 		almacenes = new ArrayList<SelectItem>();
 		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
@@ -306,5 +308,27 @@ public class IafasCombosController implements Serializable {
 		}		
 		return almacenes;
 	}
-	/******************************************/
+	
+	
+
+	public List<SelectItem> getPlazo() {
+		plazo = new ArrayList<SelectItem>();
+		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasCombos> ls = cb.getPlazoEntrega();
+		for (IafasCombos p : ls) {
+			plazo.add(new SelectItem(p.getCodigo(), p.getDescripcion()));
+		}		
+		return plazo;
+	}
+	
+	public List<SelectItem> getCondicion() {
+		condicion = new ArrayList<SelectItem>();
+		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasCombos> ls = cb.getCondicionEntrega();
+		for (IafasCombos p : ls) {
+			condicion.add(new SelectItem(p.getCodigo(), p.getDescripcion()));
+		}		
+		return condicion;
+	}
+
 }

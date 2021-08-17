@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>IAFAS- Registro de Ordenes</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+		<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
+    </h:head>
+    <body class="formulario">
+    <script>
+       function upperCase(obj) {
+        	  var x = document.getElementById(obj);
+        	  x.value = x.value.toUpperCase();
+        	}
+        	
+        	function validarSiNumero(object)
+				{
+				numero = object.value;
+				if (!/^([0-9])*$/.test(numero))
+				object.value = numero.substring(0,numero.length-1);
+				}
+				
+				PrimeFaces.locales['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Sólo hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Fecha actual',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText: 'Todo el día',
+                today: 'Hoy',
+                clear: 'Claro'
+            };
+    </script>
+        <h:form id="frmInsRegOrdenes" >
+              <p:messages id="mensaje" showDetail="true" autoUpdate="true" closable="true" globalOnly="true"/>
+            <p:panel > 
+             <p:panelGrid columns="6"  >
+                    <i class="pi pi-calendar-minus"></i>
+                    <p:outputLabel value="Registro de Ordenes " style="color: green; font-weight: bold; font-size: 12px;"/>
+                    <p:commandButton  value="Grabar" action="#{mbOrden.GrabarOrden()}"  
+                    icon="pi pi-save" style="height:35px;" ajax="false" />
+                    <p:commandButton value="Cancelar"  
+                    icon="pi pi-arrow-left" style="height:35px;"/>
+                </p:panelGrid>                         
+                <br/>
+                <p:fieldset legend="Datos de la Orden" id="DatosCA">
+                        <h:panelGrid columns="4" style="width: 100%">
+                        
+                        <p:outputLabel value="Año del Contrato:  "/>
+                        <h:selectOneMenu id="anoCont" value="#{mbOrden.cperiodoContrato}" style="width: 150px;" styleClass="select"  >
+                            <f:selectItem itemValue="0000" itemLabel="--Seleccione--"/>
+                            <f:selectItem itemValue="2021" itemLabel="2021"/>
+                            <f:selectItem itemValue="2020" itemLabel="2020"/>                  
+                        </h:selectOneMenu> 
+                                                            
+                            <p:outputLabel value="N° Contrato: "/>
+                            <h:panelGrid columns="2">
+                            <h:inputText  id="txt_nroCont" value="#{mbOrden.ncontratoCodigo}"   
+							 styleClass="input" style="width: 30px; "></h:inputText>
+                            <p:commandButton id="cmdBtnBuscar"  value="Buscar" action="#{mbOrden.verContrato()}"
+		                     style="height:30px;" ajax="false" update="frmInsRegOrdenes:dTableCla"
+		                     icon="pi pi-plus"  title="Click aqui para buscar datos del Contrato"/>
+                            
+                            </h:panelGrid>
+                        <p:outputLabel value="Tipo de Bien:  "/>
+                        <h:selectOneMenu id="tipBien" value="#{mbOrden.citemTipoCodigo}" style="width: 150px;" styleClass="select" >
+                            <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
+                            <f:selectItem itemValue="1" itemLabel="ORDEN DE COMPRA"/>
+                            <f:selectItem itemValue="2" itemLabel="ORDEN DE SERVICIO"/>
+                        </h:selectOneMenu>  
+                          <h:outputText value="Fecha Orden: "></h:outputText>							
+							<p:datePicker id="txt_fecIni" value="#{mbOrden.dordenFecha}" 
+							 locale="es" monthNavigator="true" yearNavigator="true" pattern="dd/MM/yyyy" >
+							 </p:datePicker> 
+							   <p:outputLabel value="Plazo de Entrega: "/>
+							   <h:panelGrid columns="2">
+							   <h:inputText  id="txt_nroSiaf" value="#{mbOrden.npacOrdenPlazo}"   
+							 styleClass="input" style="width: 30px; "></h:inputText>
+                        <h:selectOneMenu id="entre"  value="#{mbOrden.nplazoEntregaCodigo}"
+                        style="width:100px;" styleClass="select" >
+                         <f:selectItem itemValue="00" itemLabel="--Seleccione--"/>
+                         <f:selectItems var="depart" value="#{mbCombos.plazo}"/>
+                        </h:selectOneMenu> 
+							   </h:panelGrid>
+							   
+                          <p:outputLabel value="Condicion de Pago: "/>
+                        <h:selectOneMenu id="condic"  value="#{mbOrden.ncondicionPagoCodigo}"
+                        style="width:150px;" styleClass="select" >
+                         <f:selectItem itemValue="00" itemLabel="--Seleccione--"/>
+                         <f:selectItems var="depart" value="#{mbCombos.condicion}"/>
+                        </h:selectOneMenu>                       
+                        
+						
+                             
+                                                                     
+                        </h:panelGrid> 
+                         
+                        <h:panelGrid columns="2">                    
+                        <h:outputLabel value="Glosa: " ></h:outputLabel>
+                        <p:inputTextarea styleClass="input" id="txt_descripcion"  
+					       	 value="#{mbOrden.vordenDescripcion}" style="width: 720px;" onkeyup="upperCase(this.name)" >
+					    	</p:inputTextarea>
+                        </h:panelGrid>
+                                    
+                </p:fieldset>
+                
+                 <p:fieldset legend="Datos del Contrato" id="DatosContrato">
+                        <h:panelGrid columns="4" style="width: 100%">  
+                         <p:outputLabel value="Proveedor: " />
+						<h:outputLabel value=" #{mbOrden.cproveedorRuc} : #{mbOrden.razonSocial}" styleClass="outLabel" />							  
+						  <p:outputLabel value="F.F.: " />
+						<h:outputLabel value=" #{mbOrden.descripcionFF}" styleClass="outLabel" />	
+						 <p:outputLabel value="Tarea: " />
+						<h:outputLabel value=" #{mbOrden.ntareaPresupuestalCodigo} : #{mbOrden.descripcionTarea} " styleClass="outLabel" />	
+						 <p:outputLabel value="Clasificador: " />
+						<h:outputLabel value=" #{mbOrden.clasificador} : #{mbOrden.descripcionClasificador}"  styleClass="outLabel" />						  			  
+  						<p:outputLabel value="Moneda: " />
+						<h:outputLabel value=" #{mbOrden.moneda} " styleClass="outLabel" />	
+  						<p:outputLabel value="Tipo de Cambio: " />
+						<h:outputLabel value=" #{mbOrden.nordenTipoCambio}" styleClass="outLabel" />						  
+                         <p:outputLabel value="Descripción: " />
+						<h:outputLabel value=" #{mbOrden.descripcionContrato}" styleClass="outLabel" />				
+											  
+                        </h:panelGrid> 
+                        <p:toolbar>
+						 <p:toolbarGroup>
+							<p:commandButton value="Ingresar Detalle" icon="pi pi-plus"
+								oncomplete="PF('modalDetalle').show()"
+								update="frmInsRegOrdenes:modalDetalle"
+								styleClass="ui-button-success" style="margin-right: .5rem"
+								action="#{mbOrden.cleanCamposDetalle()}">
+							</p:commandButton>
+		
+						 </p:toolbarGroup>
+			            </p:toolbar>
+                           <h:panelGrid>
+                    <p:dataTable id="dTableCla"  value="#{mbOrden.listaDetalleSession}"  var="cad" editable="true"
+                    editMode="cell">
+                        <p:column headerText="Descripción Item" style="width: 80px;">
+                            <p:outputLabel value="#{cad.descripcionItem}" />
+                        </p:column>
+                    
+                        <p:column headerText="Cantidad Solicitada" style="width: 35px; text-align: rigth;" >
+                            <p:outputLabel value="#{cad.nordenDetalleCantidad}"  style="text-align: rigth;" >
+                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>  
+                            </p:outputLabel>
+                        </p:column>
+                          <p:column headerText="Monto Nacional" style="width: 35px; text-align: rigth;" >
+                            <p:outputLabel value="#{cad.nordenDetalleImporte}"  style="text-align: rigth;" >
+                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>  
+                            </p:outputLabel>
+                        </p:column>   
+                         <p:column headerText="Monto Extranjero" style="width: 35px; text-align: rigth;" >
+                            <p:outputLabel value="#{cad.nordenDetalleExtranjera}"  style="text-align: rigth;" >
+                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>  
+                            </p:outputLabel>
+                        </p:column>                        
+                                             
+                    </p:dataTable>
+                </h:panelGrid>  
+                                    
+                </p:fieldset>
+       
+                <br/>               
+            </p:panel>
+            <p:dialog header="INGRESO DETALLE DE LA ORDEN " id="modalDetalle" widgetVar="modalDetalle" showEffect="fade" minHeight="600" width="720">
+			<h:panelGrid columns="2" styleClass="panel" >
+				<h:outputLabel value="Item: " styleClass="etiqueta" style="font-size:12px;font-weight:bold;" />	
+						<p:autoComplete  id="acItem" size="60" value="#{mbOrden.descripcionItem}" 
+			          	 completeMethod="#{mbOrden.completeText}" scrollHeight="250">
+			          	 <p:ajax event="itemSelect" listener="#{mbOrden.onItemSelect}" update="lblDescripcionUnidadMedida"/>
+			          	 <p:ajax event="itemSelect" listener="#{mbOrden.onItemSelect}" update="lblcantContrato"/>
+			          	 <p:ajax event="itemSelect" listener="#{mbOrden.onItemSelect}" update="lblcandOrden"/>
+		            </p:autoComplete>
+		            <h:outputLabel value="Unidad Medida:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
+					<h:outputLabel  id="lblDescripcionUnidadMedida" value="#{mbOrden.lblDescripcionUnidadMedida}" 
+					styleClass="outLabel"  style="font-size:12px;font-weight:bold; " />	
+					<h:outputLabel value="cantidad Contrato:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
+					<h:outputLabel  id="lblcantContrato" value="#{mbOrden.lblcantContrato}" 
+					styleClass="outLabel"  style="font-size:12px;font-weight:bold; " />	
+					<h:outputLabel value="Cantidad Atendida:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
+					<h:outputLabel  id="lblcandOrden" value="#{mbOrden.lblcandOrden}" 
+					styleClass="outLabel"  style="font-size:12px;font-weight:bold; " />	
+					<h:outputLabel value="Cantidad Solicitada:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
+					<p:inputText id="inptxtCantidad"  styleClass="input"   value="#{mbOrden.nordenDetalleCantidad}" />
+					<h:outputLabel value="Observacion: " styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " ></h:outputLabel>
+                        <p:inputTextarea styleClass="input" id="txt_observacion" maxlength="200"  
+					       	 value="#{mbOrden.vordenDetalleObservacion}" style="width: 400px; height: 40px; " onkeyup="upperCase(this.name)" >
+					    	</p:inputTextarea>
+			</h:panelGrid>
+			
+			<f:facet name="footer">
+				<p:commandButton value="Cerrar" styleClass="ui-button-outlined ui-button-danger"
+					oncomplete="PF('modalDetalle').hide()"
+					update="frmInsRegOrdenes:dTableCla" />
+
+				<p:commandButton value="Agregar" styleClass="ui-button-outlined ui-button-success"
+					oncomplete="PF('modalDetalle').hide()"
+					action="#{mbOrden.cargarDetalleItem()}"
+					update="frmInsRegOrdenes:dTableCla"  /> 
+			</f:facet>					
+		</p:dialog>
+            
+        </h:form>
+    </body>
+</html>

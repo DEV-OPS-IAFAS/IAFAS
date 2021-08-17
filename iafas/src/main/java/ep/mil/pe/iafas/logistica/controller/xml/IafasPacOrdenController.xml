@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="IafasPacOrden">
+	<resultMap id="iafasPacOrden" type="IafasPacOrden" />
+	
+	<select id="ordenContratoReg" 
+	    resultType="ep.mil.pe.iafas.logistica.model.IafasPacOrden"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacOrden">
+		
+		select con.NCONTRATO_CODIGO ncontratoCodigo,
+		con.CPERIODO_CODIGO cperiodoContrato,
+		CA.VFUENTE_FINANCIAMIENTO nfuenteFinanciamiento ,
+		CA.VCODTIPOFINANCIAMIENTO vcodtipoFinancieamiento,
+		CA.VCOD_SEC_FUNC ntareaPresupuestalCodigo,
+		CA.descripTarea descripcionTarea,
+		CA.VID_CLASIFICADOR nclasificadorPresupuestalCodigo,
+		CA.clasificador clasificador,
+		CA.descripClasificador descripcionClasificador,
+		(select vfuente_financiamiento_abreviatura from IAFAS_FUENTE_FINANCIAMIENTO where nfuente_financiamiento_codigo=CA.VCODTIPOFINANCIAMIENTO)  descripcionFF,
+		con.CPROVEEDOR_RUC cproveedorRuc,
+		PK_UTIL_RAZON_SOCIAL(con.CPROVEEDOR_RUC) razonSocial,
+		con.NMONEDA_CODIGO nmonedaCodigo,
+		PK_SIMBOLO_MONEDA(con.NMONEDA_CODIGO) moneda,
+		con.NCONTRATO_TIPO_CAMBIO nordenTipoCambio,
+		con.VCONTRATO_DESCRIPCION descripcionContrato,
+		det.NPAC_CONTRATO_DETALLE_CANTIDAD nordenDetalleCantidad,
+		det.NPAC_CONTRATO_DETALLE_MONTO nordenDetalleMonto,
+		det.NPAC_CONTRATO_DETALLE_EXTRANJERA nordenDetalleExtranjera,
+		det.NITEM_CODIGO nitemCodigo,
+		LOG_NOM_ITEM(det.NITEM_CODIGO)descripcionItem,
+		(select CITEM_TIPO_CODIGO from iafas_item where NITEM_CODIGO=det.NITEM_CODIGO) citemTipoCodigio
+		 from iafas_pac_contratos con inner join  iafas_pac_contratos_detalle det on (
+		con.CPERIODO_CODIGO=det.CPERIODO_CODIGO and 
+		con.NCONTRATO_CODIGO=det.NCONTRATO_CODIGO 
+		) inner join V_CONTRATO_CA CA on (
+		con.CPERIODO_CODIGO=CA.VANO_DOCUMENTO and 
+		con.NCONTRATO_CODIGO=CA.VNRO_CERTIFICADO )
+		 where con.NCONTRATO_CODIGO=#{ncontratoCodigo} and con.CPERIODO_CODIGO=#{cperiodoContrato};
+		 
+	</select>
+	
+	<select id="obtenerItemContrato" 
+	    resultType="ep.mil.pe.iafas.logistica.model.IafasPacOrden"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacOrden">
+		
+		SELECT IT.NITEM_CODIGO AS nitemCodigo,IT.NCONTRATO_CODIGO ncontratoCodigo, IT.CPERIODO_CODIGO cperiodoContrato,
+        (select VITEM_DESCRIPCION from iafas_item where NITEM_CODIGO=IT.NITEM_CODIGO) AS descripcionItem, 
+		CUNIDAD_MEDIDA_CODIGO AS cunidadMedidaCodigo,  
+		(SELECT VUNIDAD_MEDIDA_NOMBRE FROM IAFAS_UNIDAD_MEDIDA WHERE CUNIDAD_MEDIDA_CODIGO=IT.CUNIDAD_MEDIDA_CODIGO) AS descripcionUnidadMedida,
+		IT.NPAC_CONTRATO_DETALLE_CANTIDAD  cantidadContrato,
+        PK_CANTIDAD_CONTRATO(IT.NCONTRATO_CODIGO,IT.CPERIODO_CODIGO,IT.NITEM_CODIGO) cantidadOrden
+		FROM iafas_pac_contratos_detalle IT
+		WHERE IT.NCONTRATO_CODIGO='8' and IT.CPERIODO_CODIGO='2021' AND
+		(select VITEM_DESCRIPCION from iafas_item where NITEM_CODIGO=IT.NITEM_CODIGO) LIKE CONCAT('%',#{descripcionItem},'%')
+		LIMIT 10;
+	
+		 
+	</select>
+	
+	<select id="grabarOrden"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacOrden"
+		statementType="CALLABLE">
+		
+		{ CALL SP_GRABAR_ORDEN (
+		#{cperiodoCodigo mode=IN, jdbcType=VARCHAR},
+		#{nfuenteFinanciamiento, mode=IN, jdbcType=INTEGER},
+		#{citemTipoCodigo, mode=IN, jdbcType=VARCHAR},
+		#{cperiodoContrato, mode=IN,jdbcType=VARCHAR},
+		#{ncontratoCodigo, mode=IN,jdbcType=INTEGER},
+		#{ntareaPresupuestalCodigo, mode=IN,jdbcType=INTEGER},
+		#{nclasificadorPresupuestalCodigo, mode=IN,jdbcType=INTEGER},
+		#{dordenFecha, mode=IN,jdbcType=DATE},
+		#{nplazoEntregaCodigo, mode=IN,jdbcType=INTEGER},
+		#{vordenDescripcion, mode=IN,jdbcType=VARCHAR},
+		#{cproveedorRuc, mode=IN,jdbcType=VARCHAR},
+		#{nmonedaCodigo, mode=IN,jdbcType=INTEGER},
+		#{nordenTipoCambio, mode=IN,jdbcType=DECIMAL},
+		#{vusuarioCreador, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR},
+		#{ncondicionPagoCodigo, mode=IN,jdbcType=INTEGER},
+		#{npacOrdenPlazo, mode=IN,jdbcType=INTEGER},
+		#{ncertificadoPresupuestalCodigo, mode=IN,jdbcType=INTEGER})}
+
+	</select>
+	
+	<select id="grabarOrdenDetalle"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacOrden"
+		statementType="CALLABLE">
+		
+		{ CALL SP_GRABAR_ORDEN_DETALLE (
+		#{cperiodoCodigo mode=IN, jdbcType=VARCHAR},
+		#{citemTipoCodigo, mode=IN, jdbcType=VARCHAR},
+		#{nitemCodigo, mode=IN,jdbcType=INTEGER},
+		#{ncontratoCodigo, mode=IN,jdbcType=INTEGER},
+		#{cperiodoContrato, mode=IN,jdbcType=VARCHAR},
+		#{nordenDetalleCantidad, mode=IN,jdbcType=DECIMAL},
+		#{nordenDetalleImporte, mode=IN,jdbcType=DECIMAL},
+		#{nordenDetalleExtranjera, mode=IN,jdbcType=DECIMAL},
+		#{vordenDetalleObservacion, mode=IN,jdbcType=VARCHAR},	
+		#{vusuarioCreador, mode=IN,jdbcType=VARCHAR},
+		#{vusuarioCodigo, mode=IN,jdbcType=VARCHAR})}
+
+	</select>
+	
+	<select id="obtenerCertificado" 
+	    resultType="ep.mil.pe.iafas.logistica.model.IafasPacOrden"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacOrden">
+		
+
+                 SELECT CPERIODO_CODIGO cperiodoCodigo, 
+		         nfuente_financiamiento_codigo nfuenteFinanciamiento, 
+		         PK_UTIL_PRESUPUESTO(nfuente_financiamiento_codigo) descripcionFF,
+		         ncertificado_codigo ncertificadoPresupuestalCodigo,
+		         ntarea_presupuestal_codigo ntareaPresupuestalCodigo,
+		         nclasificador_presupuestal_codigo nclasificadorPresupuestalCodigo,
+				 PK_DESC_TAREA(ntarea_presupuestal_codigo) as descripcionTarea,
+		         PK_AUX_CLASIFICADOR(nclasificador_presupuestal_codigo) as  clasificador,
+		         PK_AUX_NOM_CLASIFICADOR(nclasificador_presupuestal_codigo) as  descripcionClasificador
+		         FROM iafas_certifi_presupuestal_detal
+		         where CPERIODO_CODIGO=#{cperiodoCodigo} and NCERTIFICADO_CODIGO=#{ncertificadoPresupuestalCodigo};
+		 
+	</select>
+	
+	<select id="obtenerProveedor" 
+	    resultType="ep.mil.pe.iafas.logistica.model.IafasPacOrden"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacOrden">
+		
+        SELECT cproveedor_ruc cproveedorRuc,
+        vproveedor_razon_social razonSocial
+		FROM iafas_proveedores 
+		WHERE 
+		vproveedor_razon_social LIKE CONCAT('%',#{razonSocial},'%')
+		LIMIT 10;
+	 
+	</select>
+	
+		
+	<select id="consultaOrden" 
+	    resultType="ep.mil.pe.iafas.logistica.model.IafasPacOrden"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacOrden">
+		
+        	  SELECT CPERIODO_CODIGO cperiodoCodigo, CITEM_TIPO_CODIGO citemTipoCodigo,
+			  (SELECT NITEM_TIPO_DESCRIPCION FROM iafas_item_tipo WHERE CITEM_TIPO_CODIGO=IAFAS_PAC_ORDEN.CITEM_TIPO_CODIGO) descripcionBien,
+			  NORDEN_CODIGO nordenCodigo,CPERIODO_CONTRATO cperiodoContrato, NCONTRATO_CODIGO ncontratoCodigo,
+			  NCERTIFICADO_PRESUPUESTAL_CODIGO ncertificadoPresupuestalCodigo,
+			  CPROVEEDOR_RUC cproveedorRuc,
+			  PK_UTIL_RAZON_SOCIAL(CPROVEEDOR_RUC) razonSocial,
+			  DORDEN_FECHA dordenFecha
+			  FROM  IAFAS_PAC_ORDEN 
+			  WHERE CPERIODO_CODIGO=#{cperiodoCodigo} AND CESTADO_CODIGO='AC'
+			   AND CPERIODO_CONTRATO IS NOT NULL
+			   order by
+              NORDEN_CODIGO desc;
+				 
+	</select>
+	
+	
+		<select id="consultaOrdenSC" 
+	    resultType="ep.mil.pe.iafas.logistica.model.IafasPacOrden"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasPacOrden">
+		
+        	  SELECT CPERIODO_CODIGO cperiodoCodigo, CITEM_TIPO_CODIGO citemTipoCodigo,
+			  (SELECT NITEM_TIPO_DESCRIPCION FROM iafas_item_tipo WHERE CITEM_TIPO_CODIGO=IAFAS_PAC_ORDEN.CITEM_TIPO_CODIGO) descripcionBien,
+			  NORDEN_CODIGO nordenCodigo,CPERIODO_CONTRATO cperiodoContrato, NCONTRATO_CODIGO ncontratoCodigo,
+			  NCERTIFICADO_PRESUPUESTAL_CODIGO ncertificadoPresupuestalCodigo,
+			  CPROVEEDOR_RUC cproveedorRuc,
+			  PK_UTIL_RAZON_SOCIAL(CPROVEEDOR_RUC) razonSocial,
+			  DORDEN_FECHA dordenFecha
+			  FROM  IAFAS_PAC_ORDEN 
+			  WHERE CPERIODO_CODIGO=#{cperiodoCodigo} AND CESTADO_CODIGO='AC'
+			   AND CPERIODO_CONTRATO IS  NULL
+			   order by
+              NORDEN_CODIGO desc;
+				 
+	</select>
+	
+
+	
+</mapper>

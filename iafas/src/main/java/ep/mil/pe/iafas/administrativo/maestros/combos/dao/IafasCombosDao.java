@@ -326,7 +326,7 @@ public class IafasCombosDao {
           return lista;
       }
      
- 	/*Cambios agregados por Elvis Severino*/
+
      public List<IafasCombos> getAlmacenes() {
          List<IafasCombos> lista = null;
          SqlSession session = sqlSessionFactory.openSession();
@@ -338,5 +338,30 @@ public class IafasCombosDao {
          }
          return lista;
      }
-     /**************************************/
+
+     @SuppressWarnings("unchecked")
+    	public List<IafasCombos> getPlazoEntrega() {
+            List<IafasCombos> lista = null;
+            SqlSession session = sqlSessionFactory.openSession();
+            try{
+                  lista = session.selectList("Combos.tipoplazo");
+            }
+            finally{
+                 session.close();
+            }
+            return lista;
+        }
+      
+      @SuppressWarnings("unchecked")
+    	public List<IafasCombos> getCondicionEntrega() {
+            List<IafasCombos> lista = null;
+            SqlSession session = sqlSessionFactory.openSession();
+            try{
+                  lista = session.selectList("Combos.tipocondicion");
+            }
+            finally{
+                 session.close();
+            }
+            return lista;
+        }
 }

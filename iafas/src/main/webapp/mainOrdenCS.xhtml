@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>IAFAS</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="css/estilos.css" rel="stylesheet" type="text/css" />
+    </h:head>
+    <body class="formulario">
+        <script>
+           /*
+            function limpiarTexto() {
+                document.getElementById('frmCompromisoAnual:inpTxtCertificado').value = "";
+            }
+            */
+             function enviarDatos(tipo){
+	    var valor;
+		if(validaEnvio(tipo)){
+			valor = false;
+		}
+		else
+		{ valor = true;}
+		return valor
+	}     
+        function validaEnvio(tipo){
+		var valor;
+		if(tipo!="REG") {
+		swal("Alerta", 'Esta opción es solo para Devengado',"warning");
+		valor = true;
+		}
+		
+		return valor
+	}   
+                      
+        function upperCase(obj) {
+        	  var x = document.getElementById(obj);
+        	  x.value = x.value.toUpperCase();
+        	}
+         function roundNumber(num, dec) {
+		var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
+		return result;
+    } 
+    
+        </script>
+        <h:form id="frmOrden" style="border-radius: 5px 5px 5px 5px;border: 1px ; width:100%;">
+            <p:panel >
+                <p:panelGrid columns="2" styleClass="panel">
+                   <i class="pi pi-calendar-plus" style="height:20px;height:20px;" ></i>
+                    <p:outputLabel value="Consulta de Orden" styleClass="etiqueta"></p:outputLabel>
+                </p:panelGrid> 
+                <p:panelGrid columns="5" >
+                    <p:outputLabel value="A.F :" styleClass="etiqueta"/>
+                    <p:selectOneMenu id="cboAnio" value="#{mbOrden.cperiodoCodigo}" >
+                    <f:selectItem itemValue="" itemLabel="--Seleccione--"></f:selectItem>
+                      <f:selectItem itemValue="2021" itemLabel="2021"></f:selectItem>
+                      <f:ajax render="dTableDevengado" ></f:ajax>
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Tipo de Orden :" styleClass="etiqueta"/>
+                    <p:selectOneMenu id="cboOrden" value="#{mbOrden.ctipoOrden}" >
+                      <f:selectItem itemValue="0" itemLabel="--Seleccione--"/>
+                      <f:selectItem itemValue="1" itemLabel="Orden con Proceso"></f:selectItem>
+                      <f:selectItem itemValue="2" itemLabel="Orden Directos"></f:selectItem>
+                     <f:ajax render="dTableDevengado" listener="#{mbOrden.VerConsultaOrden}"></f:ajax>
+                    </p:selectOneMenu>
+                    
+                    <p:commandButton  value="Nuevo"  styleClass="button" action="#{mbOrden.NuevoRegistro()}"  ajax="false"
+                    style="height:30px;" title="Click aqui para Ingresar una Nueva Orden"/>                    
+                </p:panelGrid>
+                
+                <br/>
+                <table>
+                    <tr>
+                        <td valign="top">
+                            <div>
+                                <p:dataTable id="dTableDevengado" var="men" value="#{mbOrden.listaOrdenConsulta}" rows="10" scrollable="true"
+                                             style="width: 1000px;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
+                                             paginatorPosition="bottom" paginator="true" stripedRows="true">
+                                    <p:column headerText="N° Orden" style="width: 15px;" filterBy="#{men.nordenCodigo}" filterMatchMode="contains">
+                                        <p:outputLabel value="#{men.nordenCodigo}"/>
+                                    </p:column>
+                                    <p:column headerText=" Tipo de Bien" style="width: 15px;">
+                                        <p:outputLabel value="#{men.descripcionBien}"/>
+                                    </p:column>                                   
+                                    <p:column headerText="Proveedor" style="width: 100px;">
+                                        <p:outputLabel value="#{men.cproveedorRuc}-#{men.razonSocial}"/>
+                                    </p:column>
+                                    <p:column headerText="Fecha Orden" style="width: 10px;">
+                                        <p:outputLabel value="#{men.dordenFecha}">
+                                           <f:converter converterId="javax.faces.DateTime" />
+                                			<f:convertDateTime pattern="dd/MM/yyyy" locale="es_PE" timeZone="GMT-5" type="date" />	
+                                        </p:outputLabel>
+                                    </p:column>
+                                     <p:column headerText=" N° Contrato" style="width: 15px;">
+                                        <p:outputLabel value="#{men.ncontratoCodigo}"/>
+                                    </p:column>
+                                     <p:column headerText=" N° Certificado" style="width: 15px;">
+                                        <p:outputLabel value="#{men.ncertificadoPresupuestalCodigo}"/>
+                                    </p:column>
+                                 
+                                </p:dataTable>
+                            </div>
+                        </td>  
+                    </tr>
+                </table>
+                <!-- dialogos -->
+               
+                
+            </p:panel>
+        </h:form>
+    </body>
+</html>
