@@ -20,9 +20,11 @@ import ep.mil.pe.iafas.configuracion.MySQLSessionFactory;
 import ep.mil.pe.iafas.configuracion.util.Constantes;
 import ep.mil.pe.iafas.configuracion.util.Mensajeria;
 import ep.mil.pe.iafas.configuracion.util.Response;
+import ep.mil.pe.iafas.logistica.dao.IafasAlmacenIngresoDao;
 import ep.mil.pe.iafas.logistica.dao.IafasAlmacenSalidaAtencionDao;
 import ep.mil.pe.iafas.logistica.dao.IafasAlmacenSalidaDao;
 import ep.mil.pe.iafas.logistica.dao.IafasAlmacenSalidaDetalleDao;
+import ep.mil.pe.iafas.logistica.model.IafasAlmacenIngresoDetalle;
 import ep.mil.pe.iafas.logistica.model.IafasAlmacenSalida;
 import ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaAtencion;
 import ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaDetalle;
@@ -66,10 +68,11 @@ public class IafasAlmacenSalidaController implements Serializable {
 	
 	private List<IafasAlmacenSalidaAtencion> listaConsultaAtendido =  new ArrayList<IafasAlmacenSalidaAtencion>();
 	private String descripcionItemAtencion = Constantes.VACIO;
-	private String lblStockItemAlmacen = Constantes.CERO_STRING;
+	private Double lblStockItemAlmacen = Constantes.ZERO_DOUBLE;
 	private String lblCantidadSolicitadaItem = Constantes.VACIO;
 	private String codigoItemAtencion= Constantes.VACIO;
 	private String codigoSalidaAlmacenAtencion= Constantes.VACIO;
+	private Double lblTotalAtendido = Constantes.ZERO_DOUBLE;
 	
 	/*==========Consultas==========*/
 	public List<IafasAlmacenSalida> mostrarConsultaPrincipal() {
@@ -202,8 +205,17 @@ public class IafasAlmacenSalidaController implements Serializable {
 		listaDetalle = new ArrayList<>();
 		logger.info("[FIN:] Metodo : cleanCamposCabecera");
 	}
-	/*===================*/
 	
+	public void cleanCamposDetalleAtencion() {
+		logger.info("[INICIO:] Metodo : cleanCamposDetalleAtencion");
+		this.codigoAlmacen= Constantes.CERO_STRING;
+		setCodigoAlmacen(codigoAlmacen);
+		setLblStockItemAlmacen(Constantes.ZERO_DOUBLE);
+		setCantidadAtendida(Constantes.CERO_INT);
+		setLblTotalAtendido(Constantes.ZERO_DOUBLE);
+		logger.info("[FIN:] Metodo : cleanCamposDetalleAtencion");
+	}
+	/*===================*/
 	
 	/********AGREGAR ITEMS***********/
 	public void cargarListaDetalleSession() {
@@ -475,7 +487,10 @@ public class IafasAlmacenSalidaController implements Serializable {
 	public void obtenerItemAtender() {
 		
 		logger.info("[INICIO:] Metodo : obtenerItemAtender");
+		//cleanCamposCabecera();
 		String codItemAtencion = (String) extContext().getRequestParameterMap().get("codItemAtencion");
+		String codAlmacenSalidaCodigo = (String) extContext().getRequestParameterMap().get("codAlmacenSalidaCodigo");
+		logger.info("PARAMETROS:::"+codItemAtencion +" - "+codAlmacenSalidaCodigo);
 		IafasAlmacenSalidaDetalle objBnDet = new IafasAlmacenSalidaDetalle();
 		IafasAlmacenSalidaDetalleDao objDaoDet = new IafasAlmacenSalidaDetalleDao(MySQLSessionFactory.getSqlSessionFactory());
 		objBnDet.setCPeriodoCodigo(cPeriodoAtencion);
@@ -513,8 +528,13 @@ public class IafasAlmacenSalidaController implements Serializable {
 			for (IafasAlmacenSalidaAtencion objBeanLista : listaCab) {
 				this.listaConsultaAtendido.add(objBeanLista);
 			}
+			List<IafasAlmacenSalidaAtencion> listaAte = objDao.totalAtendidoItem(objBn);
+			if (listaAte.size() > 0) {
+				for (IafasAlmacenSalidaAtencion objBL : listaAte) {
+					setLblTotalAtendido(objBL.getTotalAtendidoItem());
+				}
+			}
 		}
-
 		logger.info("[FIN:] Metodo : obtenerDetalleAtencion");
 		return listaConsultaAtendido;
 	}
@@ -533,12 +553,6 @@ public class IafasAlmacenSalidaController implements Serializable {
 		Response response = new Response();
 		
 		objBn.setCPeriodoCodigo(cPeriodoAtencion);
-		/*if(modo.equals(Constantes.MODE_ACTUALIZACION)) {
-			objBn.setNAlmacenSalidaCodigo(bean.getNAlmacenSalidaCodigo());	
-		}
-		else {
-			objBn.setNAlmacenSalidaCodigo(Constantes.CERO_INT);
-		}*/
 		objBn.setNAlmacenSalidaCodigo(Integer.parseInt(codigoSalidaAlmacenAtencion));
 		objBn.setNItemCodigo(Integer.parseInt(codigoItemAtencion));
 		objBn.setNAlmacenCodigo(Integer.parseInt(codigoAlmacen));
@@ -547,19 +561,20 @@ public class IafasAlmacenSalidaController implements Serializable {
 		objBn.setMode(modo);
 		
 		try {
-			response = objDao.mantenimientoCabecera(objBn);
+			if (!validarMantenimiento()) {
+				response = objDao.mantenimientoCabecera(objBn);
 
-			if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
+				if (Constantes.CERO_STRING.equals(response.getCodigoRespuesta())) {
 
-				this.typeMessages = Constantes.CERO_INT;
-				this.messages = response.getMensajeRespuesta();
-				PrimeFaces.current().ajax().update("frm_SalidaAlmacen:pnl_messages");
-				refreshMessage();
-				Mensajeria.showMessages(Integer.parseInt(response.getCodigoRespuesta()),
-						response.getMensajeRespuesta(), typeMessages, messages, Constantes.METODO_JS_CNV);
+					this.typeMessages = Constantes.CERO_INT;
+					this.messages = response.getMensajeRespuesta();
+					PrimeFaces.current().ajax().update("frm_SalidaAlmacen:pnl_messages");
+					refreshMessage();
+					Mensajeria.showMessages(Integer.parseInt(response.getCodigoRespuesta()),
+							response.getMensajeRespuesta(), typeMessages, messages, Constantes.METODO_JS_CNV);
+				}
+				obtenerDetalleAtencion();
 			}
-		
-			obtenerDetalleAtencion();
 		}
 		catch (Exception e) {
 			logger.error("error : " + e.getMessage().toString());
@@ -567,7 +582,43 @@ public class IafasAlmacenSalidaController implements Serializable {
 
 			logger.info("[FIN:] Metodo : insPedidoAlmacenAtencion");
 		}
+	}
+	
+	public void obtenerCantidadPorItem() {
 		
+		logger.info("[INICIO:] Metodo : obtenerCantidadPorItem");
+		IafasAlmacenIngresoDetalle objBnDet = new IafasAlmacenIngresoDetalle();
+		IafasAlmacenIngresoDao objDaoDet = new IafasAlmacenIngresoDao(MySQLSessionFactory.getSqlSessionFactory());
+		objBnDet.setPeriodo(cPeriodoAtencion);
+		objBnDet.setNalmacenCodigo(Integer.parseInt(codigoAlmacen));
+		objBnDet.setNitemCodigo(Integer.parseInt(codigoItemAtencion));
+		
+			List<IafasAlmacenIngresoDetalle> lstdet = objDaoDet.obtenerCantidadPorItem(objBnDet);
+			if (lstdet.size() > 0) {
+			for (IafasAlmacenIngresoDetalle objDt : lstdet) {
+				setLblStockItemAlmacen(objDt.getNalmacenIngresoDetalleCantidad());
+			}
+		}
+		logger.info("[FIN:] Metodo : obtenerCantidadPorItem");
+	}
+	
+	public boolean validarMantenimiento() {
+		
+		logger.info("[INICIO:] Metodo : validarMantenimiento");
+		boolean pasoValidacion = false;
+		
+		logger.info("datos::::>"+cantidadAtendida + " - "+lblCantidadSolicitadaItem +"  - "+lblStockItemAlmacen + " - "+lblTotalAtendido);
+		if (Double.compare(cantidadAtendida, lblStockItemAlmacen) > 0) {
+			typeMessages = Constantes.DOS_INT;
+			messages = Constantes.MESSAGE_MONTO_ATENDIDO;
+			PrimeFaces.current().ajax().update("frm_SalidaAlmacen:pnl_messages");
+			refreshMessage();
+			Mensajeria.showMessages(typeMessages, messages, typeMessages, messages, Constantes.METODO_JS_CNV);
+			pasoValidacion = true;
+		}
+		logger.info("[FIN:] Metodo : validarMantenimiento");
+		
+		return pasoValidacion;
 	}
 	
 	public void refreshMessage() {

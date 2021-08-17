@@ -81,4 +81,21 @@ public class IafasAlmacenIngresoDao {
 		return i;
 	}
 	
+	/*[INICIO] METODO AGREGADO POR ELVIS SEVERINO*/
+	@SuppressWarnings("unchecked")
+	public List<IafasAlmacenIngresoDetalle> obtenerCantidadPorItem(IafasAlmacenIngresoDetalle alm){
+		List<IafasAlmacenIngresoDetalle> lista = null;
+		SqlSession session = sqlSessionFactory.openSession();
+		try{
+            lista = session.selectList("IafasAlmacenIngresoDetalle.obtenerCantidadPorItem",alm);
+      }
+      catch(Exception e) {
+      	e.printStackTrace();
+      }
+      finally{
+           session.close();
+      }
+		return lista;
+	}
+	/*[FIN] METODO AGREGADO POR ELVIS SEVERINO*/
 }

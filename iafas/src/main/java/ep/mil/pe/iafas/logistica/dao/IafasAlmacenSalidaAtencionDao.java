@@ -56,4 +56,15 @@ public class IafasAlmacenSalidaAtencionDao {
 		}
 		return list;
 	}
+	
+	public List<IafasAlmacenSalidaAtencion> totalAtendidoItem(IafasAlmacenSalidaAtencion objBn) {
+		List<IafasAlmacenSalidaAtencion> list = null;
+		SqlSession session = this.sqlSessionFactory.openSession();
+		try {
+			list = session.selectList("IafasAlmacenSalidaAtencion.totalAtendidoItem", objBn);
+		} finally {
+			session.close();
+		}
+		return list;
+	}
 }

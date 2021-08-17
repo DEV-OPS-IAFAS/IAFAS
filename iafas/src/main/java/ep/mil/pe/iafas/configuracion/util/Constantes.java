@@ -81,4 +81,7 @@ public class Constantes {
 	public static final String CODIGO_CIERRE = "C";
 	public static final String VALIDACION_AF = "Debe Seleccionar el Año.";
 	public static final String VALIDACION_MES = "Debe Seleccionar el Mes.";
+	public static final Double ZERO_DOUBLE= new Double(0);
+	/**/
+	public static final String MESSAGE_MONTO_ATENDIDO = "La cantidad atendida ingresada es mayor al Stock  en el Almacén!";
 }

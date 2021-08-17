@@ -31,6 +31,20 @@
 		#{tipo, mode=IN,jdbcType=VARCHAR})}
    </select>
 
+	<!-- [INICIO] METODO AGREGADO POR ELVIS SEVERINO -->
+	<select id="obtenerCantidadPorItem"
+	resultType="ep.mil.pe.iafas.logistica.model.IafasAlmacenIngresoDetalle"
+	parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenIngresoDetalle">
+		SELECT IFNULL(SUM(NALMACEN_INGRESO_DETALLE_CANTIDAD),0) - F_ATENDIDO_ITEM_ALMACEN(#{periodo},#{nalmacenCodigo}, #{nitemCodigo}) 
+		 AS nalmacenIngresoDetalleCantidad
+		FROM IAFAS_ALMACEN_INGRESO_DETALLE
+		WHERE
+		CPERIODO_CODIGO=#{periodo} AND
+		NALMACEN_CODIGO=#{nalmacenCodigo} AND
+		NITEM_CODIGO = #{nitemCodigo}
+	</select>	
+
+	<!-- [FIN] METODO AGREGADO POR ELVIS SEVERINO -->
 </mapper>	
 
 

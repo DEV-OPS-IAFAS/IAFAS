@@ -29,4 +29,5 @@ public class IafasAlmacenSalidaAtencion {
 	private String codigoRespuesta;
 	private String mensajeRespuesta;
 	private String descripcionAlmacen;
+	private Double totalAtendidoItem;
 }

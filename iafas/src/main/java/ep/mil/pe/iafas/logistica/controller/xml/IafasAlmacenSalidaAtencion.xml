@@ -55,5 +55,17 @@
 		NALMACEN_SALIDA_CODIGO = #{nAlmacenSalidaCodigo} AND
 		NITEM_CODIGO = #{nItemCodigo}
 	</select>
+	
+	<select id="totalAtendidoItem"
+		parameterType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaAtencion"
+		resultType="ep.mil.pe.iafas.logistica.model.IafasAlmacenSalidaAtencion">
+		SELECT IFNULL(SUM(NALMACEN_SALIDA_ATENDIDO), 0) AS totalAtendidoItem
+		FROM
+		IAFAS_ALMACEN_SALIDA_ATENCION CAB
+		WHERE 
+		CPERIODO_CODIGO= #{cPeriodoCodigo} AND
+		NALMACEN_SALIDA_CODIGO = #{nAlmacenSalidaCodigo} AND
+		NITEM_CODIGO = #{nItemCodigo}
+	</select>
 
 </mapper>

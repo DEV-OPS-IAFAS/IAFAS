@@ -43,10 +43,8 @@ button.ui-button {
 				});
 			}
 
-			if (option == 0) {
-				swal("AVISO", message, "success").then(function() {
-					window.location = "mainPedidoSalida.xhtml";
-				});
+			if (option == 0) {			
+				swal("AVISO", message, "success");
 			}
 
 			if (option == 1) {
@@ -55,6 +53,10 @@ button.ui-button {
 				});
 			}
 
+			if (option == 2) {
+				swal("ALERTA", message, "error");
+			}
+			
 		}
 	</script>
 
@@ -181,7 +183,7 @@ button.ui-button {
 
 		</p:dialog>
 		
-		<p:dialog header="ATENDER  PEDIDO" id="modalDetalle" widgetVar="modalDetalle" showEffect="fade" minHeight="600" width="720">
+		<p:dialog header="ATENDER  PEDIDO" id="modalDetalle" widgetVar="modalDetalle" closable="false" showEffect="fade" minHeight="600" width="720">
 			<h:panelGrid columns="2" styleClass="panel" id="pnlGrid_Datos">
 				
 				<h:outputLabel value="Item: " styleClass="etiqueta" style="font-size:12px;font-weight:bold;" />
@@ -192,7 +194,8 @@ button.ui-button {
 				
 				<h:outputLabel value="Almacen: " styleClass="etiqueta" style="font-size:12px;font-weight:bold;" />
 				<h:selectOneMenu id="cboAlmacen" styleClass="select" value="#{iafasAlmacenSalidaController.codigoAlmacen}">
-					<f:selectItem itemValue="0" itemLabel="Seleccione" />
+				<f:ajax render="frm_SalidaAlmacen:lblStockItemAlmacen" listener="#{iafasAlmacenSalidaController.obtenerCantidadPorItem()}" />
+					<f:selectItem  itemValue="0" itemLabel="Seleccione" />
 					<f:selectItems var="optionFuente" value="#{mbCombos.almacenes}" />
 				</h:selectOneMenu>
 				
@@ -202,18 +205,6 @@ button.ui-button {
 					<h:outputLabel value="Cantidad Atendida:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
 					<p:inputText id="inptxtCantidad"  styleClass="input"  value="#{iafasAlmacenSalidaController.cantidadAtendida}" />
 			</h:panelGrid>
-			
-			<f:facet name="footer">
-				<p:commandButton value="Cerrar" styleClass="ui-button-outlined ui-button-danger"
-					oncomplete="PF('modalDetalle').hide()"
-					action="#{iafasAlmacenSalidaController.cleanCamposDetalle()}"
-					update="frm_SalidaAlmacen:dTablePedidoAtendido" />
-
-				<p:commandButton value="Agregar" styleClass="ui-button-outlined ui-button-success"
-					action="#{iafasAlmacenSalidaController.insPedidoAlmacenAtencion()}"
-					update="frm_SalidaAlmacen:dTablePedidoAtendido" /> 
-			</f:facet>		
-			
 			
 			<p:dataTable id="dTablePedidoAtendido" var="dTablePedidoAtendido"
 				value="#{iafasAlmacenSalidaController.listaConsultaAtendido}"
@@ -233,6 +224,22 @@ button.ui-button {
 				</p:column>
 				
 			</p:dataTable>
+			
+			<f:facet name="footer">
+				<p:commandButton value="Cerrar" styleClass="ui-button-outlined ui-button-danger"
+					oncomplete="PF('modalDetalle').hide()"
+					action="#{iafasAlmacenSalidaController.cleanCamposDetalleAtencion()}"
+					update="frm_SalidaAlmacen:dTablePedidoAtendido" />
+
+				<p:commandButton value="Agregar" styleClass="ui-button-outlined ui-button-success"
+					action="#{iafasAlmacenSalidaController.insPedidoAlmacenAtencion()}"
+					update="frm_SalidaAlmacen:dTablePedidoAtendido" /> 
+					
+				<h:outputLabel value="" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
+				<h:outputLabel value="TOTAL ATENDIDO:" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />	
+				<h:outputLabel value="#{iafasAlmacenSalidaController.lblTotalAtendido}" styleClass="outLabel"  style="font-size:12px;font-weight:bold; " />
+			</f:facet>	
+			
 		</p:dialog>
 
 </h:form>
