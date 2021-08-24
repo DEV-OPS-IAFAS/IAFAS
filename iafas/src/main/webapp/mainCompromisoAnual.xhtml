@@ -98,9 +98,12 @@
                     <h:inputText id="inpTxtCertificado" value="#{mbCompAnual.certificado}" onclick="limpiarTexto();" styleClass="input"
                     size="8"/>
                     <p:commandButton id="cmdBtnBuscar"  value="Buscar"  actionListener="#{mbCompAnual.listarCompAnualCab()}"
-                     ajax="false"  update="dTableCompAnual" style="height:30px;" title="Click aqui para buscar datos del Certificado"/>
+                     ajax="false"  update="dTableCompAnual,tabViewDetalle" style="height:30px;" title="Click aqui para buscar datos del Certificado"/>
                     <p:commandButton  value="Nuevo"  styleClass="button" action="#{mbCompAnual.nuevoRegistro()}" 
                     style="height:30px;" title="Click aqui para Ingresar un Nuevo Compromiso Anual"/>
+                       <p:commandButton value="Exportar XLSX" styleClass="p-mr-2 p-mb-2" style="height:30px;">
+                    <p:dataExporter type="xlsxstream" target="dTableCompAnual" fileName="certificado #{mbCompAnual.certificado}"/>
+                </p:commandButton>
                 </p:panelGrid>
                 <p:outputLabel value="#{mbCompAnual.reg} Registros Encontrados" style="color: green; font-weight: bold;"/>
                 <br/>
@@ -108,10 +111,10 @@
                     <tr>
                         <td valign="top">
                             <div>
-                                <p:dataTable id="dTableCompAnual" var="ca" value="#{mbCompAnual.lista}" rows="10" scrollable="true" scrollHeight="175px;"
+                                <p:dataTable id="dTableCompAnual" var="ca" value="#{mbCompAnual.lista}" rows="10" scrollable="true" scrollHeight="235px;"
                                              style="width: 100%;" emptyMessage="No se encontro datos registrados"  styleClass="grid" 
                                              paginatorPosition="bottom" paginator="true" stripedRows="true">
-                                    <p:column headerText="Fase" style="width: 60px;">
+                                    <p:column headerText="Fase" style="width: 60px;font-size:10px;">
                                         <h:commandLink id="cmdLink_Fase" actionListener="#{mbCompAnual.verDetalleRegistroCA}" >
                                             <p:outputLabel value="#{ca.tipoCertificacion}"/> 
                                           <f:param id="p_secuenciaDet" name="p_secuencia" value="#{ca.vsecuenciaA}"></f:param>
@@ -125,7 +128,7 @@
                                     <p:column headerText="Numero" style="width: 75px;font-size:10px;">
                                         <p:outputLabel value="#{ca.vabrevTipDoc}:#{ca.vnroDocumentoPagoA}"/>
                                     </p:column>
-                                    <p:column headerText="Proveedor" style="width: 150px;">
+                                    <p:column headerText="Proveedor" style="width: 150px;font-size:10px;">
                                         <p:outputLabel value="#{ca.cproveedorRuc}:#{ca.razonSocial}"/>
                                     </p:column>
                                     <!--  
@@ -135,12 +138,12 @@
                                     <p:column headerText="Mon." style="width: 10px;">
                                         <p:outputLabel value="#{ca.vcodMoneda}"/>
                                     </p:column>
-                                    <p:column headerText="Monto" style="text-align: right;width: 45px;">
+                                    <p:column headerText="Monto" style="text-align: right;width: 45px;font-size:10px;">
                                         <p:outputLabel value="#{ca.nimpMonSol}">
                                             <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
                                         </p:outputLabel>
                                     </p:column>
-                                    <p:column headerText="Estado" style="width: 18px;">
+                                    <p:column headerText="Estado" style="width: 18px;font-size:10px;">
                                         <p:outputLabel value="#{ca.vcodEstado}" style="text-align: center"/>
                                     </p:column>
                                    <!--   <p:column headerText="Editar" style="width: 20px;">
@@ -168,27 +171,28 @@
                                 </p:dataTable>
                             </div>
                         </td>  
-                       <!--    <td valign="top">
+                          <td valign="top">
                             <div>
                                 <h:panelGrid columns="2">
                                     <p:panelGrid columns="1" style="width: 150px;" >
                                         <p:outputLabel value="MONTO CERTIFICADO" style="font-size: 10px;;font-weight: bold;"/>
-                                       <h:outputLabel value="0.00"  styleClass="outLabelMonto">
+                                       <h:outputLabel value="#{mbCompAnual.totCertificado}"  styleClass="outLabelMonto">
                                             <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
                                         </h:outputLabel>
-                                        <h:outputText value="MODIFICACIONES" style="font-size: 10px;;font-weight: bold;"/>
+                                      <!--    <h:outputText value="MODIFICACIONES" style="font-size: 10px;;font-weight: bold;"/>
                                         <h:outputLabel value="0.00" styleClass="outLabelMonto"> 
                                             <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
-                                        </h:outputLabel>
+                                        </h:outputLabel> -->
                                         <h:outputText value="COMP. ANUAL" style="font-size: 10px;;font-weight: bold;"/>
-                                        <h:outputLabel  value="0.00"  styleClass="outLabelMonto">
+                                        <h:outputLabel  value="#{mbCompAnual.totCompAnual}"  styleClass="outLabelMonto">
                                             <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
                                         </h:outputLabel>
                                         <h:outputText value="SALDO X COMPROMETER" style="font-size: 10px;;font-weight: bold;"/>
-                                        <h:outputLabel value="0.00"  styleClass="outLabelMonto">
+                                        <h:outputLabel value="#{mbCompAnual.saldoCert}"  styleClass="outLabelMonto">
                                             <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
                                         </h:outputLabel>
                                     </p:panelGrid>
+                                    <!-- 
                                     <p:panelGrid columns="1" style="width: 140px;" rendered="false">
                                         <h:outputText value="COMP. ANUAL" style="font-size: 10px;;font-weight: bold;"/>
                                         <p:outputLabel value="0.00"   styleClass="outLabelMonto">
@@ -206,10 +210,10 @@
                                         <p:outputLabel  value="0.00"  styleClass="outLabelMonto">
                                             <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
                                         </p:outputLabel>
-                                    </p:panelGrid>
+                                    </p:panelGrid> -->
                                 </h:panelGrid>  
                             </div> 
-                        </td> -->
+                        </td> 
                     </tr>
                 </table>
                 <br/>
@@ -233,8 +237,8 @@
                             <p:outputLabel value="Ruc:" />
                             <p:outputLabel value="#{mbCompAnual.ruc}-#{mbCompAnual.razonSocial}" styleClass="outLabel"/>
                             <p:outputLabel value="Monto"></p:outputLabel>
-                            <p:outputLabel value="#{mbCompAnual.simboloMon} #{mbCompAnual.montoCompromiso}" styleClass="outLabel">
-                            <f:convertNumber maxFractionDigits="2" minFractionDigits="2" type="number" locale="en"/>
+                            <p:outputLabel value="#{mbCompAnual.simboloMon} #{mbCompAnual.montoCompromisoFormat}" styleClass="outLabel">
+                            
                             </p:outputLabel>
                             </h:panelGrid>                     
                         <br/>

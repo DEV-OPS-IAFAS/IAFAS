@@ -6437,7 +6437,8 @@ body[themebg-pattern="theme1"] {
 
 .pcoded .pcoded-navbar[active-item-theme="theme1"] .pcoded-item>li.active>a,
 .pcoded .pcoded-navbar[active-item-theme="theme1"] .pcoded-item>li:hover>a {
-	background: #448aff;
+	/*background: #448aff;*/
+	background: #459e00;
 	color: #fff !important;
 }
 

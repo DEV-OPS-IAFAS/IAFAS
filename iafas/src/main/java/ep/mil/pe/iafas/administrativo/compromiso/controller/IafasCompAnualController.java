@@ -3,6 +3,7 @@ package ep.mil.pe.iafas.administrativo.compromiso.controller;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -55,7 +56,7 @@ public class IafasCompAnualController implements Serializable {
 	private String idProv;
 	private String concepto;
 	private String tipMon;
-    private double ntipCam = 1.0;
+    private double ntipCam = 0;
     private String ruc;
     private String razonSocial;
     private String tipCodFun;
@@ -75,6 +76,7 @@ public class IafasCompAnualController implements Serializable {
    
     private String tipoFase;
     private BigDecimal montoCompromiso;
+    private String montoCompromisoFormat;
     private String tipDoc;
     private BigDecimal montoOrden;
     
@@ -86,6 +88,10 @@ public class IafasCompAnualController implements Serializable {
     private String conceptoCertificado;
     
     private String periodoDoc;
+    
+    private double totCertificado;
+    private double totCompAnual;
+    private double saldoCert;
     
     Date hoy = new Date();
     
@@ -250,14 +256,21 @@ public class IafasCompAnualController implements Serializable {
 				setConcepto(compromiso.get(0).getVglosa());
 				setSimboloMon(compromiso.get(0).getVcodMoneda());
 				setConceptoCertificado(compromiso.get(0).getVglosa());
-				if(compromiso.get(0).getNtipCam()==0) {
+				/*if(compromiso.get(0).getNtipCam()==0) {
 					setNtipCam(1.0);
 				}
-				else {setNtipCam(compromiso.get(0).getNtipCam());}
+				else {setNtipCam(compromiso.get(0).getNtipCam());}*/
 				setTotalCertificado(compromiso.get(0).getTotCert());
 				setTotalCompAnual(compromiso.get(0).getTotCA());
 				setDifTotal(compromiso.get(0).getDifCA());
+				
+				// venta na inicial
+				setTotCertificado(compromiso.get(0).getTotCert().doubleValue());
+				setTotCompAnual(compromiso.get(0).getTotCA().doubleValue());
+				setSaldoCert(compromiso.get(0).getDifCA().doubleValue());
 			}
+			logger.info("Cargando Detalle del Certificado");
+			verDetalleRegistroCA();
 		}
 
 		catch(Exception e) {
@@ -268,8 +281,11 @@ public class IafasCompAnualController implements Serializable {
 	
 	public void verDetalleRegistroCA() {
 		try {
+
 			  psecuencia = (String) extContext().getRequestParameterMap().get("p_secuencia");
 			  pcorrelativo = (String) extContext().getRequestParameterMap().get("p_correlativo");
+			  logger.info("Secuencia: "+psecuencia);
+			  if(psecuencia==null) {setPsecuencia("001"); setPcorrelativo("001");}
 			 IafasCompromisoAnual ca = new IafasCompromisoAnual();
 			 ca.setVanoDocumento(periodo);
 			 ca.setVnroCertificado(certificado);
@@ -286,6 +302,10 @@ public class IafasCompAnualController implements Serializable {
 				 setDesPresupuesto(p.getDesPto());
 				 setTipoFase(p.getTipoCertificacion());
 				 setMontoCompromiso(p.getNimpMonSol());
+				 Double numParsed = p.getNimpMonSol().doubleValue();
+				 //setMontoCompromisoFormat(String.format("%,.2f", numParsed));
+				 DecimalFormat formato = new DecimalFormat("###,###,###.00");
+				 setMontoCompromisoFormat(formato.format(numParsed));
 				 setTipDoc(p.getVtipoDocumentoA());
 				 setSimboloMon(p.getVcodMoneda());
 			 }
