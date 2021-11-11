@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="IafasPersonalContrato">
+    <resultMap id="resultado" type="IafasPersonalContrato" />
+    
+    <select id="obtenerPersonaContratoCodigo"
+		parameterType="ep.mil.pe.iafas.patrimonio.model.IafasPersonalContrato"
+		resultType="ep.mil.pe.iafas.patrimonio.model.IafasPersonalContrato">
+		SELECT DISTINCT CPERIODO_CODIGO AS cPeriodoCodigo, CAB.NPERSONA_CODIGO AS nPersonaCodigo, CAB.NPERSONAL_CONTRATO_CODIGO AS nPersonalContratoCodigo, 
+		CONCAT(DET.VPERSONA_PATERNO,' ' ,DET.VPERSONA_MATERNO, ' , ', DET.VPERSONA_NOMBRES)   AS nombrePersona,
+		DET.VPERSONA_NUMERO_DOCUMENTO  AS numDocPersona 
+		FROM IAFAS_PERSONAL_CONTRATOS CAB , IAFAS_PERSONA DET
+		WHERE 
+        CAB.NPERSONA_CODIGO = DET.NPERSONA_CODIGO AND
+		CPERIODO_CODIGO=#{cPeriodoCodigo} AND
+		 DET.VPERSONA_PATERNO  LIKE CONCAT('%',#{nombrePersona},'%') AND
+        CESTADO_CODIGO='AC' 
+		LIMIT 10
+	</select>
+	
+	
+</mapper>

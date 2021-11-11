@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="IafasPatrimonioActa">
+    <resultMap id="resultado" type="IafasPatrimonioActa" />
+    
+    <select id="obtenerPatrimonioCabeceraActa"
+		parameterType="ep.mil.pe.iafas.patrimonio.model.IafasPatrimonioActa"
+		resultType="ep.mil.pe.iafas.patrimonio.model.IafasPatrimonioActa">
+		SELECT NPATRIMONIO_ACTA_CODIGO AS nPatrimonioActaCodigo, CPERIODO_CODIGO AS cPeriodoCodigo, VPATRIMONIO_ACTA_OBSERVACION AS vPatrimonioActaObservacion,
+		NPERSONA_PRESIDENTE AS nPersonaPresidente, NPERSONA_SECRETARIO AS nPersonaSecretario, NPERSONA_VOCAL AS nPersonaVocal, NPATRIMONIO_TIPO_ACTA_CODIGO AS nPatrimonioTipoActaCodigo,
+		NPERSONAL_CONTRATO_CODIGO AS nPersonalContratoCodigo,
+		(SELECT VPATRIMONIO_TIPO_ACTA_DESCRIPCION FROM  IAFAS_PATRIMONIO_TIPO_ACTA T WHERE T.NPATRIMONIO_TIPO_ACTA_CODIGO = CAB.NPATRIMONIO_TIPO_ACTA_CODIGO) AS desTipoActa,
+		(SELECT DISTINCT  CONCAT(DET.VPERSONA_PATERNO,' ' ,DET.VPERSONA_MATERNO, ' , ', DET.VPERSONA_NOMBRES) 
+		FROM  IAFAS_PERSONA DET WHERE DET.NPERSONA_CODIGO=CAB.NPERSONA_PRESIDENTE) AS  nombrePresidente ,
+		(SELECT DISTINCT  CONCAT(DET.VPERSONA_PATERNO,' ' ,DET.VPERSONA_MATERNO, ' , ', DET.VPERSONA_NOMBRES) 
+		FROM  IAFAS_PERSONA DET WHERE DET.NPERSONA_CODIGO=CAB.NPERSONA_VOCAL) AS   nombreVocal    ,
+		(SELECT DISTINCT  CONCAT(DET.VPERSONA_PATERNO,' ' ,DET.VPERSONA_MATERNO, ' , ', DET.VPERSONA_NOMBRES) 	
+		FROM  IAFAS_PERSONA DET WHERE DET.NPERSONA_CODIGO=CAB.NPERSONA_SECRETARIO) AS nombreSecretario  ,
+		CAB.NPERSONA_CODIGO AS nPersonaCodigo
+		FROM IAFAS_PATRIMONIO_ACTA CAB
+		WHERE 
+		CPERIODO_CODIGO=#{cPeriodoCodigo} AND 
+		NPATRIMONIO_TIPO_ACTA_CODIGO = #{nPatrimonioTipoActaCodigo} AND
+		CESTADO_CODIGO='AC' 
+		order by nPatrimonioActaCodigo asc
+	</select>
+	
+	 <select id="obtenerPatrimonioActaEdicion"
+		parameterType="ep.mil.pe.iafas.patrimonio.model.IafasPatrimonioActa"
+		resultType="ep.mil.pe.iafas.patrimonio.model.IafasPatrimonioActa">
+		SELECT NPATRIMONIO_ACTA_CODIGO AS nPatrimonioActaCodigo, CPERIODO_CODIGO AS cPeriodoCodigo, VPATRIMONIO_ACTA_OBSERVACION AS vPatrimonioActaObservacion,
+		NPERSONA_PRESIDENTE AS nPersonaPresidente, NPERSONA_SECRETARIO AS nPersonaSecretario, NPERSONA_VOCAL AS nPersonaVocal, NPATRIMONIO_TIPO_ACTA_CODIGO AS nPatrimonioTipoActaCodigo,
+		NPERSONAL_CONTRATO_CODIGO AS nPersonalContratoCodigo,
+		(SELECT VPATRIMONIO_TIPO_ACTA_DESCRIPCION FROM  IAFAS_PATRIMONIO_TIPO_ACTA T WHERE T.NPATRIMONIO_TIPO_ACTA_CODIGO = CAB.NPATRIMONIO_TIPO_ACTA_CODIGO) AS desTipoActa,
+		(SELECT DISTINCT  CONCAT(DET.VPERSONA_PATERNO,' ' ,DET.VPERSONA_MATERNO, ' ', DET.VPERSONA_NOMBRES) 
+		FROM  IAFAS_PERSONA DET WHERE DET.NPERSONA_CODIGO=CAB.NPERSONA_PRESIDENTE) AS  nombrePresidente ,
+		(SELECT DISTINCT  CONCAT(DET.VPERSONA_PATERNO,' ' ,DET.VPERSONA_MATERNO, ' ', DET.VPERSONA_NOMBRES) 
+		FROM  IAFAS_PERSONA DET WHERE DET.NPERSONA_CODIGO=CAB.NPERSONA_VOCAL) AS   nombreVocal    ,
+		(SELECT DISTINCT  CONCAT(DET.VPERSONA_PATERNO,' ' ,DET.VPERSONA_MATERNO, ' ', DET.VPERSONA_NOMBRES) 	
+		FROM  IAFAS_PERSONA DET WHERE DET.NPERSONA_CODIGO=CAB.NPERSONA_SECRETARIO) AS nombreSecretario  			
+		FROM IAFAS_PATRIMONIO_ACTA CAB
+		WHERE 
+		CPERIODO_CODIGO=#{cPeriodoCodigo} AND 
+		NPATRIMONIO_ACTA_CODIGO = #{nPatrimonioActaCodigo} AND
+		CESTADO_CODIGO='AC' 
+	</select>
+	
+	
+	<select id="SP_IDU_IAFAS_PATRIMONIO_ACTA" statementType="CALLABLE" parameterType="ep.mil.pe.iafas.patrimonio.model.IafasPatrimonioActa">
+        <![CDATA[call SP_IDU_IAFAS_PATRIMONIO_ACTA(#{cPeriodoCodigo, mode=IN},#{nPatrimonioTipoActaCodigo, mode=IN}, #{nPatrimonioActaCodigo, mode=IN},#{nPersonaCodigo, mode=IN}, #{nPersonalContratoCodigo, mode=IN},
+        #{nPersonaPresidente, mode=IN},#{nPersonaVocal, mode=IN},#{nPersonaSecretario, mode=IN},#{vPatrimonioActaObservacion, mode=IN}, #{vusuarioCodigo, mode=IN}, 
+        #{mode, mode=IN},#{codigoRespuesta,mode=OUT,jdbcType=VARCHAR}, #{mensajeRespuesta,mode=OUT,jdbcType=VARCHAR})
+         ]]>
+    </select>
+    
+</mapper>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="IafasPatrimonio">
+    <resultMap id="resultado" type="IafasPatrimonio" />
+    
+    <select id="obtenerPatrimonioCabecera"
+		parameterType="ep.mil.pe.iafas.patrimonio.model.IafasPatrimonio"
+		resultType="ep.mil.pe.iafas.patrimonio.model.IafasPatrimonio">
+		SELECT DISTINCT _rowid as numRow,
+		NPATRIMONIO_CODIGO  AS nPatrimonioCodigo, VPATRIMONIO_CODIGO AS vPatrimonioCodigo, VPATRIMONIO_DESCRIPCION AS vPatrimonioDescripcion, NMARCA_CODIGO AS nMarcaCodigo,
+		VPATRIMONIO_MODELO AS vPatrimonioModelo, NCOLOR_CODIGO AS vPtarimonioColorCodigo, NTIPO_MATERIAL_CODIGO  AS nTipoMaterialCodigo, CPATRIMONIO_CATEGORIA_CODIGO AS cPatrimonioCategoriaCodigo,  
+		VPATRIMONIO_SERIE AS vpatrimonioSerie, VPATRIMONIO_DIMENSIONES AS vPatriminioDimensiones, VPATRIMONIO_OBSERVACION AS vPatrimonioObservacion, VPATRIMONIO_TIPO AS vpatrimonioTipo, 
+		CESTADO_CODIGO  AS cEstadoCodigo,
+		(SELECT  e.VESTADO_DESCRIPCION FROM iafas_estados e where CAB.CESTADO_CODIGO = e.cestado_codigo) as desEstado, 
+		(select VMARCA_DESCRIPCION from IAFAS_MARCAS where NMARCA_CODIGO=CAB.NMARCA_CODIGO ) desMarca , 
+		(select VCOLOR_DESCRIPCION from IAFAS_COLORES where NCOLOR_CODIGO=CAB.NCOLOR_CODIGO) desColor
+		FROM IAFAS_PATRIMONIO CAB
+		WHERE CESTADO_CODIGO = 'AC'
+		ORDER BY NPATRIMONIO_CODIGO   
+	</select>
+	
+	<select id="editarPatrimonio"
+		parameterType="ep.mil.pe.iafas.patrimonio.model.IafasPatrimonio"
+		resultType="ep.mil.pe.iafas.patrimonio.model.IafasPatrimonio">
+		SELECT DISTINCT _rowid as numRow,
+		NPATRIMONIO_CODIGO  AS nPatrimonioCodigo, VPATRIMONIO_CODIGO AS vPatrimonioCodigo, VPATRIMONIO_DESCRIPCION AS vPatrimonioDescripcion, NMARCA_CODIGO AS nMarcaCodigo,
+		VPATRIMONIO_MODELO AS vPatrimonioModelo, NCOLOR_CODIGO AS vPtarimonioColorCodigo, NTIPO_MATERIAL_CODIGO  AS nTipoMaterialCodigo, CPATRIMONIO_CATEGORIA_CODIGO AS cPatrimonioCategoriaCodigo,  
+		VPATRIMONIO_SERIE AS vpatrimonioSerie, VPATRIMONIO_DIMENSIONES AS vPatriminioDimensiones, VPATRIMONIO_OBSERVACION AS vPatrimonioObservacion, VPATRIMONIO_TIPO AS vpatrimonioTipo, 
+		CESTADO_CODIGO  AS cEstadoCodigo,
+		(SELECT  e.VESTADO_DESCRIPCION FROM iafas_estados e where CAB.CESTADO_CODIGO = e.cestado_codigo) as desEstado, 
+		(select VMARCA_DESCRIPCION from IAFAS_MARCAS where NMARCA_CODIGO=CAB.NMARCA_CODIGO ) desMarca , 
+		(select VCOLOR_DESCRIPCION from IAFAS_COLORES where NCOLOR_CODIGO=CAB.NCOLOR_CODIGO) desColor
+		FROM IAFAS_PATRIMONIO CAB
+		WHERE CESTADO_CODIGO = 'AC' AND
+		NPATRIMONIO_CODIGO = #{nPatrimonioCodigo}
+	</select>
+	
+	
+	<select id="SP_IDU_PATRIMONIO" statementType="CALLABLE" parameterType="ep.mil.pe.iafas.patrimonio.model.IafasPatrimonio">
+        <![CDATA[call SP_IDU_PATRIMONIO(#{nPatrimonioCodigo, mode=IN},#{vPatrimonioCodigo, mode=IN}, #{vPatrimonioDescripcion, mode=IN},#{nMarcaCodigo, mode=IN}, #{vPatrimonioModelo, mode=IN},
+        #{vPtarimonioColorCodigo, mode=IN},#{nTipoMaterialCodigo, mode=IN},#{cPatrimonioCategoriaCodigo, mode=IN},#{vpatrimonioSerie, mode=IN},#{vPatriminioDimensiones, mode=IN},#{vPatrimonioObservacion, mode=IN},
+        #{vpatrimonioTipo, mode=IN}, #{vusuarioCodigo, mode=IN}, #{mode, mode=IN},#{codigoRespuesta,mode=OUT,jdbcType=VARCHAR}, #{mensajeRespuesta,mode=OUT,jdbcType=VARCHAR})
+         ]]>
+    </select>
+    
+    <select id="obtenerPatrimonioCompletext"
+		parameterType="ep.mil.pe.iafas.patrimonio.model.IafasPatrimonio"
+		resultType="ep.mil.pe.iafas.patrimonio.model.IafasPatrimonio">
+		SELECT  NPATRIMONIO_CODIGO AS nPatrimonioCodigo, 
+		VPATRIMONIO_CODIGO AS vPatrimonioCodigo, 
+		VPATRIMONIO_DESCRIPCION AS vPatrimonioDescripcion
+		FROM IAFAS_PATRIMONIO where VPATRIMONIO_DESCRIPCION LIKE CONCAT('%',#{nombrePatrimonio},'%') AND
+        CESTADO_CODIGO='AC' 
+		LIMIT 10
+	</select>
+	
+</mapper>

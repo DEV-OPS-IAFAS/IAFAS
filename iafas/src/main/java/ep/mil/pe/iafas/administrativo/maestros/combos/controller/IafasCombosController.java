@@ -62,6 +62,13 @@ public class IafasCombosController implements Serializable {
 	public List<SelectItem> condicion;
 	
 	/**************************************/
+	/*[INICIO] Elvis Severino*/
+	public List<SelectItem> tipoMaterial;
+	public List<SelectItem> marcaPatrimonio;
+	public List<SelectItem> colorPatrimonio;
+	public List<SelectItem> categoriaPatrimonio;
+	public List<SelectItem> tipoActa;
+	
 	
     public List<SelectItem> getProcesoSel() {
         procesoSel = new ArrayList<>();
@@ -331,4 +338,55 @@ public class IafasCombosController implements Serializable {
 		return condicion;
 	}
 
+	/*[INICIO] Elvis Severino*/
+	public List<SelectItem> getTipoMaterial() {
+		tipoMaterial = new ArrayList<SelectItem>();
+		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasCombos> ls = cb.getTipoMaterialPatrimonio();
+		for (IafasCombos p : ls) {
+			tipoMaterial.add(new SelectItem(p.getCodigo(), p.getDescripcion()));
+		}		
+		return tipoMaterial;
+	}
+	
+	public List<SelectItem> getMarcaPatrimonio() {
+		marcaPatrimonio = new ArrayList<SelectItem>();
+		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasCombos> ls = cb.getMarcaPatrimonio();
+		for (IafasCombos p : ls) {
+			marcaPatrimonio.add(new SelectItem(p.getCodigo(), p.getDescripcion()));
+		}		
+		return marcaPatrimonio;
+	}
+	
+	public List<SelectItem> getColorPatrimonio() {
+		colorPatrimonio = new ArrayList<SelectItem>();
+		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasCombos> ls = cb.getColorPatrimonio();
+		for (IafasCombos p : ls) {
+			colorPatrimonio.add(new SelectItem(p.getCodigo(), p.getDescripcion()));
+		}		
+		return colorPatrimonio;
+	}
+	
+	public List<SelectItem> getCategoriaPatrimonio() {
+		categoriaPatrimonio = new ArrayList<SelectItem>();
+		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasCombos> ls = cb.getCategoriaPatrimonio();
+		for (IafasCombos p : ls) {
+			categoriaPatrimonio.add(new SelectItem(p.getCodigo(), p.getDescripcion()));
+		}		
+		return categoriaPatrimonio;
+	}
+	
+	public List<SelectItem> getTipoActa() {
+		tipoActa = new ArrayList<SelectItem>();
+		IafasCombosDao cb = new IafasCombosDao(MySQLSessionFactory.getSqlSessionFactory());
+		List<IafasCombos> ls = cb.getTipoActa();
+		for (IafasCombos p : ls) {
+			tipoActa.add(new SelectItem(p.getCodigo(), p.getDescripcion()));
+		}		
+		return tipoActa;
+	}
+	/*[FIN] Elvis Severino*/
 }

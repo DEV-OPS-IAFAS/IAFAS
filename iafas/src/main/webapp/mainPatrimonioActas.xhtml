@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>IAFAS</title>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+	<link href="css/estilos.css" rel="stylesheet" type="text/css" />
+	<link href="css/Botones.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/css/bootstrap/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/css/style.css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/icon/themify-icons/themify-icons.css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/icon/icofont/css/icofont.css" />
+	<link rel="stylesheet" type="text/css"
+		href="material_able-main/assets/icon/font-awesome/css/font-awesome.min.css" />
+
+	<style type="text/css">
+button.ui-button {
+	margin-right: .5rem;
+}
+</style>
+
+</h:head>
+
+<body class="formulario">
+
+	<script>
+		function verMensajes() {
+			var option = document.getElementById('frm_PatrimonioActas:hdd_option').value;
+			var message = document.getElementById('frm_PatrimonioActas:hdd_message').value;
+
+			if (option == -1) {
+				swal("ALERTA", message, "error").then(function() {
+					window.location = "mainPatrimonioActas.xhtml";
+				});
+			}
+
+			if (option == 0) {
+				swal("AVISO", message, "success").then(function() {
+					window.location = "mainPatrimonioActas.xhtml";
+				});
+			}
+
+			if (option == 1) {
+				swal("ALERTA", message, "warning").then(function() {
+					window.location = "mainPatrimonioActas.xhtml";
+				});
+			}
+
+			if (option == 2) {
+				swal("ALERTA", message, "error").then(function() {
+					window.location = "mainPatrimonioActas.xhtml";
+				});
+			}
+
+			if (option == 3) {
+				swal("ALERTA", message, "error").then(function() {
+					window.location = "mainPatrimonioActas.xhtml";
+				});
+			}
+		}
+		
+		function reporteActa(anoDoc, tipActa, nroActa){
+	          
+	           var PopWidth =800;
+	           var PopHeight=600;
+	           var PopLeft  = 10;
+	           var PopTop   = 10;
+	           var nomRep;
+	           nomRep="REP001LOG";
+	                     
+	     	 var codigoIngDoc = anoDoc +tipActa + nroActa  +nomRep;
+	     	 document.open("GenerarReporte?codigoIngDoc=" + codigoIngDoc + "",'_blank','toolbar=yes,status=yes,menubar=yes,location=yes,directories=yes,resizable=yes,scrollbars=yes,width='+PopWidth+',height='+PopHeight+',top='+PopTop+',left='+PopLeft);
+		}
+		
+	</script>
+
+	<h:form id="frm_PatrimonioActas">
+		<center class="label label-inverse-success">
+			<label>ACTAS - PATRIMONIO</label>
+		</center>
+		<p:panel id="pnl_messages">
+			<h:inputHidden value="#{iafasPatrimonioController.typeMessages}" id="hdd_option" />
+			<h:inputHidden value="#{iafasPatrimonioController.messages}" id="hdd_message" />
+		</p:panel>
+
+		<p:panel header="Datos de Busqueda">
+	
+			<p:panelGrid columns="6" styleClass="panel">
+				<h:outputLabel value="A.F" styleClass="etiqueta"
+					style="font-size:11px;font-weight:bold;" />
+				<h:selectOneMenu id="cboPeriodo" styleClass="select" value="#{iafasPatrimonioController.ano}">
+					<f:ajax render="frm_PatrimonioActas:dTablePatrimonioActa" listener="#{iafasPatrimonioController.buscarCabeceraActa()}" />
+					<f:selectItem itemValue="0" itemLabel="Seleccione" />
+					<f:selectItem itemValue="2021" itemLabel="2021" />
+				</h:selectOneMenu>
+
+				<h:outputLabel value="Tipo Acta:" styleClass="etiqueta"
+					style="font-size:11px;font-weight:bold;" />
+				<h:selectOneMenu id="cboMes" styleClass="select" value="#{iafasPatrimonioController.tipoActa}" style="width:350px;">
+					<f:ajax render="frm_PatrimonioActas:dTablePatrimonioActa" listener="#{iafasPatrimonioController.buscarCabeceraActa()}" />
+					<f:selectItem itemValue="00" itemLabel="Seleccione" />
+					<f:selectItems var="optionProv" value="#{mbCombos.tipoActa}" />				
+				</h:selectOneMenu>
+				
+				<p:panelGrid columns="6" styleClass="panel">
+				
+				<p:commandButton oncomplete="PF('modalCabecera').show()"
+					title="Click aqui para Nuevo Registro" value="Nuevo"
+					action="#{iafasPatrimonioController.nuevoActas()}"
+					update="frm_PatrimonioActas:modalCabecera">
+					<f:ajax render="frm_PatrimonioActas:pnl_messages"
+						listener="#{iafasPatrimonioController.nuevoActas()}" />
+				</p:commandButton>
+
+				<p:commandButton title="Click aquiActualizar la consulta"
+					value="Actualizar"
+					action="#{iafasPatrimonioController.buscarCabeceraActa()}"
+					update="frm_PatrimonioActas:dTablePatrimonioActa" />
+			</p:panelGrid>
+			
+			</p:panelGrid>
+			
+	</p:panel>
+
+		<p:panel header="Consulta de Patrimonio">
+
+			<p:panel >
+				<p:panelGrid columns="6" styleClass="panel">
+
+					<p:dataTable id="dTablePatrimonioActa" var="tblPatrimonioActa"
+						value="#{iafasPatrimonioController.listaCabeceraActa}"
+						selection="#{iafasPatrimonioController.beanActa}"
+						rowKey="#{tblPatrimonioActa.CPeriodoCodigo}#{tblPatrimonioActa.NPatrimonioActaCodigo}#{tblPatrimonioActa.NPatrimonioTipoActaCodigo}
+						#{tblPatrimonioActa.NPersonaCodigo}#{tblPatrimonioActa.NPersonalContratoCodigo}"
+						selectionMode="single" style="font-size:11px;">
+
+						<p:column style="width:2px;" headerText="REPORTE">
+							<p:commandButton  id="cmd_report_ra"  icon="pi pi-file-pdf"  
+							onclick="reporteActa('#{tblPatrimonioActa.CPeriodoCodigo}','#{tblPatrimonioActa.NPatrimonioTipoActaCodigo}', '#{tblPatrimonioActa.NPatrimonioActaCodigo}')" />
+						</p:column>
+
+						<p:column style="width:2px;" headerText="CODIGO">
+							<p:outputLabel
+								value="#{tblPatrimonioActa.NPatrimonioActaCodigo}" />
+						</p:column>
+
+						<p:column style="width:5px;" headerText="TIPO">
+							<p:outputLabel
+								value="#{tblPatrimonioActa.desTipoActa}" />
+						</p:column>
+						
+						<p:column style="width:30px;" headerText="PRESIDENTE">
+							<p:outputLabel
+								value="#{tblPatrimonioActa.nombrePresidente}" />
+						</p:column>
+						
+						<p:column style="width:30px;" headerText="SECRETARIO">
+							<p:outputLabel
+								value="#{tblPatrimonioActa.nombreSecretario}" />
+						</p:column>
+						
+						<p:column style="width:30px;" headerText="VOCAL">
+							<p:outputLabel
+								value="#{tblPatrimonioActa.nombreVocal}" />
+						</p:column>
+
+						<p:column style="width:100px;" headerText="OBSERVACIONES">
+							<p:outputLabel
+								value="#{tblPatrimonioActa.VPatrimonioActaObservacion}" />
+						</p:column>
+					</p:dataTable>
+
+				<p:contextMenu for="dTablePatrimonioActa" style="width:200px;">
+            		<p:menuitem value="Editar" update="frm_PatrimonioActas:modalCabecera"  
+            			oncomplete="PF('modalCabecera').show()"  action="#{iafasPatrimonioController.editarPatrimonioActa()}" />
+            		<p:menuitem value="Ingresar Detalle" update="frm_PatrimonioActas:modalDetalle"  
+            			oncomplete="PF('modalDetalle').show()"  action="#{iafasPatrimonioController.mostrarPatrimonioActa()}" />	
+        		</p:contextMenu>
+        		
+				</p:panelGrid>
+			</p:panel>
+
+		</p:panel> 
+
+		<p:dialog header="PATRIMONIO" id="modalCabecera" widgetVar="modalCabecera" showEffect="fade" minHeight="600" width="1120">
+			<p:panelGrid columns="2" id="pnlGr_insert" styleClass="grid">
+				
+				<h:outputLabel value="Presidente" styleClass="etiqueta" style="font-size:12px;font-weight:bold;" />
+				<p:autoComplete  id="acPdte" size="80" value="#{iafasPatrimonioController.descripcionPresidente}" 
+		          completeMethod="#{iafasPatrimonioController.completeTextPresidente}" scrollHeight="250">
+	            </p:autoComplete>
+	            <h:outputLabel value="Vocal" styleClass="etiqueta" style="font-size:12px;font-weight:bold;" />
+	            <p:autoComplete  id="acVocal" size="80" value="#{iafasPatrimonioController.descripcionVocal}" 
+		          completeMethod="#{iafasPatrimonioController.completeTextVocal}" scrollHeight="250">
+	            </p:autoComplete>
+	            <h:outputLabel value="Secretario" styleClass="etiqueta" style="font-size:12px;font-weight:bold;" />
+	            <p:autoComplete  id="acSecretario" size="80" value="#{iafasPatrimonioController.descripcionSecretario}" 
+		          completeMethod="#{iafasPatrimonioController.completeTextSecretario}" scrollHeight="250">
+	            </p:autoComplete>
+	            <h:outputLabel value="Observaciones" styleClass="etiqueta" style="font-size:12px;font-weight:bold;" />
+				<p:inputTextarea rows="2" cols="117" counter="display" maxlength="500" style="text-transform:uppercase"
+				 value="#{iafasPatrimonioController.observacionActa}" counterTemplate="{0} Caracteres Faltantes." autoResize="false"/>
+				 <h:outputText value="" class="p-d-block" />
+        		<h:outputText id="display" class="p-d-block" />
+				 </p:panelGrid>	
+			<f:facet name="footer">
+				<p:commandButton value="Cerrar"
+					styleClass="ui-button-outlined ui-button-danger"
+					oncomplete="PF('modalCabecera').hide()"
+					action="#{iafasPatrimonioController.limpiarCamposMtoActas()}"
+					update="frm_PatrimonioActas:dTablePatrimonioActa" />
+				<p:commandButton value="Grabar" styleClass="ui-button-outlined ui-button-success"
+					oncomplete="PF('modalCabecera').hide()" action="#{iafasPatrimonioController.insRegistroActaCab()}" 
+					update="frm_PatrimonioActas:dTablePatrimonioActa" />
+			</f:facet>
+		</p:dialog>
+		
+		
+		<p:dialog header="DETALLE PATRIMONIO" id="modalDetalle" widgetVar="modalDetalle" showEffect="fade" minHeight="600" width="1120">
+			<p:panelGrid columns="2" id="pnlGr_insertDetalle" styleClass="grid">
+				
+				<h:outputLabel value="Patrimonio" styleClass="etiqueta"  style="font-size:12px;font-weight:bold;" />	
+				<p:autoComplete  id="acPatrimonio" size="120" value="#{iafasPatrimonioController.descripcionPatrimonio}" 
+		          completeMethod="#{iafasPatrimonioController.completeTextPatrimonio}" scrollHeight="250">
+	            </p:autoComplete>
+	          
+	         	<h:outputLabel value="Ubicacion" styleClass="etiqueta"  style="font-size:12px;font-weight:bold; " />
+				<p:inputText styleClass="input" id="inptUbicacion" size="120"  style="text-align: left;text-transform:uppercase" value="#{iafasPatrimonioController.ubicacionDetalle}"  />
+				
+	            <h:outputLabel value="Observaciones" styleClass="etiqueta" style="font-size:12px;font-weight:bold;" />
+				<p:inputTextarea rows="2" cols="120" counter="displayDet" maxlength="200" style="text-transform:uppercase"
+				 value="#{iafasPatrimonioController.observacionActaDetalle}" counterTemplate="{0} Caracteres Faltantes." autoResize="false"/>
+				 <h:outputText value="" class="p-d-block" />
+        		<h:outputText id="displayDet" class="p-d-block" />
+        		
+        		<f:facet name="footer">
+        		<p:commandButton value="Grabar" styleClass="ui-button-outlined ui-button-success"
+					oncomplete="PF('modalCabecera').hide()" action="#{iafasPatrimonioController.insRegistroActaDet()}" 
+					update="frm_PatrimonioActas:dTableDetalle" />
+					</f:facet>
+				 </p:panelGrid>	
+			<f:facet name="footer">
+				<p:commandButton value="Cerrar"
+					styleClass="ui-button-outlined ui-button-danger"
+					oncomplete="PF('modalDetalle').hide()"
+					action="#{iafasPatrimonioController.limpiarCamposMtoDetalleActas()}"
+					update="frm_PatrimonioActas:dTablePatrimonioActa" />
+				
+			</f:facet>
+			
+			<p:panel>
+				<p:panel>
+					<p:panelGrid columns="1" styleClass="panel">
+						 <p:dataTable id="dTableDetalle" var="tbleDetalle"
+							value="#{iafasPatrimonioController.listaDetalleActa}"
+							style="font-size:11px;"
+							emptyMessage="No se encontro Datos registrados">
+ 							
+ 							<p:column style="width:5px; text-align: center" headerText="ACCIONES">
+								<p:commandButton  value="Eliminar" icon="pi pi-trash"  action="#{iafasPatrimonioController.anularRegistroActaDetalle()}" 
+                                  update="frm_PatrimonioActas:dTableDetalle" >
+									<f:param id="codPeriodo" name="codPeriodo" value="#{tbleDetalle.CPeriodoCodigo}"  />
+									<f:param id="codPersona" name="codPersona" value="#{tbleDetalle.NPersonaCodigo}"  />
+									<f:param id="codPersonaContrato" name="codPersonaContrato" value="#{tbleDetalle.NPersonalContratoCodigo}"  />
+									<f:param id="codPatrimonioActa" name="codPatrimonioActa" value="#{tbleDetalle.NPatrimonioActaCodigo}"  />
+									<f:param id="codPatrimonio" name="codPatrimonio" value="#{tbleDetalle.NPatrimonioCodigo}"  />
+									<f:param id="codTipoActa" name="codTipoActa" value="#{tbleDetalle.NPatrimonioTipoActaCodigo}"  />
+								</p:commandButton>
+							</p:column>
+							
+							<p:column style="width:5px; text-align: center" headerText="PATRIMONIO">
+								<p:outputLabel value="#{tbleDetalle.descripcionPatrimonio}" /> 
+							</p:column>
+							
+							<p:column style="width:80px; text-align: center" headerText="UBICACION">
+								<p:outputLabel value="#{tbleDetalle.vinternamientoDetalleUbicacion}" /> 
+							</p:column>
+							
+							<p:column style="width:80px; text-align: center" headerText="OBSERVACION">
+								<p:outputLabel value="#{tbleDetalle.vinternamientoDetalleObservacion}" /> 
+							</p:column>
+							
+						</p:dataTable> 
+        	
+					</p:panelGrid>
+				</p:panel>
+			</p:panel>
+			
+		</p:dialog>
+		
+ 
+	</h:form>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/jquery/jquery.min.js "></script>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/jquery-ui/jquery-ui.min.js "></script>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/popper.js/popper.min.js"></script>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/bootstrap/js/bootstrap.min.js "></script>
+	<!-- waves js -->
+	<script src="material_able-main/assets/pages/waves/js/waves.min.js"></script>
+	<!-- jquery slimscroll js -->
+	<script type="text/javascript"
+		src="material_able-main/assets/js/jquery-slimscroll/jquery.slimscroll.js"></script>
+
+	<!-- slimscroll js -->
+	<script
+		src="material_able-main/assets/js/jquery.mCustomScrollbar.concat.min.js "></script>
+	<script type="text/javascript"
+		src="material_able-main/assets/js/script.js "></script>
+</body>
+
+</html>

@@ -364,4 +364,70 @@ public class IafasCombosDao {
             }
             return lista;
         }
+      
+      /*[INICIO] Elvis Severino*/
+      @SuppressWarnings("unchecked")
+     	public List<IafasCombos> getMarcaPatrimonio() {
+             List<IafasCombos> lista = null;
+             SqlSession session = sqlSessionFactory.openSession();
+             try{
+                   lista = session.selectList("Combos.marcaPatrimonio");
+             }
+             finally{
+                  session.close();
+             }
+             return lista;
+         }
+      
+      @SuppressWarnings("unchecked")
+   	public List<IafasCombos> getColorPatrimonio() {
+           List<IafasCombos> lista = null;
+           SqlSession session = sqlSessionFactory.openSession();
+           try{
+                 lista = session.selectList("Combos.colorPatrimonio");
+           }
+           finally{
+                session.close();
+           }
+           return lista;
+       }
+      
+      @SuppressWarnings("unchecked")
+     	public List<IafasCombos> getCategoriaPatrimonio() {
+             List<IafasCombos> lista = null;
+             SqlSession session = sqlSessionFactory.openSession();
+             try{
+                   lista = session.selectList("Combos.categoriaPatrimonio");
+             }
+             finally{
+                  session.close();
+             }
+             return lista;
+         }
+      
+      @SuppressWarnings("unchecked")
+   	public List<IafasCombos> getTipoMaterialPatrimonio() {
+           List<IafasCombos> lista = null;
+           SqlSession session = sqlSessionFactory.openSession();
+           try{
+                 lista = session.selectList("Combos.tipoMaterialPatrimonio");
+           }
+           finally{
+                session.close();
+           }
+           return lista;
+       }
+      @SuppressWarnings("unchecked")
+   	public List<IafasCombos> getTipoActa() {
+           List<IafasCombos> lista = null;
+           SqlSession session = sqlSessionFactory.openSession();
+           try{
+                 lista = session.selectList("Combos.tipoActa");
+           }
+           finally{
+                session.close();
+           }
+           return lista;
+       }
+      /*[FIN] Elvis Severino*/
 }

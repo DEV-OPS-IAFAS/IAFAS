@@ -8,11 +8,12 @@ import lombok.NoArgsConstructor;
 
 
 @Data
+@AllArgsConstructor
 public class Document implements Serializable, Comparable<Document>{
 
 	private static final long serialVersionUID = 1L;
 
-	private String nombreModulo;
+	/*private String nombreModulo;
 	private String cmenuNombre;
 	private String cmoduloCodigo;
 	
@@ -26,6 +27,21 @@ public class Document implements Serializable, Comparable<Document>{
 	public int compareTo(Document document) {
         return this.getNombreModulo().compareTo(document.getNombreModulo());
 	}
+*/
+	
+	private String name;
 
+	private String size;
+
+	private String type;
+	
+	@Override
+	public String toString() {
+		return name;
+	}
+	
+	public int compareTo(Document document) {
+        return this.getName().compareTo(document.getName());
+    }
 	
 }

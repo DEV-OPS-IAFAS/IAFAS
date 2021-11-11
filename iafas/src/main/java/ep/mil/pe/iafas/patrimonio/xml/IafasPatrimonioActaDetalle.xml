@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="IafasPatrimonioActaDetalle">
+    <resultMap id="resultado" type="IafasPatrimonioActaDetalle" />
+    
+     <select id="obtenerPatrimonioDetalleActa"
+		parameterType="ep.mil.pe.iafas.patrimonio.model.IafasPatrimonioActaDetalle"
+		resultType="ep.mil.pe.iafas.patrimonio.model.IafasPatrimonioActaDetalle">
+			SELECT DISTINCT CPERIODO_CODIGO as cPeriodoCodigo,
+			NPERSONA_CODIGO AS nPersonaCodigo,
+            NPERSONAL_CONTRATO_CODIGO AS nPersonalContratoCodigo,
+            NPATRIMONIO_ACTA_CODIGO AS nPatrimonioActaCodigo,
+			NPATRIMONIO_CODIGO  AS nPatrimonioCodigo,
+			NPATRIMONIO_TIPO_ACTA_CODIGO AS nPatrimonioTipoActaCodigo,
+			CESTADO_CODIGO  AS cEstadoCodigo,
+			(SELECT  e.VESTADO_DESCRIPCION FROM iafas_estados e where CAB.CESTADO_CODIGO = e.cestado_codigo) as desEstado,
+	        CAB.VINTERNAMIENTO_DETALLE_OBSERVACION AS vinternamientoDetalleObservacion, 
+	        CAB.VINTERNAMIENTO_DETALLE_UBICACION AS vinternamientoDetalleUbicacion,
+	        (select p.VPATRIMONIO_DESCRIPCION from IAFAS_PATRIMONIO p where p.NPATRIMONIO_CODIGO = CAB.NPATRIMONIO_CODIGO) descripcionPatrimonio
+			FROM IAFAS_PATRIMONIO_ACTA_DETALLE CAB
+			WHERE 
+	        CPERIODO_CODIGO = #{cPeriodoCodigo} AND
+	        NPERSONA_CODIGO=#{nPersonaCodigo} AND 
+	        NPERSONAL_CONTRATO_CODIGO =#{nPersonalContratoCodigo} AND 
+	        NPATRIMONIO_TIPO_ACTA_CODIGO=#{nPatrimonioTipoActaCodigo} AND 
+	        NPATRIMONIO_ACTA_CODIGO =#{nPatrimonioActaCodigo} AND
+	        CESTADO_CODIGO = 'AC'
+			ORDER BY NPATRIMONIO_CODIGO   
+	</select>
+	
+	
+	<select id="SP_IDU_IAFAS_PATRIMONIO_ACTA_DETALE" statementType="CALLABLE" parameterType="ep.mil.pe.iafas.patrimonio.model.IafasPatrimonioActaDetalle">
+        <![CDATA[call SP_IDU_IAFAS_PATRIMONIO_ACTA_DETALE(#{cPeriodoCodigo, mode=IN},#{nPersonaCodigo, mode=IN}, #{nPersonalContratoCodigo, mode=IN},#{nPatrimonioTipoActaCodigo, mode=IN},
+        #{nPatrimonioActaCodigo, mode=IN}, #{nPatrimonioCodigo, mode=IN},#{vinternamientoDetalleUbicacion, mode=IN},#{vinternamientoDetalleObservacion, mode=IN},#{vusuarioCodigo, mode=IN}, #{mode, mode=IN},
+        #{codigoRespuesta,mode=OUT,jdbcType=VARCHAR}, #{mensajeRespuesta,mode=OUT,jdbcType=VARCHAR})
+         ]]>
+    </select>
+    
+</mapper>

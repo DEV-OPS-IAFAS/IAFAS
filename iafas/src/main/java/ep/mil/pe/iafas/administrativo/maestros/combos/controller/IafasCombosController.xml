@@ -218,4 +218,53 @@ parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos"
 		FROM iafas_condiciones_pago WHERE cestado_codigo='AC' order by NCONDICION_PAGO_CODIGO asc;
 </select>
 
+<!-- [INICIO] Agregado por Elvis Severino -->
+<select id="marcaPatrimonio" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+	SELECT NMARCA_CODIGO AS codigo,
+	VMARCA_DESCRIPCION AS descripcion 
+	FROM IAFAS_MARCAS
+	WHERE 
+	CESTADO_CODIGO = 'AC'
+</select>
+
+<select id="colorPatrimonio" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+	
+	SELECT NCOLOR_CODIGO AS codigo,
+	VCOLOR_DESCRIPCION AS descripcion
+	FROM IAFAS_COLORES
+</select>
+
+<select id="categoriaPatrimonio" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+	
+	SELECT CPATRIMONIO_CATEGORIA_CODIGO AS codigo,
+	VPATRIMONIO_CATEGORIA_DESCRIPCION AS descripcion
+	FROM IAFAS_PATRIMONIO_CATEGORIA
+	WHERE 
+	CESTADO_CODIGO = 'AC'
+</select>
+
+<select id="tipoMaterialPatrimonio" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+	
+	SELECT NTIPO_MATERIAL_CODIGO AS codigo,
+	VTIPO_MATERIAL_DESCRIPCION AS descripcion
+	FROM IAFAS_TIPO_MATERIAL
+	WHERE 
+	CESTADO_CODIGO = 'AC'
+</select>
+
+<select id="tipoActa" resultType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos" 
+parameterType="ep.mil.pe.iafas.administrativo.maestros.combos.model.IafasCombos">
+	
+	SELECT   NPATRIMONIO_TIPO_ACTA_CODIGO AS codigo,
+	VPATRIMONIO_TIPO_ACTA_DESCRIPCION AS descripcion
+	FROM  IAFAS_PATRIMONIO_TIPO_ACTA
+	WHERE 
+	CESTADO_CODIGO = 'AC'
+</select>
+	
+<!-- [FIN] Agregado por Elvis Severino -->
 </mapper>

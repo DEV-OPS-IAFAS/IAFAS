@@ -85,8 +85,8 @@ public class IafasUsuariosController implements Serializable {
 		IafasUsuariosDao usuarioSessionDao = new IafasUsuariosDao(MySQLSessionFactory.getSqlSessionFactory());
 		IafasUsuarios c = new IafasUsuarios();
 		c.setVusuarioCodigo(this.idUsuario);		
-		c.setVusuarioPassword(this.passUsuario);
-		//c.setVusuarioPassword(pasusu);
+		//c.setVusuarioPassword(this.passUsuario);
+		c.setVusuarioPassword(pasusu);
 		List<IafasUsuarios> usuarioBuscado = usuarioSessionDao.SelectListFiltro2(c);
 		if (usuarioBuscado.size() > 0) {
 			for (IafasUsuarios usuario : usuarioBuscado) {
